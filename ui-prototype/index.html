@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>皮带机 PIDM · UI 原型</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo">PIDM</div>
+        <div>
+          <h1>皮带机区段分类与逐点张力</h1>
+          <p>SolidWorks 插件界面网页原型 · DTⅡ 手册口径</p>
+        </div>
+      </div>
+      <div class="meta">
+        <span class="chip">几何版本 G12</span>
+        <span class="chip">schema v1</span>
+        <span class="chip ok">主驱动已设</span>
+        <span class="chip warn">闭环：未检查</span>
+      </div>
+    </header>
+
+    <nav class="tabs" id="tabs">
+      <button class="tab active" data-panel="classify">1. 引用分类</button>
+      <button class="tab" data-panel="sequence">2. 点序</button>
+      <button class="tab" data-panel="extract">3. 提取检查</button>
+      <button class="tab" data-panel="audit">4. 审核总览</button>
+      <button class="tab" data-panel="send">5. 发送网页</button>
+    </nav>
+
+    <main class="panels">
+      <!-- 1. 引用分类 -->
+      <section class="panel active" id="panel-classify">
+        <div class="panel-grid">
+          <aside class="card">
+            <h3>当前草图 / 预览</h3>
+            <div class="viewport">
+              <div class="path-line"></div>
+              <div class="path-seg active-seg"></div>
+              <div class="dot d1"></div>
+              <div class="dot d2"></div>
+              <div class="hint">高亮：当前引用骨架线段</div>
+            </div>
+            <dl class="kv">
+              <div><dt>当前装配</dt><dd>皮带机总装.SLDASM</dd></div>
+              <div><dt>当前草图</dt><dd>草图3</dd></div>
+              <div><dt>引用状态</dt><dd class="ok-text">已引用骨架线段 (1)</dd></div>
+              <div><dt>关联滚筒</dt><dd>未关联</dd></div>
+            </dl>
+            <div class="name-preview">
+              <label>名称预览（确认后写入模型树）</label>
+              <div class="name-box" id="namePreview">03_承载分支倾斜段_上运倾斜段</div>
+            </div>
+          </aside>
+
+          <section class="card">
+            <div class="step">
+              <h3>步骤1 · 引用骨架</h3>
+              <div class="btn-row">
+                <button class="btn primary">选择 / 重选引用</button>
+                <button class="btn">清除引用</button>
+              </div>
+            </div>
+
+            <div class="step">
+              <h3>步骤2 · 十二大项（DTⅡ）</h3>
+              <div class="major-grid" id="majorGrid"></div>
+            </div>
+
+            <div class="step">
+              <h3>步骤3 · 细分选项</h3>
+              <div class="sub-list" id="subList"></div>
+            </div>
+
+            <div class="step" id="drumExtra">
+              <h3>步骤4 · 滚筒类附加</h3>
+              <div class="btn-row">
+                <button class="btn">点选关联滚筒零件</button>
+                <label class="radio"><input type="radio" name="driveRole" value="main" /> 主驱动</label>
+                <label class="radio"><input type="radio" name="driveRole" value="aux" /> 辅助驱动</label>
+              </div>
+              <p class="note">仅传动/改向/拉紧大项显示；主驱动全局唯一。</p>
+            </div>
+
+            <div class="step">
+              <h3>步骤5 · 执行</h3>
+              <div class="btn-row">
+                <button class="btn primary" id="confirmClassify">确认分类并写入</button>
+                <button class="btn">重分类</button>
+                <button class="btn ghost">取消</button>
+              </div>
+              <div class="toast" id="classifyToast">已写入模型树：03_承载分支倾斜段_上运倾斜段</div>
+            </div>
+          </section>
+        </div>
+
+        <section class="card table-card">
+          <div class="card-head">
+            <h3>已分类清单</h3>
+            <span class="muted">完整 1 · 不完整 1 · 未确认 1</span>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>序号</th><th>名称</th><th>大项</th><th>细分</th><th>状态</th><th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="classifyTable"></tbody>
+          </table>
+        </section>
+      </section>
+
+      <!-- 2. 点序 -->
+      <section class="panel" id="panel-sequence">
+        <div class="panel-grid">
+          <aside class="card">
+            <h3>全线点序预览</h3>
+            <div class="viewport sequence-view">
+              <div class="loop"></div>
+              <span class="badge b1">1 奔离</span>
+              <span class="badge b2">2</span>
+              <span class="badge b3">3</span>
+              <span class="badge b4">趋入</span>
+            </div>
+            <dl class="kv">
+              <div><dt>规则</dt><dd>第1点 = 主驱动奔离点</dd></div>
+              <div><dt>手定</dt><dd>仅 1、2 点</dd></div>
+              <div><dt>其余</dt><dd>沿运行方向自动排序</dd></div>
+            </dl>
+          </aside>
+
+          <section class="card">
+            <h3>点序操作</h3>
+            <div class="btn-row wrap">
+              <button class="btn primary">奔离点</button>
+              <button class="btn">趋入点</button>
+              <button class="btn primary">序号（手定1、2）</button>
+              <button class="btn">重排序</button>
+              <button class="btn warn-btn">闭环检查</button>
+            </div>
+
+            <div class="check-box">
+              <h4>检查结果</h4>
+              <ul>
+                <li class="ok-text">✓ 主驱动唯一</li>
+                <li class="ok-text">✓ 奔离点 = 序号1</li>
+                <li class="bad-text">✗ 段3 与 段4 存在断点 <button class="link-btn">定位修复</button></li>
+              </ul>
+            </div>
+
+            <div class="card-head" style="margin-top:16px">
+              <h3>点序表</h3>
+            </div>
+            <table>
+              <thead>
+                <tr><th>点号</th><th>类型</th><th>所属段</th><th>状态</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>1</td><td>奔离点</td><td>04_传动滚筒_主驱动</td><td><span class="tag ok">已确认</span></td></tr>
+                <tr><td>2</td><td>特性点</td><td>01_承载分支水平段</td><td><span class="tag ok">已确认</span></td></tr>
+                <tr><td>3</td><td>特性点</td><td>02_承载分支倾斜段</td><td><span class="tag">自动</span></td></tr>
+                <tr><td>n</td><td>趋入点</td><td>04_传动滚筒_主驱动</td><td><span class="tag ok">已确认</span></td></tr>
+              </tbody>
+            </table>
+          </section>
+        </div>
+      </section>
+
+      <!-- 3. 提取检查 -->
+      <section class="panel" id="panel-extract">
+        <div class="toolbar card">
+          <button class="btn primary">提取当前段</button>
+          <button class="btn">全线重提</button>
+          <button class="btn">仅重提失败项</button>
+          <button class="btn ghost">导出提取报告</button>
+          <span class="muted">完整 12 · 失败 2 · 过期 1</span>
+        </div>
+        <div class="panel-grid">
+          <aside class="card">
+            <h3>段列表</h3>
+            <ul class="seg-list">
+              <li class="ok-item">01 承载水平 <span>完整</span></li>
+              <li class="ok-item">02 承载倾斜 <span>完整</span></li>
+              <li class="bad-item active">03 凸弧段 <span>不完整</span></li>
+              <li class="ok-item">04 传动主驱 <span>完整</span></li>
+              <li class="warn-item">05 回程水平 <span>过期</span></li>
+            </ul>
+          </aside>
+          <section class="card">
+            <h3>当前段提取明细 · 03_凸弧段_承载凸弧段</h3>
+            <div class="detail-grid">
+              <div>
+                <h4>几何</h4>
+                <p>弧长 Larc = —</p>
+                <p>半径 R = <span class="bad-text">未识别</span></p>
+                <p>圆心角 θ = —</p>
+              </div>
+              <div>
+                <h4>托辊</h4>
+                <p>数量 = 1</p>
+                <p>间距 = <span class="bad-text">点不足，无法计算</span></p>
+              </div>
+              <div>
+                <h4>失败项</h4>
+                <p class="bad-text">✗ 曲率半径未识别</p>
+                <p class="bad-text">✗ 托辊点不足 2 个</p>
+              </div>
+            </div>
+            <div class="btn-row" style="margin-top:16px">
+              <button class="btn primary">写入属性</button>
+              <button class="btn">定位草图</button>
+              <button class="btn ghost">标为过期清除</button>
+            </div>
+            <p class="note">规则：禁止静默填 0；单位锁定 m / ° / mm。</p>
+          </section>
+        </div>
+      </section>
+
+      <!-- 4. 审核总览 -->
+      <section class="panel" id="panel-audit">
+        <section class="card">
+          <div class="card-head">
+            <h3>审核总览（按 DTⅡ 十二大项）</h3>
+            <div class="btn-row">
+              <button class="btn tiny active-filter">按12大项</button>
+              <button class="btn tiny">按点序</button>
+              <button class="btn tiny">仅问题项</button>
+            </div>
+          </div>
+          <div class="audit-groups" id="auditGroups"></div>
+          <div class="gate-box">
+            <h4>全线门禁</h4>
+            <div class="gate-row">
+              <span class="tag ok">主驱动唯一</span>
+              <span class="tag ok">奔离点=1</span>
+              <span class="tag ok">点序连续</span>
+              <span class="tag bad">存在不完整段</span>
+              <span class="tag">几何版本 G12</span>
+            </div>
+            <p class="note">有红项时禁用「发送网页」。</p>
+          </div>
+        </section>
+      </section>
+
+      <!-- 5. 发送网页 -->
+      <section class="panel" id="panel-send">
+        <div class="panel-grid">
+          <section class="card">
+            <h3>发送前检查</h3>
+            <ul class="check-list">
+              <li class="ok-text">✓ schema v1</li>
+              <li class="ok-text">✓ 必填字段齐全</li>
+              <li class="ok-text">✓ 单位一致</li>
+              <li class="bad-text">✗ 仍有不完整/过期段</li>
+            </ul>
+            <h4>包摘要</h4>
+            <dl class="kv">
+              <div><dt>段数</dt><dd>16</dd></div>
+              <div><dt>滚筒</dt><dd>5</dd></div>
+              <div><dt>托辊点</dt><dd>286</dd></div>
+              <div><dt>驱动</dt><dd>主1 / 辅1</dd></div>
+            </dl>
+          </section>
+          <section class="card">
+            <h3>版本绑定与网页补充</h3>
+            <dl class="kv">
+              <div><dt>schema版本</dt><dd>v1</dd></div>
+              <div><dt>几何版本</dt><dd>G12</dd></div>
+              <div><dt>系数版本</dt><dd>网页端生成</dd></div>
+              <div><dt>算法版本</dt><dd>DTⅡ-逐点张力-v1.0</dd></div>
+            </dl>
+            <h4>网页端将补充</h4>
+            <p class="note">f / μ / q、拉紧力、空满载工况、主辅功率配比</p>
+            <h4>结果回传</h4>
+            <p class="note">各点张力、各段阻力、总功率 P、主驱 P1、辅驱 P2、结果冻结号</p>
+            <div class="btn-row" style="margin-top:18px">
+              <button class="btn">生成数据包预览</button>
+              <button class="btn primary" disabled title="存在门禁红项">发送</button>
+              <button class="btn ghost">查看历史发送</button>
+              <button class="btn ghost">拉取冻结结果</button>
+            </div>
+            <div class="log">
+              <div>10:21:05 组包成功 Pack_20260730_001</div>
+              <div>10:21:08 上传成功</div>
+              <div>10:21:20 计算完成 结果冻结 R_20260730_001</div>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      网页原型仅用于评审 UI 与流程 · 不连接 SolidWorks · 不执行真实计算
+    </footer>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
