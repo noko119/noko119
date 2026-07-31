@@ -167,4 +167,10 @@ document.addEventListener("DOMContentLoaded", () => {
   initConfirm();
   renderAudit();
   document.querySelector('input[name="driveRole"][value="main"]').checked = true;
+
+  const panel = new URLSearchParams(location.search).get("panel");
+  if (panel) {
+    const tab = document.querySelector(`.tab[data-panel="${panel}"]`);
+    if (tab) tab.click();
+  }
 });
