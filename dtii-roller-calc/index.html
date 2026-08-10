@@ -2,15 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="theme-color" content="#1e3a8a">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="DTII托辊选型">
-    <meta name="description" content="DTII(A)/全系列带速托辊与轴承计算选型系统 · 可手机离线使用">
-    <link rel="manifest" href="manifest.webmanifest">
-    <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
-    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>DTII(A)/全系列带速托辊与轴承计算选型系统</title>
     <style>
         :root {
@@ -23,11 +15,10 @@
             --border: #e2e8f0;
             --success: #16a34a;
             --danger: #dc2626;
-            --safe-bottom: env(safe-area-inset-bottom, 0px);
         }
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; background: var(--bg); color: var(--text); padding-bottom: calc(80px + var(--safe-bottom)); }
-        header { background: linear-gradient(135deg, #1e3a8a 0%, #0284c7 100%); color: white; padding: 16px; padding-top: calc(16px + env(safe-area-inset-top, 0px)); position: sticky; top: 0; z-index: 10; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; background: var(--bg); color: var(--text); padding-bottom: 80px; }
+        header { background: linear-gradient(135deg, #1e3a8a 0%, #0284c7 100%); color: white; padding: 16px; position: sticky; top: 0; z-index: 10; }
         header h1 { font-size: 1.1rem; font-weight: 600; }
         header p { font-size: 0.75rem; opacity: 0.85; margin-top: 4px; }
         .container { max-width: 650px; margin: 0 auto; padding: 12px; }
@@ -38,35 +29,26 @@
         label { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px; display: block; font-weight: 500; }
         input, select { width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.88rem; background: #fff; color: var(--text); }
         .code-box { background: #0f172a; color: #38bdf8; font-family: monospace; font-size: 0.88rem; padding: 12px; border-radius: 8px; word-break: break-all; margin-top: 8px; line-height: 1.4; }
-        .result-row { display: flex; justify-content: space-between; font-size: 0.85rem; padding: 6px 0; border-bottom: 1px dashed var(--border); align-items: center; gap: 8px; }
+        .result-row { display: flex; justify-content: space-between; font-size: 0.85rem; padding: 6px 0; border-bottom: 1px dashed var(--border); align-items: center; }
         .result-row:last-child { border-bottom: none; }
-        .result-row > span:last-child { text-align: right; }
         .tag { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 600; }
         .tag-dtii { background: #dbeafe; color: #1e40af; }
         .tag-custom { background: #fef3c7; color: #92400e; }
         .tag-pass { background: #dcfce7; color: #15803d; }
         .tag-fail { background: #fee2e2; color: #b91c1c; }
-        .status-box { padding: 10px 12px; border-radius: 8px; font-size: 0.82rem; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; font-weight: 600; gap: 8px; }
+        .status-box { padding: 10px 12px; border-radius: 8px; font-size: 0.82rem; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; font-weight: 600; }
         .status-pass { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
         .status-fail { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
-        .offline-banner { display: none; background: #fef3c7; color: #92400e; font-size: 0.75rem; padding: 6px 12px; text-align: center; border-bottom: 1px solid #fde68a; }
-        .offline-banner.show { display: block; }
-        .toolbar { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-top: 1px solid var(--border); padding: 10px 16px; padding-bottom: calc(10px + var(--safe-bottom)); display: flex; gap: 10px; z-index: 20; }
+        .toolbar { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-top: 1px solid var(--border); padding: 10px 16px; display: flex; gap: 10px; }
         .toolbar button { flex: 1; padding: 10px; border-radius: 8px; border: none; font-size: 0.85rem; font-weight: 600; cursor: pointer; }
         .btn-primary { background: var(--primary); color: white; }
         .btn-secondary { background: #f1f5f9; color: var(--text); border: 1px solid var(--border) !important; }
-        @media (max-width: 420px) {
-            .grid { grid-template-columns: 1fr; }
-            .result-row { flex-direction: column; align-items: flex-start; }
-            .result-row > span:last-child { text-align: left; }
-        }
     </style>
 </head>
 <body>
-    <div id="offline_banner" class="offline-banner">当前离线 · 本地缓存可用，计算结果不依赖网络</div>
     <header>
-        <h1>DTII(A) / 全系列带速托辊与轴承计算选型系统</h1>
-        <p>集成 GB/T 10595、DTII(A)、ISO、CEMA 完整带速系列与精准反算 · 可手机离线使用</p>
+        <h1>📖 DTII(A) / 全系列带速托辊与轴承计算选型系统</h1>
+        <p>集成 GB/T 10595、DTII(A)、ISO、CEMA 完整带速系列与精准反算</p>
     </header>
     <div class="container">
         <div class="card">
@@ -126,7 +108,7 @@
                             <option value="7.1">7.1 m/s (极限特高速)</option>
                             <option value="8.0">8.0 m/s (前沿超高速技术)</option>
                         </optgroup>
-                        <option value="CUSTOM">自定义带速 (任意精确数值)...</option>
+                        <option value="CUSTOM">✍️ 自定义带速 (任意精确数值)...</option>
                     </select>
                 </div>
                 <div id="custom_speed_box" class="full" style="display:none;">
@@ -167,8 +149,8 @@
                 <div>
                     <label>轴承选型模式</label>
                     <select id="bearing_mode" onchange="onBearingModeChange()">
-                        <option value="AUTO" selected>手册推荐与自动反算</option>
-                        <option value="MANUAL">手动强行指定</option>
+                        <option value="AUTO" selected>📖 手册推荐与自动反算</option>
+                        <option value="MANUAL">🖐️ 手动强行指定</option>
                     </select>
                 </div>
                 <div id="manual_bearing_box" class="full" style="display:none;">
@@ -189,7 +171,7 @@
                 <span id="res_tag" class="tag tag-dtii">DTII(A) 手册规范</span>
             </div>
             <div id="status_box" class="status-box status-pass">
-                <span id="status_title">符合 DTII(A) 手册推荐与力学校核要求</span>
+                <span id="status_title">✓ 符合 DTII(A) 手册推荐与力学校核要求</span>
                 <span id="status_tag" class="tag tag-pass">匹配合格</span>
             </div>
             <div class="result-group">
@@ -246,11 +228,10 @@
         </div>
     </div>
     <div class="toolbar">
-        <button type="button" class="btn-secondary" onclick="copyReport()">复制全带速选型报告</button>
-        <button type="button" class="btn-primary" onclick="saveReport()">保存报告</button>
+        <button class="btn-secondary" onclick="copyReport()">📋 复制全带速选型报告</button>
+        <button class="btn-primary" onclick="alert('选型工具运行正常！')">💾 保存报告</button>
     </div>
     <script>
-        const REPORT_STORAGE_KEY = 'dtii_roller_calc_last_report';
         const dtii_length_map = { "500": 200, "650": 250, "800": 315, "1000": 380, "1200": 465, "1400": 530, "1600": 600, "1800": 670, "2000": 750, "2200": 820, "2400": 900, "2800": 1050 };
         const dtii_type_code = { "槽形35": { name: "T", part: "A11A" }, "槽形45": { name: "T", part: "A11A" }, "平行0": { name: "P", part: "A12A" }, "缓冲35": { name: "H", part: "A13A" } };
         const gb_standard_speeds = ["0.8", "1.0", "1.25", "1.6", "2.0", "2.5", "3.15", "4.0", "4.5", "5.0", "5.6", "6.3"];
@@ -280,38 +261,6 @@
             }
             return parseFloat(val);
         }
-
-        function buildReportText() {
-            const dtii = document.getElementById('res_dtii_code').innerText;
-            const part = document.getElementById('res_part_no').innerText;
-            const spd = document.getElementById('res_speed_info').innerText;
-            const brg = document.getElementById('res_calc_bearing').innerText;
-            const life = document.getElementById('res_life').innerText;
-            const loads = document.getElementById('res_loads').innerText;
-            const creq = document.getElementById('res_creq').innerText;
-            const shaft = document.getElementById('res_shaft_c').innerText;
-            const rpmDef = document.getElementById('res_rpm_def').innerText;
-            const dim = document.getElementById('res_dim_text').innerText;
-            const full = document.getElementById('res_full_code').innerText;
-            const status = document.getElementById('status_title').innerText;
-            return [
-                '【DTII(A)/全带速输送机托辊选型计算报告】',
-                `状态: ${status}`,
-                `标注图号: ${dtii}`,
-                `部件图号: ${part}`,
-                `带速: ${spd}`,
-                `载荷: ${loads}`,
-                `所需 C_req: ${creq}`,
-                `计算轴承: ${brg}`,
-                `轴承/轴径: ${shaft}`,
-                `寿命: ${life}`,
-                `转速/挠度: ${rpmDef}`,
-                `尺寸: ${dim}`,
-                `编码: ${full}`,
-                `生成时间: ${new Date().toLocaleString('zh-CN')}`
-            ].join('\n');
-        }
-
         function calc() {
             const B = document.getElementById('width').value;
             const V = getSpeed();
@@ -381,12 +330,12 @@
             const statusTag = document.getElementById('status_tag');
             if (L10h_act >= reqLife && RPM <= selectedBearing.limit_rpm && deflection_angle <= 3.5) {
                 statusBox.className = "status-box status-pass";
-                statusTitle.innerText = "符合 DTII(A) 手册推荐与力学校核要求";
+                statusTitle.innerText = "✓ 符合 DTII(A) 手册推荐与力学校核要求";
                 statusTag.className = "tag tag-pass";
                 statusTag.innerText = "匹配合格";
             } else {
                 statusBox.className = "status-box status-fail";
-                statusTitle.innerText = "当前轴承容量或转速/挠度未达标，已自动升级轴承规格";
+                statusTitle.innerText = "✕ 当前轴承容量或转速/挠度未达标，已自动升级轴承规格";
                 statusTag.className = "tag tag-fail";
                 statusTag.innerText = "需升级";
             }
@@ -411,88 +360,16 @@
             document.getElementById('res_full_code').innerText = code;
         }
 
-        function fallbackCopy(text) {
-            const ta = document.createElement('textarea');
-            ta.value = text;
-            ta.setAttribute('readonly', '');
-            ta.style.position = 'fixed';
-            ta.style.left = '-9999px';
-            document.body.appendChild(ta);
-            ta.select();
-            ta.setSelectionRange(0, ta.value.length);
-            let ok = false;
-            try {
-                ok = document.execCommand('copy');
-            } catch (e) {
-                ok = false;
-            }
-            document.body.removeChild(ta);
-            return ok;
+        function copyReport() {
+            const dtii = document.getElementById('res_dtii_code').innerText;
+            const part = document.getElementById('res_part_no').innerText;
+            const spd = document.getElementById('res_speed_info').innerText;
+            const brg = document.getElementById('res_calc_bearing').innerText;
+            const life = document.getElementById('res_life').innerText;
+            const full = document.getElementById('res_full_code').innerText;
+            const text = `【DTII(A)/全带速输送机托辊选型计算报告】\n标注图号: ${dtii}\n部件图号: ${part}\n带速: ${spd}\n计算轴承: ${brg}\n寿命: ${life}\n编码: ${full}`;
+            navigator.clipboard.writeText(text).then(() => { alert('选型报告已复制！'); });
         }
-
-        async function copyReport() {
-            const text = buildReportText();
-            try {
-                if (navigator.clipboard && window.isSecureContext) {
-                    await navigator.clipboard.writeText(text);
-                    alert('选型报告已复制！');
-                    return;
-                }
-            } catch (e) { /* fall through */ }
-            if (fallbackCopy(text)) {
-                alert('选型报告已复制！');
-            } else {
-                alert('无法自动复制，请手动长按选择下方编码或先点「保存报告」。');
-            }
-        }
-
-        function saveReport() {
-            const text = buildReportText();
-            const payload = {
-                savedAt: new Date().toISOString(),
-                text: text,
-                code: document.getElementById('res_full_code').innerText
-            };
-            try {
-                localStorage.setItem(REPORT_STORAGE_KEY, JSON.stringify(payload));
-            } catch (e) {
-                console.warn('localStorage 写入失败', e);
-            }
-
-            const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            const stamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
-            a.href = url;
-            a.download = `DTII-托辊选型报告-${stamp}.txt`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            setTimeout(() => URL.revokeObjectURL(url), 1000);
-            alert('报告已保存到本机，并写入浏览器本地缓存。');
-        }
-
-        function updateOfflineBanner() {
-            const banner = document.getElementById('offline_banner');
-            if (!navigator.onLine) {
-                banner.classList.add('show');
-            } else {
-                banner.classList.remove('show');
-            }
-        }
-
-        window.addEventListener('online', updateOfflineBanner);
-        window.addEventListener('offline', updateOfflineBanner);
-        updateOfflineBanner();
-
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js').catch((err) => {
-                    console.warn('Service Worker 注册失败（file:// 或非安全上下文下属正常）', err);
-                });
-            });
-        }
-
         calc();
     </script>
 </body>

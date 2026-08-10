@@ -13,13 +13,12 @@ SolidWorks 皮带机路径分类提取 → 网页逐点张力计算（架构与 
 cd ui-prototype && python3 -m http.server 8080
 ```
 
-## DTII(A) 托辊选型（手机离线）
+## DTII(A) 托辊选型计算页
 
 见 [`dtii-roller-calc/`](./dtii-roller-calc/)：
 
-- 全系列带速托辊与轴承反算选型动态页
-- 支持 PWA / Service Worker，可手机离线使用
-- 打开 `dtii-roller-calc/index.html`，或：
+- 打开 `dtii-roller-calc/index.html` 即可即时计算
+- 或执行：
 
 ```bash
 cd dtii-roller-calc && ./start.sh
