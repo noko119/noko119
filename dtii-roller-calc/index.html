@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DTII(A)/全系列带速托辊与轴承计算选型系统 · v1.2 超手册计算</title>
+    <title>DTII(A)/全系列带速托辊与轴承计算选型系统 · v1.4 标准直径依据</title>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <style>
         :root {
@@ -149,17 +149,13 @@
                     </select>
                 </div>
                 <div id="manual_dia_box" style="display:none;">
-                    <label>指定托辊外径 D (mm)</label>
+                    <label>指定标准托辊外径 D (mm)</label>
                     <select id="dia" onchange="calc()">
                         <option value="108">Φ108 mm</option>
                         <option value="133">Φ133 mm</option>
                         <option value="159" selected>Φ159 mm</option>
                         <option value="194">Φ194 mm</option>
                         <option value="219">Φ219 mm</option>
-                        <option value="245">Φ245 mm（超手册非标）</option>
-                        <option value="273">Φ273 mm（超手册非标）</option>
-                        <option value="299">Φ299 mm（超手册非标）</option>
-                        <option value="320">Φ320 mm（超手册非标）</option>
                     </select>
                 </div>
                 <div>
@@ -215,15 +211,15 @@
                     <span id="q_tag" class="tag tag-pass">—</span>
                 </div>
                 <div class="result-row">
-                    <span style="color:var(--text-muted);">理论最小托辊直径 D_min（转速反算）</span>
+                    <span style="color:var(--text-muted);">计算最小直径 D_min（选型依据，非产品规格）</span>
                     <span id="res_dia_min" style="font-weight:600;">Φ127.3 mm</span>
                 </div>
                 <div class="result-row">
-                    <span style="color:var(--text-muted);">采用托辊直径 D（唯一结果）</span>
+                    <span style="color:var(--text-muted);">建议标准托辊直径 D</span>
                     <span id="res_dia_primary" style="font-weight:bold; color:var(--primary); font-size:1.0rem;">Φ159 mm</span>
                 </div>
                 <div class="result-row">
-                    <span style="color:var(--text-muted);">直径选型依据 / 手册与非标</span>
+                    <span style="color:var(--text-muted);">直径选型依据（仅标准档）</span>
                     <span id="res_dia_reason" style="font-weight:600; text-align:right; max-width:62%;">带宽首选</span>
                 </div>
                 <div class="result-row">
@@ -297,9 +293,8 @@
         const section_coeff = { "槽形35": 0.090, "槽形45": 0.100, "平行0": 0.040, "缓冲35": 0.085 };
         const gb_standard_speeds = ["0.8", "1.0", "1.25", "1.6", "2.0", "2.5", "3.15", "4.0", "4.5", "5.0", "5.6", "6.3"];
         const handbook_recommended_bearings = { "500": "B6204", "650": "B6204", "800": "B6205", "1000": "B6205", "1200": "B6308", "1400": "B6308", "1600": "B6310", "1800": "B6310", "2000": "B6310", "2200": "B6312", "2400": "B6312", "2800": "B6312" };
-        // 手册常用直径 + 超手册非标扩展直径
+        // 仅标准托辊直径（不给出非标直径产品结果）
         const handbook_dias = [108, 133, 159, 194, 219];
-        const extended_dias = [108, 133, 159, 194, 219, 245, 273, 299, 320];
         const handbook_dias_by_width = {
             "500": [108, 133],
             "650": [108, 133],
@@ -359,35 +354,35 @@
             if (V <= 0) return 0;
             return (V * 60 * 1000) / (Math.PI * roller_rpm_limit);
         }
-        function pickDiaFromSeries(series, dNeed) {
-            return series.find(d => d >= dNeed) || null;
-        }
         function selectDiameter(B, V) {
             const handbook = handbook_dias_by_width[B] || [159, 194, 219];
             const dMinExact = theoreticalMinDia(V);
-            const dSpeed = pickDiaFromSeries(extended_dias, dMinExact) || extended_dias[extended_dias.length - 1];
-
-            // 1) 手册档内唯一首选
+            // 只在标准档中建议：取 ≥ D_min 的最小标准直径；若都不够，仍给最大标准档，并把 D_min 作为依据提示
             let primary = handbook.find(d => d >= dMinExact);
-            let outOfHandbook = false;
-            let lifted = false;
-
-            // 2) 手册不够 → 全系列（含超手册非标直径）继续给结果
+            let needExceedsStd = false;
             if (!primary) {
-                primary = pickDiaFromSeries(extended_dias, Math.max(dMinExact, handbook[handbook.length - 1])) || extended_dias[extended_dias.length - 1];
-                lifted = true;
-                outOfHandbook = !handbook.includes(primary) || primary > handbook_dias[handbook_dias.length - 1];
+                primary = handbook[handbook.length - 1];
+                needExceedsStd = true;
             }
-
+            const rpmAtPrimary = calcRpm(V, primary);
             const alts = handbook.filter(d => d !== primary);
-            let reason = `带宽手册首选；转速限 ${roller_rpm_limit} rpm → D_min=${dMinExact.toFixed(1)} mm`;
-            if (outOfHandbook) {
-                reason = `超手册非标直径计算：D_min=${dMinExact.toFixed(1)} mm，采用 Φ${primary}`;
-            } else if (lifted) {
-                reason = `带速抬升超该带宽手册档，升至 Φ${primary}`;
+            let reason = `计算 D_min=${dMinExact.toFixed(1)} mm（转速限 ${roller_rpm_limit} rpm）→ 建议标准 Φ${primary}`;
+            if (needExceedsStd) {
+                reason = `计算 D_min=${dMinExact.toFixed(1)} mm 已大于本带宽最大标准档；仍建议标准 Φ${primary}，请降速或复核`;
             }
-            const altText = alts.length ? `手册可选 ${alts.map(d => 'Φ' + d).join('/')}` : (outOfHandbook ? '已超出手册常用直径' : '手册仅此档');
-            return { primary, handbook, dMinExact, dSpeed, reason, altText, lifted, outOfHandbook };
+            const altText = alts.length
+                ? `本带宽标准可选 ${handbook.map(d => 'Φ' + d).join('/')}`
+                : `本带宽标准仅 Φ${primary}`;
+            return {
+                primary,
+                handbook,
+                dMinExact,
+                reason,
+                altText,
+                needExceedsStd,
+                rpmAtPrimary,
+                outOfHandbook: false
+            };
         }
         function shaftMinByDeflection(P_side, L_roller) {
             // deflection = P_side * L^2 / (0.015 * d^4) ≤ 3.5
@@ -450,9 +445,8 @@
             } else {
                 D = parseFloat(document.getElementById('dia').value);
             }
-            const diaOut = diaMode === 'MANUAL'
-                ? (!handbook_dias.includes(D) || !(handbook_dias_by_width[B] || []).includes(D))
-                : diaSel.outOfHandbook;
+            const diaOut = false; // 直径只给标准档，不再输出非标直径产品
+            const diaNeedExceeds = !!diaSel.needExceedsStd;
 
             const speedSel = document.getElementById('speed_select').value;
             let speedText = `${V.toFixed(2)} m/s (自定义精确定值)`;
@@ -486,9 +480,9 @@
                 qTag.className = "tag tag-fail";
                 qTag.innerText = "运量不足";
             }
-            document.getElementById('res_dia_primary').innerText = `Φ${D} mm${diaOut ? '（超手册非标结果）' : (diaMode === 'AUTO' ? '（自动唯一首选）' : '（手动指定）')}`;
+            document.getElementById('res_dia_min').innerText = `Φ${diaSel.dMinExact.toFixed(1)} mm（限 ${roller_rpm_limit} rpm，仅作选型依据）`;
+            document.getElementById('res_dia_primary').innerText = `Φ${D} mm${diaMode === 'AUTO' ? '（标准档建议）' : '（手动指定标准档）'}`;
             document.getElementById('res_dia_reason').innerText = `${diaSel.reason} · ${diaSel.altText}`;
-            document.getElementById('res_dia_min').innerText = `Φ${diaSel.dMinExact.toFixed(1)} mm（限 ${roller_rpm_limit} rpm）`;
 
             const qm = Q / (3.6 * Math.max(V, 1e-9));
             const qb = 25;
@@ -529,24 +523,28 @@
             const bearingOk = L10h_act >= reqLife && RPM <= selectedBearing.limit_rpm;
             const allOk = diaOk && shaftOk && bearingOk && !brgSel.insufficient;
             const summary = `D=Φ${D} · d=Φ${selectedBearing.shaft} · ${selectedBearing.key.replace('B','')} · C_req=${C_req.toFixed(1)}kN`;
-            const isOut = (diaOut || brgSel.outOfHandbook || parseInt(B, 10) > 1400);
+            const isOut = (brgSel.outOfHandbook || parseInt(B, 10) > 1400 || diaNeedExceeds);
             const outBox = document.getElementById('out_box');
             const outBadge = document.getElementById('res_out_badge');
             document.getElementById('res_out_summary').innerText = isOut
-                ? `超手册计算结果：${summary}`
+                ? `计算结果（直径仅标准档）：${summary}`
                 : `手册范围内：${summary}`;
             document.getElementById('res_out_detail').innerText =
-                `计算：D_min=Φ${diaSel.dMinExact.toFixed(1)} mm，d_min=Φ${shaftMin.toFixed(1)} mm，C_req=${C_req.toFixed(1)} kN；` +
-                `采用：D=Φ${D} mm，轴 Φ${selectedBearing.shaft} mm，轴承 ${selectedBearing.name}` +
-                (brgSel.insufficient ? '（库内最大规格，仍可能不足）' : '');
+                `计算依据：D_min=Φ${diaSel.dMinExact.toFixed(1)} mm，d_min=Φ${shaftMin.toFixed(1)} mm，C_req=${C_req.toFixed(1)} kN；` +
+                `标准建议：D=Φ${D} mm，轴 Φ${selectedBearing.shaft} mm，轴承 ${selectedBearing.name}` +
+                (diaNeedExceeds ? `；注意 D_min 已超过最大标准档 Φ${D}` : '') +
+                (brgSel.insufficient ? '（轴承库内最大规格，仍可能不足）' : '');
             outBox.className = (!allOk && isOut) ? "status-box status-fail" : "status-box status-pass";
             outBox.style.marginTop = "10px";
             outBox.style.flexDirection = "column";
             outBox.style.alignItems = "flex-start";
             outBox.style.gap = "6px";
-            if (isOut) {
+            if (diaNeedExceeds) {
+                outBadge.className = "tag tag-fail";
+                outBadge.innerText = "D_min超标准档";
+            } else if (isOut) {
                 outBadge.className = allOk ? "tag tag-pass" : "tag tag-fail";
-                outBadge.innerText = allOk ? "非标已出结果" : "非标需复核";
+                outBadge.innerText = allOk ? "已出计算结果" : "需复核";
             } else {
                 outBadge.className = "tag tag-pass";
                 outBadge.innerText = "手册范围内";
@@ -555,21 +553,26 @@
             const statusBox = document.getElementById('status_box');
             const statusTitle = document.getElementById('status_title');
             const statusTag = document.getElementById('status_tag');
-            if (allOk && isOut) {
+            if (diaNeedExceeds) {
+                statusBox.className = "status-box status-fail";
+                statusTitle.innerText = `✕ 计算 D_min=Φ${diaSel.dMinExact.toFixed(1)} 已超过本带宽最大标准托辊 Φ${D}；不输出非标直径，请降速或以 D_min 作选型依据复核`;
+                statusTag.className = "tag tag-fail";
+                statusTag.innerText = "标准档不足";
+            } else if (allOk && isOut) {
                 statusBox.className = "status-box status-pass";
-                statusTitle.innerText = "✓ 超手册范围已给出直径/轴/轴承计算结果（力学校核通过）";
+                statusTitle.innerText = "✓ 已给出标准托辊直径建议，以及轴/轴承计算结果";
                 statusTag.className = "tag tag-pass";
-                statusTag.innerText = "非标合格";
+                statusTag.innerText = "计算完成";
             } else if (allOk) {
                 statusBox.className = "status-box status-pass";
-                statusTitle.innerText = "✓ 托辊直径、轴径与轴承均符合选型/校核要求";
+                statusTitle.innerText = "✓ 标准托辊直径、轴径与轴承均符合选型/校核要求";
                 statusTag.className = "tag tag-pass";
                 statusTag.innerText = "匹配合格";
             } else if (!diaOk) {
                 statusBox.className = "status-box status-fail";
-                statusTitle.innerText = `✕ 直径转速仍超限：已给 D_min=Φ${diaSel.dMinExact.toFixed(1)}，采用 Φ${D}，请再加大直径或降速`;
+                statusTitle.innerText = `✕ 当前标准直径转速超限：D_min=Φ${diaSel.dMinExact.toFixed(1)}，建议标准 Φ${D}，请降速或改选更大标准档`;
                 statusTag.className = "tag tag-fail";
-                statusTag.innerText = "直径不足";
+                statusTag.innerText = "直径需复核";
             } else if (!shaftOk) {
                 statusBox.className = "status-box status-fail";
                 statusTitle.innerText = `✕ 轴径不足：计算 d_min=Φ${shaftMin.toFixed(1)}，当前 Φ${selectedBearing.shaft}，已尽量升级轴承/轴`;
@@ -582,7 +585,7 @@
                 statusTag.innerText = "轴承不足";
             }
 
-            const isDTII = parseInt(B, 10) <= 1400 && !diaOut && !brgSel.outOfHandbook;
+            const isDTII = parseInt(B, 10) <= 1400 && !brgSel.outOfHandbook && !diaNeedExceeds;
             const typeInfo = dtii_type_code[taKey] || { name: "T", part: "A11A" };
             const tagEl = document.getElementById('res_tag');
             if (isDTII) {
@@ -608,6 +611,9 @@
                 `标注图号: ${document.getElementById('res_dtii_code').innerText}`,
                 `部件图号: ${document.getElementById('res_part_no').innerText}`,
                 `带速: ${document.getElementById('res_speed_info').innerText}`,
+                `给定运量: ${document.getElementById('res_q_given').innerText}`,
+                `实际运量: ${document.getElementById('res_q_actual').innerText}`,
+                `运量判断: ${document.getElementById('res_q_judge').innerText}`,
                 `D_min: ${document.getElementById('res_dia_min').innerText}`,
                 `采用直径: ${document.getElementById('res_dia_primary').innerText}`,
                 `直径依据: ${document.getElementById('res_dia_reason').innerText}`,
