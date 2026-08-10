@@ -117,8 +117,12 @@
                     <input type="number" id="speed_custom" value="4.20" step="0.01" min="0.01" max="20.0" oninput="calc()">
                 </div>
                 <div>
-                    <label>输送能力 Q (t/h)</label>
+                    <label>给定运量 Q_给定 (t/h)</label>
                     <input type="number" id="capacity" value="3000" step="100" oninput="calc()">
+                </div>
+                <div>
+                    <label>物料堆积密度 ρ (t/m³)</label>
+                    <input type="number" id="density" value="1.60" step="0.05" min="0.1" max="5" oninput="calc()">
                 </div>
                 <div>
                     <label>托辊组类型及代号</label>
@@ -193,6 +197,22 @@
                 <div class="result-row">
                     <span style="color:var(--text-muted);">选定带速与类型</span>
                     <span id="res_speed_info" style="font-weight:bold; color:var(--primary);">4.00 m/s (国标推荐)</span>
+                </div>
+                <div class="result-row">
+                    <span style="color:var(--text-muted);">给定运量 Q_给定</span>
+                    <span id="res_q_given" style="font-weight:600;">3000 t/h</span>
+                </div>
+                <div class="result-row">
+                    <span style="color:var(--text-muted);">实际通过能力 Q_实际（B·V·槽角·ρ）</span>
+                    <span id="res_q_actual" style="font-weight:bold; color:var(--primary); font-size:1.0rem;">— t/h</span>
+                </div>
+                <div class="result-row">
+                    <span style="color:var(--text-muted);">运量富余 / 利用率（判断用）</span>
+                    <span id="res_q_judge" style="font-weight:600;">—</span>
+                </div>
+                <div id="q_box" class="status-box status-pass" style="margin-top:6px; margin-bottom:8px;">
+                    <span id="q_title">运量判断</span>
+                    <span id="q_tag" class="tag tag-pass">—</span>
                 </div>
                 <div class="result-row">
                     <span style="color:var(--text-muted);">理论最小托辊直径 D_min（转速反算）</span>
@@ -273,6 +293,8 @@
     <script>
         const dtii_length_map = { "500": 200, "650": 250, "800": 315, "1000": 380, "1200": 465, "1400": 530, "1600": 600, "1800": 670, "2000": 750, "2200": 820, "2400": 900, "2800": 1050 };
         const dtii_type_code = { "槽形35": { name: "T", part: "A11A" }, "槽形45": { name: "T", part: "A11A" }, "平行0": { name: "P", part: "A12A" }, "缓冲35": { name: "H", part: "A13A" } };
+        // 物料断面积系数 A ≈ c * B²（B 单位 m）；按 DTII 常用槽角近似，用于算实际通过能力
+        const section_coeff = { "槽形35": 0.090, "槽形45": 0.100, "平行0": 0.040, "缓冲35": 0.085 };
         const gb_standard_speeds = ["0.8", "1.0", "1.25", "1.6", "2.0", "2.5", "3.15", "4.0", "4.5", "5.0", "5.6", "6.3"];
         const handbook_recommended_bearings = { "500": "B6204", "650": "B6204", "800": "B6205", "1000": "B6205", "1200": "B6308", "1400": "B6308", "1600": "B6310", "1800": "B6310", "2000": "B6310", "2200": "B6312", "2400": "B6312", "2800": "B6312" };
         // 手册常用直径 + 超手册非标扩展直径
@@ -400,12 +422,22 @@
         function calc() {
             const B = document.getElementById('width').value;
             const V = getSpeed();
-            const Q = parseFloat(document.getElementById('capacity').value);
+            const Q = parseFloat(document.getElementById('capacity').value) || 0;
+            const rho = parseFloat(document.getElementById('density').value) || 1.0;
             const a0 = parseFloat(document.getElementById('spacing').value);
             const reqLife = parseFloat(document.getElementById('req_life').value) || 50000;
             const taKey = document.getElementById('type_angle').value;
             const diaMode = document.getElementById('dia_mode').value;
             const bearingMode = document.getElementById('bearing_mode').value;
+
+            // 实际通过能力：Q_实际 = 3600 * A * V * ρ，A = c * (B/1000)²
+            const Bm = parseFloat(B) / 1000;
+            const cA = section_coeff[taKey] || 0.09;
+            const A_sec = cA * Bm * Bm;
+            const Q_actual = 3600 * A_sec * Math.max(V, 0) * Math.max(rho, 0);
+            const qRatio = Q_actual > 0 ? (Q / Q_actual) : Infinity;
+            const qMargin = Q_actual > 0 ? (Q_actual / Math.max(Q, 1e-9)) : 0;
+            const qOk = Q_actual + 1e-9 >= Q && Q > 0;
 
             const diaSel = selectDiameter(B, V);
             let D;
@@ -430,9 +462,33 @@
                     : `${V.toFixed(2)} m/s (ISO/CEMA 特种扩展)`;
             }
             document.getElementById('res_speed_info').innerText = speedText;
-            document.getElementById('res_dia_min').innerText = `Φ${diaSel.dMinExact.toFixed(1)} mm（限 ${roller_rpm_limit} rpm）`;
+            document.getElementById('res_q_given').innerText = `${Q.toLocaleString()} t/h（ρ=${rho.toFixed(2)} t/m³）`;
+            document.getElementById('res_q_actual').innerText = `${Math.round(Q_actual).toLocaleString()} t/h（A=${A_sec.toFixed(3)} m²）`;
+            document.getElementById('res_q_judge').innerText = qOk
+                ? `富余 ${(qMargin).toFixed(2)} 倍 · 利用率 ${(qRatio * 100).toFixed(1)}%`
+                : `不足 · 给定已达实际能力的 ${(qRatio * 100).toFixed(1)}%`;
+            const qBox = document.getElementById('q_box');
+            const qTitle = document.getElementById('q_title');
+            const qTag = document.getElementById('q_tag');
+            if (Q <= 0) {
+                qBox.className = "status-box status-fail";
+                qTitle.innerText = "请输入给定运量 Q_给定";
+                qTag.className = "tag tag-fail";
+                qTag.innerText = "缺输入";
+            } else if (qOk) {
+                qBox.className = "status-box status-pass";
+                qTitle.innerText = `✓ 运量满足：Q_实际 ${Math.round(Q_actual).toLocaleString()} ≥ Q_给定 ${Q.toLocaleString()} t/h`;
+                qTag.className = "tag tag-pass";
+                qTag.innerText = "运量合格";
+            } else {
+                qBox.className = "status-box status-fail";
+                qTitle.innerText = `✕ 运量不足：Q_实际 ${Math.round(Q_actual).toLocaleString()} < Q_给定 ${Q.toLocaleString()} t/h，需加大带宽/带速或降低给定运量`;
+                qTag.className = "tag tag-fail";
+                qTag.innerText = "运量不足";
+            }
             document.getElementById('res_dia_primary').innerText = `Φ${D} mm${diaOut ? '（超手册非标结果）' : (diaMode === 'AUTO' ? '（自动唯一首选）' : '（手动指定）')}`;
             document.getElementById('res_dia_reason').innerText = `${diaSel.reason} · ${diaSel.altText}`;
+            document.getElementById('res_dia_min').innerText = `Φ${diaSel.dMinExact.toFixed(1)} mm（限 ${roller_rpm_limit} rpm）`;
 
             const qm = Q / (3.6 * Math.max(V, 1e-9));
             const qb = 25;
