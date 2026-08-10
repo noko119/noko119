@@ -23,3 +23,7 @@ cd ui-prototype && python3 -m http.server 8080
 ```bash
 cd dtii-roller-calc && ./start.sh
 ```
+
+### Firebase 联网部署
+
+纯前端，可用 Firebase Hosting 部署后手机/电脑联网动态计算。步骤见 [`dtii-roller-calc/FIREBASE.md`](./dtii-roller-calc/FIREBASE.md)。
