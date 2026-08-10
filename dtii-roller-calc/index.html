@@ -76,6 +76,13 @@
     }
     .btn1 { background: #e2e8f0; color: var(--text); }
     .btn2 { background: var(--primary); color: #fff; }
+    .btn-mini {
+      border: 1px solid #93c5fd; background: #eff6ff; color: #1e3a8a;
+      border-radius: 999px; padding: 6px 10px; font-size: 0.75rem; font-weight: 700; cursor: pointer; margin: 4px 6px 0 0;
+    }
+    .btn-mini:hover { background: #dbeafe; }
+    .btn-apply { border-color: #1e3a8a; background: #1e3a8a; color: #fff; }
+    #rec_list { margin-top: 8px; }
     @media (max-width: 520px) { .grid { grid-template-columns: 1fr; } }
   </style>
 </head>
@@ -89,9 +96,77 @@
     <section class="card">
       <h2>1. 托辊工况输入 <span class="tag tag-std">国标口径</span></h2>
       <div class="grid">
+        <div>
+          <label>给定运量 Q_给定 (t/h)</label>
+          <input id="capacity" type="number" value="3000" min="1" step="50" oninput="onDutyChange()" />
+        </div>
+        <div>
+          <label>粒度类型</label>
+          <select id="lump_mode" onchange="onDutyChange()">
+            <option value="sized">筛分物料（k≈3.0）</option>
+            <option value="unsized" selected>未筛分物料（k≈4.5）</option>
+          </select>
+        </div>
         <div class="full">
-          <label>带宽 B (mm) · DTII(A) 标准系列</label>
-          <select id="width" onchange="calc()">
+          <label>物料名称（自动密度 + 最大粒度）</label>
+          <select id="material" onchange="onMaterialChange()">
+            <optgroup label="常用散状物料（DTII/工程常用值）">
+              <option value="1.00|300|原煤（混煤）">原煤（混煤） · ρ1.00 · a_max300</option>
+              <option value="0.80|200|烟煤">烟煤 · ρ0.80 · a_max200</option>
+              <option value="0.90|200|无烟煤">无烟煤 · ρ0.90 · a_max200</option>
+              <option value="0.70|250|褐煤">褐煤 · ρ0.70 · a_max250</option>
+              <option value="1.20|80|洗精煤">洗精煤 · ρ1.20 · a_max80</option>
+              <option value="0.75|100|焦炭">焦炭 · ρ0.75 · a_max100</option>
+              <option value="1.60|150|石灰石" selected>石灰石 · ρ1.60 · a_max150</option>
+              <option value="1.70|180|砂岩">砂岩 · ρ1.70 · a_max180</option>
+              <option value="1.80|200|花岗岩碎石">花岗岩碎石 · ρ1.80 · a_max200</option>
+              <option value="1.50|120|河卵石">河卵石 · ρ1.50 · a_max120</option>
+              <option value="1.60|200|碎石（一般）">碎石（一般） · ρ1.60 · a_max200</option>
+              <option value="1.40|200|矿石（中等）">矿石（中等） · ρ1.40 · a_max200</option>
+              <option value="2.00|250|铁矿石">铁矿石 · ρ2.00 · a_max250</option>
+              <option value="2.20|250|铜矿石">铜矿石 · ρ2.20 · a_max250</option>
+              <option value="1.30|100|粘土">粘土 · ρ1.30 · a_max100</option>
+              <option value="1.60|50|湿砂">湿砂 · ρ1.60 · a_max50</option>
+              <option value="1.40|40|干砂">干砂 · ρ1.40 · a_max40</option>
+              <option value="1.10|60|水泥生料">水泥生料 · ρ1.10 · a_max60</option>
+              <option value="1.25|80|水泥熟料">水泥熟料 · ρ1.25 · a_max80</option>
+              <option value="1.10|15|粮食（小麦）">粮食（小麦） · ρ1.10 · a_max15</option>
+              <option value="0.75|20|谷物（玉米）">谷物（玉米） · ρ0.75 · a_max20</option>
+              <option value="0.55|30|木屑">木屑 · ρ0.55 · a_max30</option>
+              <option value="0.85|40|化肥">化肥 · ρ0.85 · a_max40</option>
+              <option value="1.00|30|盐">盐 · ρ1.00 · a_max30</option>
+            </optgroup>
+            <option value="CUSTOM|100|自定义物料">自定义物料 / 自定义密度与粒度...</option>
+          </select>
+        </div>
+        <div>
+          <label>堆积密度 ρ (t/m³) · 可改</label>
+          <input id="density" type="number" value="1.60" min="0.2" max="4" step="0.05" oninput="onDensityEdit()" />
+        </div>
+        <div>
+          <label>最大粒度 a_max (mm) · 可改</label>
+          <input id="amax" type="number" value="150" min="1" max="800" step="5" oninput="onAmaxEdit()" />
+        </div>
+        <div class="full">
+          <label>当前物料</label>
+          <input id="material_name" type="text" value="石灰石" readonly />
+        </div>
+
+        <div class="full">
+          <label>带宽/带速推荐（按 Q + ρ + a_max）</label>
+          <div class="box box-info" style="margin-top:0;">
+            <div style="width:100%;display:flex;justify-content:space-between;gap:8px;align-items:center;">
+              <span id="rec_title">推荐组合</span>
+              <span class="tag tag-std" id="rec_tag">DTII</span>
+            </div>
+            <div id="rec_detail" style="font-size:0.75rem;font-weight:500;margin-top:4px;line-height:1.45;"></div>
+            <div id="rec_list"></div>
+          </div>
+        </div>
+
+        <div>
+          <label>带宽 B · 推荐可改（标准系列）</label>
+          <select id="width" onchange="onWidthManual()">
             <option value="500">B500</option>
             <option value="650">B650</option>
             <option value="800">B800</option>
@@ -105,9 +180,9 @@
             <option value="2400">B2400</option>
           </select>
         </div>
-        <div class="full">
-          <label>带速 V (m/s) · GB/T 10595 / DTII(A)</label>
-          <select id="speed_select" onchange="onSpeedChange()">
+        <div>
+          <label>带速 V · 推荐可改</label>
+          <select id="speed_select" onchange="onSpeedManual()">
             <option value="0.8">0.8</option>
             <option value="1.0">1.0</option>
             <option value="1.25">1.25</option>
@@ -120,60 +195,27 @@
             <option value="5.0">5.0</option>
             <option value="5.6">5.6</option>
             <option value="6.3">6.3</option>
-            <option value="CUSTOM">自定义...</option>
+            <option value="CUSTOM">自定义数值...</option>
           </select>
         </div>
         <div id="custom_speed_box" class="full" style="display:none;">
           <label>自定义带速 V (m/s)</label>
-          <input id="speed_custom" type="number" value="4.20" min="0.1" max="8" step="0.01" oninput="calc()" />
-        </div>
-        <div>
-          <label>给定运量 Q_给定 (t/h)</label>
-          <input id="capacity" type="number" value="3000" min="1" step="50" oninput="calc()" />
+          <input id="speed_custom" type="number" value="4.20" min="0.1" max="8" step="0.01" oninput="onSpeedManual()" />
         </div>
         <div class="full">
-          <label>物料名称（自动给出堆积密度）</label>
-          <select id="material" onchange="onMaterialChange()">
-            <optgroup label="常用散状物料（DTII/工程常用值）">
-              <option value="1.00|原煤（混煤）">原煤（混煤） · 1.00 t/m³</option>
-              <option value="0.80|烟煤">烟煤 · 0.80 t/m³</option>
-              <option value="0.90|无烟煤">无烟煤 · 0.90 t/m³</option>
-              <option value="0.70|褐煤">褐煤 · 0.70 t/m³</option>
-              <option value="1.20|洗精煤">洗精煤 · 1.20 t/m³</option>
-              <option value="0.75|焦炭">焦炭 · 0.75 t/m³</option>
-              <option value="1.60|石灰石" selected>石灰石 · 1.60 t/m³</option>
-              <option value="1.70|砂岩">砂岩 · 1.70 t/m³</option>
-              <option value="1.80|花岗岩碎石">花岗岩碎石 · 1.80 t/m³</option>
-              <option value="1.50|河卵石">河卵石 · 1.50 t/m³</option>
-              <option value="1.60|碎石（一般）">碎石（一般） · 1.60 t/m³</option>
-              <option value="1.40|矿石（中等）">矿石（中等） · 1.40 t/m³</option>
-              <option value="2.00|铁矿石">铁矿石 · 2.00 t/m³</option>
-              <option value="2.20|铜矿石">铜矿石 · 2.20 t/m³</option>
-              <option value="1.30|粘土">粘土 · 1.30 t/m³</option>
-              <option value="1.60|湿砂">湿砂 · 1.60 t/m³</option>
-              <option value="1.40|干砂">干砂 · 1.40 t/m³</option>
-              <option value="1.10|水泥生料">水泥生料 · 1.10 t/m³</option>
-              <option value="1.25|水泥熟料">水泥熟料 · 1.25 t/m³</option>
-              <option value="1.10|粮食（小麦）">粮食（小麦） · 1.10 t/m³</option>
-              <option value="0.75|谷物（玉米）">谷物（玉米） · 0.75 t/m³</option>
-              <option value="0.55|木屑">木屑 · 0.55 t/m³</option>
-              <option value="0.85|化肥">化肥 · 0.85 t/m³</option>
-              <option value="1.00|盐">盐 · 1.00 t/m³</option>
-            </optgroup>
-            <option value="CUSTOM|自定义物料">自定义物料 / 自定义密度...</option>
-          </select>
+          <div class="row" style="border:none;padding-top:0;">
+            <div class="k">粒度要求最小带宽</div>
+            <div class="v" id="res_Bmin_lump">—</div>
+          </div>
+          <div class="row" style="border:none;padding-top:0;">
+            <div class="k">当前 B/V 状态</div>
+            <div class="v" id="res_BV_status">—</div>
+          </div>
         </div>
-        <div>
-          <label>堆积密度 ρ (t/m³)</label>
-          <input id="density" type="number" value="1.60" min="0.2" max="4" step="0.05" oninput="onDensityEdit()" />
-        </div>
-        <div>
-          <label>当前物料</label>
-          <input id="material_name" type="text" value="石灰石" readonly />
-        </div>
+
         <div>
           <label>托辊类型</label>
-          <select id="type_angle" onchange="calc()">
+          <select id="type_angle" onchange="onDutyChange()">
             <option value="槽形35" selected>槽形上托辊 35° (T)</option>
             <option value="槽形45">槽形上托辊 45° (T)</option>
             <option value="平行0">平行下托辊 0° (P)</option>
@@ -208,14 +250,15 @@
           </select>
         </div>
       </div>
-      <p class="note">说明：本工具只做<strong>托辊</strong>选型与校核，不包含驱动/改向滚筒。尺寸、轴承、图号按 DTII(A) 常用标准表给出。</p>
+      <p class="note">说明：只做<strong>托辊</strong>。带宽/带速先按运量+密度+粒度给出推荐，可在标准系列内手改；手改后做粒度下限与运量校核。</p>
     </section>
 
     <section class="card">
-      <h2>2. 运量判断（给定 vs 实际）</h2>
+      <h2>2. 运量与粒度判断</h2>
       <div class="row"><div class="k">给定运量 Q_给定</div><div class="v" id="res_q_given">—</div></div>
       <div class="row"><div class="k">实际通过能力 Q_实际</div><div class="v em" id="res_q_actual">—</div></div>
       <div class="row"><div class="k">富余系数 / 利用率</div><div class="v" id="res_q_judge">—</div></div>
+      <div class="row"><div class="k">最大粒度 / 带宽粒度校核</div><div class="v" id="res_lump_check">—</div></div>
       <div class="box box-ok" id="q_box"><span id="q_title">运量判断</span><span class="tag tag-ok" id="q_tag">—</span></div>
     </section>
 
@@ -306,55 +349,176 @@
 
     // 直径序列号（手册表）
     const D_SEQ = { "89": 3, "108": 4, "133": 5, "159": 6, "194": 7, "219": 8 };
+    const WIDTHS = Object.keys(BY_WIDTH).map(Number);
+    // 各带宽常用推荐带速（GB/DTII 常用工作点）
+    const V_BY_B = {
+      500: [1.25, 1.6, 2.0],
+      650: [1.6, 2.0, 2.5],
+      800: [1.6, 2.0, 2.5, 3.15],
+      1000: [2.0, 2.5, 3.15],
+      1200: [2.0, 2.5, 3.15, 4.0],
+      1400: [2.5, 3.15, 4.0],
+      1600: [2.5, 3.15, 4.0, 4.5],
+      1800: [3.15, 4.0, 4.5],
+      2000: [3.15, 4.0, 4.5, 5.0],
+      2200: [3.15, 4.0, 4.5, 5.0],
+      2400: [4.0, 4.5, 5.0, 5.6]
+    };
+    // 用户手改 B/V 后不再自动覆盖，除非点“采用推荐”或改工况触发自动推荐模式
+    let bvLocked = false;
+    let lastRec = null;
 
-    function onSpeedChange() {
-      const v = document.getElementById("speed_select").value;
-      document.getElementById("custom_speed_box").style.display = v === "CUSTOM" ? "block" : "none";
-      calc();
-    }
     function onDiaMode() {
       const m = document.getElementById("dia_mode").value;
       document.getElementById("manual_dia_box").style.display = m === "MANUAL" ? "block" : "none";
       calc();
     }
     function parseMaterial() {
-      const raw = document.getElementById("material").value;
-      const i = raw.indexOf("|");
-      return { rho: raw.slice(0, i), name: raw.slice(i + 1) };
+      // 格式：rho|amax|name  或 CUSTOM|amax|name
+      const parts = document.getElementById("material").value.split("|");
+      return { rho: parts[0], amax: parts[1], name: parts.slice(2).join("|") };
     }
     function onMaterialChange() {
       const m = parseMaterial();
       const dens = document.getElementById("density");
+      const amaxEl = document.getElementById("amax");
       const nameEl = document.getElementById("material_name");
       if (m.rho === "CUSTOM") {
-        dens.readOnly = false;
         dens.style.background = "#fff";
+        amaxEl.style.background = "#fff";
         nameEl.readOnly = false;
-        nameEl.value = nameEl.value && nameEl.value !== "石灰石" ? nameEl.value : "自定义物料";
-        dens.focus();
+        if (!nameEl.value || nameEl.value === "石灰石") nameEl.value = "自定义物料";
       } else {
-        dens.readOnly = false; // 允许在自动值基础上微调
         dens.style.background = "#f8fafc";
+        amaxEl.style.background = "#f8fafc";
         dens.value = Number(m.rho).toFixed(2);
+        amaxEl.value = String(parseInt(m.amax, 10) || 100);
         nameEl.readOnly = true;
         nameEl.value = m.name;
       }
-      calc();
+      bvLocked = false;
+      onDutyChange();
     }
     function onDensityEdit() {
-      // 手动改密度时，若不在自定义，标记为“手册值已调整”
       const m = parseMaterial();
       const nameEl = document.getElementById("material_name");
       if (m.rho !== "CUSTOM") {
         const auto = Number(m.rho);
         const now = parseFloat(document.getElementById("density").value);
+        const base = m.name.replace(/（密度已自调|粒度已自调|参数已自调）/g, "").replace(/（+/g, "（");
         nameEl.value = (Math.abs(now - auto) > 1e-6) ? `${m.name}（密度已自调）` : m.name;
       }
+      bvLocked = false;
+      onDutyChange();
+    }
+    function onAmaxEdit() {
+      const m = parseMaterial();
+      const nameEl = document.getElementById("material_name");
+      if (m.rho !== "CUSTOM") {
+        const autoA = parseInt(m.amax, 10);
+        const nowA = parseFloat(document.getElementById("amax").value);
+        nameEl.value = (Math.abs(nowA - autoA) > 1e-6) ? `${m.name}（粒度已自调）` : m.name;
+      }
+      bvLocked = false;
+      onDutyChange();
+    }
+    function onDutyChange() {
+      // 工况变化：刷新推荐；若未手锁则自动采用首选推荐
+      refreshRecommendations();
+      if (!bvLocked && lastRec) applyRecommendation(lastRec.B, lastRec.V, false);
+      else calc();
+    }
+    function onWidthManual() {
+      bvLocked = true;
+      calc();
+    }
+    function onSpeedManual() {
+      bvLocked = true;
+      const v = document.getElementById("speed_select").value;
+      document.getElementById("custom_speed_box").style.display = v === "CUSTOM" ? "block" : "none";
       calc();
     }
     function getV() {
       const s = document.getElementById("speed_select").value;
       return s === "CUSTOM" ? (parseFloat(document.getElementById("speed_custom").value) || 0) : parseFloat(s);
+    }
+    function qActual(B, V, rho, cA) {
+      const Bm = B / 1000;
+      return 3600 * cA * Bm * Bm * Math.max(V, 0) * Math.max(rho, 0);
+    }
+    function BminByLump(amax, mode) {
+      const k = mode === "sized" ? 3.0 : 4.5;
+      const need = k * Math.max(amax, 0);
+      const B = WIDTHS.find(b => b >= need) || WIDTHS[WIDTHS.length - 1];
+      return { Bmin: B, need, k };
+    }
+    function buildRecommendations() {
+      const Q = parseFloat(document.getElementById("capacity").value) || 0;
+      const rho = parseFloat(document.getElementById("density").value) || 1;
+      const amax = parseFloat(document.getElementById("amax").value) || 0;
+      const mode = document.getElementById("lump_mode").value;
+      const type = TYPE[document.getElementById("type_angle").value];
+      const lump = BminByLump(amax, mode);
+      const recs = [];
+      for (const B of WIDTHS) {
+        if (B < lump.Bmin) continue;
+        const vs = V_BY_B[B] || [2.5, 3.15, 4.0];
+        for (const V of vs) {
+          const Qa = qActual(B, V, rho, type.cA);
+          if (Qa + 1e-6 >= Q) {
+            recs.push({ B, V, Qa, margin: Qa / Math.max(Q, 1e-9) });
+          }
+        }
+      }
+      // 优先：较小带宽、适中带速、富余接近 1.15~1.4
+      recs.sort((a, b) => {
+        const score = (r) => Math.abs(r.margin - 1.25) * 10 + r.B / 1000 + r.V / 10;
+        return score(a) - score(b);
+      });
+      return { lump, recs: recs.slice(0, 4) };
+    }
+    function refreshRecommendations() {
+      const { lump, recs } = buildRecommendations();
+      lastRec = recs[0] || null;
+      document.getElementById("res_Bmin_lump").textContent =
+        `B_min≈${lump.Bmin} mm（k=${lump.k}，k·a_max=${lump.need.toFixed(0)} mm）`;
+      const list = document.getElementById("rec_list");
+      list.innerHTML = "";
+      if (!recs.length) {
+        document.getElementById("rec_title").textContent = "无满足组合，请降低运量或增大允许带宽";
+        document.getElementById("rec_tag").textContent = "需调整";
+        document.getElementById("rec_detail").textContent =
+          `粒度下限 B≥${lump.Bmin}；当前 Q/ρ 下标准系列内算不出 Q_实际≥Q_给定 的组合。`;
+        return;
+      }
+      document.getElementById("rec_title").textContent = `首选推荐：B${recs[0].B} + V${recs[0].V} m/s`;
+      document.getElementById("rec_tag").textContent = bvLocked ? "已手改" : "可点选";
+      document.getElementById("rec_detail").textContent =
+        `已按粒度下限 B≥${lump.Bmin}，并从手册常用带速中筛选 Q_实际≥Q_给定 的组合；可点选采用，也可下方手改。`;
+      recs.forEach((r, idx) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "btn-mini" + (idx === 0 ? " btn-apply" : "");
+        btn.textContent = `${idx === 0 ? "采用首选 " : ""}B${r.B} · V${r.V}（Q≈${Math.round(r.Qa)}，富余${r.margin.toFixed(2)}）`;
+        btn.onclick = () => applyRecommendation(r.B, r.V, true);
+        list.appendChild(btn);
+      });
+    }
+    function applyRecommendation(B, V, fromClick) {
+      if (fromClick) bvLocked = false;
+      document.getElementById("width").value = String(B);
+      const speedSel = document.getElementById("speed_select");
+      const opt = [...speedSel.options].some(o => o.value === String(V));
+      if (opt) {
+        speedSel.value = String(V);
+        document.getElementById("custom_speed_box").style.display = "none";
+      } else {
+        speedSel.value = "CUSTOM";
+        document.getElementById("custom_speed_box").style.display = "block";
+        document.getElementById("speed_custom").value = String(V);
+      }
+      document.getElementById("rec_tag").textContent = fromClick ? "已采用推荐" : "已自动填入";
+      calc();
     }
     function dMinBySpeed(V) {
       if (V <= 0) return 0;
@@ -373,7 +537,6 @@
         const b = BEARING[k];
         if (b && b.C >= Creq && b.nmax >= rpm && b.d >= dmin - 1e-9) return { key: k, ...b, ok: true };
       }
-      // 手册同带宽不够时，在全手册轴承中升档（仍为标准轴承，不出非标直径）
       const all = Object.keys(BEARING);
       for (const k of all) {
         const b = BEARING[k];
@@ -390,10 +553,13 @@
     }
 
     function calc() {
+      refreshRecommendations();
       const B = document.getElementById("width").value;
       const V = getV();
       const Q = parseFloat(document.getElementById("capacity").value) || 0;
       const rho = parseFloat(document.getElementById("density").value) || 1;
+      const amax = parseFloat(document.getElementById("amax").value) || 0;
+      const lumpMode = document.getElementById("lump_mode").value;
       const matName = document.getElementById("material_name").value || parseMaterial().name;
       const a0 = parseFloat(document.getElementById("spacing").value) || 1.2;
       const lifeReq = parseFloat(document.getElementById("req_life").value) || 30000;
@@ -401,6 +567,8 @@
       const type = TYPE[typeKey];
       const row = BY_WIDTH[B];
       const diaMode = document.getElementById("dia_mode").value;
+      const lump = BminByLump(amax, lumpMode);
+      const lumpOk = parseInt(B, 10) >= lump.Bmin;
 
       // ---- 运量 ----
       const Bm = parseFloat(B) / 1000;
@@ -409,21 +577,29 @@
       const util = Qact > 0 ? Q / Qact : Infinity;
       const margin = Qact > 0 ? Qact / Math.max(Q, 1e-9) : 0;
       const qOk = Q > 0 && Qact >= Q;
-      document.getElementById("res_q_given").textContent = `${Q.toLocaleString()} t/h · ${matName} · ρ=${rho.toFixed(2)}`;
+      document.getElementById("res_q_given").textContent = `${Q.toLocaleString()} t/h · ${matName} · ρ=${rho.toFixed(2)} · a_max=${amax} mm`;
       document.getElementById("res_q_actual").textContent = `${Math.round(Qact).toLocaleString()} t/h · A=${A.toFixed(3)} m²`;
       document.getElementById("res_q_judge").textContent = qOk
         ? `富余 ${margin.toFixed(2)} 倍 · 利用率 ${(util * 100).toFixed(1)}%`
         : `不足 · 已达能力 ${(util * 100).toFixed(1)}%`;
+      document.getElementById("res_lump_check").textContent = lumpOk
+        ? `a_max=${amax} mm · B${B} ≥ B_min${lump.Bmin}（k=${lump.k}）· 合格`
+        : `a_max=${amax} mm · B${B} < B_min${lump.Bmin}（k=${lump.k}）· 不合格，请加大带宽`;
+      document.getElementById("res_BV_status").textContent = bvLocked
+        ? `手改中：B${B} / V${V} m/s`
+        : `跟随推荐：B${B} / V${V} m/s`;
+      const bothOk = qOk && lumpOk;
       setBox(document.getElementById("q_box"), document.getElementById("q_title"), document.getElementById("q_tag"),
-        qOk, qOk ? `✓ Q_实际 ${Math.round(Qact)} ≥ Q_给定 ${Q}` : `✕ Q_实际 ${Math.round(Qact)} < Q_给定 ${Q}，需加大 B/V 或降低给定运量`,
-        qOk ? "运量合格" : "运量不足");
+        bothOk,
+        bothOk ? `✓ 运量与粒度均满足（B${B}, V${V}）`
+          : (!lumpOk ? `✕ 粒度不满足：需要 B≥${lump.Bmin}` : `✕ 运量不足：Q_实际 ${Math.round(Qact)} < Q_给定 ${Q}`),
+        bothOk ? "合格" : (!lumpOk ? "粒度不足" : "运量不足"));
 
       // ---- 标准直径 ----
       const auto = pickStdD(B, V);
       let D = auto.D;
       if (diaMode === "MANUAL") {
         D = parseFloat(document.getElementById("dia").value);
-        // 手动时也限制在本带宽手册可选标准档；不在表内则仍计算但提示
       } else {
         document.getElementById("dia").value = String(D);
       }
@@ -501,7 +677,7 @@
 
       // 缓存报告
       window.__report = {
-        mark, part, gp, B, V, Q, Qact, matName, rho, D, Dmin, wall, L, dStd, Ls, brg: brg.name, life, full, dim: document.getElementById("res_dim").textContent
+        mark, part, gp, B, V, Q, Qact, matName, rho, amax, lumpBmin: lump.Bmin, lumpOk, D, Dmin, wall, L, dStd, Ls, brg: brg.name, life, full, dim: document.getElementById("res_dim").textContent
       };
     }
 
@@ -514,7 +690,8 @@
         `部件/辊子图号: ${r.part} / ${r.gp}`,
         `带宽/带速: B${r.B} / ${Number(r.V).toFixed(2)} m/s`,
         `给定运量/实际运量: ${r.Q} / ${Math.round(r.Qact)} t/h`,
-        `物料/密度: ${r.matName} / ${Number(r.rho).toFixed(2)} t/m³`,
+        `物料/密度/最大粒度: ${r.matName} / ${Number(r.rho).toFixed(2)} t/m³ / ${r.amax} mm`,
+        `粒度最小带宽: B_min=${r.lumpBmin} · ${r.lumpOk ? "合格" : "不合格"}`,
         `D_min(依据): Φ${Number(r.Dmin).toFixed(1)} mm`,
         `标准直径 D: Φ${r.D} mm`,
         `标准壁厚 δ: ${r.wall} mm`,
@@ -529,7 +706,8 @@
       navigator.clipboard.writeText(text).then(() => alert("托辊选型报告已复制"));
     }
 
-    calc();
+    // 初始化：物料 → 推荐 B/V → 全量计算
+    onMaterialChange();
   </script>
 </body>
 </html>
