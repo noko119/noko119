@@ -137,7 +137,14 @@
                     <input type="number" id="req_life" value="50000" step="5000" oninput="calc()">
                 </div>
                 <div>
-                    <label>托辊外径 D (mm)</label>
+                    <label>托辊直径选型模式</label>
+                    <select id="dia_mode" onchange="onDiaModeChange()">
+                        <option value="AUTO" selected>📖 按带宽+带速自动选型</option>
+                        <option value="MANUAL">🖐️ 手动强行指定</option>
+                    </select>
+                </div>
+                <div id="manual_dia_box" style="display:none;">
+                    <label>指定托辊外径 D (mm)</label>
                     <select id="dia" onchange="calc()">
                         <option value="108">Φ108 mm</option>
                         <option value="133">Φ133 mm</option>
@@ -167,7 +174,7 @@
         </div>
         <div class="card">
             <div class="card-title">
-                2. 工程力学与轴承反算校核
+                2. 托辊直径选型 + 轴承反算校核
                 <span id="res_tag" class="tag tag-dtii">DTII(A) 手册规范</span>
             </div>
             <div id="status_box" class="status-box status-pass">
@@ -178,6 +185,14 @@
                 <div class="result-row">
                     <span style="color:var(--text-muted);">选定带速与类型</span>
                     <span id="res_speed_info" style="font-weight:bold; color:var(--primary);">4.00 m/s (国标推荐)</span>
+                </div>
+                <div class="result-row">
+                    <span style="color:var(--text-muted);">托辊直径首选 D（唯一）</span>
+                    <span id="res_dia_primary" style="font-weight:bold; color:var(--primary); font-size:1.0rem;">Φ159 mm</span>
+                </div>
+                <div class="result-row">
+                    <span style="color:var(--text-muted);">直径选型依据 / 手册可选档</span>
+                    <span id="res_dia_reason" style="font-weight:600; text-align:right; max-width:62%;">带宽首选 · 可选 Φ133/159/194</span>
                 </div>
                 <div class="result-row">
                     <span style="color:var(--text-muted);">单辊受力 P_static / 动载 P_dynamic</span>
@@ -236,6 +251,24 @@
         const dtii_type_code = { "槽形35": { name: "T", part: "A11A" }, "槽形45": { name: "T", part: "A11A" }, "平行0": { name: "P", part: "A12A" }, "缓冲35": { name: "H", part: "A13A" } };
         const gb_standard_speeds = ["0.8", "1.0", "1.25", "1.6", "2.0", "2.5", "3.15", "4.0", "4.5", "5.0", "5.6", "6.3"];
         const handbook_recommended_bearings = { "500": "B6204", "650": "B6204", "800": "B6205", "1000": "B6205", "1200": "B6308", "1400": "B6308", "1600": "B6310", "1800": "B6310", "2000": "B6310", "2200": "B6312", "2400": "B6312", "2800": "B6312" };
+        // DTII(A) 常用托辊外径系列；按带宽给出手册常用可选档（首选在前）
+        const standard_dias = [108, 133, 159, 194, 219];
+        const handbook_dias_by_width = {
+            "500": [108, 133],
+            "650": [108, 133],
+            "800": [108, 133, 159],
+            "1000": [133, 159],
+            "1200": [133, 159, 194],
+            "1400": [159, 194],
+            "1600": [159, 194, 219],
+            "1800": [194, 219],
+            "2000": [194, 219],
+            "2200": [219],
+            "2400": [219],
+            "2800": [219]
+        };
+        // 钢制托辊常用工作转速上限（rpm），用于由带速反算最小直径
+        const roller_rpm_limit = 600;
         const bearing_db = [
             { key: "B6204", name: "6204 深沟球轴承", C: 12.8, shaft: 20, limit_rpm: 1200 },
             { key: "B6205", name: "6205 深沟球轴承", C: 14.0, shaft: 25, limit_rpm: 1000 },
@@ -254,6 +287,11 @@
             document.getElementById('manual_bearing_box').style.display = (mode === 'MANUAL') ? 'block' : 'none';
             calc();
         }
+        function onDiaModeChange() {
+            const mode = document.getElementById('dia_mode').value;
+            document.getElementById('manual_dia_box').style.display = (mode === 'MANUAL') ? 'block' : 'none';
+            calc();
+        }
         function getSpeed() {
             const val = document.getElementById('speed_select').value;
             if (val === 'CUSTOM') {
@@ -261,14 +299,48 @@
             }
             return parseFloat(val);
         }
+        function calcRpm(V, D) {
+            if (!D || D <= 0) return 0;
+            return (V * 60 * 1000) / (Math.PI * D);
+        }
+        function minDiaBySpeed(V) {
+            if (V <= 0) return standard_dias[0];
+            const dNeed = (V * 60 * 1000) / (Math.PI * roller_rpm_limit);
+            return standard_dias.find(d => d >= dNeed) || standard_dias[standard_dias.length - 1];
+        }
+        function selectDiameter(B, V) {
+            const handbook = handbook_dias_by_width[B] || [159, 194, 219];
+            const dSpeed = minDiaBySpeed(V);
+            // 唯一首选：在手册可选档中取满足带速转速限值的最小直径；不够则向全系列抬升
+            let primary = handbook.find(d => d >= dSpeed);
+            let lifted = false;
+            if (!primary) {
+                primary = standard_dias.find(d => d >= Math.max(dSpeed, handbook[handbook.length - 1])) || standard_dias[standard_dias.length - 1];
+                lifted = primary > handbook[handbook.length - 1];
+            }
+            const alts = handbook.filter(d => d !== primary);
+            let reason = `带宽手册首选；转速限 ${roller_rpm_limit} rpm → 最小 Φ${dSpeed}`;
+            if (lifted) reason = `带速抬升超手册档，升至 Φ${primary}（转速 ≤ ${roller_rpm_limit} rpm）`;
+            const altText = alts.length ? `手册可选 ${alts.map(d => 'Φ' + d).join('/')}` : '手册仅此档';
+            return { primary, handbook, dSpeed, reason, altText, lifted };
+        }
         function calc() {
             const B = document.getElementById('width').value;
             const V = getSpeed();
             const Q = parseFloat(document.getElementById('capacity').value);
             const a0 = parseFloat(document.getElementById('spacing').value);
             const reqLife = parseFloat(document.getElementById('req_life').value) || 50000;
-            const D = parseFloat(document.getElementById('dia').value);
             const taKey = document.getElementById('type_angle').value;
+            const diaMode = document.getElementById('dia_mode').value;
+
+            const diaSel = selectDiameter(B, V);
+            let D;
+            if (diaMode === 'AUTO') {
+                D = diaSel.primary;
+                document.getElementById('dia').value = String(D);
+            } else {
+                D = parseFloat(document.getElementById('dia').value);
+            }
 
             const speedSel = document.getElementById('speed_select').value;
             let speedText = `${V.toFixed(2)} m/s (自定义精确定值)`;
@@ -280,6 +352,8 @@
                 }
             }
             document.getElementById('res_speed_info').innerText = speedText;
+            document.getElementById('res_dia_primary').innerText = `Φ${D} mm${diaMode === 'AUTO' ? '（自动唯一首选）' : '（手动指定）'}`;
+            document.getElementById('res_dia_reason').innerText = `${diaSel.reason} · ${diaSel.altText}`;
 
             const qm = Q / (3.6 * V);
             const qb = 25;
@@ -289,7 +363,7 @@
             const P_dyn = P_side * 1.4;
             const P_bearing = P_dyn / 2;
 
-            const RPM = (V * 60 * 1000) / (Math.PI * D);
+            const RPM = calcRpm(V, D);
             let C_req = 0;
             if (RPM > 0 && P_bearing > 0) {
                 const factor = Math.pow((reqLife * 60 * RPM / 1000000), 1/3);
@@ -323,21 +397,28 @@
             document.getElementById('res_calc_bearing').innerText = selectedBearing.name;
             document.getElementById('res_shaft_c').innerText = `C = ${selectedBearing.C} kN / Φ${selectedBearing.shaft} mm 轴`;
             document.getElementById('res_life').innerText = `${Math.round(L10h_act).toLocaleString()} 小时 (要求 ≥ ${reqLife.toLocaleString()}h)`;
-            document.getElementById('res_rpm_def').innerText = `${Math.round(RPM)} rpm / ${deflection_angle.toFixed(1)}'`;
+            document.getElementById('res_rpm_def').innerText = `${Math.round(RPM)} rpm / ${deflection_angle.toFixed(1)}' (限 ${roller_rpm_limit} rpm / ≤3.5')`;
 
             const statusBox = document.getElementById('status_box');
             const statusTitle = document.getElementById('status_title');
             const statusTag = document.getElementById('status_tag');
-            if (L10h_act >= reqLife && RPM <= selectedBearing.limit_rpm && deflection_angle <= 3.5) {
+            const diaOk = RPM <= roller_rpm_limit + 1e-6;
+            const bearingOk = L10h_act >= reqLife && RPM <= selectedBearing.limit_rpm && deflection_angle <= 3.5;
+            if (diaOk && bearingOk) {
                 statusBox.className = "status-box status-pass";
-                statusTitle.innerText = "✓ 符合 DTII(A) 手册推荐与力学校核要求";
+                statusTitle.innerText = "✓ 托辊直径与轴承均符合 DTII(A) 选型/校核要求";
                 statusTag.className = "tag tag-pass";
                 statusTag.innerText = "匹配合格";
+            } else if (!diaOk) {
+                statusBox.className = "status-box status-fail";
+                statusTitle.innerText = "✕ 当前直径转速超限，请加大托辊直径或降低带速";
+                statusTag.className = "tag tag-fail";
+                statusTag.innerText = "直径需升级";
             } else {
                 statusBox.className = "status-box status-fail";
                 statusTitle.innerText = "✕ 当前轴承容量或转速/挠度未达标，已自动升级轴承规格";
                 statusTag.className = "tag tag-fail";
-                statusTag.innerText = "需升级";
+                statusTag.innerText = "轴承需升级";
             }
 
             const isDTII = parseInt(B) <= 1400;
@@ -355,7 +436,7 @@
                 document.getElementById('res_part_no').innerText = `NS-${typeInfo.name}${D}-${B}`;
             }
 
-            document.getElementById('res_dim_text').innerText = `L = ${L_roller} mm, 轴径 Φ${selectedBearing.shaft}mm`;
+            document.getElementById('res_dim_text').innerText = `L = ${L_roller} mm, 外径 Φ${D} mm, 轴径 Φ${selectedBearing.shaft}mm`;
             const code = `TR-W${B}-V${V.toFixed(2)}-C${Q}-${typeInfo.name}${D}-ENV-MDH-${selectedBearing.key}-SWR`;
             document.getElementById('res_full_code').innerText = code;
         }
@@ -364,10 +445,12 @@
             const dtii = document.getElementById('res_dtii_code').innerText;
             const part = document.getElementById('res_part_no').innerText;
             const spd = document.getElementById('res_speed_info').innerText;
+            const dia = document.getElementById('res_dia_primary').innerText;
+            const diaReason = document.getElementById('res_dia_reason').innerText;
             const brg = document.getElementById('res_calc_bearing').innerText;
             const life = document.getElementById('res_life').innerText;
             const full = document.getElementById('res_full_code').innerText;
-            const text = `【DTII(A)/全带速输送机托辊选型计算报告】\n标注图号: ${dtii}\n部件图号: ${part}\n带速: ${spd}\n计算轴承: ${brg}\n寿命: ${life}\n编码: ${full}`;
+            const text = `【DTII(A)/全带速输送机托辊选型计算报告】\n标注图号: ${dtii}\n部件图号: ${part}\n带速: ${spd}\n托辊直径: ${dia}\n直径依据: ${diaReason}\n计算轴承: ${brg}\n寿命: ${life}\n编码: ${full}`;
             navigator.clipboard.writeText(text).then(() => { alert('选型报告已复制！'); });
         }
         calc();
