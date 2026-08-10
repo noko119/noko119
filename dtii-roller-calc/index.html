@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DTII(A)/全系列带速托辊与轴承计算选型系统</title>
+    <title>DTII(A)/全系列带速托辊与轴承计算选型系统 · v1.2 超手册计算</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <style>
         :root {
             --primary: #1e3a8a;
@@ -233,9 +234,13 @@
                     <span style="color:var(--text-muted);">托辊转速 / 轴弯曲挠度</span>
                     <span id="res_rpm_def" style="font-weight:600;">480 rpm / 2.1'</span>
                 </div>
-                <div class="result-row">
-                    <span style="color:var(--text-muted);">超手册汇总（直径·轴·轴承）</span>
-                    <span id="res_out_summary" style="font-weight:600; text-align:right; max-width:62%; color:var(--primary-light);">手册范围内</span>
+                <div id="out_box" class="status-box status-pass" style="margin-top:10px; flex-direction:column; align-items:flex-start; gap:6px;">
+                    <div style="display:flex; width:100%; justify-content:space-between; align-items:center; gap:8px;">
+                        <span>超手册计算结果（直径 · 轴 · 轴承）</span>
+                        <span id="res_out_badge" class="tag tag-pass">手册范围内</span>
+                    </div>
+                    <div id="res_out_summary" style="font-size:0.82rem; font-weight:600; line-height:1.45;">D / d / 轴承 将在此显示</div>
+                    <div id="res_out_detail" style="font-size:0.75rem; font-weight:500; opacity:0.9; line-height:1.45;"></div>
                 </div>
             </div>
         </div>
@@ -463,20 +468,38 @@
             document.getElementById('res_life').innerText = `${Math.round(L10h_act).toLocaleString()} 小时 (要求 ≥ ${reqLife.toLocaleString()}h)`;
             document.getElementById('res_rpm_def').innerText = `${Math.round(RPM)} rpm / ${deflection_angle.toFixed(1)}' (限 ${roller_rpm_limit} rpm / ≤${defl_limit}')`;
 
-            const summary = `D=Φ${D} · d=Φ${selectedBearing.shaft} · ${selectedBearing.key.replace('B','')} · C_req=${C_req.toFixed(1)}kN`;
-            document.getElementById('res_out_summary').innerText = (diaOut || brgSel.outOfHandbook || parseInt(B, 10) > 1400)
-                ? `超手册计算结果：${summary}`
-                : `手册范围内：${summary}`;
-
-            const statusBox = document.getElementById('status_box');
-            const statusTitle = document.getElementById('status_title');
-            const statusTag = document.getElementById('status_tag');
             const diaOk = RPM <= roller_rpm_limit + 1e-6;
             const shaftOk = selectedBearing.shaft + 1e-9 >= shaftMin && deflection_angle <= defl_limit;
             const bearingOk = L10h_act >= reqLife && RPM <= selectedBearing.limit_rpm;
             const allOk = diaOk && shaftOk && bearingOk && !brgSel.insufficient;
+            const summary = `D=Φ${D} · d=Φ${selectedBearing.shaft} · ${selectedBearing.key.replace('B','')} · C_req=${C_req.toFixed(1)}kN`;
+            const isOut = (diaOut || brgSel.outOfHandbook || parseInt(B, 10) > 1400);
+            const outBox = document.getElementById('out_box');
+            const outBadge = document.getElementById('res_out_badge');
+            document.getElementById('res_out_summary').innerText = isOut
+                ? `超手册计算结果：${summary}`
+                : `手册范围内：${summary}`;
+            document.getElementById('res_out_detail').innerText =
+                `计算：D_min=Φ${diaSel.dMinExact.toFixed(1)} mm，d_min=Φ${shaftMin.toFixed(1)} mm，C_req=${C_req.toFixed(1)} kN；` +
+                `采用：D=Φ${D} mm，轴 Φ${selectedBearing.shaft} mm，轴承 ${selectedBearing.name}` +
+                (brgSel.insufficient ? '（库内最大规格，仍可能不足）' : '');
+            outBox.className = (!allOk && isOut) ? "status-box status-fail" : "status-box status-pass";
+            outBox.style.marginTop = "10px";
+            outBox.style.flexDirection = "column";
+            outBox.style.alignItems = "flex-start";
+            outBox.style.gap = "6px";
+            if (isOut) {
+                outBadge.className = allOk ? "tag tag-pass" : "tag tag-fail";
+                outBadge.innerText = allOk ? "非标已出结果" : "非标需复核";
+            } else {
+                outBadge.className = "tag tag-pass";
+                outBadge.innerText = "手册范围内";
+            }
 
-            if (allOk && (diaOut || brgSel.outOfHandbook || parseInt(B, 10) > 1400)) {
+            const statusBox = document.getElementById('status_box');
+            const statusTitle = document.getElementById('status_title');
+            const statusTag = document.getElementById('status_tag');
+            if (allOk && isOut) {
                 statusBox.className = "status-box status-pass";
                 statusTitle.innerText = "✓ 超手册范围已给出直径/轴/轴承计算结果（力学校核通过）";
                 statusTag.className = "tag tag-pass";
