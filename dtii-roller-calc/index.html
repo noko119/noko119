@@ -131,9 +131,45 @@
           <label>给定运量 Q_给定 (t/h)</label>
           <input id="capacity" type="number" value="3000" min="1" step="50" oninput="calc()" />
         </div>
+        <div class="full">
+          <label>物料名称（自动给出堆积密度）</label>
+          <select id="material" onchange="onMaterialChange()">
+            <optgroup label="常用散状物料（DTII/工程常用值）">
+              <option value="1.00|原煤（混煤）">原煤（混煤） · 1.00 t/m³</option>
+              <option value="0.80|烟煤">烟煤 · 0.80 t/m³</option>
+              <option value="0.90|无烟煤">无烟煤 · 0.90 t/m³</option>
+              <option value="0.70|褐煤">褐煤 · 0.70 t/m³</option>
+              <option value="1.20|洗精煤">洗精煤 · 1.20 t/m³</option>
+              <option value="0.75|焦炭">焦炭 · 0.75 t/m³</option>
+              <option value="1.60|石灰石" selected>石灰石 · 1.60 t/m³</option>
+              <option value="1.70|砂岩">砂岩 · 1.70 t/m³</option>
+              <option value="1.80|花岗岩碎石">花岗岩碎石 · 1.80 t/m³</option>
+              <option value="1.50|河卵石">河卵石 · 1.50 t/m³</option>
+              <option value="1.60|碎石（一般）">碎石（一般） · 1.60 t/m³</option>
+              <option value="1.40|矿石（中等）">矿石（中等） · 1.40 t/m³</option>
+              <option value="2.00|铁矿石">铁矿石 · 2.00 t/m³</option>
+              <option value="2.20|铜矿石">铜矿石 · 2.20 t/m³</option>
+              <option value="1.30|粘土">粘土 · 1.30 t/m³</option>
+              <option value="1.60|湿砂">湿砂 · 1.60 t/m³</option>
+              <option value="1.40|干砂">干砂 · 1.40 t/m³</option>
+              <option value="1.10|水泥生料">水泥生料 · 1.10 t/m³</option>
+              <option value="1.25|水泥熟料">水泥熟料 · 1.25 t/m³</option>
+              <option value="1.10|粮食（小麦）">粮食（小麦） · 1.10 t/m³</option>
+              <option value="0.75|谷物（玉米）">谷物（玉米） · 0.75 t/m³</option>
+              <option value="0.55|木屑">木屑 · 0.55 t/m³</option>
+              <option value="0.85|化肥">化肥 · 0.85 t/m³</option>
+              <option value="1.00|盐">盐 · 1.00 t/m³</option>
+            </optgroup>
+            <option value="CUSTOM|自定义物料">自定义物料 / 自定义密度...</option>
+          </select>
+        </div>
         <div>
           <label>堆积密度 ρ (t/m³)</label>
-          <input id="density" type="number" value="1.60" min="0.2" max="4" step="0.05" oninput="calc()" />
+          <input id="density" type="number" value="1.60" min="0.2" max="4" step="0.05" oninput="onDensityEdit()" />
+        </div>
+        <div>
+          <label>当前物料</label>
+          <input id="material_name" type="text" value="石灰石" readonly />
         </div>
         <div>
           <label>托辊类型</label>
@@ -281,6 +317,41 @@
       document.getElementById("manual_dia_box").style.display = m === "MANUAL" ? "block" : "none";
       calc();
     }
+    function parseMaterial() {
+      const raw = document.getElementById("material").value;
+      const i = raw.indexOf("|");
+      return { rho: raw.slice(0, i), name: raw.slice(i + 1) };
+    }
+    function onMaterialChange() {
+      const m = parseMaterial();
+      const dens = document.getElementById("density");
+      const nameEl = document.getElementById("material_name");
+      if (m.rho === "CUSTOM") {
+        dens.readOnly = false;
+        dens.style.background = "#fff";
+        nameEl.readOnly = false;
+        nameEl.value = nameEl.value && nameEl.value !== "石灰石" ? nameEl.value : "自定义物料";
+        dens.focus();
+      } else {
+        dens.readOnly = false; // 允许在自动值基础上微调
+        dens.style.background = "#f8fafc";
+        dens.value = Number(m.rho).toFixed(2);
+        nameEl.readOnly = true;
+        nameEl.value = m.name;
+      }
+      calc();
+    }
+    function onDensityEdit() {
+      // 手动改密度时，若不在自定义，标记为“手册值已调整”
+      const m = parseMaterial();
+      const nameEl = document.getElementById("material_name");
+      if (m.rho !== "CUSTOM") {
+        const auto = Number(m.rho);
+        const now = parseFloat(document.getElementById("density").value);
+        nameEl.value = (Math.abs(now - auto) > 1e-6) ? `${m.name}（密度已自调）` : m.name;
+      }
+      calc();
+    }
     function getV() {
       const s = document.getElementById("speed_select").value;
       return s === "CUSTOM" ? (parseFloat(document.getElementById("speed_custom").value) || 0) : parseFloat(s);
@@ -323,6 +394,7 @@
       const V = getV();
       const Q = parseFloat(document.getElementById("capacity").value) || 0;
       const rho = parseFloat(document.getElementById("density").value) || 1;
+      const matName = document.getElementById("material_name").value || parseMaterial().name;
       const a0 = parseFloat(document.getElementById("spacing").value) || 1.2;
       const lifeReq = parseFloat(document.getElementById("req_life").value) || 30000;
       const typeKey = document.getElementById("type_angle").value;
@@ -337,7 +409,7 @@
       const util = Qact > 0 ? Q / Qact : Infinity;
       const margin = Qact > 0 ? Qact / Math.max(Q, 1e-9) : 0;
       const qOk = Q > 0 && Qact >= Q;
-      document.getElementById("res_q_given").textContent = `${Q.toLocaleString()} t/h · ρ=${rho.toFixed(2)}`;
+      document.getElementById("res_q_given").textContent = `${Q.toLocaleString()} t/h · ${matName} · ρ=${rho.toFixed(2)}`;
       document.getElementById("res_q_actual").textContent = `${Math.round(Qact).toLocaleString()} t/h · A=${A.toFixed(3)} m²`;
       document.getElementById("res_q_judge").textContent = qOk
         ? `富余 ${margin.toFixed(2)} 倍 · 利用率 ${(util * 100).toFixed(1)}%`
@@ -429,7 +501,7 @@
 
       // 缓存报告
       window.__report = {
-        mark, part, gp, B, V, Q, Qact, D, Dmin, wall, L, dStd, Ls, brg: brg.name, life, full, dim: document.getElementById("res_dim").textContent
+        mark, part, gp, B, V, Q, Qact, matName, rho, D, Dmin, wall, L, dStd, Ls, brg: brg.name, life, full, dim: document.getElementById("res_dim").textContent
       };
     }
 
@@ -442,6 +514,7 @@
         `部件/辊子图号: ${r.part} / ${r.gp}`,
         `带宽/带速: B${r.B} / ${Number(r.V).toFixed(2)} m/s`,
         `给定运量/实际运量: ${r.Q} / ${Math.round(r.Qact)} t/h`,
+        `物料/密度: ${r.matName} / ${Number(r.rho).toFixed(2)} t/m³`,
         `D_min(依据): Φ${Number(r.Dmin).toFixed(1)} mm`,
         `标准直径 D: Φ${r.D} mm`,
         `标准壁厚 δ: ${r.wall} mm`,
