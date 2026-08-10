@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DTII(A)/全系列带速托辊与轴承计算选型系统 · v1.4 标准直径依据</title>
+    <title>DTII(A)/全系列带速托辊与轴承计算选型系统 · v1.5 标准尺寸</title>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <style>
         :root {
@@ -252,7 +252,7 @@
                 </div>
                 <div id="out_box" class="status-box status-pass" style="margin-top:10px; flex-direction:column; align-items:flex-start; gap:6px;">
                     <div style="display:flex; width:100%; justify-content:space-between; align-items:center; gap:8px;">
-                        <span>超手册计算结果（直径 · 轴 · 轴承）</span>
+                        <span>计算结果汇总（直径仅标准档 · 轴 · 轴承）</span>
                         <span id="res_out_badge" class="tag tag-pass">手册范围内</span>
                     </div>
                     <div id="res_out_summary" style="font-size:0.82rem; font-weight:600; line-height:1.45;">D / d / 轴承 将在此显示</div>
@@ -261,19 +261,35 @@
             </div>
         </div>
         <div class="card">
-            <div class="card-title">3. 标注图号 / 非标代号与尺寸结果</div>
+            <div class="card-title">3. DTII(A) 标准尺寸（辊体 / 壁厚 / 轴径 / 轴长）</div>
             <div class="result-group">
                 <div class="result-row">
-                    <span style="color:var(--text-muted);">DTII(A) 手册标准标注图号</span>
+                    <span style="color:var(--text-muted);">标准标注图号</span>
                     <span id="res_dtii_code" style="font-weight:bold; color:var(--primary); font-size:1.0rem;">DTII(A)-T159-1400</span>
                 </div>
                 <div class="result-row">
-                    <span style="color:var(--text-muted);">手册标准部件/明细表号</span>
+                    <span style="color:var(--text-muted);">标准部件/明细表号</span>
                     <span id="res_part_no" style="font-weight:600; color:var(--primary-light);">A11A-T159-1400</span>
                 </div>
                 <div class="result-row">
-                    <span style="color:var(--text-muted);">手册标准单辊长 L × 轴径</span>
-                    <span id="res_dim_text" style="font-weight:600;">L = 530 mm, 轴径 Φ40mm</span>
+                    <span style="color:var(--text-muted);">标准辊体外径 D × 壁厚 δ</span>
+                    <span id="res_shell_dim" style="font-weight:bold; color:var(--primary);">Φ159 × 4.5 mm</span>
+                </div>
+                <div class="result-row">
+                    <span style="color:var(--text-muted);">标准辊体长度 L（按带宽）</span>
+                    <span id="res_roller_len" style="font-weight:bold; color:var(--primary);">L = 530 mm</span>
+                </div>
+                <div class="result-row">
+                    <span style="color:var(--text-muted);">标准轴径 d</span>
+                    <span id="res_shaft_dia" style="font-weight:bold; color:var(--primary);">Φ40 mm</span>
+                </div>
+                <div class="result-row">
+                    <span style="color:var(--text-muted);">标准轴长 Ls</span>
+                    <span id="res_shaft_len" style="font-weight:bold; color:var(--primary);">Ls = 640 mm</span>
+                </div>
+                <div class="result-row">
+                    <span style="color:var(--text-muted);">尺寸汇总（选型依据）</span>
+                    <span id="res_dim_text" style="font-weight:600; text-align:right; max-width:62%;">—</span>
                 </div>
             </div>
             <div style="margin-top:12px;">
@@ -288,6 +304,12 @@
     </div>
     <script>
         const dtii_length_map = { "500": 200, "650": 250, "800": 315, "1000": 380, "1200": 465, "1400": 530, "1600": 600, "1800": 670, "2000": 750, "2200": 820, "2400": 900, "2800": 1050 };
+        // DTII(A) 标准管壁厚 δ（mm），按托辊外径
+        const dtii_wall_by_dia = { "108": 4.0, "133": 4.0, "159": 4.5, "194": 6.0, "219": 6.0 };
+        // DTII(A) 标准轴径（mm），按带宽；最终取 max(手册轴径, 轴承匹配轴径)
+        const dtii_shaft_by_width = { "500": 20, "650": 20, "800": 25, "1000": 25, "1200": 40, "1400": 40, "1600": 50, "1800": 50, "2000": 50, "2200": 60, "2400": 60, "2800": 60 };
+        // 轴伸出/轴承座单侧长度（mm），用于标准轴长 Ls = L + 2×e
+        const dtii_shaft_end_by_d = { "20": 40, "25": 45, "40": 55, "50": 60, "60": 65, "70": 70, "80": 75, "100": 85 };
         const dtii_type_code = { "槽形35": { name: "T", part: "A11A" }, "槽形45": { name: "T", part: "A11A" }, "平行0": { name: "P", part: "A12A" }, "缓冲35": { name: "H", part: "A13A" } };
         // 物料断面积系数 A ≈ c * B²（B 单位 m）；按 DTII 常用槽角近似，用于算实际通过能力
         const section_coeff = { "槽形35": 0.090, "槽形45": 0.100, "平行0": 0.040, "缓冲35": 0.085 };
@@ -500,9 +522,14 @@
             }
 
             const L_roller = dtii_length_map[B] || Math.round(0.38 * parseInt(B, 10));
+            const wall = dtii_wall_by_dia[String(D)] || dtii_wall_by_dia["159"];
+            const shaftBook = dtii_shaft_by_width[B] || 40;
             const shaftMin = shaftMinByDeflection(P_side, L_roller);
-            const brgSel = selectBearing(B, C_req, RPM, shaftMin, bearingMode);
+            const brgSel = selectBearing(B, C_req, RPM, Math.max(shaftMin, shaftBook), bearingMode);
             const selectedBearing = brgSel.bearing;
+            const shaftDia = Math.max(shaftBook, selectedBearing.shaft);
+            const endLen = dtii_shaft_end_by_d[String(shaftDia)] || dtii_shaft_end_by_d[String(selectedBearing.shaft)] || 55;
+            const shaftLen = L_roller + 2 * endLen;
 
             let L10h_act = 0;
             if (P_bearing > 0 && RPM > 0) {
@@ -514,7 +541,7 @@
             document.getElementById('res_creq').innerText = `${C_req.toFixed(1)} kN`;
             document.getElementById('res_shaft_min').innerText = `Φ${shaftMin.toFixed(1)} mm（挠度 ≤ ${defl_limit}'）`;
             document.getElementById('res_calc_bearing').innerText = selectedBearing.name + (brgSel.outOfHandbook ? '（超手册）' : (brgSel.upgraded ? '（已升级）' : ''));
-            document.getElementById('res_shaft_c').innerText = `Φ${selectedBearing.shaft} mm / C = ${selectedBearing.C} kN（需求 C_req=${C_req.toFixed(1)}）`;
+            document.getElementById('res_shaft_c').innerText = `Φ${shaftDia} mm / C = ${selectedBearing.C} kN（需求 C_req=${C_req.toFixed(1)}）`;
             document.getElementById('res_life').innerText = `${Math.round(L10h_act).toLocaleString()} 小时 (要求 ≥ ${reqLife.toLocaleString()}h)`;
             document.getElementById('res_rpm_def').innerText = `${Math.round(RPM)} rpm / ${deflection_angle.toFixed(1)}' (限 ${roller_rpm_limit} rpm / ≤${defl_limit}')`;
 
@@ -522,16 +549,16 @@
             const shaftOk = selectedBearing.shaft + 1e-9 >= shaftMin && deflection_angle <= defl_limit;
             const bearingOk = L10h_act >= reqLife && RPM <= selectedBearing.limit_rpm;
             const allOk = diaOk && shaftOk && bearingOk && !brgSel.insufficient;
-            const summary = `D=Φ${D} · d=Φ${selectedBearing.shaft} · ${selectedBearing.key.replace('B','')} · C_req=${C_req.toFixed(1)}kN`;
+            const summary = `D=Φ${D}×δ${wall}×L${L_roller} · d=Φ${shaftDia}×Ls${shaftLen} · ${selectedBearing.key.replace('B','')}`;
             const isOut = (brgSel.outOfHandbook || parseInt(B, 10) > 1400 || diaNeedExceeds);
             const outBox = document.getElementById('out_box');
             const outBadge = document.getElementById('res_out_badge');
             document.getElementById('res_out_summary').innerText = isOut
                 ? `计算结果（直径仅标准档）：${summary}`
-                : `手册范围内：${summary}`;
+                : `标准尺寸：${summary}`;
             document.getElementById('res_out_detail').innerText =
                 `计算依据：D_min=Φ${diaSel.dMinExact.toFixed(1)} mm，d_min=Φ${shaftMin.toFixed(1)} mm，C_req=${C_req.toFixed(1)} kN；` +
-                `标准建议：D=Φ${D} mm，轴 Φ${selectedBearing.shaft} mm，轴承 ${selectedBearing.name}` +
+                `标准给出：辊体 Φ${D}×δ${wall}×L${L_roller}，轴 Φ${shaftDia}×Ls${shaftLen}，轴承 ${selectedBearing.name}` +
                 (diaNeedExceeds ? `；注意 D_min 已超过最大标准档 Φ${D}` : '') +
                 (brgSel.insufficient ? '（轴承库内最大规格，仍可能不足）' : '');
             outBox.className = (!allOk && isOut) ? "status-box status-fail" : "status-box status-pass";
@@ -600,8 +627,13 @@
                 document.getElementById('res_part_no').innerText = `NS-${typeInfo.name}${D}-d${selectedBearing.shaft}-${selectedBearing.key}-${B}`;
             }
 
-            document.getElementById('res_dim_text').innerText = `L=${L_roller} mm · D=Φ${D} mm · d=Φ${selectedBearing.shaft} mm · C_req=${C_req.toFixed(1)} kN`;
-            const code = `TR-W${B}-V${V.toFixed(2)}-C${Q}-${typeInfo.name}${D}-d${selectedBearing.shaft}-${selectedBearing.key}-SWR`;
+            document.getElementById('res_dim_text').innerText =
+                `Φ${D}×δ${wall}×L${L_roller} / dΦ${shaftDia}×Ls${shaftLen}`;
+            document.getElementById('res_shell_dim').innerText = `Φ${D} × δ${wall} mm（DTII 标准壁厚）`;
+            document.getElementById('res_roller_len').innerText = `L = ${L_roller} mm（带宽 B=${B} 标准辊长）`;
+            document.getElementById('res_shaft_dia').innerText = `Φ${shaftDia} mm（手册Φ${shaftBook} / 轴承配Φ${selectedBearing.shaft}${shaftDia > shaftBook ? '，已按校核抬升' : ''}）`;
+            document.getElementById('res_shaft_len').innerText = `Ls = ${shaftLen} mm（L+2×${endLen}，标准轴端）`;
+            const code = `TR-W${B}-V${V.toFixed(2)}-C${Q}-${typeInfo.name}${D}x${wall}-L${L_roller}-d${shaftDia}x${shaftLen}-${selectedBearing.key}`;
             document.getElementById('res_full_code').innerText = code;
         }
 
@@ -617,10 +649,15 @@
                 `D_min: ${document.getElementById('res_dia_min').innerText}`,
                 `采用直径: ${document.getElementById('res_dia_primary').innerText}`,
                 `直径依据: ${document.getElementById('res_dia_reason').innerText}`,
+                `辊体Dxδ: ${document.getElementById('res_shell_dim').innerText}`,
+                `辊长L: ${document.getElementById('res_roller_len').innerText}`,
+                `轴径d: ${document.getElementById('res_shaft_dia').innerText}`,
+                `轴长Ls: ${document.getElementById('res_shaft_len').innerText}`,
                 `d_min: ${document.getElementById('res_shaft_min').innerText}`,
                 `轴承: ${document.getElementById('res_calc_bearing').innerText}`,
                 `轴/C: ${document.getElementById('res_shaft_c').innerText}`,
                 `寿命: ${document.getElementById('res_life').innerText}`,
+                `尺寸汇总: ${document.getElementById('res_dim_text').innerText}`,
                 `汇总: ${document.getElementById('res_out_summary').innerText}`,
                 `编码: ${document.getElementById('res_full_code').innerText}`
             ].join('\n');
