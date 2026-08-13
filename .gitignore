@@ -1,0 +1,27 @@
+# Git ignore
+
+# CAD / CAM source (keep path on the drawing card only)
+*.sldprt
+*.sldasm
+*.slddrw
+*.SLDPRT
+*.SLDASM
+*.SLDDRW
+*.dwg
+*.dxf
+*.step
+*.stp
+*.STEP
+*.STP
+*.igs
+*.iges
+
+# Obsidian workspace (machine-specific)
+图纸库/.obsidian/workspace.json
+图纸库/.obsidian/workspace-mobile.json
+图纸库/.obsidian/cache
+图纸库/.trash/
+
+# OS
+.DS_Store
+Thumbs.db

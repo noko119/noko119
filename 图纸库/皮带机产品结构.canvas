@@ -1,0 +1,116 @@
+{
+  "nodes": [
+    {
+      "id": "root",
+      "type": "text",
+      "text": "皮带机总装",
+      "x": 40,
+      "y": 220,
+      "width": 180,
+      "height": 60,
+      "color": "4"
+    },
+    {
+      "id": "d01",
+      "type": "file",
+      "file": "10-机械/部件/01-驱动装置.md",
+      "x": 320,
+      "y": 0,
+      "width": 260,
+      "height": 80
+    },
+    {
+      "id": "d02",
+      "type": "file",
+      "file": "10-机械/部件/02-滚筒.md",
+      "x": 320,
+      "y": 100,
+      "width": 260,
+      "height": 80
+    },
+    {
+      "id": "d03",
+      "type": "file",
+      "file": "10-机械/部件/03-托辊.md",
+      "x": 320,
+      "y": 200,
+      "width": 260,
+      "height": 80
+    },
+    {
+      "id": "d04",
+      "type": "file",
+      "file": "10-机械/部件/04-机架.md",
+      "x": 320,
+      "y": 300,
+      "width": 260,
+      "height": 80
+    },
+    {
+      "id": "d05",
+      "type": "file",
+      "file": "10-机械/部件/05-拉紧装置.md",
+      "x": 320,
+      "y": 400,
+      "width": 260,
+      "height": 80
+    },
+    {
+      "id": "d06",
+      "type": "file",
+      "file": "10-机械/部件/06-清扫器.md",
+      "x": 640,
+      "y": 0,
+      "width": 280,
+      "height": 80
+    },
+    {
+      "id": "d07",
+      "type": "file",
+      "file": "10-机械/部件/07-导料槽与漏斗.md",
+      "x": 640,
+      "y": 100,
+      "width": 280,
+      "height": 80
+    },
+    {
+      "id": "d08",
+      "type": "file",
+      "file": "10-机械/部件/08-卸料器.md",
+      "x": 640,
+      "y": 200,
+      "width": 280,
+      "height": 80
+    },
+    {
+      "id": "d09",
+      "type": "file",
+      "file": "10-机械/部件/09-保护装置.md",
+      "x": 640,
+      "y": 300,
+      "width": 280,
+      "height": 80
+    },
+    {
+      "id": "d10",
+      "type": "file",
+      "file": "10-机械/部件/10-总图与布置.md",
+      "x": 640,
+      "y": 400,
+      "width": 280,
+      "height": 80
+    }
+  ],
+  "edges": [
+    { "id": "e1", "fromNode": "root", "toNode": "d01" },
+    { "id": "e2", "fromNode": "root", "toNode": "d02" },
+    { "id": "e3", "fromNode": "root", "toNode": "d03" },
+    { "id": "e4", "fromNode": "root", "toNode": "d04" },
+    { "id": "e5", "fromNode": "root", "toNode": "d05" },
+    { "id": "e6", "fromNode": "root", "toNode": "d06" },
+    { "id": "e7", "fromNode": "root", "toNode": "d07" },
+    { "id": "e8", "fromNode": "root", "toNode": "d08" },
+    { "id": "e9", "fromNode": "root", "toNode": "d09" },
+    { "id": "e10", "fromNode": "root", "toNode": "d10" }
+  ]
+}
