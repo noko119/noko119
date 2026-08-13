@@ -1,0 +1,8 @@
+{
+  "colorGroups": [
+    { "query": "tag:#机械", "color": { "a": 1, "rgb": 3947580 } },
+    { "query": "tag:#工艺", "color": { "a": 1, "rgb": 12118442 } },
+    { "query": "tag:#图纸", "color": { "a": 1, "rgb": 5431474 } },
+    { "query": "tag:#计算机", "color": { "a": 1, "rgb": 11316396 } }
+  ]
+}
