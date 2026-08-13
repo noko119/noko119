@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>皮带机滚筒/托辊 · 原料采购清单</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo">采</div>
+        <div>
+          <h1>滚筒 / 托辊订单 → 原料采购清单</h1>
+          <p>双标规格（默认公制）· 工艺裕量可调 · 部件手选手填后再汇总</p>
+        </div>
+      </div>
+      <div class="meta">
+        <span class="chip">界面单位 mm / kg</span>
+        <span class="chip ok">不上传服务器 · 数据在本机</span>
+      </div>
+    </header>
+
+    <details class="card" id="processCard" open>
+      <summary class="details-head"><strong>工艺参数设置</strong> <span class="hint">轴/管/板余量与损耗，改完立刻重算下料</span></summary>
+      <div class="grid g6" id="processFields"></div>
+    </details>
+
+    <section class="card">
+      <h2>
+        1. 订单列表
+        <span class="hint">先录整批台份，再点某一行手选部件原料</span>
+      </h2>
+      <div class="btn-row no-print">
+        <button class="primary" id="addDrum">+ 滚筒</button>
+        <button class="primary" id="addIdler">+ 托辊</button>
+        <button class="ghost" id="loadDemo">载入示例订单</button>
+        <button class="ghost" id="clearOrders">清空订单</button>
+      </div>
+      <div class="table-wrap" id="orderTable"></div>
+    </section>
+
+    <section class="card" id="editorCard">
+      <h2 id="editorTitle">2. 部件原料手选 / 填写 <span class="hint">未勾选的不进采购清单</span></h2>
+      <div id="editorEmpty" class="empty">在上方点一行订单，填写成品尺寸，再手选钢管、圆钢、钢板和标准件。</div>
+      <div id="editorBody" hidden>
+        <div class="grid g5" id="finishedFields"></div>
+        <div class="bom-tools no-print">
+          <button class="primary" id="fillBom">按成品尺寸预填部件规格</button>
+          <button id="addPipe">+ 钢管</button>
+          <button id="addBar">+ 圆钢</button>
+          <button id="addPlate">+ 钢板</button>
+          <button id="addStd">+ 标准件</button>
+          <button id="addBought">+ 外购件</button>
+        </div>
+        <p class="hint" id="allowHint"></p>
+        <div class="table-wrap" id="bomTable"></div>
+      </div>
+    </section>
+
+    <section class="card" id="summaryCard">
+      <h2>3. 整批采购汇总 <span class="hint">同规格自动合并 · 含工艺裕量与板材损耗</span></h2>
+      <div class="totals" id="totals"></div>
+      <div id="summaryTables"></div>
+    </section>
+
+    <div class="toolbar no-print">
+      <button class="primary" id="copyBtn">复制采购清单</button>
+      <button id="csvBtn">导出 CSV</button>
+      <button id="printBtn">打印</button>
+      <button id="saveBtn">保存到本机</button>
+      <button id="loadBtn">读取本机</button>
+      <span class="muted" id="saveMsg"></span>
+    </div>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
