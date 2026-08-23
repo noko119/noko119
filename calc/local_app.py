@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -12,8 +13,6 @@ if str(ROOT) not in sys.path:
 
 from calc.extract_handbook import CONFIG, extract_pymupdf, parse_pages, read_handbook_path
 from calc.m01_capacity import CATALOG, run
-
-PY = Path(r"C:\Users\HP\miniconda3\python.exe")
 
 
 def ask(prompt: str, default: str | None = None) -> str:
@@ -38,8 +37,22 @@ def pause() -> None:
 
 
 def python_exe() -> Path:
-    if PY.is_file():
-        return PY
+    home = Path.home()
+    candidates = []
+    conda = os.environ.get("CONDA_PREFIX")
+    if conda:
+        candidates.append(Path(conda) / "python.exe")
+    candidates.extend(
+        [
+            home / "miniconda3" / "python.exe",
+            home / "Miniconda3" / "python.exe",
+            home / "anaconda3" / "python.exe",
+            Path(sys.executable),
+        ]
+    )
+    for path in candidates:
+        if path.is_file():
+            return path
     return Path(sys.executable)
 
 
