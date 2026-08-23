@@ -8,7 +8,10 @@ SolidWorks 皮带机路径分类提取 → 网页逐点张力计算（架构与 
 
 见 [`calc/README-m01.md`](./calc/README-m01.md)。
 
+本机双击 `打开本机计算.bat`（用 `C:\Users\HP\miniconda3\python.exe`）。菜单里可登记手册路径、抽页、计算。
+
 ```text
+打开本机计算.bat
 scripts\extract-handbook.bat --pages 80-95
 scripts\run-m01.bat --Q 800 --rho 1.6 --v 2.5
 ```
