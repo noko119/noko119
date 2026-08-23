@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>皮带机本机计算 · 运量带宽带速</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo">M1</div>
+        <div>
+          <h1>皮带机本机计算</h1>
+          <p>第 1 步：运量 → 截面 → 带宽 / 带速。数据只在本机，不上传手册。</p>
+        </div>
+      </div>
+      <div class="meta">
+        <span class="chip">双击即可用</span>
+        <span class="chip">三专家会签</span>
+        <span class="chip">DTⅡ / GB</span>
+      </div>
+    </header>
+
+    <section class="card">
+      <h2>本机 DTⅡ 手册</h2>
+      <p class="hint">手册 PDF 留在你电脑上，不上传。用资源管理器打开 PDF，翻到「输送能力 / 带宽 / 带速」，对照下面的表抄数字。</p>
+      <div class="actions">
+        <label class="filepick">选择本机手册 PDF<input id="pdfPick" type="file" accept="application/pdf" hidden /></label>
+        <span id="pdfName" class="chip">尚未选择</span>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>输入（按项目填，不会填就先用默认）</h2>
+      <div class="grid4">
+        <label>运量 Q (t/h)<input id="Q" type="number" step="any" value="800" /></label>
+        <label>堆积密度 (t/m³)<input id="rho" type="number" step="any" value="1.6" /></label>
+        <label>带速 v (m/s)<input id="v" type="number" step="any" value="2.5" /></label>
+        <label>倾角 (°，上运为正)<input id="incline" type="number" step="any" value="0" /></label>
+        <label>槽角 (°)<input id="trough" type="number" step="any" value="35" /></label>
+        <label>运行堆积角 (°)<input id="surcharge" type="number" step="any" value="20" /></label>
+        <label>最大粒度 (mm，可空)<input id="lump" type="number" step="any" placeholder="可空" /></label>
+      </div>
+      <div class="actions">
+        <button id="btnCalc" type="button">计算</button>
+        <button id="btnReset" class="ghost" type="button">恢复默认输入</button>
+      </div>
+    </section>
+
+    <section class="card" id="resultCard">
+      <h2>计算结果</h2>
+      <pre id="result">点「计算」后这里出数。截面表没按手册填时，只给所需截面，不推荐带宽。</pre>
+    </section>
+
+    <section class="card">
+      <h2>三专家会签</h2>
+      <div class="experts" id="experts"></div>
+    </section>
+
+    <section class="card">
+      <h2>手册表（存在本机浏览器，请对照原书填写）</h2>
+      <p class="hint">不填表也能算 A_req。要推荐带宽，至少填一行截面表。数字必须来自你的 DTⅡ 手册。</p>
+      <h3>截面表 A</h3>
+      <div class="table-wrap" id="tblSection"></div>
+      <h3>倾斜系数 k（倾角为 0 可不填）</h3>
+      <div class="table-wrap" id="tblIncline"></div>
+      <h3>粒度上限</h3>
+      <div class="table-wrap" id="tblLump"></div>
+      <div class="actions">
+        <button id="btnSave" type="button">保存手册表</button>
+        <button id="btnClear" class="ghost" type="button">清空已填表</button>
+      </div>
+    </section>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
