@@ -1,0 +1,171 @@
+:root {
+  --bg: #0f141c;
+  --bg2: #171e29;
+  --card: #1c2533;
+  --line: #2c384c;
+  --text: #e8eef7;
+  --muted: #93a0b5;
+  --primary: #3b82f6;
+  --ok: #22c55e;
+  --warn: #f59e0b;
+  --bad: #ef4444;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  --radius: 14px;
+}
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  min-height: 100%;
+  font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(1000px 500px at 10% -10%, rgba(59, 130, 246, 0.18), transparent 50%),
+    var(--bg);
+}
+
+.app { max-width: 1100px; margin: 0 auto; padding: 20px 20px 48px; }
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+.brand { display: flex; gap: 14px; align-items: center; }
+.logo {
+  width: 48px; height: 48px; border-radius: 12px;
+  display: grid; place-items: center; font-weight: 800;
+  background: linear-gradient(135deg, #3b82f6, #06b6d4);
+  box-shadow: var(--shadow);
+}
+.brand h1 { margin: 0; font-size: 20px; }
+.brand p { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
+.meta { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+.chip {
+  background: var(--bg2);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 18px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow);
+}
+.card h2 { margin: 0 0 12px; font-size: 16px; }
+.card h3 { margin: 16px 0 8px; font-size: 13px; color: var(--muted); font-weight: 600; }
+.hint { color: var(--muted); font-size: 13px; margin: 0 0 12px; }
+
+.grid4 {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+}
+label { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--muted); }
+input, button, textarea {
+  font: inherit;
+  color: var(--text);
+}
+input {
+  background: var(--bg2);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 8px 10px;
+}
+.actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+button {
+  background: var(--primary);
+  border: 0;
+  border-radius: 10px;
+  padding: 10px 16px;
+  cursor: pointer;
+  font-weight: 600;
+}
+label.filepick {
+  display: inline-flex;
+  align-items: center;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px 16px;
+  cursor: pointer;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+pre {
+  margin: 0;
+  white-space: pre-wrap;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--text);
+}
+
+.experts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+}
+.expert {
+  background: var(--bg2);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+.expert h3 { margin: 0 0 8px; color: var(--text); font-size: 14px; }
+.expert .verdict {
+  display: inline-block;
+  font-size: 12px;
+  border-radius: 999px;
+  padding: 2px 8px;
+  margin-left: 6px;
+}
+.verdict.no { background: rgba(239, 68, 68, 0.2); color: var(--bad); }
+.verdict.warn { background: rgba(245, 158, 11, 0.2); color: var(--warn); }
+.verdict.ok { background: rgba(34, 197, 94, 0.2); color: var(--ok); }
+.expert p { margin: 0; font-size: 13px; color: var(--muted); line-height: 1.55; }
+
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th, td { border: 1px solid var(--line); padding: 6px; }
+th { color: var(--muted); font-weight: 600; text-align: left; }
+td input { width: 100%; padding: 6px 8px; }
+.search-row { display: flex; gap: 10px; margin-top: 12px; }
+.search-row input { flex: 1; }
+#searchHits { margin-top: 12px; display: grid; gap: 8px; }
+.hit {
+  background: var(--bg2);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.hit strong { color: var(--text); }
+.hit button { margin-top: 8px; padding: 6px 10px; font-size: 12px; }
+textarea {
+  width: 100%;
+  margin-top: 8px;
+  background: var(--bg2);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 8px 10px;
+  resize: vertical;
+}
+.ext-item {
+  margin-top: 8px;
+  padding: 8px 10px;
+  border: 1px dashed var(--warn);
+  border-radius: 10px;
+  font-size: 13px;
+  color: var(--muted);
+}

@@ -1,14 +1,16 @@
 # 皮带机 PIDM
 
-SolidWorks 皮带机路径分类提取 → 网页逐点张力计算（架构与 UI 原型）。
+以本机 DTⅡ 手册为权威的选型计算与检索。手册 PDF 不上传。
+
+## 自己用（给设计院引用）
+
+1. 双击 `打开本机计算.bat`
+2. 载入本机 DTⅡ PDF（建立检索，文件不离开这台电脑）
+3. 检索手册原文，复制带页码的依据
+4. 对照手册把截面表抄进网页后再计算
+
+厂标、设计院额外规格写在「扩展」里，不会和手册原文混用。
 
 ## UI 原型
 
-见 [`ui-prototype/`](./ui-prototype/)：
-
-- 打开 `ui-prototype/index.html` 即可预览五面板界面
-- 或执行：
-
-```bash
-cd ui-prototype && python3 -m http.server 8080
-```
+见 [`ui-prototype/`](./ui-prototype/)。
