@@ -24,12 +24,21 @@
     </header>
 
     <section class="card">
-      <h2>本机 DTⅡ 手册</h2>
-      <p class="hint">手册 PDF 留在你电脑上，不上传。用资源管理器打开 PDF，翻到「输送能力 / 带宽 / 带速」，对照下面的表抄数字。</p>
-      <div class="actions">
-        <label class="filepick">选择本机手册 PDF<input id="pdfPick" type="file" accept="application/pdf" hidden /></label>
-        <span id="pdfName" class="chip">尚未选择</span>
+      <h2>本机 DTⅡ 手册（权威来源）</h2>
+      <p class="hint">手册 PDF 只在这台电脑读取，不上传。检索结果带页码原文，可直接给设计院引用。扫描件页可能没有文字。</p>
+      <div class="grid4">
+        <label>手册版本（引用时带上）<input id="edition" placeholder="例如 DTⅡ(A) 某某年版" /></label>
       </div>
+      <div class="actions">
+        <label class="filepick">载入本机手册 PDF 并建立检索<input id="pdfPick" type="file" accept="application/pdf" hidden /></label>
+        <span id="pdfName" class="chip">尚未载入</span>
+        <span id="pdfProgress" class="chip">未建索引</span>
+      </div>
+      <div class="search-row">
+        <input id="qSearch" placeholder="检索手册，例如：带宽 1000 托辊  或  倾斜系数" />
+        <button id="btnSearch" type="button">检索</button>
+      </div>
+      <div id="searchHits"></div>
     </section>
 
     <section class="card">
@@ -73,7 +82,23 @@
         <button id="btnClear" class="ghost" type="button">清空已填表</button>
       </div>
     </section>
+
+    <section class="card">
+      <h2>厂标 / 设计院规格扩展（必须标明非手册）</h2>
+      <p class="hint">这里只放手册没有、但你和设计院约定要用的规格。检索时会单独标成「扩展」，不能冒充 DTⅡ 原文。</p>
+      <div class="grid4">
+        <label>标题<input id="extTitle" placeholder="例如：某院托辊图号规则" /></label>
+        <label>对应手册页（可空）<input id="extPage" placeholder="可选" /></label>
+      </div>
+      <label>内容<textarea id="extBody" rows="3" placeholder="写清规格、和手册的差异、谁认可的"></textarea></label>
+      <div class="actions">
+        <button id="btnExtAdd" type="button">加入扩展</button>
+      </div>
+      <div id="extList"></div>
+    </section>
   </div>
+  <script src="vendor/pdf.min.js"></script>
+  <script src="handbook.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

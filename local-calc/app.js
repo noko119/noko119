@@ -245,20 +245,123 @@ $("btnClear").onclick = () => {
 const PDF_STORE = "noko119-m01-handbook-name";
 
 function showPdfName() {
-  $("pdfName").textContent = localStorage.getItem(PDF_STORE) || "尚未选择";
+  const el = $("pdfName");
+  const meta = handbookMeta();
+  if (el) el.textContent = localStorage.getItem(PDF_STORE) || "尚未载入";
+  if ($("edition") && meta.edition) $("edition").value = meta.edition;
+  if ($("pdfProgress") && meta.pages) {
+    $("pdfProgress").textContent = "已索引 " + meta.pages + " 页";
+  }
 }
 
-$("pdfPick").onchange = () => {
-  const f = $("pdfPick").files && $("pdfPick").files[0];
-  if (!f) return;
-  localStorage.setItem(PDF_STORE, f.name + "（仅本机记住文件名，文件没有上传）");
-  showPdfName();
-};
+function renderExtList() {
+  const rows = loadExtensions();
+  $("extList").innerHTML = rows.length
+    ? rows.map((r, i) => `<div class="ext-item"><strong>【扩展】${r.title || "未命名"}</strong>
+        <div>${r.body || ""}</div>
+        <button class="ghost" type="button" data-del="${i}">删除</button></div>`).join("")
+    : "<p class='hint'>还没有扩展。手册有的内容不要写在这里。</p>";
+  $("extList").querySelectorAll("[data-del]").forEach((btn) => {
+    btn.onclick = () => {
+      const all = loadExtensions();
+      all.splice(Number(btn.dataset.del), 1);
+      saveExtensions(all);
+      renderExtList();
+    };
+  });
+}
+
+async function renderHits(query) {
+  const pages = await readPages();
+  const hits = searchPages(pages, query, loadExtensions());
+  const edition = ($("edition") && $("edition").value.trim()) || handbookMeta().edition || "DTⅡ 手册";
+  if (!hits.length) {
+    $("searchHits").innerHTML = "<p class='hint'>没有命中。若刚载入过扫描版 PDF，该页可能没有文字。</p>";
+    return;
+  }
+  $("searchHits").innerHTML = hits.map((h, i) => {
+    const cite = citation(edition, h);
+    const scan = h.scan ? " · 可能是扫描页" : "";
+    return `<article class="hit">
+      <strong>${h.kind}</strong>　第 ${h.page} 页${scan}
+      <div>${h.excerpt}</div>
+      <button type="button" data-cite="${i}">复制给设计院的依据</button>
+    </article>`;
+  }).join("");
+  $("searchHits").querySelectorAll("[data-cite]").forEach((btn) => {
+    btn.onclick = async () => {
+      const h = hits[Number(btn.dataset.cite)];
+      const text = citation(edition, h);
+      try {
+        await navigator.clipboard.writeText(text);
+        btn.textContent = "已复制";
+      } catch {
+        window.prompt("复制下面这段", text);
+      }
+    };
+  });
+}
+
+const pdfPick = $("pdfPick");
+if (pdfPick) {
+  pdfPick.onchange = async () => {
+    const f = pdfPick.files && pdfPick.files[0];
+    if (!f) return;
+    localStorage.setItem(PDF_STORE, f.name + "（本机索引，未上传）");
+    showPdfName();
+    $("pdfProgress").textContent = "正在读手册…";
+    try {
+      const pages = await indexPdf(f, (i, n) => {
+        $("pdfProgress").textContent = "正在读第 " + i + " / " + n + " 页";
+      });
+      const meta = handbookMeta();
+      meta.pages = pages.length;
+      meta.file = f.name;
+      meta.edition = ($("edition") && $("edition").value.trim()) || meta.edition || "";
+      saveHandbookMeta(meta);
+      $("pdfProgress").textContent = "已索引 " + pages.length + " 页，可检索";
+    } catch (err) {
+      $("pdfProgress").textContent = "索引失败";
+      $("searchHits").innerHTML = "<p class='hint'>无法读取 PDF：" + err.message + "</p>";
+    }
+  };
+}
+
+if ($("edition")) {
+  $("edition").onchange = () => {
+    const meta = handbookMeta();
+    meta.edition = $("edition").value.trim();
+    saveHandbookMeta(meta);
+  };
+}
+
+if ($("btnSearch")) {
+  $("btnSearch").onclick = () => renderHits($("qSearch").value);
+  $("qSearch").addEventListener("keydown", (ev) => {
+    if (ev.key === "Enter") renderHits($("qSearch").value);
+  });
+}
+
+if ($("btnExtAdd")) {
+  $("btnExtAdd").onclick = () => {
+    const title = $("extTitle").value.trim();
+    const body = $("extBody").value.trim();
+    if (!title && !body) return;
+    const rows = loadExtensions();
+    rows.push({ title, body, page: $("extPage").value.trim() });
+    saveExtensions(rows);
+    $("extTitle").value = "";
+    $("extBody").value = "";
+    $("extPage").value = "";
+    renderExtList();
+  };
+}
 
 paintTables();
 showPdfName();
+renderExtList();
 renderExperts([
-  { title: "机械工程师", verdict: "warn", tag: "待计算", text: "先点计算。没有校对截面表之前，不出图号。" },
-  { title: "工艺工程师", verdict: "warn", tag: "待计算", text: "这页双击就能用，不要再去 Anaconda 里敲命令。" },
-  { title: "计算机工程师", verdict: "ok", tag: "入口已改", text: "双击「打开本机计算.bat」或直接打开本 html。数据在本机。" },
+  { title: "机械工程师", verdict: "warn", tag: "待计算", text: "先载入本机手册并检索。没有校对截面表之前，不出图号。" },
+  { title: "工艺工程师", verdict: "warn", tag: "待计算", text: "双击 bat 打开本页即可。给设计院只引用带页码的手册原文。" },
+  { title: "计算机工程师", verdict: "ok", tag: "手册在本机", text: "PDF 在本机建索引。扩展规格单独标注，不会和 DTⅡ 原文混在一起。" },
 ]);
