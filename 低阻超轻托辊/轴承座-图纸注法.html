@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>低阻超轻托辊 · 压铸轴承座 公差与技术要求</title>
+  <style>
+    :root {
+      --ink: #1a1d23;
+      --muted: #5b6270;
+      --line: #d8dce4;
+      --paper: #f4f1ea;
+      --card: #fff;
+      --accent: #8b1e1e;
+      --ok: #1f6b4a;
+      --warn: #8a5a00;
+      --chip: #eef1f6;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font: 15px/1.55 "Noto Sans SC", "Source Han Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+      color: var(--ink);
+      background: #e7e3da;
+    }
+    header {
+      background: var(--ink);
+      color: #fff;
+      padding: 22px 28px 18px;
+    }
+    header h1 { margin: 0 0 6px; font-size: 22px; font-weight: 650; }
+    header p { margin: 0; color: #c9ced8; font-size: 13px; }
+    .wrap { max-width: 1180px; margin: 0 auto; padding: 20px; }
+    .grid { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 16px; }
+    @media (max-width: 960px) { .grid { grid-template-columns: 1fr; } }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 16px 18px;
+    }
+    h2 { margin: 0 0 10px; font-size: 16px; border-left: 3px solid var(--accent); padding-left: 8px; }
+    h3 { margin: 16px 0 8px; font-size: 14px; }
+    img.dwg {
+      width: 100%;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { border: 1px solid var(--line); padding: 6px 8px; text-align: left; vertical-align: top; }
+    th { background: #f6f7fa; font-weight: 600; }
+    .tag { display: inline-block; padding: 1px 7px; border-radius: 999px; font-size: 12px; }
+    .tag-m { background: #e8f5ee; color: var(--ok); }
+    .tag-c { background: #f3eee4; color: var(--warn); }
+    .tag-a { background: #f8eaea; color: var(--accent); }
+    .note { color: var(--muted); font-size: 13px; }
+    pre.spec {
+      background: #f7f5f0;
+      border: 1px dashed #c9c2b4;
+      padding: 12px 14px;
+      font: 13px/1.5 ui-monospace, "Sarasa Mono SC", Consolas, monospace;
+      white-space: pre-wrap;
+      margin: 0;
+    }
+    .callouts { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 0; }
+    .callouts span { background: var(--chip); padding: 4px 8px; border-radius: 6px; font-size: 12px; }
+    svg.scheme { width: 100%; height: auto; background: #fbfaf7; border: 1px solid var(--line); border-radius: 6px; }
+    footer { text-align: center; color: var(--muted); font-size: 12px; padding: 8px 0 24px; }
+    .toc a { color: var(--accent); text-decoration: none; margin-right: 14px; font-size: 13px; }
+    @media print {
+      body { background: #fff; }
+      header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .card { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>低阻超轻托辊 · 铝合金压铸轴承座</h1>
+    <p>形位公差 · 尺寸公差 · 技术要求　｜　按 GB/T 1182、GB/T 1800、GB/T 10595、MT 821　｜　可直接补到 SolidWorks 图框</p>
+  </header>
+  <div class="wrap">
+    <nav class="toc card">
+      <a href="轴承座-零件图.html"><strong>轴承座零件图（A3）</strong></a>
+      <a href="#dwg">原图</a>
+      <a href="#judge">判定</a>
+      <a href="#datum">基准</a>
+      <a href="#size">尺寸公差</a>
+      <a href="#gdt">形位公差</a>
+      <a href="#tech">技术要求</a>
+      <a href="#perf">成辊指标</a>
+      <a href="#qc">检验</a>
+    </nav>
+
+    <section class="grid" id="dwg" style="margin-top:16px">
+      <article class="card">
+        <h2>1. 用户图纸（现状）</h2>
+        <img class="dwg" src="assets/bearing-housing-source.png" alt="压铸轴承座零件图" />
+        <p class="note">图面已有结构、迷宫槽、Φ100.1 H8 / Φ100 M7 和 1° 斜度，但没有基准、形位公差、粗糙度和完整技术要求。</p>
+      </article>
+      <article class="card" id="judge">
+        <h2>2. 零件判定</h2>
+        <table>
+          <tr><th>名称</th><td>铝合金压铸轴承座（端盖）</td></tr>
+          <tr><th>产品</th><td>低阻超轻托辊，辊径档 Φ194</td></tr>
+          <tr><th>轴承</th><td>6309（d45 × D100 × B25）</td></tr>
+          <tr><th>孔公差</th><td>Φ100 M7 — 与 MT 821「轴承孔为 M7」一致，不要改成 H7</td></tr>
+          <tr><th>工艺</th><td>ADC12 高压压铸 + 轴承孔 / 止口机加</td></tr>
+        </table>
+        <div class="callouts">
+          <span>外缘 Φ194</span>
+          <span>筋廓 Φ163</span>
+          <span>内腔 Φ108 / Φ110</span>
+          <span>宽 72</span>
+          <span>迷宫 12×5=60</span>
+          <span>筋距 7.5°（48 处）</span>
+          <span>2-Φ8×183</span>
+        </div>
+        <p class="note" style="margin-top:10px">Φ108 / Φ110 / Φ163 是否与管体过盈，本张零件图不能唯一确定，总装图确认后再把配装止口的同轴度落到具体直径上。</p>
+        <h3>图面必须补的 7 项</h3>
+        <ol class="note" style="margin:0;padding-left:18px">
+          <li>基准 A、B</li>
+          <li>形位公差框格</li>
+          <li>压铸面 / 机加工面分开</li>
+          <li>Φ194、72、2-Φ8、183 公差</li>
+          <li>粗糙度</li>
+          <li>材料与时效</li>
+          <li>技术要求条文</li>
+        </ol>
+      </article>
+    </section>
+
+    <section class="grid" id="datum" style="margin-top:16px">
+      <article class="card">
+        <h2>3. 基准体系</h2>
+        <svg class="scheme" viewBox="0 0 640 280" role="img" aria-label="基准与形位公差示意图">
+          <rect x="1" y="1" width="638" height="278" fill="#fbfaf7" stroke="#d8dce4"/>
+          <!-- simplified housing section -->
+          <path d="M70 70 h200 v20 h-30 v100 h30 v20 h-200 v-20 h40 v-100 h-40 z" fill="#e8edf4" stroke="#1a1d23" stroke-width="1.6"/>
+          <path d="M370 70 h200 v20 h-40 v100 h40 v20 h-200 v-20 h30 v-100 h-30 z" fill="#e8edf4" stroke="#1a1d23" stroke-width="1.6"/>
+          <line x1="40" y1="140" x2="600" y2="140" stroke="#8b1e1e" stroke-dasharray="6 4" stroke-width="1.2"/>
+          <text x="46" y="132" fill="#8b1e1e" font-size="12">A 轴线</text>
+          <!-- datum A triangle -->
+          <polygon points="320,140 332,162 308,162" fill="#fff" stroke="#8b1e1e"/>
+          <rect x="302" y="162" width="36" height="22" fill="#fff" stroke="#8b1e1e"/>
+          <text x="313" y="178" font-size="14" font-weight="700">A</text>
+          <!-- datum B on shoulder -->
+          <line x1="240" y1="90" x2="240" y2="50" stroke="#1f6b4a"/>
+          <polygon points="240,50 232,62 248,62" fill="#fff" stroke="#1f6b4a"/>
+          <rect x="222" y="28" width="36" height="22" fill="#fff" stroke="#1f6b4a"/>
+          <text x="233" y="44" font-size="14" font-weight="700">B</text>
+          <text x="262" y="46" font-size="12" fill="#1f6b4a">止口端面</text>
+          <!-- FCF -->
+          <g font-size="12" font-family="Noto Sans SC, Microsoft YaHei, sans-serif">
+            <rect x="40" y="208" width="250" height="26" fill="#fff" stroke="#1a1d23"/>
+            <text x="48" y="226">圆柱度 0.008　Φ100 M7 孔</text>
+            <rect x="304" y="208" width="292" height="26" fill="#fff" stroke="#1a1d23"/>
+            <text x="312" y="226">垂直度 0.03 相对 A　止口端面 B</text>
+          </g>
+        </svg>
+        <p class="note">基准 A = Φ100 M7 孔轴线（转）。基准 B = 轴承止口端面（轴向）。低阻成败看这两项：孔不圆、止口不垂直，轴承就会别劲。</p>
+      </article>
+      <article class="card">
+        <h2>4. 为什么是 M7，不是 H7</h2>
+        <p>座是铝，圈是钢。铝的线胀约 23×10⁻⁶，钢约 12×10⁻⁶。温度一升，孔比外圈胀得快，H7 会松，外圈爬行，阻力发黏。</p>
+        <p>MT 821 规定轴承孔为 <strong>M7</strong>。尺寸段 &gt;80～100 mm：</p>
+        <table>
+          <tr><th>公差带</th><th>上偏差</th><th>下偏差</th><th>极限</th></tr>
+          <tr><td>Φ100 M7</td><td>0</td><td>−0.035</td><td>100.000～99.965</td></tr>
+          <tr><td>Φ100.1 H8</td><td>+0.054</td><td>0</td><td>100.154～100.100</td></tr>
+        </table>
+        <p class="note">Φ100.1 H8 是让刀 / 引导，比 M7 段大 0.1，避免刮轴承外圈。两段必须同轴。</p>
+      </article>
+    </section>
+
+    <section class="card" id="size" style="margin-top:16px">
+      <h2>5. 尺寸公差</h2>
+      <h3>机加工（必须上图）</h3>
+      <table>
+        <tr>
+          <th>尺寸</th><th>公差带</th><th>极限尺寸 mm</th><th>粗糙度</th><th>面</th><th>作用</th>
+        </tr>
+        <tr>
+          <td>Φ100 M7</td><td>0 / −0.035</td><td>100.000～99.965</td><td>Ra 0.8</td>
+          <td><span class="tag tag-m">机加</span></td><td>6309 外圈定位</td>
+        </tr>
+        <tr>
+          <td>Φ100.1 H8</td><td>+0.054 / 0</td><td>100.154～100.100</td><td>Ra 1.6</td>
+          <td><span class="tag tag-m">机加</span></td><td>让刀、密封引导</td>
+        </tr>
+        <tr>
+          <td>轴承孔深度（B=25 段）</td><td>±0.10</td><td>按图台肩</td><td>Ra 1.6</td>
+          <td><span class="tag tag-m">机加</span></td><td>外圈全部落入 M7</td>
+        </tr>
+        <tr>
+          <td>止口端面 / 总宽 72</td><td>±0.10（止口）</td><td>—</td><td>Ra 1.6</td>
+          <td><span class="tag tag-m">机加</span></td><td>两端对称、轴向游隙</td>
+        </tr>
+        <tr>
+          <td>2-Φ8 贯穿</td><td>H11（+0.09/0）</td><td>8.09～8.00</td><td>Ra 6.3</td>
+          <td><span class="tag tag-m">钻</span></td><td>工艺孔</td>
+        </tr>
+        <tr>
+          <td>183</td><td>±0.15</td><td>183.15～182.85</td><td>—</td>
+          <td><span class="tag tag-m">钻</span></td><td>两孔中心距</td>
+        </tr>
+      </table>
+      <h3>压铸（未注按 DCTG6，建议把外缘写上）</h3>
+      <table>
+        <tr>
+          <th>尺寸</th><th>建议</th><th>面</th><th>说明</th>
+        </tr>
+        <tr>
+          <td>Φ194</td><td>±0.40 DCTG6；若与管体齐平则止口机加 js12</td>
+          <td><span class="tag tag-c">压铸</span></td><td>外缘 / 可能的摩擦盘</td>
+        </tr>
+        <tr>
+          <td>Φ163</td><td>±0.36 DCTG6</td>
+          <td><span class="tag tag-c">压铸</span></td><td>筋廓包络，非配合</td>
+        </tr>
+        <tr>
+          <td>Φ108 / Φ110</td><td>配装则 H8/H9；空刀则 DCTG6</td>
+          <td><span class="tag tag-a">待确认</span></td><td>总装图定</td>
+        </tr>
+        <tr>
+          <td>12×5=60 迷宫</td><td>槽距 ±0.20，槽深 3～6 按图</td>
+          <td><span class="tag tag-c">压铸</span></td><td>槽内禁止飞边</td>
+        </tr>
+        <tr>
+          <td>斜度 1°、R3、筋 3 / 4 / 6</td><td>斜度 ±0.5°；筋 DCTG6</td>
+          <td><span class="tag tag-c">压铸</span></td><td>减重，非配合</td>
+        </tr>
+      </table>
+      <p class="note">未注：压铸 GB/T 6414 DCTG6；机加 GB/T 1804-m；形位 GB/T 1184-K；角度 ±0.5°。</p>
+    </section>
+
+    <section class="card" id="gdt" style="margin-top:16px">
+      <h2>6. 形位公差（按 GB/T 1182 上框格）</h2>
+      <p class="note">成辊短辊、高带速径向圆跳动 0.5 mm（GB/T 10595 表 13）。两端座各留 Φ0.05 同轴度，剩下给管体和配装。</p>
+      <table>
+        <tr>
+          <th>#</th><th>被测</th><th>符号</th><th>值 mm</th><th>基准</th><th>框格写法</th><th>优先级</th>
+        </tr>
+        <tr>
+          <td>1</td><td>Φ100 M7 孔</td><td>圆柱度</td><td>0.008</td><td>—</td>
+          <td>圆柱度 0.008</td><td><span class="tag tag-a">必须</span></td>
+        </tr>
+        <tr>
+          <td>2</td><td>止口端面 B</td><td>平面度</td><td>0.02</td><td>—</td>
+          <td>平面度 0.02</td><td>必须</td>
+        </tr>
+        <tr>
+          <td>3</td><td>止口端面 B</td><td>垂直度</td><td>0.03</td><td>A</td>
+          <td>垂直度 0.03 | A</td><td><span class="tag tag-a">必须</span></td>
+        </tr>
+        <tr>
+          <td>4</td><td>Φ100.1 H8</td><td>同轴度</td><td>Φ0.03</td><td>A</td>
+          <td>同轴度 Φ0.03 | A</td><td>必须</td>
+        </tr>
+        <tr>
+          <td>5</td><td>管体配装止口（确认直径后）</td><td>同轴度</td><td>Φ0.05</td><td>A</td>
+          <td>同轴度 Φ0.05 | A</td><td><span class="tag tag-a">必须</span></td>
+        </tr>
+        <tr>
+          <td>6</td><td>管体配装止口端面</td><td>端面圆跳动</td><td>0.05</td><td>A</td>
+          <td>端面圆跳动 0.05 | A</td><td>建议</td>
+        </tr>
+        <tr>
+          <td>7</td><td>Φ194 外缘（机加或找正时）</td><td>径向圆跳动</td><td>0.08</td><td>A</td>
+          <td>径向圆跳动 0.08 | A</td><td>建议</td>
+        </tr>
+        <tr>
+          <td>8</td><td>2-Φ8</td><td>位置度</td><td>Φ0.20</td><td>A</td>
+          <td>位置度 Φ0.20 | A</td><td>一般</td>
+        </tr>
+      </table>
+    </section>
+
+    <section class="card" id="tech" style="margin-top:16px">
+      <h2>7. 技术要求（复制到图框）</h2>
+      <pre class="spec">技 术 要 求
+1. 材料：ADC12（GB/T 15115 / 等同 YL112），高压压铸。
+2. 未注铸造尺寸公差按 GB/T 6414 DCTG6；未注机加工尺寸按 GB/T 1804-m；
+   未注形位公差按 GB/T 1184 K 级；未注铸造圆角 R3，筋根 R1～R1.5。
+3. 铸造斜度 1°（按图示方向）。
+4. 压铸后 T5 时效（175 ℃ × 3～5 h，或按厂内工艺），时效后再机加工。
+5. Φ100 M7 为 6309 轴承孔，Ra 0.8 μm，禁止涂层，禁止研抛改变公差带。
+6. 机加工面：轴承孔、止口端面、（确认后的）管体配装止口。其余为压铸面。
+7. 锐边倒钝 0.2×45°；迷宫沟槽（12×5=60）内不得有飞边、铝屑、冷隔。
+8. 铸件不得有裂纹、冷隔。轴承孔及止口加工后，表层 2 mm 内不允许气孔、缩松。
+9. 除轴承孔、止口配合面外，允许铬酸盐钝化或喷涂；配合面涂防锈油。
+10. 本零件用于 Φ194 低阻超轻托辊。成辊性能应满足 GB/T 10595，低阻指标见企业标准。</pre>
+    </section>
+
+    <section class="grid" id="perf" style="margin-top:16px">
+      <article class="card">
+        <h2>8. 成辊指标（零件公差的目的）</h2>
+        <h3>GB/T 10595-2017</h3>
+        <table>
+          <tr><th>项目</th><th>指标</th></tr>
+          <tr><td>径向圆跳动</td><td>v≥3.15 m/s：L&lt;550 为 0.5；550～950 为 0.7</td></tr>
+          <tr><td>轴向窜动</td><td>500 N 下 ≤0.7 mm</td></tr>
+          <tr><td>旋转阻力</td><td>250 N、600 r/min；辊径&gt;108：防尘 3.0 N / 防水 4.35 N</td></tr>
+          <tr><td>停 1 h 再转</td><td>≤ 上值的 1.5 倍</td></tr>
+          <tr><td>防水</td><td>浸水 24 h，进水 ≤5 g</td></tr>
+          <tr><td>寿命</td><td>≥25 000 h，损坏率 ≤10%</td></tr>
+        </table>
+        <h3>低阻内控（建议）</h3>
+        <table>
+          <tr><td>空载旋转阻力</td><td>≤ 国标表 15 的 50%（Φ194 防水目标 ≤2.0 N，能到 1.5 N 更好）</td></tr>
+          <tr><td>迷宫</td><td>内外密封件不得接触（MT 821 3.4.6）</td></tr>
+        </table>
+      </article>
+      <article class="card" id="qc">
+        <h2>9. 检验</h2>
+        <table>
+          <tr><th>项目</th><th>方法</th><th>频次</th></tr>
+          <tr><td>Φ100 M7</td><td>M7 通止塞规 + 内径表</td><td>100%</td></tr>
+          <tr><td>圆柱度 0.008</td><td>3 截面×3 向，或 CMM</td><td>首件 + 抽</td></tr>
+          <tr><td>垂直度 0.03</td><td>CMM / 检具</td><td>首件 + 抽</td></tr>
+          <tr><td>同轴度 Φ0.05</td><td>CMM</td><td>首件 + 班抽</td></tr>
+          <tr><td>Ra 0.8</td><td>粗糙度仪</td><td>抽</td></tr>
+          <tr><td>迷宫飞边</td><td>目视</td><td>100%</td></tr>
+          <tr><td>气孔</td><td>机加面目视；首件剖切</td><td>首件 / 调模</td></tr>
+        </table>
+        <h3>还缺的图</h3>
+        <p class="note">这张只覆盖轴承座。轴（Φ45 配 6309 内圈）、管体过盈、密封件、总装轴向游隙，需要你继续把图发来，按同样口径补公差和技术要求。</p>
+      </article>
+    </section>
+  </div>
+  <footer>低阻超轻托辊 · 压铸轴承座 · 公差与技术要求 · 供 SolidWorks 补图使用</footer>
+</body>
+</html>
