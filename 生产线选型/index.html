@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>托辊生产线 · 中间物流 / 上料 / 料仓 部件选型</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo">选</div>
+        <div>
+          <h1>托辊加工生产线部件选型</h1>
+          <p>3.10 中间物流 · 3.11 机械手上料 · 3.12 智能料仓 · 四工种会审</p>
+        </div>
+      </div>
+      <div class="meta">
+        <span class="chip mech">机械</span>
+        <span class="chip elec">电气</span>
+        <span class="chip pneu">气动</span>
+        <span class="chip hyd">液压</span>
+        <span class="chip ok">数据在本机 · 改参数立刻重算</span>
+      </div>
+    </header>
+
+    <nav class="tabs" id="tabs">
+      <button class="tab active" data-panel="load">1. 工况载荷</button>
+      <button class="tab" data-panel="pick">2. 七类选型</button>
+      <button class="tab" data-panel="sys">3. 分系统</button>
+      <button class="tab" data-panel="bom">4. 采购 BOM</button>
+      <button class="tab" data-panel="review">5. 四工种会审</button>
+    </nav>
+
+    <section class="panel active" id="panel-load">
+      <div class="panel-grid">
+        <aside class="card">
+          <h3>可调工况</h3>
+          <p class="note">按任务书默认：管长 275–1600 mm，轴 320–1700 mm，v≤15 m/min，系统约 0.75 kW。改完立即重算。</p>
+          <form id="paramForm" class="params"></form>
+        </aside>
+        <div>
+          <div class="card schematic-card">
+            <h3>移载小车（四缸 + 四导柱 + 地轨）</h3>
+            <div id="schematic"></div>
+            <p class="caption">缸只出轴向力；侧向、偏载走导向杆/导向套；水平走直线导轨 + 齿条伺服。</p>
+          </div>
+          <div class="card" id="loadResult"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-pick">
+      <div id="pickGrid" class="pick-grid"></div>
+      <div class="card" id="pickDetail"></div>
+    </section>
+
+    <section class="panel" id="panel-sys">
+      <div id="sysBody"></div>
+    </section>
+
+    <section class="panel" id="panel-bom">
+      <div class="card">
+        <div class="card-head">
+          <h3>采购清单（按当前工况）</h3>
+          <div class="btn-row no-print">
+            <button class="btn primary" id="copyBtn">复制清单</button>
+            <button class="btn" id="csvBtn">导出 CSV</button>
+            <button class="btn" id="printBtn">打印</button>
+          </div>
+        </div>
+        <p class="note">数量按 1 台移载小车 + 1 套空中机械手 + 4 台上料机械手 + 6 类料仓。液压件只给压装工位，不进 3.10 的 0.75 kW。</p>
+        <div class="table-wrap" id="bomTable"></div>
+        <p class="muted" id="bomMsg"></p>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-review">
+      <div id="reviewBody" class="review-grid"></div>
+    </section>
+  </div>
+  <script src="calc.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
