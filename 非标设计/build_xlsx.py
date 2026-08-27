@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""生成《伺服步进丝杠齿条选型.xlsx》。公式在表内，用 Excel / WPS 打开即算。"""
+"""生成《非标设计》选型表：伺服步进丝杠齿条选型.xlsx。公式在表内，用 Excel / WPS 打开即算。"""
 from pathlib import Path
 
 from openpyxl import Workbook
@@ -161,7 +161,7 @@ def main():
 
     # ---- 输入 ----
     wsI = wb.create_sheet("输入", 0)
-    wsI["A1"] = "伺服 / 步进 / 丝杠 / 齿轮齿条选型（Excel）"
+    wsI["A1"] = "非标设计　伺服 / 步进 / 丝杠 / 齿轮齿条选型"
     sty(wsI["A1"], TITLE)
     wsI.merge_cells("A1:D1")
     wsI["A2"] = "黄格可改。改完先看「推荐」：结果旁边就是公式和代入数字。完整 22 步在「计算过程」。架子重量填实重，不要用别人估的 640 kg。"
@@ -325,7 +325,7 @@ def main():
 
     # ---- 推荐（结果 + 公式 + 代入，同一页）----
     wsR = wb.create_sheet("推荐", 1)
-    wsR["A1"] = "推荐结果（只读；右边是公式和代入）"
+    wsR["A1"] = "非标设计　推荐结果（只读；右边是公式和代入）"
     sty(wsR["A1"], TITLE)
     wsR.merge_cells("A1:D1")
     wsR["A2"] = '=输入!B4&"　总质量 "&TEXT(计算!B2,"0.00")&" kg　速度 "&TEXT(输入!B9,"0.00")&" m/min　工作推力 "&TEXT(计算!B6,"0.0")&" N。完整 22 步见「计算过程」。'
@@ -430,7 +430,7 @@ def main():
 
     # ---- 计算过程（给会审看步骤）----
     wsK = wb.create_sheet("计算过程", 2)
-    wsK["A1"] = "计算过程（随输入自动变，只读）"
+    wsK["A1"] = "非标设计　计算过程（随输入自动变，只读）"
     sty(wsK["A1"], TITLE)
     wsK.merge_cells("A1:D1")
     wsK["A2"] = "先看本页步骤，再看「推荐」「对照」。公式与「计算」页同一套。"
@@ -522,7 +522,7 @@ def main():
 
     # ---- 对照 ----
     wsD = wb.create_sheet("对照", 3)
-    wsD["A1"] = "丝杠方案 vs 齿轮齿条方案（同一载荷、同一速度）"
+    wsD["A1"] = "非标设计　丝杠方案 vs 齿轮齿条方案（同一载荷、同一速度）"
     sty(wsD["A1"], TITLE)
     wsD.merge_cells("A1:C1")
     headers = ["项目", "滚珠丝杠", "齿轮齿条"]
@@ -572,7 +572,7 @@ def main():
 
     # ---- 会审 ----
     wsE = wb.create_sheet("会审", 4)
-    wsE["A1"] = "工艺 / 机械 / 计算机"
+    wsE["A1"] = "非标设计　工艺 / 机械 / 计算机会审"
     sty(wsE["A1"], TITLE)
     wsE["A3"] = "机械工程师"
     sty(wsE["A3"], H, BLUE)
@@ -598,9 +598,10 @@ def main():
 
     # ---- 说明 ----
     wsP = wb.create_sheet("说明", 0)
-    wsP["A1"] = "怎么用"
+    wsP["A1"] = "非标设计"
     sty(wsP["A1"], TITLE)
     lines = [
+        "非标直线传动选型（伺服 / 步进 / 丝杠 / 齿轮齿条）。与托辊铝座无关。只改「输入」黄格。",
         "1. 只改「输入」黄色格子和下拉。",
         "2. 安装方向可选：水平、垂直向上、垂直向下、倾斜上坡、倾斜下坡。倾斜必须填倾角。",
         "3. 工件质量和机构质量分开填。不要用估计的 640 kg 当架子重。",
