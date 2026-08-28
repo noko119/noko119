@@ -1,0 +1,16 @@
+---
+description: 公差对话工作目录已锁定
+alwaysApply: true
+---
+
+工作目录锁定为 `C:\ABC\My Work\DA Std`。
+
+公差相关 Markdown 只写到：
+
+`C:\ABC\My Work\DA Std\公差技术要求\`
+
+- `现行标注.md`
+- `缺尺寸清单.md`
+- `工作口径.md`
+
+不要写到云端 `/workspace` 的其它位置。不要另出零件图网页。本地 Agent 继续本对话。
