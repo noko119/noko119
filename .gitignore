@@ -1,6 +1,7 @@
 # Git ignore
 
 # CAD / CAM source (keep path on the drawing card only)
+# Engineering drawings: never commit .slddrw
 *.sldprt
 *.sldasm
 *.slddrw
