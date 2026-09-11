@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { buildPathExport } from "./path-schema.js";
 
 /** @typedef {{ id:string, x:number, y:number, z:number, type:string, mainDrive?:boolean }} PathNode */
 
@@ -656,21 +657,40 @@ function bindChrome() {
   document.getElementById("btnDemo").addEventListener("click", loadDemo);
   document.getElementById("btnClear").addEventListener("click", clearPath);
   document.getElementById("btnExport").addEventListener("click", () => {
-    const payload = {
-      schema: "pidm.path.v0",
+    const payload = buildPathExport({
+      nodes: state.nodes,
       modeHint: state.mode,
-      nodes: state.nodes.map((n, i) => ({
-        seq: i + 1,
-        ...n,
-      })),
-      totalLength_m: +totalLength().toFixed(3),
-    };
+      line: {
+        line_id: "demo-slope-01",
+        name: "示例坡道（编辑器）",
+      },
+    });
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = "path-export.json";
+    a.download = "pidm-path-v0.json";
     a.click();
     URL.revokeObjectURL(a.href);
+
+    const chip = document.getElementById("closureChip");
+    if (chip) {
+      chip.textContent = payload.closure.ok ? "闭环：通过（含警告可继续）" : "闭环：有错误";
+      chip.className = "chip " + (payload.closure.ok ? "ok" : "warn");
+    }
+  });
+
+  document.getElementById("btnCheck")?.addEventListener("click", () => {
+    const payload = buildPathExport({ nodes: state.nodes, modeHint: state.mode });
+    const lines = payload.closure.items.map((i) => `[${i.level}] ${i.code}: ${i.message}`);
+    alert(
+      (payload.closure.ok ? "闭环检查：无 error\n\n" : "闭环检查：存在 error\n\n") +
+        (lines.join("\n") || "无项")
+    );
+    const chip = document.getElementById("closureChip");
+    if (chip) {
+      chip.textContent = payload.closure.ok ? "闭环：通过" : "闭环：有错误";
+      chip.className = "chip " + (payload.closure.ok ? "ok" : "warn");
+    }
   });
 
   document.querySelectorAll(".drum-btn").forEach((btn) => {

@@ -1,0 +1,165 @@
+:root {
+  --bg: #0f141c;
+  --card: #1c2533;
+  --line: #2c384c;
+  --text: #e8eef7;
+  --muted: #93a0b5;
+  --primary: #3b82f6;
+  --ok: #22c55e;
+  --bad: #ef4444;
+  --warn: #f59e0b;
+  --radius: 14px;
+}
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  min-height: 100%;
+  font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(900px 480px at 8% -10%, rgba(59,130,246,.18), transparent 50%),
+    var(--bg);
+}
+
+.app { max-width: 1280px; margin: 0 auto; padding: 16px 20px 32px; }
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+.brand { display: flex; gap: 14px; align-items: center; }
+.logo {
+  width: 48px; height: 48px; border-radius: 12px;
+  display: grid; place-items: center;
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  font-weight: 800;
+}
+.brand h1 { margin: 0; font-size: 1.25rem; }
+.brand p { margin: 4px 0 0; color: var(--muted); font-size: .9rem; }
+.meta { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.chip {
+  border: 1px solid var(--line);
+  background: #171e29;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: .82rem;
+  color: var(--muted);
+}
+.chip.link { color: #93c5fd; text-decoration: none; }
+.chip.ok { color: #86efac; border-color: rgba(34,197,94,.35); }
+.chip.bad { color: #fecaca; border-color: rgba(239,68,68,.35); }
+
+.toolbar {
+  display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+.btn {
+  border: 1px solid var(--line);
+  background: #171e29;
+  color: var(--text);
+  border-radius: 10px;
+  padding: 7px 12px;
+  cursor: pointer;
+  font: inherit;
+}
+.btn.primary { background: var(--primary); border-color: var(--primary); }
+.split { color: var(--muted); font-size: .88rem; display: flex; gap: 8px; align-items: center; }
+.split select {
+  background: #171e29; color: var(--text);
+  border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 12px;
+}
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 14px;
+}
+.card h3 { margin: 0 0 10px; font-size: .95rem; }
+.card h3 + .kv, .card h3 + #comparePanel { margin-bottom: 16px; }
+
+.kv { font-size: .82rem; color: var(--muted); line-height: 1.55; }
+.kv div { display: flex; justify-content: space-between; gap: 8px; border-bottom: 1px dashed #2a3648; padding: 4px 0; }
+.kv strong { color: var(--text); font-weight: 600; }
+
+.step {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  margin-bottom: 10px;
+  overflow: hidden;
+  background: #171e29;
+}
+.step > summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 12px 14px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: baseline;
+}
+.step > summary::-webkit-details-marker { display: none; }
+.step .sid {
+  color: #93c5fd;
+  font-weight: 700;
+  margin-right: 8px;
+}
+.step .sres { color: #86efac; font-variant-numeric: tabular-nums; }
+.step .body {
+  border-top: 1px solid var(--line);
+  padding: 12px 14px 14px;
+  font-size: .86rem;
+  color: var(--muted);
+}
+.step .body code, .step .body .formula {
+  display: block;
+  background: #0f141c;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px 10px;
+  color: #bfdbfe;
+  margin: 6px 0 10px;
+  white-space: pre-wrap;
+}
+.grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.mini h4 { margin: 0 0 6px; color: var(--text); font-size: .82rem; }
+.mini pre {
+  margin: 0;
+  background: #0f141c;
+  border-radius: 8px;
+  padding: 8px;
+  overflow: auto;
+  color: #cbd5e1;
+  font-size: .78rem;
+}
+
+.compare-table { width: 100%; border-collapse: collapse; font-size: .8rem; }
+.compare-table th, .compare-table td {
+  border-bottom: 1px solid var(--line);
+  padding: 6px 4px;
+  text-align: right;
+}
+.compare-table th:first-child, .compare-table td:first-child { text-align: left; }
+.pass { color: var(--ok); }
+.fail { color: var(--bad); }
+
+@media (max-width: 960px) {
+  .layout { grid-template-columns: 1fr; }
+  .grid2 { grid-template-columns: 1fr; }
+}

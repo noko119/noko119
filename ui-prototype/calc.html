@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>皮带机 PIDM · 逐步透明计算（GC-01）</title>
+  <link rel="stylesheet" href="calc.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo">PIDM</div>
+        <div>
+          <h1>逐步透明计算</h1>
+          <p>DTⅡ(A) · 算法 DTII-P2P-v0.1 · 对齐黄金算例 GC-01</p>
+        </div>
+      </div>
+      <div class="meta">
+        <a class="chip link" href="path-editor.html">← 路径编辑器</a>
+        <a class="chip link" href="index.html">五面板</a>
+        <span class="chip" id="algoChip">DTII-P2P-v0.1</span>
+        <span class="chip" id="passChip">对照：—</span>
+      </div>
+    </header>
+
+    <div class="toolbar">
+      <button class="btn primary" id="btnRun">运行 GC-01</button>
+      <button class="btn" id="btnExpandAll">全部展开</button>
+      <button class="btn" id="btnCollapseAll">全部折叠</button>
+      <label class="split">
+        双驱展示
+        <select id="splitSelect" disabled title="v0 主链先实现 1:1；2:1/1:2 二期">
+          <option value="1:1" selected>1:1</option>
+          <option value="2:1">2:1（二期）</option>
+          <option value="1:2">1:2（二期）</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="layout">
+      <aside class="card">
+        <h3>GC-01 输入（采用值）</h3>
+        <div id="inputPanel" class="kv"></div>
+        <h3>摘要结果</h3>
+        <div id="summaryPanel" class="kv"></div>
+        <h3>与期望对照</h3>
+        <div id="comparePanel"></div>
+      </aside>
+      <main class="card steps-card">
+        <h3>计算步骤（点击展开：输入 → 公式 → 中间值 → 结果）</h3>
+        <div id="stepsPanel"></div>
+      </main>
+    </div>
+  </div>
+  <script type="module" src="calc-app.js"></script>
+</body>
+</html>

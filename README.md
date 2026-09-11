@@ -25,7 +25,8 @@
 | 页面 | 说明 |
 |------|------|
 | `index.html` | SW 薄插件五面板（分类/点序/提取/审核/发送） |
-| `path-editor.html` | **网页路径编辑器**：2D 操作 ↔ 3D 操作，XYZ 表联动 |
+| `path-editor.html` | **路径编辑器**：2D↔3D，导出 `pidm.path.v0` |
+| `calc.html` | **逐步透明计算**：对齐 GC-01 |
 
 本地预览：
 
@@ -35,3 +36,4 @@ cd ui-prototype && python3 -m http.server 8080
 
 - 五面板：`http://localhost:8080/`
 - 路径编辑：`http://localhost:8080/path-editor.html`
+- 计算：`http://localhost:8080/calc.html`
