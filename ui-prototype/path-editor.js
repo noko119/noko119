@@ -79,8 +79,10 @@ function totalLength() {
 }
 
 function loadDemo() {
-  // GC-01 风格上运坡道（示意坐标）+ Auto Return 闭环
-  // 注：仓库中未见用户路径照片文件；用黄金算例形态先闭环。收到照片后可精确贴点。
+  // GC-01 风格上运坡道（示意坐标）+ Auto Return 闭环（大厂默认）
+  const modeEl = document.getElementById("profileMode");
+  if (modeEl) modeEl.value = "auto";
+  state.returnMode = "auto";
   const carry = [
     { id: uid(), x: 0, y: 0, z: 0, type: "tail" },
     { id: uid(), x: 40, y: 0, z: 0, type: "bend" },
@@ -98,8 +100,37 @@ function getReturnOffset() {
   return Number.isFinite(v) && v > 0 ? v : 1.2;
 }
 
+/** Belt Analyst: Auto Return | Advanced */
+function getProfileMode() {
+  const el = document.getElementById("profileMode");
+  const v = el?.value || state.returnMode || "auto";
+  return v === "advanced" ? "advanced" : "auto";
+}
+
 function isAdvancedReturn() {
-  return !!document.getElementById("returnAdvanced")?.checked;
+  return getProfileMode() === "advanced";
+}
+
+function isReturnNode(n) {
+  return !!(n && (n.branch === "return" || n.strand === "return"));
+}
+
+function updateReturnModeChip() {
+  const chip = document.getElementById("returnModeChip");
+  if (!chip) return;
+  const mode = getProfileMode();
+  chip.textContent = mode === "advanced" ? "模式：Advanced（回程可改）" : "模式：Auto Return（回程锁定）";
+  chip.className = "chip " + mode;
+}
+
+/**
+ * Auto 模式：改承载后自动重算回程（大厂默认）
+ * Advanced：不自动覆盖手改回程
+ */
+function maybeResyncReturn(opts = {}) {
+  if (!state.returnMeta && !opts.force) return false;
+  if (isAdvancedReturn() && !opts.force) return false;
+  return applyAutoReturn(null, { quiet: true, ...opts });
 }
 
 function applyAutoReturn(carryNodes, opts = {}) {
@@ -108,27 +139,64 @@ function applyAutoReturn(carryNodes, opts = {}) {
     if (!(opts.quiet || opts.silent)) alert("Auto Return 需要至少 2 个承载节点（尾→头）");
     return false;
   }
-  const mode = isAdvancedReturn() ? "advanced" : "auto";
+  const mode = getProfileMode();
   const { nodes, meta } = buildAutoReturnLoop(carry, {
     offset_m: getReturnOffset(),
     mode,
   });
+  // 尽量保持当前选中（若仍存在）
+  const prevSel = state.selectedId;
   state.nodes = nodes;
   state.returnMeta = meta;
   state.returnMode = mode;
-  state.selectedId = state.nodes[0]?.id ?? null;
+  if (!nodes.some((n) => n.id === prevSel)) {
+    state.selectedId = nodes.find((n) => !isReturnNode(n))?.id ?? nodes[0]?.id ?? null;
+  }
   rebuildSceneObjects();
   updateUI();
-  fitView();
+  if (!opts.skipFit) fitView();
+  updateReturnModeChip();
   if (!opts.quiet) {
     alert(
-      "Auto Return 完成（" + meta.return_mode + ")\n\n" +
+      "已按大厂 Auto Return 生成闭环\n\n" +
+        "模式：" + (mode === "advanced" ? "Advanced" : "Auto Return") + "\n" +
         "承载节点：" + meta.carry_count + "\n" +
         "回程节点：" + meta.return_count + "\n" +
-        "间距：" + meta.carry_return_offset_m + " m\n" +
-        "已形成闭环（蓝=承载，橙=回程）"
+        "间距：" + meta.carry_return_offset_m + " m\n\n" +
+        (mode === "auto"
+          ? "当前为 Auto：回程锁定，改承载会自动跟随。"
+          : "当前为 Advanced：可单独拖改橙色回程点。")
     );
   }
+  return true;
+}
+
+function setProfileMode(mode, { confirmSwitch = true } = {}) {
+  const next = mode === "advanced" ? "advanced" : "auto";
+  const prev = state.returnMode || "auto";
+  const sel = document.getElementById("profileMode");
+  if (sel) sel.value = next;
+
+  if (prev === "advanced" && next === "auto" && state.returnMeta) {
+    if (
+      confirmSwitch &&
+      !confirm("切回 Auto Return 将按承载重新生成回程，Advanced 下手改的回程会被覆盖。继续？")
+    ) {
+      if (sel) sel.value = "advanced";
+      return false;
+    }
+    state.returnMode = "auto";
+    applyAutoReturn(null, { quiet: true, force: true });
+  } else {
+    state.returnMode = next;
+    // 首次进入且还没有回程时，自动生成
+    if (next === "auto" && extractCarryChain(state.nodes).length >= 2) {
+      const hasReturn = state.nodes.some(isReturnNode);
+      if (!hasReturn) applyAutoReturn(null, { quiet: true, skipFit: true });
+    }
+  }
+  updateReturnModeChip();
+  updateUI();
   return true;
 }
 
@@ -452,22 +520,40 @@ function hitGround() {
 }
 
 function addNodeAt(pt, type = "node") {
+  // Auto 模式只允许往承载加点（回程由 Auto Return 重算）
+  if (!isAdvancedReturn() && isReturnNode(state.nodes.find((n) => n.id === state.selectedId))) {
+    // 若当前选中回程，改选最后一个承载点
+    const carry = extractCarryChain(state.nodes);
+    state.selectedId = carry.at(-1)?.id ?? null;
+  }
+
   const node = {
     id: uid(),
     x: +pt.x.toFixed(3),
     y: state.mode === "2d-xz" ? 0 : +pt.y.toFixed(3),
-    z: state.mode === "2d-xy" ? (state.nodes.at(-1)?.z ?? 0) : +pt.z.toFixed(3),
+    z: state.mode === "2d-xy" ? (extractCarryChain(state.nodes).at(-1)?.z ?? 0) : +pt.z.toFixed(3),
     type,
     mainDrive: type === "drive",
+    branch: "carry",
+    strand: "carry",
   };
   if (type === "drive") {
     state.nodes.forEach((n) => {
       if (n.type === "drive") n.mainDrive = false;
     });
   }
-  state.nodes.push(node);
+
+  if (!isAdvancedReturn() && state.nodes.some(isReturnNode)) {
+    // 插到承载末尾（第一个回程点之前）
+    const firstRet = state.nodes.findIndex(isReturnNode);
+    const idx = firstRet >= 0 ? firstRet : state.nodes.length;
+    state.nodes.splice(idx, 0, node);
+  } else {
+    state.nodes.push(node);
+  }
   state.selectedId = node.id;
   rebuildSceneObjects();
+  maybeResyncReturn({ skipFit: true });
   updateUI();
 }
 
@@ -475,31 +561,52 @@ function insertAfterSelected() {
   const idx = state.nodes.findIndex((n) => n.id === state.selectedId);
   if (idx < 0) return;
   const a = state.nodes[idx];
+  if (!isAdvancedReturn() && isReturnNode(a)) {
+    alert("Auto Return 模式：请在承载上插点。\n回程点会随承载自动重算。");
+    return;
+  }
   const b = state.nodes[idx + 1] || { x: a.x + 20, y: a.y, z: a.z };
+  // Auto：若下一点是回程，则插在承载末与回程之间
   const node = {
     id: uid(),
     x: +((a.x + b.x) / 2).toFixed(3),
     y: +((a.y + b.y) / 2).toFixed(3),
     z: +((a.z + b.z) / 2).toFixed(3),
     type: "node",
+    branch: "carry",
+    strand: "carry",
   };
   state.nodes.splice(idx + 1, 0, node);
   state.selectedId = node.id;
   rebuildSceneObjects();
+  maybeResyncReturn({ skipFit: true });
   updateUI();
 }
 
 function deleteSelected() {
   if (!state.selectedId) return;
+  const cur = state.nodes.find((n) => n.id === state.selectedId);
+  if (cur && isReturnNode(cur) && !isAdvancedReturn()) {
+    alert("Auto Return 模式不能删除回程点。\n请切换到 Advanced，或改承载后自动重算回程。");
+    return;
+  }
   state.nodes = state.nodes.filter((n) => n.id !== state.selectedId);
   state.selectedId = state.nodes[0]?.id ?? null;
   rebuildSceneObjects();
+  maybeResyncReturn({ skipFit: true });
   updateUI();
 }
 
 function beginDrag(nodeId, ev) {
   const node = state.nodes.find((n) => n.id === nodeId);
   if (!node) return;
+  // Auto Return：回程点锁定（对标 Belt Analyst）
+  if (!isAdvancedReturn() && isReturnNode(node)) {
+    alert("当前为 Auto Return 模式：回程点锁定。\n如需手改回程，请切换到 Advanced。");
+    state.selectedId = nodeId;
+    updateUI();
+    return;
+  }
   state.dragging = true;
   state.dragId = nodeId;
   controls.enabled = false;
@@ -552,9 +659,13 @@ function onDrag(ev) {
 
 function endDrag() {
   if (!state.dragging) return;
+  const dragged = state.nodes.find((n) => n.id === state.dragId);
   state.dragging = false;
   state.dragId = null;
   controls.enabled = true;
+  if (dragged && !isReturnNode(dragged)) {
+    maybeResyncReturn({ skipFit: true });
+  }
   updateUI();
 }
 
@@ -607,6 +718,7 @@ function bindPointer() {
 }
 
 function updateUI(rebuildTable = true) {
+  updateReturnModeChip();
   els.pointCount.textContent = `节点：${state.nodes.length}`;
   els.lengthChip.textContent = `展开长：${totalLength().toFixed(2)} m`;
 
@@ -747,7 +859,13 @@ function bindChrome() {
   document.getElementById("btnDemo").addEventListener("click", loadDemo);
   document.getElementById("btnAutoReturn")?.addEventListener("click", () => applyAutoReturn());
   document.getElementById("returnOffset")?.addEventListener("change", () => {
-    if (state.returnMeta && state.returnMode === "auto") applyAutoReturn(null, { quiet: true });
+    if (getProfileMode() === "auto") applyAutoReturn(null, { quiet: true, skipFit: true });
+    else if (state.returnMeta && confirm("Advanced 下改间距将重算回程并覆盖手改，继续？")) {
+      applyAutoReturn(null, { quiet: true, skipFit: true, force: true });
+    }
+  });
+  document.getElementById("profileMode")?.addEventListener("change", (ev) => {
+    setProfileMode(ev.target.value);
   });
   document.getElementById("btnClear").addEventListener("click", clearPath);
   document.getElementById("btnExport").addEventListener("click", () => {
@@ -856,6 +974,11 @@ function bindChrome() {
   const applyForm = () => {
     const node = state.nodes.find((n) => n.id === state.selectedId);
     if (!node) return;
+    if (!isAdvancedReturn() && isReturnNode(node)) {
+      alert("Auto Return 模式：回程锁定，不能手改。\n请切换 Advanced。");
+      updateUI();
+      return;
+    }
     node.type = els.fType.value;
     node.x = parseFloat(els.fX.value) || 0;
     node.y = parseFloat(els.fY.value) || 0;
@@ -871,6 +994,7 @@ function bindChrome() {
       node.mainDrive = false;
     }
     rebuildSceneObjects();
+    if (!isReturnNode(node)) maybeResyncReturn({ skipFit: true });
     updateUI();
   };
   ["fType", "fX", "fY", "fZ", "fMainDrive"].forEach((id) => {

@@ -44,7 +44,6 @@
         <span class="label">快捷</span>
         <button class="btn" id="btnFit">适应窗口</button>
         <button class="btn" id="btnDemo">载入示例坡道</button>
-        <button class="btn" id="btnAutoReturn">Auto Return 回程</button>
         <button class="btn" id="btnClear">清空</button>
         <button class="btn" id="btnCheck">闭环检查</button>
         <button class="btn" id="btnExtract">提取几何</button>
@@ -52,11 +51,16 @@
         <button class="btn" id="btnExport">导出 JSON</button>
       </div>
       <div class="tool-group">
-        <span class="label">回程</span>
+        <span class="label">回程模式</span>
+        <select id="profileMode" title="对标 Belt Analyst：Auto Return / Advanced">
+          <option value="auto" selected>Auto Return（回程跟随承载）</option>
+          <option value="advanced">Advanced（承载/回程分改）</option>
+        </select>
         <label class="inline">间距
           <input type="number" id="returnOffset" value="1.2" min="0.2" max="5" step="0.1" style="width:4.2rem" title="承载-回程法向间距 (m)" /> m
         </label>
-        <label class="inline check"><input type="checkbox" id="returnAdvanced" /> Advanced 可手改回程</label>
+        <button class="btn" id="btnAutoReturn">生成/刷新回程</button>
+        <span class="chip" id="returnModeChip">模式：Auto Return</span>
       </div>
     </div>
 
@@ -98,7 +102,9 @@
           <li><strong>3D</strong>：左键选/拖点，中键或 Alt+左键旋转，滚轮缩放；拖点改 XYZ。</li>
           <li><strong>2D 俯视</strong>：改 X/Y；Z 用右侧表或选中后改高程。</li>
           <li><strong>2D 侧视</strong>：改 X/Z（看坡度/高差）。</li>
-          <li>表格改坐标会立刻同步回 2D/3D。</li>
+          <li><strong>Auto Return（默认，大厂）</strong>：只画/改承载；回程自动生成并锁定跟随。</li>
+          <li><strong>Advanced</strong>：可单独改回程；切回 Auto 会按承载重算回程。</li>
+          <li>颜色：蓝=承载，橙=回程，黄=闭合段。</li>
         </ul>
       </aside>
 

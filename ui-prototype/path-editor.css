@@ -282,3 +282,14 @@ label.inline input[type=number] { background:#0f172a; border:1px solid #334155; 
 .path-legend i { display:inline-block; width:18px; height:3px; margin-right:4px; vertical-align:middle; }
 .path-legend .carry { background:#38bdf8; }
 .path-legend .return { background:#fb923c; }
+
+#profileMode {
+  background: #0f172a;
+  color: #e2e8f0;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 12px;
+}
+#returnModeChip.auto { background:#0c4a6e; color:#bae6fd; }
+#returnModeChip.advanced { background:#7c2d12; color:#fed7aa; }
