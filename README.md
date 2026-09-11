@@ -5,9 +5,18 @@
 - 网页：订阅获客、路径录入（**2D + 3D 双操作**）、逐点张力/功率计算、报告冻结
 - SW 薄插件：路径同步成骨架、DTⅡ分类、点序、几何提取、回传
 
-详细强制规则见：[`docs/PROJECT_RULES.md`](./docs/PROJECT_RULES.md)
+## 文档
 
-网页工具材料准备表：[`docs/WEB_TOOL_MATERIALS_CHECKLIST.md`](./docs/WEB_TOOL_MATERIALS_CHECKLIST.md)
+| 文档 | 说明 |
+|------|------|
+| [`docs/PROJECT_RULES.md`](./docs/PROJECT_RULES.md) | 强制产品规则 |
+| [`docs/DESIGN_OVERVIEW.md`](./docs/DESIGN_OVERVIEW.md) | **设计总览 / MVP 里程碑** |
+| [`docs/DTII_SEGMENT_DICTIONARY.md`](./docs/DTII_SEGMENT_DICTIONARY.md) | DTⅡ 十二大项字典 |
+| [`docs/PATH_INPUT_FIELD_SCHEMA.md`](./docs/PATH_INPUT_FIELD_SCHEMA.md) | 路径字段与闭环检查 |
+| [`docs/WEB_SW_DATA_CONTRACT_DRAFT.md`](./docs/WEB_SW_DATA_CONTRACT_DRAFT.md) | 网页↔SW 契约 |
+| [`docs/DEFAULT_COEFFICIENTS_V0.md`](./docs/DEFAULT_COEFFICIENTS_V0.md) | 默认系数 + GC-01 锚定 |
+| [`docs/WEB_TOOL_MATERIALS_CHECKLIST.md`](./docs/WEB_TOOL_MATERIALS_CHECKLIST.md) | 材料准备表 |
+| [`docs/golden-cases/GC-01_blast_furnace_feeder.md`](./docs/golden-cases/GC-01_blast_furnace_feeder.md) | 黄金算例 |
 
 ## UI 原型
 
