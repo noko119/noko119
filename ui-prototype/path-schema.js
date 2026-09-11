@@ -2,18 +2,14 @@
  * pidm.path.v0 — build export payload + closure checks
  * Spec: docs/PATH_INPUT_FIELD_SCHEMA.md
  */
+import { extractGeometryFromPath, segmentGeometry } from "./calc/path-extract.js";
 
 const DRUM_TYPES = new Set(["tail", "head", "drive", "bend", "takeup"]);
 
 /** Guess major/sub from geometry between two nodes (draft classify). */
 export function classifySegmentDraft(from, to) {
-  const dx = to.x - from.x;
-  const dy = to.y - from.y;
-  const dz = to.z - from.z;
-  const horiz = Math.hypot(dx, dy);
-  const L = Math.hypot(dx, dy, dz);
-  const deltaDeg = (Math.atan2(dz, horiz) * 180) / Math.PI;
-  const absD = Math.abs(deltaDeg);
+  const g = segmentGeometry(from, to);
+  const absD = Math.abs(g.delta_deg);
 
   let major_id = "carryH";
   let sub_id = "carryH.1";
@@ -22,7 +18,7 @@ export function classifySegmentDraft(from, to) {
   if (absD < 2) {
     major_id = "carryH";
     sub_id = "carryH.1";
-  } else if (deltaDeg >= 2) {
+  } else if (g.delta_deg >= 2) {
     major_id = "carryI";
     sub_id = "carryI.1"; // 上运
   } else {
@@ -34,9 +30,9 @@ export function classifySegmentDraft(from, to) {
     major_id,
     sub_id,
     branch,
-    L: +L.toFixed(3),
-    delta_deg: +deltaDeg.toFixed(4),
-    H: +dz.toFixed(3),
+    L: g.L_m,
+    delta_deg: g.delta_deg,
+    H: g.H_m,
   };
 }
 
@@ -184,11 +180,6 @@ export function buildPathExport({ nodes, line = {}, modeHint = "3d" }) {
   const segments = buildSegments(mappedNodes);
   const point_order = buildPointOrder(mappedNodes);
 
-  const totalL = segments.reduce((s, g) => s + g.L, 0);
-  const totalH = mappedNodes.length
-    ? mappedNodes[mappedNodes.length - 1].z - mappedNodes[0].z
-    : 0;
-
   const path = {
     schema: "pidm.path.v0",
     modeHint,
@@ -205,15 +196,20 @@ export function buildPathExport({ nodes, line = {}, modeHint = "3d" }) {
       coord_system: "Z_up_right",
       length_unit: "m",
       open_path: true,
-      Ln: line.Ln ?? +totalL.toFixed(3),
-      H: line.H ?? +totalH.toFixed(3),
+      FS1_N: line.FS1_N,
+      FS2_N: line.FS2_N,
+      power_split: line.power_split,
     },
     nodes: mappedNodes,
     segments,
     point_order,
-    totalLength_m: +totalL.toFixed(3),
   };
 
+  // 强制：导出时正确提取几何并回写 L/H/δ/Ln
+  const extract = extractGeometryFromPath(path, {
+    geometry_version: line.geometry_version || "G-web-1",
+  });
+  path.extract = extract;
   path.closure = runClosureChecks(path);
   return path;
 }

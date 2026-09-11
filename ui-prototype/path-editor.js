@@ -671,12 +671,52 @@ function bindChrome() {
     a.download = "pidm-path-v0.json";
     a.click();
     URL.revokeObjectURL(a.href);
+    applyClosureChip(payload);
+    renderExtractSummary(payload.extract);
+  });
 
-    const chip = document.getElementById("closureChip");
-    if (chip) {
-      chip.textContent = payload.closure.ok ? "闭环：通过（含警告可继续）" : "闭环：有错误";
-      chip.className = "chip " + (payload.closure.ok ? "ok" : "warn");
+  document.getElementById("btnExtract")?.addEventListener("click", () => {
+    const payload = buildPathExport({
+      nodes: state.nodes,
+      modeHint: state.mode,
+      line: { line_id: "demo-slope-01", name: "示例坡道（编辑器）" },
+    });
+    applyClosureChip(payload);
+    renderExtractSummary(payload.extract);
+    const lg = payload.extract.line_geometry;
+    alert(
+      `网页几何提取完成（source=web_path）\n\n` +
+        `L = ${lg.L_m} m\n` +
+        `Ln = ${lg.Ln_m} m\n` +
+        `H = ${lg.H_m} m\n` +
+        `δ = ${lg.delta_deg} °\n` +
+        `区段数 = ${lg.segment_count}\n` +
+        `滚筒数 = ${payload.extract.drums.length}`
+    );
+  });
+
+  document.getElementById("btnCalc")?.addEventListener("click", () => {
+    const payload = buildPathExport({
+      nodes: state.nodes,
+      modeHint: state.mode,
+      line: { line_id: "demo-slope-01", name: "示例坡道（编辑器）" },
+    });
+    if (!payload.closure.ok) {
+      const errs = payload.closure.items.filter((i) => i.level === "error").map((i) => i.message);
+      alert("闭环存在 error，无法进入计算：\n\n" + errs.join("\n"));
+      applyClosureChip(payload);
+      return;
     }
+    sessionStorage.setItem(
+      "pidm.calc.bundle",
+      JSON.stringify({
+        schema: "pidm.bundle.v0",
+        path: payload,
+        extract: payload.extract,
+        from: "path-editor",
+      })
+    );
+    window.location.href = "calc.html?source=path";
   });
 
   document.getElementById("btnCheck")?.addEventListener("click", () => {
@@ -686,12 +726,39 @@ function bindChrome() {
       (payload.closure.ok ? "闭环检查：无 error\n\n" : "闭环检查：存在 error\n\n") +
         (lines.join("\n") || "无项")
     );
-    const chip = document.getElementById("closureChip");
-    if (chip) {
-      chip.textContent = payload.closure.ok ? "闭环：通过" : "闭环：有错误";
-      chip.className = "chip " + (payload.closure.ok ? "ok" : "warn");
-    }
+    applyClosureChip(payload);
+    renderExtractSummary(payload.extract);
   });
+
+  function applyClosureChip(payload) {
+    const chip = document.getElementById("closureChip");
+    if (!chip) return;
+    chip.textContent = payload.closure.ok ? "闭环：通过" : "闭环：有错误";
+    chip.className = "chip " + (payload.closure.ok ? "ok" : "warn");
+  }
+
+  function renderExtractSummary(extract) {
+    const el = document.getElementById("segSummary");
+    if (!el || !extract) return;
+    const lg = extract.line_geometry;
+    el.innerHTML = `
+      <div class="kv-mini">
+        <div><span>来源</span><strong>${extract.source}</strong></div>
+        <div><span>L</span><strong>${lg.L_m} m</strong></div>
+        <div><span>Ln</span><strong>${lg.Ln_m} m</strong></div>
+        <div><span>H</span><strong>${lg.H_m} m</strong></div>
+        <div><span>δ</span><strong>${lg.delta_deg} °</strong></div>
+        <div><span>版本</span><strong>${extract.geometry_version}</strong></div>
+      </div>
+      <ul class="seg-list">
+        ${extract.segments
+          .map(
+            (s) =>
+              `<li>${s.path_segment_id}: L=${s.L_m} · H=${s.H_m} · δ=${s.delta_deg}°</li>`
+          )
+          .join("")}
+      </ul>`;
+  }
 
   document.querySelectorAll(".drum-btn").forEach((btn) => {
     btn.addEventListener("dragstart", (ev) => {

@@ -254,6 +254,19 @@ tbody input:focus {
   line-height: 1.5;
 }
 .seg-summary strong { color: var(--text); }
+.seg-summary .kv-mini {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 10px;
+  margin-bottom: 8px;
+}
+.seg-summary .kv-mini span { color: var(--muted); margin-right: 6px; }
+.seg-summary .seg-list {
+  margin: 0;
+  padding-left: 1.1rem;
+  max-height: 180px;
+  overflow: auto;
+}
 
 @media (max-width: 1100px) {
   .workspace {

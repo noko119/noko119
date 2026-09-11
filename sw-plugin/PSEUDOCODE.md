@@ -93,7 +93,7 @@ END FUNCTION
 FUNCTION ExportExtract(path, map) -> extractJson:
   segs = []
   FOR EACH s IN path.segments:
-    L = MeasureLength(s.from_node_id, s.to_node_id) / 1000  // mm→m
+    L = MeasureLength(s.from_node_id, s.to_node_id)  // API 单位已是米
     segs.Add({
       path_segment_id: s.id,
       L_m: L,

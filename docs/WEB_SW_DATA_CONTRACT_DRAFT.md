@@ -12,7 +12,8 @@
 | 数据 | 写入方 | 权威 |
 |------|--------|------|
 | 业务路径（节点/区段分类意图） | Web | Web 录入为先 |
-| 工程几何正式值（提数后） | SW | 同步进 SW 并提取后，**几何以 SW 为准** |
+| 路径几何提取（L/H/δ/Ln/点序） | Web | **Web 必须正确提取**，可直接驱动计算（`source=web_path`） |
+| 装配核对 / 模型专有量 | SW | SW 回传后可升 `geometry_version` 并复算；与 Web 冲突以核对规则解决 |
 | 计算结果 | Web 计算服务 | Web |
 | 字典 major/sub | 共用 | `DTII_SEGMENT_DICTIONARY.md` |
 

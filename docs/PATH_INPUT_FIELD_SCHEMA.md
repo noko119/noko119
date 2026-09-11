@@ -104,7 +104,8 @@ Project
 - `H_calc = z_to − z_from`  
 - `delta_calc = atan2(H, √(dx²+dy²))`
 
-用户确认后写入 `L/H/delta_deg`；若 XYZ 变则 `extract_status=stale`。
+**网页强制正确提取**：由 XYZ 按公式计算后写入 `L/H/delta_deg/Ln`，并生成 `pidm.extract.v0`（`source=web_path`）；可直接驱动计算。  
+用户可确认分类；若 XYZ 再变则 `extract_status=stale`，必须重提。
 
 ---
 

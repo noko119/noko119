@@ -20,12 +20,14 @@
         <a class="chip link" href="path-editor.html">← 路径编辑器</a>
         <a class="chip link" href="index.html">五面板</a>
         <span class="chip" id="algoChip">DTII-P2P-v0.2</span>
+        <span class="chip" id="sourceChip">几何：—</span>
         <span class="chip" id="passChip">对照：—</span>
       </div>
     </header>
 
     <div class="toolbar">
       <button class="btn primary" id="btnRun">运行 GC-01</button>
+      <button class="btn" id="btnRunPath">运行路径提取包</button>
       <button class="btn" id="btnExpandAll">全部展开</button>
       <button class="btn" id="btnCollapseAll">全部折叠</button>
       <label class="split">
@@ -40,7 +42,7 @@
 
     <div class="layout">
       <aside class="card">
-        <h3>GC-01 输入（采用值）</h3>
+        <h3 id="inputTitle">GC-01 输入（采用值）</h3>
         <div id="inputPanel" class="kv"></div>
         <h3>摘要结果</h3>
         <div id="summaryPanel" class="kv"></div>
