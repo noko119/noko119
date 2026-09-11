@@ -1,0 +1,10 @@
+{
+  "attachmentFolderPath": "80-附件",
+  "alwaysUpdateLinks": true,
+  "newFileLocation": "folder",
+  "newFileFolderPath": "30-图纸卡片",
+  "useMarkdownLinks": false,
+  "newLinkFormat": "shortest",
+  "showUnsupportedFiles": true,
+  "promptDelete": false
+}
