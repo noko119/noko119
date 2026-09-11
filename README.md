@@ -7,6 +7,8 @@
 
 详细强制规则见：[`docs/PROJECT_RULES.md`](./docs/PROJECT_RULES.md)
 
+网页工具材料准备表：[`docs/WEB_TOOL_MATERIALS_CHECKLIST.md`](./docs/WEB_TOOL_MATERIALS_CHECKLIST.md)
+
 ## UI 原型
 
 见 [`ui-prototype/`](./ui-prototype/)：
