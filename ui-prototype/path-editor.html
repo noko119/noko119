@@ -44,11 +44,19 @@
         <span class="label">快捷</span>
         <button class="btn" id="btnFit">适应窗口</button>
         <button class="btn" id="btnDemo">载入示例坡道</button>
+        <button class="btn" id="btnAutoReturn">Auto Return 回程</button>
         <button class="btn" id="btnClear">清空</button>
         <button class="btn" id="btnCheck">闭环检查</button>
         <button class="btn" id="btnExtract">提取几何</button>
         <button class="btn primary" id="btnCalc">提取并计算</button>
         <button class="btn" id="btnExport">导出 JSON</button>
+      </div>
+      <div class="tool-group">
+        <span class="label">回程</span>
+        <label class="inline">间距
+          <input type="number" id="returnOffset" value="1.2" min="0.2" max="5" step="0.1" style="width:4.2rem" title="承载-回程法向间距 (m)" /> m
+        </label>
+        <label class="inline check"><input type="checkbox" id="returnAdvanced" /> Advanced 可手改回程</label>
       </div>
     </div>
 

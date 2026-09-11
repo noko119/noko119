@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { buildPathExport } from "./path-schema.js";
+import { buildAutoReturnLoop, extractCarryChain } from "./calc/auto-return.js";
 
 /** @typedef {{ id:string, x:number, y:number, z:number, type:string, mainDrive?:boolean }} PathNode */
 
@@ -13,6 +14,7 @@ const TYPE_LABEL = {
   takeup: "拉紧",
 };
 
+const RETURN_COLOR = 0xfb923c;
 const TYPE_COLOR = {
   node: 0x93c5fd,
   tail: 0xa78bfa,
@@ -31,6 +33,8 @@ const state = {
   dragging: false,
   dragId: null,
   planeY: 0,
+  returnMeta: null,
+  returnMode: "auto", // auto | advanced
 };
 
 const els = {
@@ -52,7 +56,7 @@ const els = {
 };
 
 let renderer, scene, camera, controls;
-let pathLine, pointGroup, gridHelper, axesHelper;
+let pathLine, returnLine, closeLine, pointGroup, gridHelper, axesHelper;
 let raycaster, pointer, dragPlane, dragOffset;
 let groundMesh;
 
@@ -68,12 +72,16 @@ function dist(a, b) {
 function totalLength() {
   let L = 0;
   for (let i = 1; i < state.nodes.length; i++) L += dist(state.nodes[i - 1], state.nodes[i]);
+  if (state.returnMeta?.closed_loop && state.nodes.length >= 3) {
+    L += dist(state.nodes[state.nodes.length - 1], state.nodes[0]);
+  }
   return L;
 }
 
 function loadDemo() {
-  // 简化坡道：尾→改向→爬坡→头驱（示意，非 GC-01 精确坐标）
-  state.nodes = [
+  // GC-01 风格上运坡道（示意坐标）+ Auto Return 闭环
+  // 注：仓库中未见用户路径照片文件；用黄金算例形态先闭环。收到照片后可精确贴点。
+  const carry = [
     { id: uid(), x: 0, y: 0, z: 0, type: "tail" },
     { id: uid(), x: 40, y: 0, z: 0, type: "bend" },
     { id: uid(), x: 120, y: 0, z: 25, type: "node" },
@@ -81,15 +89,54 @@ function loadDemo() {
     { id: uid(), x: 260, y: 0, z: 57, type: "drive", mainDrive: true },
     { id: uid(), x: 280, y: 0, z: 57, type: "head" },
   ];
-  state.selectedId = state.nodes[0].id;
+  applyAutoReturn(carry, { quiet: true });
+}
+
+function getReturnOffset() {
+  const el = document.getElementById("returnOffset");
+  const v = el ? parseFloat(el.value) : 1.2;
+  return Number.isFinite(v) && v > 0 ? v : 1.2;
+}
+
+function isAdvancedReturn() {
+  return !!document.getElementById("returnAdvanced")?.checked;
+}
+
+function applyAutoReturn(carryNodes, opts = {}) {
+  const carry = extractCarryChain(carryNodes || state.nodes);
+  if (carry.length < 2) {
+    if (!(opts.quiet || opts.silent)) alert("Auto Return 需要至少 2 个承载节点（尾→头）");
+    return false;
+  }
+  const mode = isAdvancedReturn() ? "advanced" : "auto";
+  const { nodes, meta } = buildAutoReturnLoop(carry, {
+    offset_m: getReturnOffset(),
+    mode,
+  });
+  state.nodes = nodes;
+  state.returnMeta = meta;
+  state.returnMode = mode;
+  state.selectedId = state.nodes[0]?.id ?? null;
   rebuildSceneObjects();
   updateUI();
   fitView();
+  if (!opts.quiet) {
+    alert(
+      "Auto Return 完成（" + meta.return_mode + ")\n\n" +
+        "承载节点：" + meta.carry_count + "\n" +
+        "回程节点：" + meta.return_count + "\n" +
+        "间距：" + meta.carry_return_offset_m + " m\n" +
+        "已形成闭环（蓝=承载，橙=回程）"
+    );
+  }
+  return true;
 }
 
 function clearPath() {
   state.nodes = [];
   state.selectedId = null;
+  state.returnMeta = null;
+  state.returnMode = "auto";
   rebuildSceneObjects();
   updateUI();
 }
@@ -147,6 +194,12 @@ function initThree() {
   const lineMat = new THREE.LineBasicMaterial({ color: 0x38bdf8 });
   pathLine = new THREE.Line(new THREE.BufferGeometry(), lineMat);
   scene.add(pathLine);
+  const returnMat = new THREE.LineBasicMaterial({ color: 0xfb923c });
+  returnLine = new THREE.Line(new THREE.BufferGeometry(), returnMat);
+  scene.add(returnLine);
+  const closeMat = new THREE.LineBasicMaterial({ color: 0xfbbf24, linewidth: true });
+  closeLine = new THREE.Line(new THREE.BufferGeometry(), closeMat);
+  scene.add(closeLine);
 
   raycaster = new THREE.Raycaster();
   raycaster.params.Points = { threshold: 2 };
@@ -160,7 +213,9 @@ function initThree() {
 }
 
 function makePointMesh(node, index) {
-  const color = TYPE_COLOR[node.type] || TYPE_COLOR.node;
+  const color = (node.branch === "return" || node.strand === "return")
+    ? RETURN_COLOR
+    : (TYPE_COLOR[node.type] || TYPE_COLOR.node);
   const geo = new THREE.SphereGeometry(node.type === "node" ? 1.6 : 2.4, 16, 16);
   const mat = new THREE.MeshStandardMaterial({
     color,
@@ -198,17 +253,42 @@ function rebuildSceneObjects() {
 
   state.nodes.forEach((n, i) => pointGroup.add(makePointMesh(n, i)));
 
+  updatePathLines();
+}
+
+function setLinePositions(line, pts) {
+  if (!line) return;
+  line.geometry.dispose();
+  if (!pts || pts.length < 2) {
+    line.geometry = new THREE.BufferGeometry();
+    return;
+  }
   const positions = [];
-  state.nodes.forEach((n) => positions.push(n.x, n.y, n.z));
-  pathLine.geometry.dispose();
-  if (positions.length >= 2) {
-    pathLine.geometry = new THREE.BufferGeometry();
-    pathLine.geometry.setAttribute(
-      "position",
-      new THREE.Float32BufferAttribute(positions, 3)
-    );
+  pts.forEach((n) => positions.push(n.x, n.y, n.z));
+  // 闭合段：若最后一点不是首点，调用方可自行传入首点
+  line.geometry = new THREE.BufferGeometry();
+  line.geometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
+}
+
+function updatePathLines() {
+  const carry = [];
+  const ret = [];
+  for (const n of state.nodes) {
+    if (n.branch === "return" || n.strand === "return") ret.push(n);
+    else carry.push(n);
+  }
+  // 承载折线
+  setLinePositions(pathLine, carry);
+  // 回程折线：头 → 回程点… （头作为回程起点视觉连接）
+  if (ret.length && carry.length) {
+    setLinePositions(returnLine, [carry[carry.length - 1], ...ret]);
+    // 闭合：最后回程 → 尾
+    setLinePositions(closeLine, [ret[ret.length - 1], carry[0]]);
   } else {
-    pathLine.geometry = new THREE.BufferGeometry();
+    // 无回程时整链用承载色
+    setLinePositions(pathLine, state.nodes);
+    setLinePositions(returnLine, []);
+    setLinePositions(closeLine, []);
   }
 }
 
@@ -222,16 +302,7 @@ function syncNodeMeshes() {
     mesh.material.emissiveIntensity = selected ? 0.55 : 0;
   });
 
-  const positions = [];
-  state.nodes.forEach((n) => positions.push(n.x, n.y, n.z));
-  if (positions.length >= 2) {
-    pathLine.geometry.setAttribute(
-      "position",
-      new THREE.Float32BufferAttribute(positions, 3)
-    );
-    pathLine.geometry.attributes.position.needsUpdate = true;
-    pathLine.geometry.computeBoundingSphere();
-  }
+  updatePathLines();
 }
 
 function applyMode(mode) {
@@ -641,6 +712,25 @@ function animate() {
   renderer.render(scene, camera);
 }
 
+
+function currentExportOpts(extraLine = {}) {
+  const closed = !!(state.returnMeta && state.returnMeta.closed_loop);
+  return {
+    nodes: state.nodes,
+    modeHint: state.mode,
+    returnMeta: state.returnMeta,
+    line: {
+      line_id: "demo-slope-01",
+      name: closed ? "示例坡道（含 Auto Return 闭环）" : "示例坡道（编辑器）",
+      open_path: !closed,
+      closed_loop: closed,
+      return_mode: state.returnMeta?.return_mode || "none",
+      carry_return_offset_m: state.returnMeta?.carry_return_offset_m ?? getReturnOffset(),
+      ...extraLine,
+    },
+  };
+}
+
 function bindChrome() {
   document.querySelectorAll(".btn.mode").forEach((btn) => {
     btn.addEventListener("click", () => applyMode(btn.dataset.mode));
@@ -655,16 +745,13 @@ function bindChrome() {
 
   document.getElementById("btnFit").addEventListener("click", fitView);
   document.getElementById("btnDemo").addEventListener("click", loadDemo);
+  document.getElementById("btnAutoReturn")?.addEventListener("click", () => applyAutoReturn());
+  document.getElementById("returnOffset")?.addEventListener("change", () => {
+    if (state.returnMeta && state.returnMode === "auto") applyAutoReturn(null, { quiet: true });
+  });
   document.getElementById("btnClear").addEventListener("click", clearPath);
   document.getElementById("btnExport").addEventListener("click", () => {
-    const payload = buildPathExport({
-      nodes: state.nodes,
-      modeHint: state.mode,
-      line: {
-        line_id: "demo-slope-01",
-        name: "示例坡道（编辑器）",
-      },
-    });
+    const payload = buildPathExport(currentExportOpts());
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
@@ -676,11 +763,7 @@ function bindChrome() {
   });
 
   document.getElementById("btnExtract")?.addEventListener("click", () => {
-    const payload = buildPathExport({
-      nodes: state.nodes,
-      modeHint: state.mode,
-      line: { line_id: "demo-slope-01", name: "示例坡道（编辑器）" },
-    });
+    const payload = buildPathExport(currentExportOpts());
     applyClosureChip(payload);
     renderExtractSummary(payload.extract);
     const lg = payload.extract.line_geometry;
@@ -696,11 +779,7 @@ function bindChrome() {
   });
 
   document.getElementById("btnCalc")?.addEventListener("click", () => {
-    const payload = buildPathExport({
-      nodes: state.nodes,
-      modeHint: state.mode,
-      line: { line_id: "demo-slope-01", name: "示例坡道（编辑器）" },
-    });
+    const payload = buildPathExport(currentExportOpts());
     if (!payload.closure.ok) {
       const errs = payload.closure.items.filter((i) => i.level === "error").map((i) => i.message);
       alert("闭环存在 error，无法进入计算：\n\n" + errs.join("\n"));
@@ -720,7 +799,7 @@ function bindChrome() {
   });
 
   document.getElementById("btnCheck")?.addEventListener("click", () => {
-    const payload = buildPathExport({ nodes: state.nodes, modeHint: state.mode });
+    const payload = buildPathExport(currentExportOpts());
     const lines = payload.closure.items.map((i) => `[${i.level}] ${i.code}: ${i.message}`);
     alert(
       (payload.closure.ok ? "闭环检查：无 error\n\n" : "闭环检查：存在 error\n\n") +

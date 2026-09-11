@@ -11,6 +11,7 @@ import {
   buildCalcInputFromExtract,
   pathToCalcBundle,
 } from "./calc/path-extract.js";
+import { buildAutoReturnLoop } from "./calc/auto-return.js";
 
 let failed = 0;
 function assert(cond, msg) {
@@ -124,6 +125,30 @@ function near(a, b, tol = 1e-6) {
   const cmp = compareToExpected(out.summary, GC01_EXPECTED, GC01_TOL);
   assert(cmp.pass === true, "GC-01 compare all pass");
   assert(out.algorithm === "DTII-P2P-v0.2", "algorithm version");
+}
+
+// 8) Auto Return 闭环（对标 Belt Analyst）
+{
+  const carry = [
+    { id: "t", x: 0, y: 0, z: 0, type: "tail", drum_D_mm: 800 },
+    { id: "b", x: 50, y: 0, z: 0, type: "bend", drum_D_mm: 630 },
+    { id: "n", x: 150, y: 0, z: 30, type: "node" },
+    { id: "d", x: 250, y: 0, z: 55, type: "drive", mainDrive: true, drum_D_mm: 1000 },
+    { id: "h", x: 270, y: 0, z: 55, type: "head", drum_D_mm: 800 },
+  ];
+  const { nodes, meta } = buildAutoReturnLoop(carry, { offset_m: 1.2, mode: "auto" });
+  assert(meta.closed_loop === true, "auto return closed_loop");
+  assert(meta.return_count === 3, "auto return interiors = 3");
+  assert(nodes.filter((n) => n.branch === "return").length === 3, "has 3 return nodes");
+  const path = buildPathExport({
+    nodes,
+    line: { open_path: false, closed_loop: true, line_id: "loop-01", name: "闭环回归" },
+    returnMeta: meta,
+  });
+  assert(path.line.closed_loop === true, "export closed_loop");
+  assert(path.segments.some((seg) => seg.branch === "return"), "export has return segments");
+  assert(path.closure.ok === true, "closed loop closure ok");
+  assert(path.segments.length === nodes.length, "closed loop segments = nodes (with closing edge)");
 }
 
 if (failed) {

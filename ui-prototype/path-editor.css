@@ -274,3 +274,11 @@ tbody input:focus {
   }
   .viewport-wrap, #viewport { min-height: 480px; }
 }
+
+label.inline { display:inline-flex; align-items:center; gap:6px; font-size:12px; color:var(--muted,#93a0b5); }
+label.inline input[type=number] { background:#0f172a; border:1px solid #334155; color:#e2e8f0; border-radius:6px; padding:4px 6px; }
+.chip.ok { background:#14532d; color:#bbf7d0; }
+.path-legend { display:flex; gap:12px; font-size:12px; color:#94a3b8; margin-top:6px; }
+.path-legend i { display:inline-block; width:18px; height:3px; margin-right:4px; vertical-align:middle; }
+.path-legend .carry { background:#38bdf8; }
+.path-legend .return { background:#fb923c; }
