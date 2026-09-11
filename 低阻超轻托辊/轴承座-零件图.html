@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>轴承座 零件图 · Φ194 低阻超轻托辊</title>
+  <style>
+    @page { size: A3 landscape; margin: 8mm; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #cfc9bc;
+      font: 12px/1.4 "Noto Sans SC", "Source Han Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+      color: #111;
+    }
+    .bar {
+      max-width: 1480px;
+      margin: 0 auto;
+      padding: 10px 12px 0;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .bar a { color: #8b1e1e; }
+    .sheet {
+      width: 420mm;
+      height: 297mm;
+      margin: 8px auto 24px;
+      background: #f7f3ea;
+      box-shadow: 0 8px 28px rgba(0,0,0,.22);
+    }
+    svg { width: 100%; height: 100%; display: block; }
+    @media print {
+      body { background: #fff; }
+      .bar { display: none; }
+      .sheet { margin: 0; box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bar">
+    <strong>轴承座零件图（A3 横）</strong>
+    <a href="轴承座-图纸注法.html">公差说明</a>
+    <a href="轴承座-公差与技术要求.md">文本版</a>
+    <span>打印选 A3 横向。剖面/视图 1:2，局部 B 2:1。按本图补 SolidWorks。</span>
+  </div>
+  <div class="sheet">
+    <svg viewBox="0 0 420 297" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <pattern id="hatch" patternUnits="userSpaceOnUse" width="2.4" height="2.4" patternTransform="rotate(45)">
+          <line x1="0" y1="0" x2="0" y2="2.4" stroke="#444" stroke-width="0.28"/>
+        </pattern>
+      </defs>
+
+      <rect x="6" y="6" width="408" height="285" fill="none" stroke="#111" stroke-width="0.7"/>
+      <rect x="8" y="8" width="404" height="281" fill="none" stroke="#111" stroke-width="0.35"/>
+
+      <text x="11" y="16" font-size="5.4" font-weight="700">低阻超轻托辊　轴承座　零件图</text>
+      <text x="11" y="21.8" font-size="3.1" fill="#444">ADC12 高压压铸　轴承孔/止口机加　单位 mm　剖面·视图 1:2　局部 B 2:1　基准 A：Φ100 M7 轴线　基准 B：轴承止口端面</text>
+
+      <!-- 剖面 A-A  1:2   1 mm 实物 = 0.5 mm 图面 -->
+      <g transform="translate(22,118)">
+        <text x="0" y="-58" font-size="3.7" font-weight="700">剖面 A-A　1:2</text>
+        <line x1="-6" y1="0" x2="48" y2="0" stroke="#b00000" stroke-width="0.25" stroke-dasharray="3 1.2 0.6 1.2"/>
+        <text x="49" y="1.1" font-size="2.8" fill="#b00000">A</text>
+        <!-- x: 0..36 (=72)  y: ±48.5 (=Φ194) -->
+        <path fill="url(#hatch)" stroke="#111" stroke-width="0.38"
+          d="M0,-24.25 L1,-24.25 L1,-40.75 L1.5,-48.5 L3,-48.5 L3,-40.75 L36,-40.75
+             L36,-25 L35,-25.03 L23.5,-25 L23.5,-27 L20,-27.5 L0.5,-27 L0.5,-24.25 L0,-24.25
+             L0,24.25 L0.5,24.25 L0.5,27 L20,27.5 L23.5,27 L23.5,25 L35,25.03 L36,25
+             L36,40.75 L3,40.75 L3,48.5 L1.5,48.5 L1,40.75 L1,24.25 L0,24.25 Z"/>
+        <line x1="23.5" y1="-25" x2="35" y2="-25" stroke="#8b1e1e" stroke-width="0.7"/>
+        <line x1="23.5" y1="25" x2="35" y2="25" stroke="#8b1e1e" stroke-width="0.7"/>
+        <g fill="#1a4a9c" font-size="3" stroke="#1a4a9c" stroke-width="0.16">
+          <line x1="-7" y1="-48.5" x2="-7" y2="48.5"/>
+          <line x1="-8.5" y1="-48.5" x2="3" y2="-48.5"/>
+          <line x1="-8.5" y1="48.5" x2="3" y2="48.5"/>
+          <text x="-19" y="1.2">Φ194</text>
+          <line x1="39" y1="-40.75" x2="39" y2="40.75"/>
+          <text x="40.5" y="1.2">Φ163</text>
+          <text x="4" y="-16">Φ108</text>
+          <text x="4" y="-12">Φ110</text>
+          <line x1="0" y1="54" x2="36" y2="54"/>
+          <line x1="0" y1="52.5" x2="0" y2="55.5"/>
+          <line x1="36" y1="40.75" x2="36" y2="55.5"/>
+          <text x="14.5" y="58.5">72</text>
+        </g>
+        <text x="21" y="-27.2" font-size="2.5" fill="#8b1e1e">Φ100 M7</text>
+        <circle cx="33" cy="-25" r="2.6" fill="none" stroke="#c45c00" stroke-width="0.32" stroke-dasharray="1 0.6"/>
+        <text x="36" y="-27" font-size="2.7" fill="#c45c00">B</text>
+        <polygon points="16,0 18.6,5.2 13.4,5.2" fill="#fff" stroke="#b00000" stroke-width="0.28"/>
+        <rect x="13.3" y="5.2" width="5.4" height="4.6" fill="#fff" stroke="#b00000" stroke-width="0.28"/>
+        <text x="14.5" y="8.8" font-size="3.1" font-weight="700" fill="#b00000">A</text>
+        <text x="19.2" y="8.6" font-size="2.5" fill="#b00000">孔轴线</text>
+      </g>
+
+      <!-- 端面视图 1:2 -->
+      <g transform="translate(148,118)">
+        <text x="-48" y="-58" font-size="3.7" font-weight="700">视图　1:2</text>
+        <line x1="-54" y1="0" x2="54" y2="0" stroke="#b00000" stroke-width="0.22" stroke-dasharray="3 1.2 0.6 1.2"/>
+        <line x1="0" y1="-54" x2="0" y2="54" stroke="#b00000" stroke-width="0.22" stroke-dasharray="3 1.2 0.6 1.2"/>
+        <circle cx="0" cy="0" r="48.5" fill="none" stroke="#111" stroke-width="0.4"/>
+        <circle cx="0" cy="0" r="40.75" fill="none" stroke="#111" stroke-width="0.3"/>
+        <circle cx="0" cy="0" r="27.5" fill="none" stroke="#111" stroke-width="0.28"/>
+        <circle cx="0" cy="0" r="27" fill="none" stroke="#111" stroke-width="0.28"/>
+        <circle cx="0" cy="0" r="25" fill="none" stroke="#8b1e1e" stroke-width="0.5"/>
+        <g id="ribs" stroke="#333" stroke-width="0.16" fill="none"></g>
+        <circle cx="0" cy="-45.75" r="2" fill="#f7f3ea" stroke="#111" stroke-width="0.32"/>
+        <circle cx="0" cy="45.75" r="2" fill="#f7f3ea" stroke="#111" stroke-width="0.32"/>
+        <g fill="#1a4a9c" stroke="#1a4a9c" stroke-width="0.16" font-size="3">
+          <line x1="54" y1="-45.75" x2="54" y2="45.75"/>
+          <line x1="52" y1="-45.75" x2="56" y2="-45.75"/>
+          <line x1="52" y1="45.75" x2="56" y2="45.75"/>
+          <text x="55.5" y="1.2">183</text>
+          <text x="4" y="-50.5">2-Φ8 H11 贯穿</text>
+          <text x="4" y="-46.5">位置度 Φ0.20 | A</text>
+        </g>
+        <text x="3.5" y="-54.5" font-size="2.6">7.5°</text>
+        <text x="-10" y="6" font-size="2.5" fill="#8b1e1e">Φ100 M7</text>
+        <text x="-9" y="70" font-size="2.6" fill="#444">7.5°×48 减重筋　R3</text>
+      </g>
+
+      <!-- 局部 B  2:1  只画孔壁 -->
+      <g transform="translate(248,28)">
+        <text x="0" y="0" font-size="3.7" font-weight="700">局部视图 B　2:1</text>
+        <text x="0" y="5" font-size="2.6" fill="#444">轴承孔配 6309　机加面</text>
+        <g transform="translate(4,22)">
+          <path fill="url(#hatch)" stroke="#111" stroke-width="0.35"
+            d="M0,0 L50,0 L54,-0.2 L58,8 L70,8 L70,28 L0,28 Z"/>
+          <line x1="0" y1="0" x2="50" y2="0" stroke="#8b1e1e" stroke-width="0.8"/>
+          <!-- 止口 B 在 x=0 -->
+          <line x1="0" y1="0" x2="0" y2="-14" stroke="#1f6b4a" stroke-width="0.28"/>
+          <polygon points="0,-14 -2.4,-8.5 2.4,-8.5" fill="#fff" stroke="#1f6b4a" stroke-width="0.28"/>
+          <rect x="-3.4" y="-19.6" width="6.8" height="5.6" fill="#fff" stroke="#1f6b4a" stroke-width="0.28"/>
+          <text x="-1.7" y="-15.5" font-size="3.2" font-weight="700" fill="#1f6b4a">B</text>
+          <g font-size="2.8" fill="#1a4a9c">
+            <text x="6" y="-3.2">Φ100 M7　0 / −0.035　Ra 0.8</text>
+            <text x="52" y="-3.2">Φ100.1 H8</text>
+            <line x1="0" y1="32" x2="50" y2="32" stroke="#1a4a9c" stroke-width="0.16"/>
+            <text x="14" y="36">25（6309 宽）</text>
+          </g>
+          <g font-size="2.6" fill="#111">
+            <rect x="0" y="40" width="72" height="6.2" fill="#fff" stroke="#111" stroke-width="0.22"/>
+            <text x="1.5" y="44.5">圆柱度 0.008　（Φ100 M7 孔）</text>
+            <rect x="0" y="47.4" width="72" height="6.2" fill="#fff" stroke="#111" stroke-width="0.22"/>
+            <text x="1.5" y="51.9">垂直度 0.03 | A　（止口 B）</text>
+            <rect x="0" y="54.8" width="72" height="6.2" fill="#fff" stroke="#111" stroke-width="0.22"/>
+            <text x="1.5" y="59.3">同轴度 Φ0.03 | A　（Φ100.1 H8）</text>
+            <rect x="0" y="62.2" width="72" height="6.2" fill="#fff" stroke="#111" stroke-width="0.22"/>
+            <text x="1.5" y="66.7">平面度 0.02　（止口 B）</text>
+          </g>
+          <text x="0" y="74" font-size="2.4" fill="#444">12×5=60 迷宫　3～6 mm 铸造沟槽　斜度 1°　槽内禁止飞边</text>
+        </g>
+      </g>
+
+      <!-- 用户原图 -->
+      <g transform="translate(248,8)">
+        <text x="78" y="5.5" font-size="2.6" fill="#555">用户原图</text>
+        <rect x="78" y="7" width="82" height="18" fill="#fff" stroke="#999" stroke-width="0.2"/>
+        <image href="assets/bearing-housing-source.png" x="78.3" y="7.3" width="81.4" height="17.4" preserveAspectRatio="xMidYMid meet"/>
+      </g>
+
+      <!-- 形位公差汇总 -->
+      <g transform="translate(248,175)">
+        <text x="0" y="0" font-size="3.3" font-weight="700">形位公差（GB/T 1182）</text>
+        <g font-size="2.55" fill="#111">
+          <text x="0" y="6">1  Φ100 M7 孔　　圆柱度 0.008</text>
+          <text x="0" y="11">2  止口端面 B　　平面度 0.02；垂直度 0.03 | A</text>
+          <text x="0" y="16">3  Φ100.1 H8　　同轴度 Φ0.03 | A</text>
+          <text x="0" y="21">4  管体配装止口　同轴度 Φ0.05 | A（直径待总装确认）</text>
+          <text x="0" y="26">5  Φ194 外缘　　径向圆跳动 0.08 | A（机加或找正时）</text>
+          <text x="0" y="31">6  2-Φ8　　　　位置度 Φ0.20 | A　　183 ±0.15</text>
+        </g>
+      </g>
+
+      <!-- 技术要求 -->
+      <rect x="8" y="228" width="266" height="61" fill="#fff" stroke="#111" stroke-width="0.35"/>
+      <text x="10" y="234.2" font-size="3.3" font-weight="700">技术要求</text>
+      <g font-size="2.4" fill="#111">
+        <text x="10" y="239.6">1. 材料 ADC12（GB/T 15115），高压压铸。未注铸造尺寸 GB/T 6414 DCTG6；未注机加 GB/T 1804-m；未注形位 GB/T 1184-K。</text>
+        <text x="10" y="244.2">2. 铸造斜度 1°。未注圆角 R3，筋根 R1～R1.5。压铸后 T5（175℃×3～5 h），然后机加。</text>
+        <text x="10" y="248.8">3. Φ100 M7 配 6309 外圈。MT 821 规定轴承孔为 M7，铝座禁止改 H7。Ra 0.8，禁止涂层，禁止研抛改公差。</text>
+        <text x="10" y="253.4">4. 机加面：轴承孔、止口 B、确认后的管体配装止口。其余压铸。锐边倒钝 0.2×45°。</text>
+        <text x="10" y="258.0">5. 迷宫槽内不得飞边、铝屑、冷隔。孔及止口加工后表层 2 mm 内无气孔、缩松。铸件无裂纹。</text>
+        <text x="10" y="262.6">6. 除配合面外允许钝化或喷涂；配合面涂防锈油。每辊 2 件，左右对称。</text>
+        <text x="10" y="267.2">7. 成辊 GB/T 10595：高带速短辊径向跳动 0.5，轴向窜动 ≤0.7。低阻阻力建议 ≤国标 50%。</text>
+        <text x="10" y="271.8">8. 检验：M7 通止塞规 100%；圆柱度、垂直度首件 CMM；迷宫 100% 目视。</text>
+        <text x="10" y="277.0" fill="#555">Φ108 / Φ110 / Φ163 原图未注配合，是否管体过盈须总装确认后再落公差。图号待定。</text>
+        <text x="10" y="283.2" fill="#555">本图按用户提供的 SolidWorks 截图重建并补注，轴向台阶以原图 72、35.5、25 为准。</text>
+      </g>
+
+      <g font-size="3" fill="#111">
+        <rect x="274" y="228" width="138" height="61" fill="#fff" stroke="#111" stroke-width="0.35"/>
+        <line x1="274" y1="244" x2="412" y2="244" stroke="#111" stroke-width="0.25"/>
+        <line x1="274" y1="260" x2="412" y2="260" stroke="#111" stroke-width="0.25"/>
+        <line x1="274" y1="276" x2="412" y2="276" stroke="#111" stroke-width="0.25"/>
+        <line x1="314" y1="228" x2="314" y2="289" stroke="#111" stroke-width="0.25"/>
+        <line x1="358" y1="228" x2="358" y2="289" stroke="#111" stroke-width="0.25"/>
+        <text x="276" y="235">零件名称</text>
+        <text x="318" y="237.5" font-size="5.2" font-weight="700">轴 承 座</text>
+        <text x="276" y="251">材料</text>
+        <text x="318" y="253.5" font-size="3.5">ADC12</text>
+        <text x="360" y="251">比例</text>
+        <text x="380" y="253.5">1:2 / 2:1</text>
+        <text x="276" y="267">配轴承</text>
+        <text x="318" y="269.5">6309　Φ100 M7</text>
+        <text x="276" y="283">所属</text>
+        <text x="318" y="285.5" font-size="2.7">Φ194 低阻超轻托辊</text>
+        <text x="360" y="267">数量</text>
+        <text x="380" y="269.5">2 / 辊</text>
+        <text x="360" y="283">单位</text>
+        <text x="380" y="285.5">mm</text>
+      </g>
+    </svg>
+  </div>
+  <script>
+    (function () {
+      var g = document.getElementById("ribs");
+      if (!g) return;
+      var ns = "http://www.w3.org/2000/svg";
+      for (var i = 0; i < 48; i++) {
+        var a = (i * 7.5) * Math.PI / 180;
+        var c = Math.cos(a), s = Math.sin(a);
+        var l = document.createElementNS(ns, "line");
+        l.setAttribute("x1", (27.5 * s).toFixed(2));
+        l.setAttribute("y1", (-27.5 * c).toFixed(2));
+        l.setAttribute("x2", (40.75 * s).toFixed(2));
+        l.setAttribute("y2", (-40.75 * c).toFixed(2));
+        g.appendChild(l);
+      }
+    })();
+  </script>
+</body>
+</html>
