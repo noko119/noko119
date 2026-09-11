@@ -1,0 +1,44 @@
+{
+  "schema": "pidm.path.v0",
+  "modeHint": "3d",
+  "line": {
+    "line_id": "demo-01",
+    "name": "SW读包样例坡道",
+    "coord_system": "Z_up_right",
+    "length_unit": "m",
+    "open_path": true,
+    "Q": 1700,
+    "rho": 1800,
+    "B": 1400,
+    "v": 2
+  },
+  "nodes": [
+    { "id": "n1", "seq": 1, "x": 0, "y": 0, "z": 0, "type": "tail", "drum_D_mm": 630, "is_main_drive": false },
+    { "id": "n2", "seq": 2, "x": 40, "y": 0, "z": 0, "type": "bend", "drum_D_mm": 500, "is_main_drive": false },
+    { "id": "n3", "seq": 3, "x": 120, "y": 0, "z": 25, "type": "node", "is_main_drive": false },
+    { "id": "n4", "seq": 4, "x": 200, "y": 0, "z": 45, "type": "node", "is_main_drive": false },
+    { "id": "n5", "seq": 5, "x": 260, "y": 0, "z": 57, "type": "drive", "drum_D_mm": 800, "is_main_drive": true },
+    { "id": "n6", "seq": 6, "x": 280, "y": 0, "z": 57, "type": "head", "drum_D_mm": 630, "is_main_drive": false }
+  ],
+  "segments": [
+    { "id": "seg_1", "from_node_id": "n1", "to_node_id": "n2", "major_id": "carryH", "sub_id": "carryH.1", "L": 40, "delta_deg": 0, "H": 0, "classify_status": "draft" },
+    { "id": "seg_2", "from_node_id": "n2", "to_node_id": "n3", "major_id": "carryI", "sub_id": "carryI.1", "L": 83.815, "delta_deg": 17.35, "H": 25, "classify_status": "draft" },
+    { "id": "seg_3", "from_node_id": "n3", "to_node_id": "n4", "major_id": "carryI", "sub_id": "carryI.1", "L": 82.462, "delta_deg": 14.04, "H": 20, "classify_status": "draft" },
+    { "id": "seg_4", "from_node_id": "n4", "to_node_id": "n5", "major_id": "carryI", "sub_id": "carryI.1", "L": 61.188, "delta_deg": 11.31, "H": 12, "classify_status": "draft" },
+    { "id": "seg_5", "from_node_id": "n5", "to_node_id": "n6", "major_id": "carryH", "sub_id": "carryH.1", "L": 20, "delta_deg": 0, "H": 0, "classify_status": "draft" }
+  ],
+  "point_order": {
+    "leave_point_node_id": "n5",
+    "manual_p1_node_id": "n5",
+    "manual_p2_node_id": "n2",
+    "direction": "running_dir"
+  },
+  "closure": {
+    "ok": true,
+    "items": [
+      { "code": "CL_SEG_CLASS", "level": "warn", "message": "区段分类仍为 draft（演示可继续）" }
+    ]
+  },
+  "totalLength_m": 287.465,
+  "_comment_check": "导入后首点应在原点，n5 约 (260m,0,57m)；草图名 PIDM_PATH_SKEL"
+}

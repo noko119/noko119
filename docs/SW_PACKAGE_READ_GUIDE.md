@@ -110,8 +110,9 @@ v0 可先只放 `path`，`extract` 留空对象。
 ### B. 写入总骨架
 
 1. 在约定装配下找或建草图：`PIDM_PATH_SKEL`（名称固定）  
-2. 按 `nodes[].seq` 顺序写 3D 草图折线点：`(x,y,z)` 单位 **米 → 转 mm**（×1000）  
+2. 按 `nodes[].seq` 顺序写 3D 草图折线点：`(x,y,z)` 单位 **米**（SW API 亦为米，**不要 ×1000**）  
 3. 删除/更新旧点，避免双真相：以本次 `nodes[].id` 映射表为准  
+4. 可用仓库宏：`sw-plugin/vba/PidmPathImport.bas`（见 `sw-plugin/README.md`）  
 
 映射表建议存装配属性或旁路 JSON：
 
@@ -226,7 +227,8 @@ v0 可先只放 `path`，`extract` 留空对象。
 | 坡度反了 / 高差错 | 装配 Y-up 却当 Z-up | 改 Z-up 或写 `axis_map` |
 | 双主驱 | 两块都写了 main | 读包时强制唯一 |
 | 点乱序 | 未按 `seq` | 严格按 seq 建折线 |
-| 单位差 1000 倍 | m/mm 混用 | Web=m，SW 草图=mm |
+| 单位差 1000 倍 | 误把 API 米当成毫米再 ×1000 | Web=m，SW API=m；界面显示 mm 勿混淆 |
+| 宏找不到 | 未导入 .bas | 见 `sw-plugin/README.md` |
 | 拒绝写入 | closure error | 先在 Web 点「闭环检查」 |
 
 ---
