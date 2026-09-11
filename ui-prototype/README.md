@@ -6,7 +6,7 @@
 |------|------|
 | `index.html` | SolidWorks 薄插件五面板（分类 / 点序 / 提取 / 审核 / 发送） |
 | `path-editor.html` | **网页路径编辑器**：2D + 3D，导出 `pidm.path.v0` + 闭环检查 |
-| `calc.html` | **逐步透明计算**：GC-01 主链对照（DTII-P2P-v0.1） |
+| `calc.html` | **逐步透明计算**：GC-01 主链对照（DTII-P2P-v0.2） |
 
 ## 路径编辑器（定稿能力）
 
@@ -30,6 +30,12 @@
 ```bash
 cd ui-prototype
 python3 -m http.server 8080
+```
+
+冒烟回归：
+
+```bash
+node smoke-test.mjs
 ```
 
 - 五面板：`http://localhost:8080/`

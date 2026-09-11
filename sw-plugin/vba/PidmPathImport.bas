@@ -74,7 +74,7 @@ Public Sub PidmImportPathFromJson()
 
     mainCount = 0
     For i = 0 To nCount - 1
-        If LCase$(nodes(i).TypeName) = "drive" And nodes(i).IsMainDrive Then
+        If LCase$(nodes(i).NodeType) = "drive" And nodes(i).IsMainDrive Then
             mainCount = mainCount + 1
         End If
     Next i
@@ -86,46 +86,36 @@ Public Sub PidmImportPathFromJson()
            "文件：" & filePath, vbInformation
 End Sub
 
-'--- 节点结构 -------------------------------------------------------------
+'--- 节点结构（NodeType 不用 TypeName，避免与 VBA 函数冲突） -------------
 Private Type PidmNode
     Id As String
     Seq As Long
     X As Double
     Y As Double
     Z As Double
-    TypeName As String
+    NodeType As String
     IsMainDrive As Boolean
 End Type
 
-'--- 文件 -----------------------------------------------------------------
+'--- 文件（SolidWorks VBA 无 Word/Excel FileDialog，改用 InputBox） ------
 Private Function BrowseJsonFile() As String
-    Dim fd As Object
-    On Error Resume Next
-    Set fd = Application.FileDialog(msoFileDialogFilePicker)
-    If fd Is Nothing Then
-        ' SolidWorks VBA 有时无 mso 常量，退回 InputBox
-        BrowseJsonFile = Trim$(InputBox("请输入 JSON 完整路径：", "PIDM Import"))
-        Exit Function
-    End If
-    On Error GoTo 0
-    With fd
-        .Title = "选择 PIDM 路径 JSON"
-        .AllowMultiSelect = False
-        .Filters.Clear
-        .Filters.Add "JSON", "*.json"
-        If .Show = -1 Then
-            BrowseJsonFile = .SelectedItems(1)
-        Else
-            BrowseJsonFile = ""
+    Dim p As String
+    p = Trim$(InputBox( _
+        "请输入 PIDM 路径 JSON 的完整路径：" & vbCrLf & _
+        "例如：D:\...\sw-plugin\samples\demo-path-v0.json", _
+        "PIDM Import"))
+    ' 去掉可能被粘贴进来的引号
+    If Len(p) >= 2 Then
+        If Left$(p, 1) = """" And Right$(p, 1) = """" Then
+            p = Mid$(p, 2, Len(p) - 2)
         End If
-    End With
+    End If
+    BrowseJsonFile = p
 End Function
 
 Private Function ReadTextFileUtf8(ByVal filePath As String) As String
-    Dim ts As Object
     Dim stm As Object
     On Error GoTo FALLBACK
-    ' ADODB.Stream 读 UTF-8
     Set stm = CreateObject("ADODB.Stream")
     stm.Type = 2 ' text
     stm.Charset = "UTF-8"
@@ -136,10 +126,16 @@ Private Function ReadTextFileUtf8(ByVal filePath As String) As String
     Exit Function
 FALLBACK:
     Dim f As Integer
+    On Error GoTo FAIL
     f = FreeFile
     Open filePath For Input As #f
     ReadTextFileUtf8 = Input$(LOF(f), f)
     Close #f
+    Exit Function
+FAIL:
+    On Error Resume Next
+    Close #f
+    ReadTextFileUtf8 = ""
 End Function
 
 '--- JSON 子集：取出 path 对象文本 ---------------------------------------
@@ -160,20 +156,16 @@ End Function
 Private Function ValidateSchemaAndClosure(ByVal pathJson As String, ByRef errMsg As String) As Boolean
     Dim schema As String
     Dim closureTxt As String
-    Dim okTxt As String
     Dim itemsTxt As String
     Dim errors As String
 
     schema = JsonGetString(pathJson, "schema")
     If Len(schema) > 0 Then
-        If InStr(1, schema, "pidm.path", vbTextCompare) = 0 And _
+        If InStr(1, schema, "path.v0", vbTextCompare) = 0 And _
            InStr(1, schema, "pidm.path", vbTextCompare) = 0 Then
-            ' 兼容历史拼写 pidm.path / pidm.path
-            If InStr(1, schema, "path.v0", vbTextCompare) = 0 Then
-                errMsg = "schema 不是路径包：" & schema
-                ValidateSchemaAndClosure = False
-                Exit Function
-            End If
+            errMsg = "schema 不是路径包：" & schema
+            ValidateSchemaAndClosure = False
+            Exit Function
         End If
     End If
 
@@ -183,8 +175,7 @@ Private Function ValidateSchemaAndClosure(ByVal pathJson As String, ByRef errMsg
         Exit Function
     End If
 
-    okTxt = LCase$(JsonGetRaw(closureTxt, "ok"))
-    itemsTxt = JsonGetArrayText(closureTxt, "items")
+    itemsTxt = JsonGetArrayInner(closureTxt, "items")
     errors = CollectClosureErrors(itemsTxt)
 
     If Len(errors) > 0 Then
@@ -193,25 +184,24 @@ Private Function ValidateSchemaAndClosure(ByVal pathJson As String, ByRef errMsg
         Exit Function
     End If
 
-    If okTxt = "false" Then
-        ' ok=false 但无 error 级别时：警告仍继续
-        errMsg = ""
-    End If
     ValidateSchemaAndClosure = True
 End Function
 
 Private Function CollectClosureErrors(ByVal itemsArr As String) As String
     Dim parts() As String
     Dim i As Long
+    Dim n As Long
     Dim obj As String
     Dim lvl As String
     Dim code As String
     Dim msg As String
     Dim out As String
 
-    If Len(itemsArr) = 0 Then Exit Function
-    parts = SplitJsonObjects(itemsArr)
-    For i = LBound(parts) To UBound(parts)
+    If Len(Trim$(itemsArr)) = 0 Then Exit Function
+    n = SplitJsonObjects(itemsArr, parts)
+    If n <= 0 Then Exit Function
+
+    For i = 0 To n - 1
         obj = parts(i)
         lvl = LCase$(JsonGetString(obj, "level"))
         If lvl = "error" Then
@@ -232,17 +222,16 @@ Private Function ParseNodes(ByVal pathJson As String, ByRef nodes() As PidmNode,
     Dim n As Long
     Dim o As String
 
-    arr = JsonGetArrayText(pathJson, "nodes")
-    If Len(arr) = 0 Then
+    arr = JsonGetArrayInner(pathJson, "nodes")
+    If Len(Trim$(arr)) = 0 Then
         errMsg = "未找到 nodes 数组。"
         ParseNodes = 0
         Exit Function
     End If
 
-    objs = SplitJsonObjects(arr)
-    n = UBound(objs) - LBound(objs) + 1
+    n = SplitJsonObjects(arr, objs)
     If n <= 0 Then
-        errMsg = "nodes 为空。"
+        errMsg = "nodes 为空或无法解析。"
         ParseNodes = 0
         Exit Function
     End If
@@ -255,10 +244,11 @@ Private Function ParseNodes(ByVal pathJson As String, ByRef nodes() As PidmNode,
         nodes(i).X = Val(JsonGetRaw(o, "x"))
         nodes(i).Y = Val(JsonGetRaw(o, "y"))
         nodes(i).Z = Val(JsonGetRaw(o, "z"))
-        nodes(i).TypeName = JsonGetString(o, "type")
+        nodes(i).NodeType = JsonGetString(o, "type")
         nodes(i).IsMainDrive = JsonGetBool(o, "is_main_drive") Or _
                                JsonGetBool(o, "is_mainDrive") Or _
-                               JsonGetBool(o, "mainDrive")
+                               JsonGetBool(o, "mainDrive") Or _
+                               (LCase$(JsonGetString(o, "drive_role")) = "main")
         If Len(nodes(i).Id) = 0 Then nodes(i).Id = "n" & CStr(i + 1)
         If nodes(i).Seq = 0 Then nodes(i).Seq = i + 1
     Next i
@@ -287,49 +277,46 @@ Private Function BuildOrUpdateSkeleton(ByVal swModel As SldWorks.ModelDoc2, _
     Dim swSkMgr As SldWorks.SketchManager
     Dim feat As SldWorks.Feature
     Dim i As Long
-    Dim pts() As SldWorks.SketchPoint
-    Dim boolstatus As Boolean
+    Dim x1 As Double, y1 As Double, z1 As Double
+    Dim x2 As Double, y2 As Double, z2 As Double
+    Dim skSeg As Object
 
     On Error GoTo FAIL
     Set swSkMgr = swModel.SketchManager
 
-    ' 若已有同名草图：选中并编辑；否则新建 3D 草图
+    ' 已有同名草图则删除后重建（避免双真相）
     Set feat = FindFeatureByName(swModel, SKETCH_NAME)
     If Not feat Is Nothing Then
-        boolstatus = feat.Select2(False, 0)
-        swModel.EditSketch
-        ' 清除旧几何：退出后删除特征再重建更稳
-        swModel.ClearSelection2 True
-        swModel.Insert3DSketch True ' 退出编辑
         feat.Select2 False, 0
         swModel.EditDelete
+        Set feat = Nothing
     End If
 
+    swModel.ClearSelection2 True
     swModel.Insert3DSketch True
-    ReDim pts(0 To nCount - 1)
 
-    For i = 0 To nCount - 1
-        ' API 单位：米（与 Web 一致）
-        Set pts(i) = swSkMgr.CreatePoint(nodes(i).X, nodes(i).Y, nodes(i).Z)
-        If pts(i) Is Nothing Then
-            errMsg = "CreatePoint 失败 @ " & nodes(i).Id
+    ' 只建折线（点由线端点形成），避免点线重复几何
+    For i = 0 To nCount - 2
+        x1 = nodes(i).X: y1 = nodes(i).Y: z1 = nodes(i).Z
+        x2 = nodes(i + 1).X: y2 = nodes(i + 1).Y: z2 = nodes(i + 1).Z
+        Set skSeg = swSkMgr.CreateLine(x1, y1, z1, x2, y2, z2)
+        If skSeg Is Nothing Then
+            errMsg = "CreateLine 失败 @ " & nodes(i).Id & " → " & nodes(i + 1).Id
             GoTo FAIL
         End If
     Next i
 
-    For i = 0 To nCount - 2
-        swSkMgr.CreateLine pts(i).X, pts(i).Y, pts(i).Z, _
-                           pts(i + 1).X, pts(i + 1).Y, pts(i + 1).Z
-    Next i
-
     swModel.Insert3DSketch True ' 退出并保存草图
 
-    ' 重命名最新草图特征
-    Set feat = swModel.FeatureByPositionReverse(0)
+    ' 重命名：找最近创建的 3D 草图，不要盲目用 FeatureByPositionReverse(0)
+    Set feat = FindNewest3DSketch(swModel)
     If Not feat Is Nothing Then
         On Error Resume Next
         feat.Name = SKETCH_NAME
         On Error GoTo FAIL
+    Else
+        errMsg = "已创建几何，但未能重命名草图为 " & SKETCH_NAME
+        ' 不视为致命失败
     End If
 
     swModel.ForceRebuild3 False
@@ -338,7 +325,9 @@ Private Function BuildOrUpdateSkeleton(ByVal swModel As SldWorks.ModelDoc2, _
 FAIL:
     If Len(errMsg) = 0 Then errMsg = Err.Description
     On Error Resume Next
-    swModel.Insert3DSketch True
+    If Not swModel.GetActiveSketch2() Is Nothing Then
+        swModel.Insert3DSketch True
+    End If
     BuildOrUpdateSkeleton = False
 End Function
 
@@ -355,8 +344,24 @@ Private Function FindFeatureByName(ByVal swModel As SldWorks.ModelDoc2, ByVal na
     Set FindFeatureByName = Nothing
 End Function
 
+Private Function FindNewest3DSketch(ByVal swModel As SldWorks.ModelDoc2) As SldWorks.Feature
+    Dim feat As SldWorks.Feature
+    Dim lastSk As SldWorks.Feature
+    Dim t As String
+    Set feat = swModel.FirstFeature
+    Do While Not feat Is Nothing
+        t = feat.GetTypeName2
+        ' 3D 草图类型名一般为 "3DProfileFeature"
+        If StrComp(t, "3DProfileFeature", vbTextCompare) = 0 Then
+            Set lastSk = feat
+        End If
+        Set feat = feat.GetNextFeature
+    Loop
+    Set FindNewest3DSketch = lastSk
+End Function
+
 '==============================================================================
-' 极简 JSON 子集工具（仅字符串/数字/布尔/对象/数组提取）
+' 极简 JSON 子集工具
 '==============================================================================
 Private Function JsonGetString(ByVal json As String, ByVal key As String) As String
     Dim raw As String
@@ -370,16 +375,20 @@ Private Function JsonGetBool(ByVal json As String, ByVal key As String) As Boole
     JsonGetBool = (raw = "true")
 End Function
 
+Private Function IsJsonWhitespace(ByVal ch As String) As Boolean
+    IsJsonWhitespace = (ch = " " Or ch = vbTab Or ch = vbCr Or ch = vbLf)
+End Function
+
 Private Function JsonGetRaw(ByVal json As String, ByVal key As String) As String
-    Dim p As Long, p2 As Long, p3 As Long
+    Dim p As Long, p2 As Long
     Dim k As String
     k = """" & key & """"
     p = InStr(1, json, k, vbTextCompare)
     If p = 0 Then Exit Function
-    p = InStr(p, json, ":", vbBinaryCompare)
+    p = InStr(p + Len(k), json, ":", vbBinaryCompare)
     If p = 0 Then Exit Function
     p = p + 1
-    Do While p <= Len(json) And Mid$(json, p, 1) Like "[ " & vbTab & vbCr & vbLf & "]"
+    Do While p <= Len(json) And IsJsonWhitespace(Mid$(json, p, 1))
         p = p + 1
     Loop
     If Mid$(json, p, 1) = """" Then
@@ -390,7 +399,7 @@ Private Function JsonGetRaw(ByVal json As String, ByVal key As String) As String
         Loop
         JsonGetRaw = Mid$(json, p, p2 - p + 1)
     ElseIf Mid$(json, p, 1) = "{" Or Mid$(json, p, 1) = "[" Then
-        JsonGetRaw = "" ' 用专用函数
+        JsonGetRaw = ""
     Else
         p2 = p
         Do While p2 <= Len(json)
@@ -410,24 +419,24 @@ Private Function JsonGetObjectText(ByVal json As String, ByVal key As String) As
     k = """" & key & """"
     p = InStr(1, json, k, vbTextCompare)
     If p = 0 Then Exit Function
-    startBrace = InStr(p, json, "{", vbBinaryCompare)
+    startBrace = InStr(p + Len(k), json, "{", vbBinaryCompare)
     If startBrace = 0 Then Exit Function
     JsonGetObjectText = ExtractBalanced(json, startBrace, "{", "}")
 End Function
 
-Private Function JsonGetArrayText(ByVal json As String, ByVal key As String) As String
+' 返回数组内部文本（不含两侧 []）
+Private Function JsonGetArrayInner(ByVal json As String, ByVal key As String) As String
     Dim p As Long, startBracket As Long
     Dim k As String
     Dim body As String
     k = """" & key & """"
     p = InStr(1, json, k, vbTextCompare)
     If p = 0 Then Exit Function
-    startBracket = InStr(p, json, "[", vbBinaryCompare)
+    startBracket = InStr(p + Len(k), json, "[", vbBinaryCompare)
     If startBracket = 0 Then Exit Function
     body = ExtractBalanced(json, startBracket, "[", "]")
-    ' 去掉两侧括号，留给 SplitJsonObjects
     If Len(body) >= 2 Then
-        JsonGetArrayText = Mid$(body, 2, Len(body) - 2)
+        JsonGetArrayInner = Mid$(body, 2, Len(body) - 2)
     End If
 End Function
 
@@ -454,22 +463,20 @@ Private Function ExtractBalanced(ByVal s As String, ByVal startPos As Long, _
     Next i
 End Function
 
-Private Function SplitJsonObjects(ByVal arrInner As String) As String()
+' 返回对象个数；通过 ByRef parts() 输出。避免 ReDim 0 To -1（VBA 非法）
+Private Function SplitJsonObjects(ByVal arrInner As String, ByRef parts() As String) As Long
     Dim i As Long, depth As Long, ch As String, inStrq As Boolean
     Dim startI As Long
     Dim tmp As String
-    Dim out() As String
     Dim n As Long
 
     arrInner = Trim$(arrInner)
+    n = 0
     If Len(arrInner) = 0 Then
-        ReDim out(0 To -1)
-        SplitJsonObjects = out
+        SplitJsonObjects = 0
         Exit Function
     End If
 
-    n = -1
-    startI = 1
     depth = 0
     inStrq = False
     For i = 1 To Len(arrInner)
@@ -486,14 +493,13 @@ Private Function SplitJsonObjects(ByVal arrInner As String) As String()
                 If depth = 0 Then
                     tmp = Mid$(arrInner, startI, i - startI + 1)
                     n = n + 1
-                    ReDim Preserve out(0 To n)
-                    out(n) = tmp
+                    ReDim Preserve parts(0 To n - 1)
+                    parts(n - 1) = tmp
                 End If
             End If
         End If
     Next i
-    If n < 0 Then ReDim out(0 To -1)
-    SplitJsonObjects = out
+    SplitJsonObjects = n
 End Function
 
 Private Function StripQuotes(ByVal s As String) As String

@@ -36,7 +36,7 @@ FUNCTION ImportPathBundle(filePath):
 
   // 5) 按 seq 排序节点
   nodes = Sort(path.nodes, by seq ascending)
-  pointsMm = []
+  points = []
   map = {}   // node.id -> sketch point name
 
   FOR EACH n IN nodes:
@@ -46,13 +46,13 @@ FUNCTION ImportPathBundle(filePath):
     Z = n.z
     pt = CreateSketchPoint(sketch, X, Y, Z)
     NameEntity(pt, "PIDM_N_" + n.id)
-    pointsMm.Add(pt)
+    points.Add(pt)
     map[n.id] = "PIDM_N_" + n.id
   END FOR
 
   // 6) 连折线
-  FOR i = 0 TO pointsMm.Count - 2:
-    CreateSketchLine(sketch, pointsMm[i], pointsMm[i+1])
+  FOR i = 0 TO points.Count - 2:
+    CreateSketchLine(sketch, points[i], points[i+1])
   END FOR
 
   ExitSketch(sketch)

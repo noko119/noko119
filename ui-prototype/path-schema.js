@@ -65,9 +65,15 @@ export function buildSegments(nodes) {
   return segs;
 }
 
+function isMainDriveNode(n) {
+  return !!(n && (n.is_main_drive || n.mainDrive || n.drive_role === "main"));
+}
+
 export function buildPointOrder(nodes) {
-  const drive = nodes.find((n) => n.type === "drive" && n.mainDrive)
-    || nodes.find((n) => n.type === "drive");
+  // 导出映射后字段是 is_main_drive / drive_role，不能只看 mainDrive
+  const drive =
+    nodes.find((n) => n.type === "drive" && isMainDriveNode(n)) ||
+    nodes.find((n) => n.type === "drive");
   const leave = drive?.id ?? nodes[0]?.id ?? null;
   const p2 = nodes.find((n) => n.id !== leave)?.id ?? leave;
   return {
@@ -97,7 +103,9 @@ export function runClosureChecks(path) {
     }
   }
 
-  const mains = nodes.filter((n) => n.type === "drive" && (n.is_main_drive || n.mainDrive));
+  const mains = nodes.filter(
+    (n) => n.type === "drive" && (n.is_main_drive || n.mainDrive || n.drive_role === "main")
+  );
   if (mains.length !== 1) {
     push("CL_MAIN_DRIVE", "error", `主驱动数量应为 1，实际 ${mains.length}`);
   }

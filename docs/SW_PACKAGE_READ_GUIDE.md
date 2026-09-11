@@ -2,7 +2,8 @@
 
 > 状态：实现指引 v0（与 `WEB_SW_DATA_CONTRACT_DRAFT.md` 配套）  
 > 目标：插件（或人工）能从 Web 导出的 JSON **读入 → 建/更新骨架 → 回写提取包**  
-> 坐标系：**Z 向上**（已确认）
+> 坐标系：**Z 向上**（已确认）  
+> **可运行骨架：** [`sw-plugin/`](../sw-plugin/README.md)（VBA 宏 + 伪代码 + 样例 JSON）
 
 ---
 

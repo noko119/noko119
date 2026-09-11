@@ -12,7 +12,7 @@
 | 选文件读 `pidm.path.v0` | HTTP 拉取 |
 | 校验 schema / closure.error | 完整 UI 面板 |
 | 在当前装配建/更新 3D 草图折线 `PIDM_PATH_SKEL` | 自动插设计库滚筒块 |
-| 节点坐标 m→mm，Z-up | Y-up 坐标变换 |
+| 节点坐标 **米（API 同为米）**，Z-up | Y-up 坐标变换 |
 | 写出映射旁路 JSON（node.id → 草图点名） | 完整 extract 回传 |
 
 ---
@@ -43,10 +43,12 @@
 3. 编辑：删除默认空模块，**导入** `sw-plugin/vba/PidmPathImport.bas`  
    （或把 `.bas` 内容粘贴进模块）  
 4. 运行宏：`PidmImportPathFromJson`  
-5. 选 `sw-plugin/samples/demo-path-v0.json`（或 Web 导出的 path JSON）  
+5. 在弹出框中粘贴 JSON 完整路径（SolidWorks VBA 无 Office 文件对话框）  
+   例如：`D:\...\sw-plugin\samples\demo-path-v0.json`  
 6. 检查特征树是否出现草图 **`PIDM_PATH_SKEL`**，折线点是否与 Web 一致  
 
-若 JSON 解析失败：确认文件为 UTF-8，且 `schema` 为 `pidm.path.v0`（或 bundle 内含 `path`）。
+若 JSON 解析失败：确认文件为 UTF-8，且 `schema` 为 `pidm.path.v0`（或 bundle 内含 `path`）。  
+读文件优先用 `ADODB.Stream`（UTF-8）；若系统无 ADODB，回退为系统默认码页（样例 JSON 为纯 ASCII 仍可）。
 
 ---
 
@@ -85,3 +87,4 @@
 | 日期 | 说明 |
 |------|------|
 | 2026-09-11 | 首版：伪代码 + VBA 读包画骨架 |
+| 2026-09-11 | 修：去掉非法空数组 ReDim、Office FileDialog、TypeName 冲突；草图重命名改找 3DProfileFeature；API 单位说明 |
