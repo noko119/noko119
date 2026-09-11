@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>皮带机 PIDM · 路径编辑器（2D / 3D）</title>
+  <link rel="stylesheet" href="path-editor.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo">PIDM</div>
+        <div>
+          <h1>网页路径编辑器</h1>
+          <p>2D 操作 ↔ 3D 操作 · 同一套 XYZ · 可同步至 SW 骨架</p>
+        </div>
+      </div>
+      <div class="meta">
+        <a class="chip link" href="index.html">← 五面板原型</a>
+        <span class="chip" id="modeChip">模式：3D</span>
+        <span class="chip ok" id="pointCount">节点：0</span>
+        <span class="chip" id="lengthChip">展开长：0 m</span>
+      </div>
+    </header>
+
+    <div class="toolbar">
+      <div class="tool-group">
+        <span class="label">视图</span>
+        <button class="btn mode active" data-mode="3d" id="btn3d">3D 操作</button>
+        <button class="btn mode" data-mode="2d-xy" id="btn2dxy">2D 俯视 XY</button>
+        <button class="btn mode" data-mode="2d-xz" id="btn2dxz">2D 侧视 XZ</button>
+      </div>
+      <div class="tool-group">
+        <span class="label">工具</span>
+        <button class="btn tool active" data-tool="select" title="选择/拖拽">选择</button>
+        <button class="btn tool" data-tool="add" title="点击地面加点">加点</button>
+        <button class="btn tool" data-tool="insert" title="在选中点后插入">插点</button>
+        <button class="btn tool danger" data-tool="delete" title="删除选中点">删点</button>
+      </div>
+      <div class="tool-group">
+        <span class="label">快捷</span>
+        <button class="btn" id="btnFit">适应窗口</button>
+        <button class="btn" id="btnDemo">载入示例坡道</button>
+        <button class="btn" id="btnClear">清空</button>
+        <button class="btn primary" id="btnExport">导出 JSON</button>
+      </div>
+    </div>
+
+    <div class="workspace">
+      <aside class="side card">
+        <h3>滚筒块（拖到视图）</h3>
+        <div class="drum-palette" id="drumPalette">
+          <button class="drum-btn" data-type="tail" draggable="true">尾滚筒</button>
+          <button class="drum-btn" data-type="bend" draggable="true">改向</button>
+          <button class="drum-btn" data-type="drive" draggable="true">传动（主驱）</button>
+          <button class="drum-btn" data-type="head" draggable="true">头滚筒</button>
+          <button class="drum-btn" data-type="takeup" draggable="true">拉紧</button>
+        </div>
+
+        <h3>选中节点</h3>
+        <div class="edit-form" id="nodeForm">
+          <p class="muted" id="noSelection">未选中节点。在视图中点击节点，或用「加点」。</p>
+          <div class="form-grid hidden" id="nodeFields">
+            <label>序号<input type="number" id="fIndex" readonly /></label>
+            <label>类型
+              <select id="fType">
+                <option value="node">普通节点</option>
+                <option value="tail">尾滚筒</option>
+                <option value="bend">改向</option>
+                <option value="drive">传动</option>
+                <option value="head">头滚筒</option>
+                <option value="takeup">拉紧</option>
+              </select>
+            </label>
+            <label>X (m)<input type="number" step="0.01" id="fX" /></label>
+            <label>Y (m)<input type="number" step="0.01" id="fY" /></label>
+            <label>Z (m)<input type="number" step="0.01" id="fZ" /></label>
+            <label class="check"><input type="checkbox" id="fMainDrive" /> 主驱动</label>
+          </div>
+        </div>
+
+        <h3>操作说明</h3>
+        <ul class="help">
+          <li><strong>3D</strong>：左键选/拖点，中键或 Alt+左键旋转，滚轮缩放；拖点改 XYZ。</li>
+          <li><strong>2D 俯视</strong>：改 X/Y；Z 用右侧表或选中后改高程。</li>
+          <li><strong>2D 侧视</strong>：改 X/Z（看坡度/高差）。</li>
+          <li>表格改坐标会立刻同步回 2D/3D。</li>
+        </ul>
+      </aside>
+
+      <section class="viewport-wrap card">
+        <div id="viewport"></div>
+        <div class="hud">
+          <span id="hudHint">3D：拖节点改空间位置 · 滚轮缩放 · Alt+拖旋转</span>
+        </div>
+      </section>
+
+      <aside class="table-pane card">
+        <h3>XYZ / 节点表</h3>
+        <div class="table-scroll">
+          <table id="xyzTable">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>类型</th>
+                <th>X</th>
+                <th>Y</th>
+                <th>Z</th>
+                <th>段长</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <h3>区段摘要</h3>
+        <div class="seg-summary" id="segSummary"></div>
+      </aside>
+    </div>
+  </div>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+  <script type="module" src="path-editor.js"></script>
+</body>
+</html>
