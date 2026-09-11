@@ -36,9 +36,6 @@ export const GC01_INPUT = {
   power_split: "1:1",
 };
 
-/**
- * 手册约等号。FH/FU 与精确浮点会有约 100N 级差，容差见 GC01_TOL。
- */
 export const GC01_EXPECTED = {
   FH_N: 25525,
   FS1_N: 6100,
@@ -50,15 +47,15 @@ export const GC01_EXPECTED = {
   S1min_slip_N: 24946,
   S_carry_sag_N: 41746,
   S_return_sag_N: 17511,
-  FU1_N: 87811,
-  S22_1_N: 124399,
-  S1_back_N: 36588,
-  F1_N: 357753,
-  F2_N: 160987,
+  F1_11_N: 357753,
+  F2_11_N: 160987,
+  F1max_N: 399000,
+  F2max_N: 215000,
 };
 
 export const GC01_TOL = {
-  force_N: 160, // 手册约等号 vs 浮点展开
+  force_N: 160,
   power_kW: 0.8,
   relative: 0.003,
+  envelope_N: 2500,
 };

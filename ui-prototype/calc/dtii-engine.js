@@ -1,6 +1,6 @@
 /**
  * DTⅡ(A) 逐点张力计算引擎 v0（逐步透明）
- * 算法版本：DTII-P2P-v0.1
+ * 算法版本：DTII-P2P-v0.2（含双驱 1:1 / 2:1 / 1:2）
  */
 
 function step(partial) {
@@ -20,14 +20,42 @@ function step(partial) {
 function near(a, b, absTol, relTol = 0.002) {
   if (!Number.isFinite(a) || !Number.isFinite(b)) return false;
   if (Math.abs(a - b) <= absTol) return true;
-  const den = Math.max(Math.abs(b), 1e-9);
-  return Math.abs(a - b) / den <= relTol;
+  return Math.abs(a - b) / Math.max(Math.abs(b), 1e-9) <= relTol;
 }
 
-/** @param {object} input GC01_INPUT 形状 */
+/**
+ * 双传动滚筒合力（手册算例简化法）
+ * FU1:FU2 = r1:r2；S_mid = max(FU1,FU2)·e/(e-1)
+ * F1 = S22 + S_mid；F2 = 2·S_mid − max(FU1,FU2)
+ */
+export function dualDriveForces(FU, S22, e, r1, r2) {
+  const FU1 = (FU * r1) / (r1 + r2);
+  const FU2 = (FU * r2) / (r1 + r2);
+  const FU_ref = Math.max(FU1, FU2);
+  const S_mid = (FU_ref * e) / (e - 1);
+  const S1_back = S_mid - FU_ref;
+  return {
+    ratio: `${r1}:${r2}`,
+    FU1_N: +FU1.toFixed(0),
+    FU2_N: +FU2.toFixed(0),
+    FU_ref_N: +FU_ref.toFixed(0),
+    S_mid_N: +S_mid.toFixed(0),
+    S1_back_N: +S1_back.toFixed(0),
+    F1_N: +(S22 + S_mid).toFixed(0),
+    F2_N: +(S_mid + S1_back).toFixed(0),
+  };
+}
+
+function parseSplit(split) {
+  if (split === "2:1") return [2, 1];
+  if (split === "1:2") return [1, 2];
+  return [1, 1];
+}
+
 export function runDtiiP2P(input) {
   const g = input.g ?? 9.81;
   const steps = [];
+  const activeSplit = input.power_split || "1:1";
 
   steps.push(
     step({
@@ -37,18 +65,16 @@ export function runDtiiP2P(input) {
       formula: "—",
       inputs: {
         Q: input.Q_tph,
-        rho: input.rho,
         L: input.L_m,
         H: input.H_m,
         delta_deg: input.delta_deg,
-        B: input.B_mm,
-        v: input.v_mps,
         f: input.f,
         C: input.C,
         qRO: input.qRO,
         qRU: input.qRU,
         qB: input.qB,
         qG: input.qG,
+        power_split: activeSplit,
       },
       result: input.case_id || "case",
       note: "后续步骤均引用本表采用值",
@@ -87,10 +113,9 @@ export function runDtiiP2P(input) {
       title: "特种主要阻力 FS1",
       handbook: "式3-24/3-25/3-27",
       formula: "FS1 = Fε + Fgl（v0 整项锚定）",
-      inputs: { FS1_anchor: input.FS1_N },
+      inputs: { FS1_anchor: FS1 },
       result: FS1,
       unit: "N",
-      note: "分项展开二期；本步用 GC-01 锚定整项",
     })
   );
 
@@ -101,7 +126,7 @@ export function runDtiiP2P(input) {
       title: "附加特种阻力 FS2",
       handbook: "式3-28/3-29",
       formula: "清扫器等附加（v0 整项锚定）",
-      inputs: { FS2_anchor: input.FS2_N },
+      inputs: { FS2_anchor: FS2 },
       result: FS2,
       unit: "N",
     })
@@ -156,7 +181,6 @@ export function runDtiiP2P(input) {
       inputs: { PA: +PA.toFixed(2), eta: input.eta },
       result: +PM.toFixed(2),
       unit: "kW",
-      note: "GC-01：双滚筒四电机，正常 3 台 → 约 155.5 kW/台 → Y315L1-4 160 kW",
     })
   );
 
@@ -169,14 +193,8 @@ export function runDtiiP2P(input) {
       title: "不打滑最小张力 S1min（奔离点）",
       handbook: "式3-32",
       formula: "欧拉摩擦求 S1min；双驱例取手册值起算",
-      inputs: {
-        FU: +FU.toFixed(1),
-        "e^{μφ}": emu,
-        S1min_handbook: input.S1min_anchor_N,
-      },
-      intermediates: {
-        "FU/(e-1) 单滚筒满圆周力参考": +S1_simple.toFixed(0),
-      },
+      inputs: { FU: +FU.toFixed(1), "e^{μφ}": emu, S1min_handbook: input.S1min_anchor_N },
+      intermediates: { "FU/(e-1) 参考": +S1_simple.toFixed(0) },
       result: S1min,
       unit: "N",
       note: "GC-01 起算 S1=24946 N；e^{μφ}=3.4 主要用于双驱合力",
@@ -208,63 +226,86 @@ export function runDtiiP2P(input) {
     })
   );
 
-  const FU1 = FU / 2;
-  const S22_1 = (FU1 * emu) / (emu - 1);
-  const S1_back = S22_1 - FU1;
   const S22 = input.S22_N ?? 233354;
-  const F1 = S22 + S22_1;
-  const F2 = S22_1 + S1_back;
+  const split11 = dualDriveForces(FU, S22, emu, 1, 1);
+  const split21 = dualDriveForces(FU, S22, emu, 2, 1);
+  const split12 = dualDriveForces(FU, S22, emu, 1, 2);
+  const F1max = Math.max(split11.F1_N, split21.F1_N, split12.F1_N);
+  const F2max = Math.max(split11.F2_N, split21.F2_N, split12.F2_N);
+  const [ar, br] = parseSplit(activeSplit);
+  const active = dualDriveForces(FU, S22, emu, ar, br);
+
   steps.push(
     step({
-      id: "Split11",
-      title: "双传动功率分配 1:1 与滚筒合力",
+      id: "SplitActive",
+      title: `双传动功率分配 ${active.ratio} 与滚筒合力（当前）`,
       handbook: "表3-26 / 算例续算",
-      formula: "FU1=FU2=FU/2；S22-1=FU1·e/(e-1)；F1=S22+S22-1；F2=S22-1+S1'",
-      inputs: { FU: +FU.toFixed(1), e: emu, S22_anchor: S22 },
+      formula:
+        "FU1:FU2=r1:r2；FU_ref=max(FU1,FU2)；S_mid=FU_ref·e/(e-1)；F1=S22+S_mid；F2=2·S_mid−FU_ref",
+      inputs: { FU: +FU.toFixed(1), e: emu, S22_anchor: S22, ratio: active.ratio },
       intermediates: {
-        FU1: +FU1.toFixed(0),
-        "S22-1": +S22_1.toFixed(0),
-        "S1'": +S1_back.toFixed(0),
+        FU1: active.FU1_N,
+        FU2: active.FU2_N,
+        FU_ref: active.FU_ref_N,
+        S_mid: active.S_mid_N,
+        S1_back: active.S1_back_N,
       },
-      result: { F1: +F1.toFixed(0), F2: +F2.toFixed(0) },
+      result: { F1: active.F1_N, F2: active.F2_N },
       unit: "N",
     })
   );
 
-  const summary = {
-    FH_N: +FH.toFixed(1),
-    FS1_N: FS1,
-    FS2_N: FS2,
-    FSt_N: +FSt.toFixed(1),
-    FU_N: +FU.toFixed(1),
-    PA_kW: +PA.toFixed(2),
-    PM_kW: +PM.toFixed(2),
-    S1min_N: Number(S1min),
-    S_carry_sag_N: S_carry,
-    S_return_sag_N: S_return,
-    split_1_1: {
-      FU1_N: +FU1.toFixed(0),
-      S22_1_N: +S22_1.toFixed(0),
-      S1_back_N: +S1_back.toFixed(0),
-      F1_N: +F1.toFixed(0),
-      F2_N: +F2.toFixed(0),
-    },
-  };
+  steps.push(
+    step({
+      id: "SplitEnvelope",
+      title: "三种配比合张力包络（选型用）",
+      handbook: "第44页汇总",
+      formula: "F1max / F2max = max over {1:1, 2:1, 1:2}",
+      inputs: {
+        "1:1": { F1: split11.F1_N, F2: split11.F2_N },
+        "2:1": { F1: split21.F1_N, F2: split21.F2_N },
+        "1:2": { F1: split12.F1_N, F2: split12.F2_N },
+      },
+      result: { F1max, F2max },
+      unit: "N",
+      note: "GC-01 手册取 F1max≈399 kN、F2max≈215 kN",
+    })
+  );
 
   return {
-    algorithm: "DTII-P2P-v0.1",
+    algorithm: "DTII-P2P-v0.2",
     coeff: "coeff-v0",
     steps,
-    summary,
+    summary: {
+      FH_N: +FH.toFixed(1),
+      FS1_N: FS1,
+      FS2_N: FS2,
+      FSt_N: +FSt.toFixed(1),
+      FU_N: +FU.toFixed(1),
+      PA_kW: +PA.toFixed(2),
+      PM_kW: +PM.toFixed(2),
+      S1min_N: Number(S1min),
+      S_carry_sag_N: S_carry,
+      S_return_sag_N: S_return,
+      power_split: activeSplit,
+      split_active: active,
+      split_1_1: split11,
+      split_2_1: split21,
+      split_1_2: split12,
+      F1max_N: F1max,
+      F2max_N: F2max,
+      F1_N: split11.F1_N,
+      F2_N: split11.F2_N,
+    },
   };
 }
 
 export function compareToExpected(summary, expected, tol) {
   const forceTol = tol?.force_N ?? 160;
   const powerTol = tol?.power_kW ?? 0.8;
+  const envTol = tol?.envelope_N ?? 2500;
   const rel = tol?.relative ?? 0.003;
   const rows = [];
-
   const check = (name, got, exp, absTol) => {
     rows.push({
       name,
@@ -283,8 +324,10 @@ export function compareToExpected(summary, expected, tol) {
   check("PA", summary.PA_kW, expected.PA_kW, powerTol);
   check("PM", summary.PM_kW, expected.PM_kW, powerTol);
   check("S1min", summary.S1min_N, expected.S1min_slip_N, forceTol);
-  check("F1(1:1)", summary.split_1_1.F1_N, expected.F1_N, 200);
-  check("F2(1:1)", summary.split_1_1.F2_N, expected.F2_N, 200);
+  check("F1(1:1)", summary.split_1_1.F1_N, expected.F1_11_N, 200);
+  check("F2(1:1)", summary.split_1_1.F2_N, expected.F2_11_N, 200);
+  check("F1max", summary.F1max_N, expected.F1max_N, envTol);
+  check("F2max", summary.F2max_N, expected.F2max_N, envTol);
 
   return { pass: rows.every((r) => r.pass), rows };
 }

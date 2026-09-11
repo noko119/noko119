@@ -20,9 +20,10 @@
 
 ## 计算原型
 
-- 引擎：`calc/dtii-engine.js`
+- 引擎：`calc/dtii-engine.js`（**1:1 / 2:1 / 1:2** 双驱配比）
 - 锚定算例：`calc/gc01-case.js`（**v1 唯一黄金算例 GC-01**）
 - 每步可展开：输入 → 公式 → 中间值 → 结果；并与期望对照
+- SW 读包：见仓库 `docs/SW_PACKAGE_READ_GUIDE.md`
 
 ## 本地打开
 
