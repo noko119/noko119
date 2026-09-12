@@ -2,6 +2,8 @@
  * DTⅡ(A) 逐点张力计算引擎 v0（逐步透明）
  * 算法版本：DTII-P2P-v0.2（含双驱 1:1 / 2:1 / 1:2）
  */
+import { selectBeltGrade } from "./selection-catalog.js";
+import { buildDesignLoadsFromP2P } from "./design-loads.js";
 
 function step(partial) {
   return {
@@ -50,6 +52,42 @@ function parseSplit(split) {
   if (split === "2:1") return [2, 1];
   if (split === "1:2") return [1, 2];
   return [1, 1];
+}
+
+/** 常用标准电机功率档（kW） */
+export const STANDARD_MOTOR_KW = [
+  0.75, 1.1, 1.5, 2.2, 3, 4, 5.5, 7.5, 11, 15, 18.5, 22, 30, 37, 45, 55, 75, 90, 110, 132, 160, 185, 200, 220, 250, 280, 315, 355, 400, 450, 500, 560, 630, 710, 800,
+];
+
+/**
+ * 按 PM 上靠最近标准电机功率
+ * @param {number} PM_kW
+ * @param {number[]} [series]
+ */
+export function selectMotorFromPm(PM_kW, series = STANDARD_MOTOR_KW) {
+  const pm = Number(PM_kW);
+  if (!(pm > 0)) {
+    return {
+      P_kW: null,
+      PM_kW: pm,
+      ok: false,
+      note: "PM 无效，无法选型",
+      series_label: "IEC/常用 kW",
+      near: [],
+    };
+  }
+  const pick = series.find((p) => p >= pm - 1e-9) ?? series[series.length - 1];
+  const idx = series.indexOf(pick);
+  const near = series.slice(Math.max(0, idx - 1), Math.min(series.length, idx + 2));
+  return {
+    P_kW: pick,
+    PM_kW: +pm.toFixed(2),
+    ok: pick >= pm,
+    margin_kW: +(pick - pm).toFixed(2),
+    series_label: "IEC/常用 kW",
+    near,
+    note: pick >= pm ? `选用 ${pick} kW（≥ PM ${pm.toFixed(2)} kW）` : `超出系列上限，取 ${pick} kW`,
+  };
 }
 
 export function runDtiiP2P(input) {
@@ -184,6 +222,21 @@ export function runDtiiP2P(input) {
     })
   );
 
+  const motor = selectMotorFromPm(PM);
+  steps.push(
+    step({
+      id: "Motor",
+      title: "电动机选型（标准功率上靠）",
+      handbook: "选型示意",
+      formula: "P_motor = min { P ∈ 标准系列 | P ≥ PM }",
+      inputs: { PM_kW: +PM.toFixed(2), series: motor.series_label },
+      intermediates: { candidates_near: motor.near },
+      result: motor.P_kW,
+      unit: "kW",
+      note: motor.note,
+    })
+  );
+
   const emu = input.e_mu_phi;
   const S1_simple = FU / (emu - 1);
   const S1min = input.S1min_anchor_N ?? S1_simple;
@@ -272,31 +325,65 @@ export function runDtiiP2P(input) {
     })
   );
 
+  const S_max_belt = Math.max(F1max, F2max, S_carry, Number(S1min) || 0);
+  const belt = selectBeltGrade({
+    S_max_N: S_max_belt,
+    B_mm: input.B_mm ?? 1400,
+    n1: input.belt_n1 ?? 10,
+  });
+  steps.push(
+    step({
+      id: "Belt",
+      title: "胶带强度档选型（ST 上靠）",
+      handbook: "选型示意",
+      formula: "σ_req = n1·S_max/B ；选 ST ≥ σ_req",
+      inputs: {
+        S_max_N: +S_max_belt.toFixed(0),
+        B_mm: input.B_mm ?? 1400,
+        n1: input.belt_n1 ?? 10,
+      },
+      intermediates: {
+        sigma_req_Npm: belt.sigma_req_Npm,
+        margin_Npm: belt.margin_Npm,
+      },
+      result: belt.grade,
+      unit: "",
+      note: belt.note,
+    })
+  );
+
+  const summary = {
+    FH_N: +FH.toFixed(1),
+    FS1_N: FS1,
+    FS2_N: FS2,
+    FSt_N: +FSt.toFixed(1),
+    FU_N: +FU.toFixed(1),
+    PA_kW: +PA.toFixed(2),
+    PM_kW: +PM.toFixed(2),
+    motor_kW: motor.P_kW,
+    motor_select: motor,
+    belt_grade: belt.grade,
+    belt_select: belt,
+    S1min_N: Number(S1min),
+    S_carry_sag_N: S_carry,
+    S_return_sag_N: S_return,
+    power_split: activeSplit,
+    split_active: active,
+    split_1_1: split11,
+    split_2_1: split21,
+    split_1_2: split12,
+    F1max_N: F1max,
+    F2max_N: F2max,
+    F1_N: split11.F1_N,
+    F2_N: split11.F2_N,
+  };
+  summary.design_loads = buildDesignLoadsFromP2P(summary, input);
+
   return {
     algorithm: "DTII-P2P-v0.2",
     coeff: "coeff-v0",
     steps,
-    summary: {
-      FH_N: +FH.toFixed(1),
-      FS1_N: FS1,
-      FS2_N: FS2,
-      FSt_N: +FSt.toFixed(1),
-      FU_N: +FU.toFixed(1),
-      PA_kW: +PA.toFixed(2),
-      PM_kW: +PM.toFixed(2),
-      S1min_N: Number(S1min),
-      S_carry_sag_N: S_carry,
-      S_return_sag_N: S_return,
-      power_split: activeSplit,
-      split_active: active,
-      split_1_1: split11,
-      split_2_1: split21,
-      split_1_2: split12,
-      F1max_N: F1max,
-      F2max_N: F2max,
-      F1_N: split11.F1_N,
-      F2_N: split11.F2_N,
-    },
+    summary,
   };
 }
 
