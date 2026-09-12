@@ -20,6 +20,14 @@
 | [`docs/WEB_TOOL_MATERIALS_CHECKLIST.md`](./docs/WEB_TOOL_MATERIALS_CHECKLIST.md) | 材料准备表 |
 | [`docs/golden-cases/GC-01_blast_furnace_feeder.md`](./docs/golden-cases/GC-01_blast_furnace_feeder.md) | 黄金算例 |
 
+## 非标设计
+
+伺服 / 步进 / 丝杠 / 齿条选型（Excel）。填负载和速度，对照丝杠与齿轮齿条、伺服与步进：
+
+[`非标设计/伺服步进丝杠齿条选型.xlsx`](./非标设计/伺服步进丝杠齿条选型.xlsx)
+
+用 Excel 或 WPS 打开。对话整理见 [`非标设计/非标设计.md`](./非标设计/非标设计.md)。
+
 ## UI 原型
 
 见 [`ui-prototype/`](./ui-prototype/)：
