@@ -17,6 +17,12 @@ import {
   buildGravityTakeupTemplate,
 } from "./calc/path-templates.js";
 import { buildGc01ComplexPath } from "./calc/gc01-complex-path.js";
+import { buildEasyFromPreset, EASY_PRESETS } from "./calc/easy-wizard.js";
+import { exportNodesToDxf } from "./calc/dxf-import.js";
+import { buildFlightRows, pairCarryReturnFlights } from "./calc/flight-model.js";
+import { finalizeProfile, checkWrapDtii } from "./calc/finalize-checks.js";
+import { nodesToCsv, csvToNodes, flightsToCsv } from "./calc/excel-io.js";
+
 import { buildEasyInclineConveyor } from "./calc/easy-wizard.js";
 import { parseDxfPolylines, dxfPointsToCarryNodes } from "./calc/dxf-import.js";
 import { insertVerticalCurveAt, suggestMinRadius_m } from "./calc/vertical-curve.js";
@@ -267,6 +273,40 @@ function near(a, b, tol = 1e-6) {
   const { nodes: offNodes, meta } = applyDrumRadiusOffsets(annotated, { outward: true });
   assert(meta.offset_count >= 1, "drum offset applied");
   assert(offNodes[1].offset_applied === true, "bend offset flag");
+}
+
+
+// 15) Easy 机型库 + Flight 配对 + Finalize + DXF/CSV 往返
+{
+  assert(EASY_PRESETS.length >= 3, "easy presets >= 3");
+  const easy = buildEasyFromPreset("incline_short");
+  assert(easy.nodes.length >= 4, "easy preset nodes");
+  assert(easy.meta.preset_id === "incline_short", "easy preset id");
+  // ensure drums have D for finalize
+  easy.nodes.forEach((n) => {
+    if (["tail","head","drive","bend","takeup"].includes(n.type) && !(n.drum_D_mm > 0)) n.drum_D_mm = 800;
+  });
+  let flights = buildFlightRows(easy.nodes, { closed_loop: true });
+  assert(flights.length >= 3, "flight rows built");
+  const paired = pairCarryReturnFlights(flights);
+  assert(paired.meta.paired_pairs >= 1, "paired flights >= 1");
+  const fin = finalizeProfile({
+    nodes: easy.nodes,
+    returnMeta: { ...easy.meta, closed_loop: true },
+    flightOverrides: Object.fromEntries(
+      paired.flights.filter((f) => f.paired_flight_id).map((f) => [f.id, { paired_flight_id: f.paired_flight_id, classify_status: "confirmed" }])
+    ),
+  });
+  assert(fin.ok === true, "finalize ok after pair/drums");
+  const dxf = exportNodesToDxf(easy.nodes.filter((n) => n.branch !== "return"), { plane: "xz" });
+  assert(dxf.includes("LWPOLYLINE"), "dxf export lwpolyline");
+  const csv = nodesToCsv(easy.nodes);
+  const back = csvToNodes(csv);
+  assert(back.length === easy.nodes.length, "csv roundtrip node count");
+  const fcsv = flightsToCsv(paired.flights);
+  assert(fcsv.includes("a_idler_m"), "flight csv header");
+  const wrap = checkWrapDtii(easy.nodes, { min_drive_wrap_deg: 1 });
+  assert(wrap.items.length >= 1, "wrap dtii has drive item");
 }
 
 if (failed) {

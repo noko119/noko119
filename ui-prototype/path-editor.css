@@ -294,3 +294,34 @@ label.inline input[type=number] { background:#0f172a; border:1px solid #334155; 
 }
 #returnModeChip.auto { background:#0c4a6e; color:#bae6fd; }
 #returnModeChip.advanced { background:#7c2d12; color:#fed7aa; }
+
+
+/* —— 大厂缺口补齐：tabs / modal / finalize —— */
+.table-tabs { display:flex; gap:6px; margin-bottom:8px; }
+.table-tabs .tab {
+  border:1px solid var(--line); background:var(--bg2); color:var(--text);
+  border-radius:999px; padding:6px 12px; cursor:pointer; font:inherit; font-size:.85rem;
+}
+.table-tabs .tab.active { background:rgba(59,130,246,.2); border-color:var(--primary); color:#bfdbfe; }
+.hidden { display:none !important; }
+.flight-scroll { max-height: 320px; }
+#flightTable input, #flightTable select {
+  background:#0b1220; color:var(--text); border:1px solid var(--line); border-radius:6px; padding:2px 4px;
+}
+.chip.ok { background:#14532d; color:#bbf7d0; }
+.chip.warn { background:#7c2d12; color:#fed7aa; }
+.modal {
+  position:fixed; inset:0; background:rgba(0,0,0,.55); display:flex; align-items:center; justify-content:center; z-index:50;
+}
+.modal.hidden { display:none !important; }
+.modal-card {
+  width:min(560px,92vw); background:var(--card); border:1px solid var(--line); border-radius:16px; padding:16px;
+  box-shadow:0 20px 60px rgba(0,0,0,.45);
+}
+.modal-card header, .modal-card footer { display:flex; justify-content:space-between; align-items:center; gap:12px; }
+.modal-card .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px; }
+.modal-card label { display:flex; flex-direction:column; gap:4px; font-size:.85rem; color:var(--muted); }
+.modal-card input, .modal-card select {
+  background:#0b1220; color:var(--text); border:1px solid var(--line); border-radius:8px; padding:8px 10px; font:inherit;
+}
+.btn.primary { background:var(--primary); border-color:var(--primary); color:#fff; }

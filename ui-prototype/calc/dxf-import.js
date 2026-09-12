@@ -175,3 +175,30 @@ export function dxfPointsToCarryNodes(points) {
     };
   });
 }
+
+
+/**
+ * 节点折线 → ASCII DXF（LWPOLYLINE），便于往返
+ * @param {Array} nodes
+ * @param {{plane?:'xy'|'xz', unit_scale?:number}} [opts]
+ */
+export function exportNodesToDxf(nodes, opts = {}) {
+  const plane = opts.plane === "xy" ? "xy" : "xz";
+  const scale = Number.isFinite(opts.unit_scale) && opts.unit_scale > 0 ? opts.unit_scale : 1;
+  if (!nodes || nodes.length < 2) throw new Error("DXF 导出需要至少 2 个节点");
+  const lines = [
+    "0", "SECTION", "2", "HEADER", "0", "ENDSEC",
+    "0", "SECTION", "2", "ENTITIES",
+    "0", "LWPOLYLINE",
+    "8", "PIDM_CENTERLINE",
+    "90", String(nodes.length),
+    "70", "0",
+  ];
+  for (const n of nodes) {
+    const x = (Number(n.x) || 0) / scale;
+    const yz = plane === "xy" ? (Number(n.y) || 0) / scale : (Number(n.z) || 0) / scale;
+    lines.push("10", x.toFixed(6), "20", yz.toFixed(6));
+  }
+  lines.push("0", "ENDSEC", "0", "EOF");
+  return lines.join("\n") + "\n";
+}

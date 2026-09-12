@@ -109,3 +109,40 @@ export function buildEasyInclineConveyor(opts = {}) {
     },
   };
 }
+
+/** 机型库快搭（对标 Sidewinder Easy 模板） */
+export const EASY_PRESETS = [
+  {
+    id: "incline_short",
+    name: "短斜坡上运",
+    desc: "Ln=80 m · H=15 m · 头驱",
+    opts: { Ln_m: 80, H_m: 15, return_offset_m: 1.2, mid_points: 2, drive_at: "head" },
+  },
+  {
+    id: "incline_gc01_like",
+    name: "高炉上料级斜坡（示意）",
+    desc: "Ln=305 m · H=57 m · 头驱",
+    opts: { Ln_m: 304.88, H_m: 57.051, return_offset_m: 1.8, mid_points: 3, drive_at: "head" },
+  },
+  {
+    id: "flat_transfer",
+    name: "近水平转载",
+    desc: "Ln=120 m · H=3 m · 头驱",
+    opts: { Ln_m: 120, H_m: 3, return_offset_m: 1.0, mid_points: 1, drive_at: "head" },
+  },
+  {
+    id: "tail_drive_decline",
+    name: "下运尾驱",
+    desc: "Ln=100 m · H=-20 m · 尾驱",
+    opts: { Ln_m: 100, H_m: -20, return_offset_m: 1.2, mid_points: 2, drive_at: "tail" },
+  },
+];
+
+export function buildEasyFromPreset(presetId, overrides = {}) {
+  const p = EASY_PRESETS.find((x) => x.id === presetId);
+  if (!p) throw new Error("未知 Easy 机型：" + presetId);
+  const out = buildEasyInclineConveyor({ ...p.opts, ...overrides });
+  out.meta.preset_id = p.id;
+  out.meta.preset_name = p.name;
+  return out;
+}

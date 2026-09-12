@@ -51,10 +51,20 @@
         <button class="btn" id="btnExport">导出 JSON</button>
       </div>
       <div class="tool-group">
-        <span class="label">Easy / 导入</span>
-        <button class="btn" id="btnEasyWizard" title="对标 Sidewinder Easy：少参数快搭斜坡机">Easy 向导</button>
-        <button class="btn" id="btnImportDxf" title="对标大厂：导入 DXF 中心线（LINE/LWPOLYLINE）">导入 DXF</button>
+        <span class="label">Easy / 导入导出</span>
+        <button class="btn" id="btnEasyWizard" title="对标 Sidewinder Easy：向导面板+机型库">Easy 向导</button>
+        <button class="btn" id="btnImportDxf" title="导入 DXF 中心线">导入 DXF</button>
+        <button class="btn" id="btnExportDxf" title="导出中心线 DXF">导出 DXF</button>
+        <button class="btn" id="btnImportExcel" title="导入 Excel 兼容 CSV">导入 Excel</button>
+        <button class="btn" id="btnExportExcel" title="导出节点/Flight CSV">导出 Excel</button>
         <input type="file" id="dxfFileInput" accept=".dxf,text/plain" hidden />
+        <input type="file" id="excelFileInput" accept=".csv,text/csv,text/plain" hidden />
+      </div>
+      <div class="tool-group">
+        <span class="label">剖面确认</span>
+        <button class="btn" id="btnPairFlights" title="承载↔回程配对">配对航段</button>
+        <button class="btn primary" id="btnFinalize" title="Finalize Profile">Finalize</button>
+        <span class="chip" id="finalizeChip">Finalize：未锁定</span>
       </div>
       <div class="tool-group">
         <span class="label">局部模板</span>
@@ -138,25 +148,71 @@
       </section>
 
       <aside class="table-pane card">
-        <h3>XYZ / 节点表</h3>
-        <div class="table-scroll">
-          <table id="xyzTable">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>类型</th>
-                <th>X</th>
-                <th>Y</th>
-                <th>Z</th>
-                <th>段长</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
+        <div class="table-tabs">
+          <button type="button" class="tab active" id="tabXyz" data-tab="xyz">XYZ 节点</button>
+          <button type="button" class="tab" id="tabFlight" data-tab="flight">Flight 段表</button>
         </div>
-        <h3>区段摘要</h3>
+        <div id="panelXyz">
+          <h3>XYZ / 节点表</h3>
+          <div class="table-scroll">
+            <table id="xyzTable">
+              <thead>
+                <tr>
+                  <th>#</th><th>类型</th><th>X</th><th>Y</th><th>Z</th><th>段长</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+        <div id="panelFlight" class="hidden">
+          <h3>Flight 段属性 <span class="muted" id="flightSummary"></span></h3>
+          <div class="table-scroll flight-scroll">
+            <table id="flightTable">
+              <thead>
+                <tr>
+                  <th>#</th><th>分支</th><th>分类</th><th>L</th><th>H</th><th>δ</th>
+                  <th>a</th><th>R</th><th>曲线</th><th>配对</th><th>状态</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+        <h3>区段摘要 / Finalize</h3>
         <div class="seg-summary" id="segSummary"></div>
+        <div class="seg-summary" id="finalizeSummary"></div>
       </aside>
+    </div>
+  </div>
+
+  <div class="modal hidden" id="easyModal" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <header>
+        <h2>Easy 向导（对标 Sidewinder）</h2>
+        <button class="btn" id="btnEasyClose" type="button">关闭</button>
+      </header>
+      <div class="modal-body">
+        <label>机型模板
+          <select id="easyPreset"></select>
+        </label>
+        <div class="form-grid">
+          <label>Ln (m)<input type="number" id="easyLn" value="100" step="0.1" /></label>
+          <label>H (m)<input type="number" id="easyH" value="20" step="0.1" /></label>
+          <label>回程间距 (m)<input type="number" id="easyOffset" value="1.2" step="0.1" /></label>
+          <label>中间点数<input type="number" id="easyMids" value="2" min="0" max="8" step="1" /></label>
+          <label>驱动位置
+            <select id="easyDriveAt">
+              <option value="head">头部</option>
+              <option value="tail">尾部</option>
+            </select>
+          </label>
+        </div>
+        <p class="muted" id="easyPresetDesc">少参数快搭斜坡机，生成后可 Advanced 精修。</p>
+      </div>
+      <footer>
+        <button class="btn primary" id="btnEasyApply" type="button">生成路径</button>
+      </footer>
     </div>
   </div>
 

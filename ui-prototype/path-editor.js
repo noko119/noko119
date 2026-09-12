@@ -7,10 +7,13 @@ import {
   buildGravityTakeupTemplate,
 } from "./calc/path-templates.js";
 import { buildGc01ComplexPath } from "./calc/gc01-complex-path.js";
-import { buildEasyInclineConveyor } from "./calc/easy-wizard.js";
-import { parseDxfPolylines, dxfPointsToCarryNodes } from "./calc/dxf-import.js";
+import { buildEasyInclineConveyor, buildEasyFromPreset, EASY_PRESETS } from "./calc/easy-wizard.js";
+import { parseDxfPolylines, dxfPointsToCarryNodes, exportNodesToDxf } from "./calc/dxf-import.js";
 import { insertVerticalCurveAt, suggestMinRadius_m } from "./calc/vertical-curve.js";
 import { annotateWrapAngles, applyDrumRadiusOffsets, computeWrapAtNode } from "./calc/drum-geometry.js";
+import { buildFlightRows, pairCarryReturnFlights, flightRowsToOverrides, summarizeFlights } from "./calc/flight-model.js";
+import { finalizeProfile, checkVerticalCurveDtii, checkWrapDtii } from "./calc/finalize-checks.js";
+import { nodesToCsv, csvToNodes, flightsToCsv, csvToFlightOverrides } from "./calc/excel-io.js";
 
 /** @typedef {{ id:string, x:number, y:number, z:number, type:string, mainDrive?:boolean, branch?:string, strand?:string }} PathNode */
 
@@ -44,6 +47,10 @@ const state = {
   planeY: 0,
   returnMeta: null,
   returnMode: "auto", // auto | advanced
+  flightOverrides: {},
+  flights: [],
+  finalizeResult: null,
+  finalized: false,
 };
 
 const els = {
@@ -64,6 +71,13 @@ const els = {
   fWrap: document.getElementById("fWrap"),
   tbody: document.querySelector("#xyzTable tbody"),
   segSummary: document.getElementById("segSummary"),
+  flightBody: document.querySelector("#flightTable tbody"),
+  flightSummary: document.getElementById("flightSummary"),
+  finalizeSummary: document.getElementById("finalizeSummary"),
+  finalizeChip: document.getElementById("finalizeChip"),
+  panelXyz: document.getElementById("panelXyz"),
+  panelFlight: document.getElementById("panelFlight"),
+  easyModal: document.getElementById("easyModal"),
 };
 
 let renderer, scene, camera, controls;
@@ -919,6 +933,8 @@ function updateUI(rebuildTable = true) {
 
   if (rebuildTable) renderTable();
   else syncTableInputs();
+  if (!els.panelFlight?.classList.contains("hidden")) renderFlightTable();
+  else refreshFlights();
 
   // segment summary
   let html = "";
@@ -1043,42 +1059,291 @@ function remapNodeIds(nodes) {
   }));
 }
 
-function loadEasyWizard() {
-  const Ln = parseFloat(prompt("Easy 向导 · 水平机长 Ln (m)", "100") || "");
-  if (!(Ln > 0)) return;
-  const H = parseFloat(prompt("提升高度 H (m)", "20") || "0");
-  if (!Number.isFinite(H)) return;
-  const offset = parseFloat(prompt("回程间距 (m)", String(getReturnOffset())) || "1.2");
-  const mids = parseInt(prompt("承载中间点数 (0-8)", "2") || "2", 10);
-  try {
-    const { nodes, meta } = buildEasyInclineConveyor({
-      Ln_m: Ln,
-      H_m: H,
-      return_offset_m: Number.isFinite(offset) ? offset : 1.2,
-      mid_points: Number.isFinite(mids) ? mids : 2,
-      drive_at: "head",
+
+function isClosedPath() {
+  const m = state.returnMeta || {};
+  return !!(m.closed_loop || m.closedLoop);
+}
+
+function refreshFlights() {
+  state.flights = buildFlightRows(state.nodes, {
+    closed_loop: isClosedPath(),
+    flightOverrides: state.flightOverrides,
+  });
+  return state.flights;
+}
+
+function renderFlightTable() {
+  if (!els.flightBody) return;
+  const flights = refreshFlights();
+  const sum = summarizeFlights(flights);
+  if (els.flightSummary) {
+    els.flightSummary.textContent =
+      `承载 ${sum.carry_count} / 回程 ${sum.return_count} · L_c=${sum.L_carry_m} · 配对 ${sum.paired_pairs}`;
+  }
+  els.flightBody.innerHTML = "";
+  flights.forEach((f) => {
+    const tr = document.createElement("tr");
+    tr.dataset.id = f.id;
+    tr.innerHTML = `
+      <td>${f.seq}</td>
+      <td>${f.branch}</td>
+      <td>${f.major_id || ""}</td>
+      <td>${f.L_m}</td>
+      <td>${f.H_m}</td>
+      <td>${f.delta_deg}</td>
+      <td><input data-f="a_idler_m" type="number" step="0.1" value="${f.a_idler_m ?? ""}" style="width:4rem" /></td>
+      <td><input data-f="R_m" type="number" step="0.1" value="${f.R_m ?? ""}" style="width:4rem" /></td>
+      <td>
+        <select data-f="curve_kind">
+          <option value="">—</option>
+          <option value="convex" ${f.curve_kind === "convex" ? "selected" : ""}>凸</option>
+          <option value="concave" ${f.curve_kind === "concave" ? "selected" : ""}>凹</option>
+          <option value="horizontal" ${f.curve_kind === "horizontal" ? "selected" : ""}>水平弯</option>
+        </select>
+      </td>
+      <td>${f.paired_flight_id || "—"}</td>
+      <td>${f.classify_status}</td>`;
+    tr.querySelectorAll("input,select").forEach((el) => {
+      el.addEventListener("change", () => {
+        const key = el.dataset.f;
+        let val = el.value;
+        if (key === "a_idler_m" || key === "R_m") {
+          val = val === "" ? null : parseFloat(val);
+        }
+        state.flightOverrides[f.id] = {
+          ...(state.flightOverrides[f.id] || {}),
+          [key]: val,
+        };
+        state.finalized = false;
+        updateFinalizeChip();
+        renderFlightTable();
+      });
     });
+    els.flightBody.appendChild(tr);
+  });
+}
+
+function updateFinalizeChip() {
+  if (!els.finalizeChip) return;
+  if (state.finalized && state.finalizeResult?.ok) {
+    els.finalizeChip.textContent = "Finalize：已锁定";
+    els.finalizeChip.className = "chip ok";
+  } else if (state.finalizeResult && !state.finalizeResult.ok) {
+    els.finalizeChip.textContent = "Finalize：未通过";
+    els.finalizeChip.className = "chip warn";
+  } else {
+    els.finalizeChip.textContent = "Finalize：未锁定";
+    els.finalizeChip.className = "chip";
+  }
+}
+
+function switchTableTab(tab) {
+  const flight = tab === "flight";
+  document.getElementById("tabXyz")?.classList.toggle("active", !flight);
+  document.getElementById("tabFlight")?.classList.toggle("active", flight);
+  els.panelXyz?.classList.toggle("hidden", flight);
+  els.panelFlight?.classList.toggle("hidden", !flight);
+  if (flight) renderFlightTable();
+}
+
+function openEasyModal() {
+  const sel = document.getElementById("easyPreset");
+  if (sel && !sel.options.length) {
+    const opt0 = document.createElement("option");
+    opt0.value = "";
+    opt0.textContent = "自定义参数";
+    sel.appendChild(opt0);
+    EASY_PRESETS.forEach((p) => {
+      const o = document.createElement("option");
+      o.value = p.id;
+      o.textContent = p.name;
+      sel.appendChild(o);
+    });
+  }
+  els.easyModal?.classList.remove("hidden");
+}
+
+function closeEasyModal() {
+  els.easyModal?.classList.add("hidden");
+}
+
+function applyEasyFromModal() {
+  try {
+    const preset = document.getElementById("easyPreset")?.value || "";
+    const Ln = parseFloat(document.getElementById("easyLn")?.value || "100");
+    const H = parseFloat(document.getElementById("easyH")?.value || "0");
+    const offset = parseFloat(document.getElementById("easyOffset")?.value || "1.2");
+    const mids = parseInt(document.getElementById("easyMids")?.value || "2", 10);
+    const driveAt = document.getElementById("easyDriveAt")?.value || "head";
+    const { nodes, meta } = preset
+      ? buildEasyFromPreset(preset, {
+          Ln_m: Ln,
+          H_m: H,
+          return_offset_m: offset,
+          mid_points: mids,
+          drive_at: driveAt,
+        })
+      : buildEasyInclineConveyor({
+          Ln_m: Ln,
+          H_m: H,
+          return_offset_m: offset,
+          mid_points: mids,
+          drive_at: driveAt,
+        });
     const modeEl = document.getElementById("profileMode");
     if (modeEl) modeEl.value = "auto";
     state.returnMode = "auto";
     state.nodes = remapNodeIds(nodes);
     state.returnMeta = { ...meta, closed_loop: true, open_path: false, return_mode: "auto" };
     state.selectedId = state.nodes[0]?.id ?? null;
+    state.flightOverrides = {};
+    state.finalized = false;
     const offEl = document.getElementById("returnOffset");
     if (offEl && Number.isFinite(meta.carry_return_offset_m)) offEl.value = String(meta.carry_return_offset_m);
     rebuildSceneObjects();
     updateUI();
     fitView();
     updateReturnModeChip();
+    updateFinalizeChip();
+    closeEasyModal();
     alert(
       "Easy 向导已生成（对标 Sidewinder）\n\n" +
+        `模板：${meta.preset_name || "自定义"}\n` +
         `Ln=${meta.Ln_m} m · H=${meta.H_m} m · δ≈${meta.delta_deg}°\n` +
-        `节点 ${state.nodes.length}（含 Auto Return）\n\n` +
-        "可继续精修；复杂回程请切 Advanced 并插入局部模板。"
+        `节点 ${state.nodes.length}`
     );
   } catch (err) {
     alert("Easy 向导失败：\n" + (err?.message || err));
   }
+}
+
+function onEasyPresetChange() {
+  const id = document.getElementById("easyPreset")?.value;
+  const p = EASY_PRESETS.find((x) => x.id === id);
+  const desc = document.getElementById("easyPresetDesc");
+  if (!p) {
+    if (desc) desc.textContent = "自定义参数快搭斜坡机。";
+    return;
+  }
+  if (desc) desc.textContent = p.desc;
+  const set = (i, v) => { const el = document.getElementById(i); if (el) el.value = v; };
+  set("easyLn", p.opts.Ln_m);
+  set("easyH", p.opts.H_m);
+  set("easyOffset", p.opts.return_offset_m);
+  set("easyMids", p.opts.mid_points);
+  set("easyDriveAt", p.opts.drive_at);
+}
+
+function pairFlightsAction() {
+  const flights = refreshFlights();
+  const { flights: paired, meta } = pairCarryReturnFlights(flights);
+  state.flightOverrides = {
+    ...state.flightOverrides,
+    ...flightRowsToOverrides(paired),
+  };
+  state.finalized = false;
+  renderFlightTable();
+  updateFinalizeChip();
+  alert(`航段配对完成\n\n配对对数：${meta.paired_pairs}\n${meta.note}`);
+}
+
+function runFinalizeAction() {
+  // ensure wraps annotated
+  state.nodes = annotateWrapAngles(state.nodes);
+  const result = finalizeProfile({
+    nodes: state.nodes,
+    returnMeta: state.returnMeta,
+    flightOverrides: state.flightOverrides,
+    v_mps: 2,
+  });
+  const wrapChk = checkWrapDtii(state.nodes, { min_drive_wrap_deg: 180 });
+  const curveChk = checkVerticalCurveDtii(result.flights, { v_mps: 2 });
+  state.finalizeResult = result;
+  state.finalized = !!result.ok;
+  if (result.ok) {
+    state.flightOverrides = {
+      ...state.flightOverrides,
+      ...flightRowsToOverrides(result.flights),
+    };
+  }
+  updateFinalizeChip();
+  renderFlightTable();
+  if (els.finalizeSummary) {
+    const lines = result.items.map((i) => `[${i.level}] ${i.code}: ${i.message}`);
+    lines.push(`包角校核：${wrapChk.ok ? "通过" : "有告警"}`);
+    lines.push(`竖曲线校核：${curveChk.ok ? "通过" : "有告警/无曲线"}`);
+    els.finalizeSummary.innerHTML = `<div><strong>Finalize</strong>：${result.meta.note}</div>` +
+      lines.map((l) => `<div>${l}</div>`).join("");
+  }
+  alert(
+    (result.ok ? "Finalize 通过，剖面已锁定\n\n" : "Finalize 未通过\n\n") +
+      result.items.slice(0, 8).map((i) => `[${i.level}] ${i.message}`).join("\n")
+  );
+  updateUI(false);
+}
+
+function downloadText(filename, text, mime = "text/plain") {
+  const blob = new Blob([text], { type: mime });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function exportDxfAction() {
+  try {
+    const carry = extractCarryChain(state.nodes);
+    const dxf = exportNodesToDxf(carry, { plane: "xz", unit_scale: 1 });
+    downloadText("pidm-centerline.xz.dxf", dxf, "application/dxf");
+  } catch (err) {
+    alert("DXF 导出失败：\n" + (err?.message || err));
+  }
+}
+
+function exportExcelAction() {
+  const flights = refreshFlights();
+  const kind = confirm("确定=导出节点CSV；取消=导出 Flight CSV") ? "nodes" : "flights";
+  if (kind === "nodes") downloadText("pidm-nodes.csv", nodesToCsv(state.nodes), "text/csv");
+  else downloadText("pidm-flights.csv", flightsToCsv(flights), "text/csv");
+}
+
+function importExcelFile(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const text = String(reader.result || "");
+      const header = text.split(/\\r?\n/)[0] || "";
+      if (/\bL_m\b/i.test(header) || /\bpaired_flight_id\b/i.test(header)) {
+        state.flightOverrides = { ...state.flightOverrides, ...csvToFlightOverrides(text) };
+        state.finalized = false;
+        renderFlightTable();
+        alert("Flight CSV 已合并到段属性覆盖层");
+      } else {
+        const nodes = remapNodeIds(csvToNodes(text));
+        const modeEl = document.getElementById("profileMode");
+        if (modeEl) modeEl.value = "auto";
+        state.returnMode = "auto";
+        applyAutoReturn(nodes, { quiet: true });
+        state.flightOverrides = {};
+        state.finalized = false;
+        alert(`节点 CSV 已导入并 Auto Return\n节点：${state.nodes.length}`);
+      }
+      updateFinalizeChip();
+      updateUI();
+      fitView();
+    } catch (err) {
+      alert("Excel/CSV 导入失败：\n" + (err?.message || err));
+    }
+  };
+  reader.readAsText(file);
+}
+
+
+function loadEasyWizard() {
+  openEasyModal();
 }
 
 function importDxfFile(file) {
@@ -1210,6 +1475,22 @@ function bindChrome() {
   document.getElementById("btnGc01Demo")?.addEventListener("click", loadGc01Demo);
 
   document.getElementById("btnEasyWizard")?.addEventListener("click", loadEasyWizard);
+
+  document.getElementById("tabXyz")?.addEventListener("click", () => switchTableTab("xyz"));
+  document.getElementById("tabFlight")?.addEventListener("click", () => switchTableTab("flight"));
+  document.getElementById("btnEasyClose")?.addEventListener("click", closeEasyModal);
+  document.getElementById("btnEasyApply")?.addEventListener("click", applyEasyFromModal);
+  document.getElementById("easyPreset")?.addEventListener("change", onEasyPresetChange);
+  document.getElementById("btnPairFlights")?.addEventListener("click", pairFlightsAction);
+  document.getElementById("btnFinalize")?.addEventListener("click", runFinalizeAction);
+  document.getElementById("btnExportDxf")?.addEventListener("click", exportDxfAction);
+  document.getElementById("btnExportExcel")?.addEventListener("click", exportExcelAction);
+  document.getElementById("btnImportExcel")?.addEventListener("click", () => document.getElementById("excelFileInput")?.click());
+  document.getElementById("excelFileInput")?.addEventListener("change", (ev) => {
+    importExcelFile(ev.target.files?.[0]);
+    ev.target.value = "";
+  });
+
   document.getElementById("btnImportDxf")?.addEventListener("click", () => {
     document.getElementById("dxfFileInput")?.click();
   });
