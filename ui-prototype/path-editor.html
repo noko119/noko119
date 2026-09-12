@@ -51,10 +51,22 @@
         <button class="btn" id="btnExport">导出 JSON</button>
       </div>
       <div class="tool-group">
+        <span class="label">Easy / 导入</span>
+        <button class="btn" id="btnEasyWizard" title="对标 Sidewinder Easy：少参数快搭斜坡机">Easy 向导</button>
+        <button class="btn" id="btnImportDxf" title="对标大厂：导入 DXF 中心线（LINE/LWPOLYLINE）">导入 DXF</button>
+        <input type="file" id="dxfFileInput" accept=".dxf,text/plain" hidden />
+      </div>
+      <div class="tool-group">
         <span class="label">局部模板</span>
         <button class="btn" id="btnInsertDualDrive" title="对标 Sidewinder：插入双驱蛇形绕法（Advanced，插入后可改）">插入双驱绕法</button>
         <button class="btn" id="btnInsertTakeup" title="对标 Sidewinder：插入垂直重锤拉紧（Advanced，插入后可改）">插入重锤拉紧</button>
         <button class="btn muted" id="btnGc01Demo" title="仅演示/对照，非整机主交互（规则 §3.0）">演示：GC-01复杂回程</button>
+      </div>
+      <div class="tool-group">
+        <span class="label">工业绘图</span>
+        <button class="btn" id="btnInsertCurve" title="对标大厂：在选中转角插入凸/凹弧">插入竖曲线</button>
+        <button class="btn" id="btnAnnotateWrap" title="按邻段几何重算滚筒包角">重算包角</button>
+        <button class="btn" id="btnDrumOffset" title="滚筒节点按 D/2 角平分线偏移中心线">D/2 偏移</button>
       </div>
       <div class="tool-group">
         <span class="label">回程模式</span>
@@ -99,6 +111,8 @@
             <label>X (m)<input type="number" step="0.01" id="fX" /></label>
             <label>Y (m)<input type="number" step="0.01" id="fY" /></label>
             <label>Z (m)<input type="number" step="0.01" id="fZ" /></label>
+            <label>D (mm)<input type="number" step="1" id="fDrumD" title="滚筒直径" /></label>
+            <label>包角 φ (°)<input type="number" step="0.1" id="fWrap" readonly title="由邻段几何计算" /></label>
             <label class="check"><input type="checkbox" id="fMainDrive" /> 主驱动</label>
           </div>
         </div>
@@ -108,9 +122,10 @@
           <li><strong>3D</strong>：左键选/拖点，中键或 Alt+左键旋转，滚轮缩放；拖点改 XYZ。</li>
           <li><strong>2D 俯视</strong>：改 X/Y；Z 用右侧表或选中后改高程。</li>
           <li><strong>2D 侧视</strong>：改 X/Z（看坡度/高差）。</li>
-          <li><strong>Auto Return（默认，大厂）</strong>：只画/改承载；回程自动生成并锁定跟随。</li>
-          <li><strong>Advanced</strong>：可单独改回程（拖/插/删）；切回 Auto 会按承载重算回程。</li>
-          <li><strong>局部模板</strong>：双驱绕法 / 重锤拉紧可插入，插入后仍可改（非整机预制）。</li>
+          <li><strong>Easy 向导</strong>：少参数生成斜坡机 + Auto Return（对标 Sidewinder）。</li>
+          <li><strong>DXF</strong>：导入 LINE/LWPOLYLINE 中心线后可 Auto Return。</li>
+          <li><strong>Auto Return（默认）</strong>：只画/改承载；回程自动跟随锁定。</li>
+          <li><strong>Advanced</strong>：可单独改回程；局部模板/竖曲线/D2 在此精修。</li>
           <li>颜色：蓝=承载，橙=回程，黄=闭合段。</li>
         </ul>
       </aside>

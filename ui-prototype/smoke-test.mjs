@@ -17,6 +17,15 @@ import {
   buildGravityTakeupTemplate,
 } from "./calc/path-templates.js";
 import { buildGc01ComplexPath } from "./calc/gc01-complex-path.js";
+import { buildEasyInclineConveyor } from "./calc/easy-wizard.js";
+import { parseDxfPolylines, dxfPointsToCarryNodes } from "./calc/dxf-import.js";
+import { insertVerticalCurveAt, suggestMinRadius_m } from "./calc/vertical-curve.js";
+import { annotateWrapAngles, applyDrumRadiusOffsets, computeWrapAtNode } from "./calc/drum-geometry.js";
+import { readFileSync } from "fs";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
 
 let failed = 0;
 function assert(cond, msg) {
@@ -196,6 +205,68 @@ function near(a, b, tol = 1e-6) {
   });
   assert(path.closure.ok === true, "gc01 demo closure ok");
   assert(path.extract?.source === "web_path", "gc01 demo extractable");
+}
+
+
+// 11) Easy 向导（Sidewinder）
+{
+  const { nodes, meta } = buildEasyInclineConveyor({
+    Ln_m: 60,
+    H_m: 12,
+    return_offset_m: 1.2,
+    mid_points: 1,
+    drive_at: "head",
+  });
+  assert(meta.closed_loop === true, "easy wizard closed_loop");
+  assert(meta.source === "easy_wizard", "easy wizard source");
+  assert(nodes.some((n) => n.branch === "return"), "easy has return");
+  assert(nodes.filter((n) => n.branch !== "return").length >= 3, "easy carry count");
+}
+
+// 12) DXF 导入中心线
+{
+  const dxf = readFileSync(join(__dirname, "samples/sample-carry.xz.dxf"), "utf8");
+  const { points, meta } = parseDxfPolylines(dxf, { plane: "xz", unit_scale: 1 });
+  assert(points.length >= 3, "dxf points >= 3");
+  assert(meta.plane === "xz", "dxf plane xz");
+  const carry = dxfPointsToCarryNodes(points);
+  assert(carry[0].type === "tail", "dxf first tail");
+  assert(carry.at(-1).type === "head", "dxf last head");
+  const { nodes, meta: rm } = buildAutoReturnLoop(carry, { offset_m: 1.2, mode: "auto" });
+  assert(rm.closed_loop === true, "dxf+auto return closed");
+  assert(nodes.length > carry.length, "dxf path grew with return");
+}
+
+// 13) 竖曲线 + 最小半径建议
+{
+  const base = [
+    { id: "a", x: 0, y: 0, z: 0, type: "tail", branch: "carry" },
+    { id: "b", x: 50, y: 0, z: 0, type: "node", branch: "carry" },
+    { id: "c", x: 100, y: 0, z: 25, type: "head", branch: "carry" },
+  ];
+  const sug = suggestMinRadius_m({ kind: "convex", v_mps: 2 });
+  assert(sug.R_min_m > 0, "suggest Rmin > 0");
+  const { nodes, meta } = insertVerticalCurveAt(base, 1, { R_m: 120, kind: "convex", segments: 4 });
+  assert(nodes.length > base.length, "curve inserts points");
+  assert(meta.R_m === 120, "curve R recorded");
+  assert(meta.kind === "convex", "curve kind convex");
+}
+
+// 14) 包角 + D/2 偏移
+{
+  const nodes = [
+    { id: "t", x: 0, y: 0, z: 0, type: "tail", branch: "carry", drum_D_mm: 800 },
+    { id: "b", x: 30, y: 0, z: 0, type: "bend", branch: "carry", drum_D_mm: 800 },
+    { id: "h", x: 60, y: 0, z: 15, type: "head", branch: "carry", drum_D_mm: 1000 },
+  ];
+  const w = computeWrapAtNode(nodes, 1);
+  assert(w.ok === true, "wrap at bend ok");
+  assert(w.wrap_angle_deg > 0, "wrap angle > 0");
+  const annotated = annotateWrapAngles(nodes);
+  assert(annotated[1].wrap_angle_deg != null, "annotate wrap written");
+  const { nodes: offNodes, meta } = applyDrumRadiusOffsets(annotated, { outward: true });
+  assert(meta.offset_count >= 1, "drum offset applied");
+  assert(offNodes[1].offset_applied === true, "bend offset flag");
 }
 
 if (failed) {

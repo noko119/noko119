@@ -7,6 +7,10 @@ import {
   buildGravityTakeupTemplate,
 } from "./calc/path-templates.js";
 import { buildGc01ComplexPath } from "./calc/gc01-complex-path.js";
+import { buildEasyInclineConveyor } from "./calc/easy-wizard.js";
+import { parseDxfPolylines, dxfPointsToCarryNodes } from "./calc/dxf-import.js";
+import { insertVerticalCurveAt, suggestMinRadius_m } from "./calc/vertical-curve.js";
+import { annotateWrapAngles, applyDrumRadiusOffsets, computeWrapAtNode } from "./calc/drum-geometry.js";
 
 /** @typedef {{ id:string, x:number, y:number, z:number, type:string, mainDrive?:boolean, branch?:string, strand?:string }} PathNode */
 
@@ -56,6 +60,8 @@ const els = {
   fY: document.getElementById("fY"),
   fZ: document.getElementById("fZ"),
   fMainDrive: document.getElementById("fMainDrive"),
+  fDrumD: document.getElementById("fDrumD"),
+  fWrap: document.getElementById("fWrap"),
   tbody: document.querySelector("#xyzTable tbody"),
   segSummary: document.getElementById("segSummary"),
 };
@@ -900,6 +906,15 @@ function updateUI(rebuildTable = true) {
     els.fZ.value = String(node.z);
     els.fMainDrive.checked = !!node.mainDrive;
     els.fMainDrive.disabled = node.type !== "drive";
+    if (els.fDrumD) {
+      els.fDrumD.value = node.drum_D_mm != null ? String(node.drum_D_mm) : "";
+      els.fDrumD.disabled = !isAdvancedReturn() && isReturnNode(node);
+    }
+    if (els.fWrap) {
+      const i = state.nodes.indexOf(node);
+      const w = node.wrap_angle_deg != null ? node.wrap_angle_deg : computeWrapAtNode(state.nodes, i).wrap_angle_deg;
+      els.fWrap.value = w != null ? String(w) : "";
+    }
   }
 
   if (rebuildTable) renderTable();
@@ -1014,6 +1029,168 @@ function currentExportOpts(extraLine = {}) {
   };
 }
 
+
+function remapNodeIds(nodes) {
+  return (nodes || []).map((n) => ({
+    ...n,
+    id: uid(),
+    y: n.y ?? 0,
+    branch: n.branch || "carry",
+    strand: n.strand || n.branch || "carry",
+    mainDrive: !!n.mainDrive,
+    drum_D_mm: n.drum_D_mm,
+    wrap_angle_deg: n.wrap_angle_deg,
+  }));
+}
+
+function loadEasyWizard() {
+  const Ln = parseFloat(prompt("Easy 向导 · 水平机长 Ln (m)", "100") || "");
+  if (!(Ln > 0)) return;
+  const H = parseFloat(prompt("提升高度 H (m)", "20") || "0");
+  if (!Number.isFinite(H)) return;
+  const offset = parseFloat(prompt("回程间距 (m)", String(getReturnOffset())) || "1.2");
+  const mids = parseInt(prompt("承载中间点数 (0-8)", "2") || "2", 10);
+  try {
+    const { nodes, meta } = buildEasyInclineConveyor({
+      Ln_m: Ln,
+      H_m: H,
+      return_offset_m: Number.isFinite(offset) ? offset : 1.2,
+      mid_points: Number.isFinite(mids) ? mids : 2,
+      drive_at: "head",
+    });
+    const modeEl = document.getElementById("profileMode");
+    if (modeEl) modeEl.value = "auto";
+    state.returnMode = "auto";
+    state.nodes = remapNodeIds(nodes);
+    state.returnMeta = { ...meta, closed_loop: true, open_path: false, return_mode: "auto" };
+    state.selectedId = state.nodes[0]?.id ?? null;
+    const offEl = document.getElementById("returnOffset");
+    if (offEl && Number.isFinite(meta.carry_return_offset_m)) offEl.value = String(meta.carry_return_offset_m);
+    rebuildSceneObjects();
+    updateUI();
+    fitView();
+    updateReturnModeChip();
+    alert(
+      "Easy 向导已生成（对标 Sidewinder）\n\n" +
+        `Ln=${meta.Ln_m} m · H=${meta.H_m} m · δ≈${meta.delta_deg}°\n` +
+        `节点 ${state.nodes.length}（含 Auto Return）\n\n` +
+        "可继续精修；复杂回程请切 Advanced 并插入局部模板。"
+    );
+  } catch (err) {
+    alert("Easy 向导失败：\n" + (err?.message || err));
+  }
+}
+
+function importDxfFile(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const plane = prompt("DXF 平面：xy 或 xz（侧视坡度用 xz）", "xz") || "xz";
+      const scale = parseFloat(prompt("单位缩放（mm→m 填 0.001）", "1") || "1");
+      const { points, meta } = parseDxfPolylines(String(reader.result || ""), {
+        plane: plane === "xy" ? "xy" : "xz",
+        unit_scale: Number.isFinite(scale) && scale > 0 ? scale : 1,
+      });
+      if (points.length < 2) {
+        alert("DXF 未解析到有效折线（需 LINE / LWPOLYLINE）");
+        return;
+      }
+      const carry = remapNodeIds(dxfPointsToCarryNodes(points));
+      const modeEl = document.getElementById("profileMode");
+      if (modeEl) modeEl.value = "auto";
+      state.returnMode = "auto";
+      applyAutoReturn(carry, { quiet: true });
+      state.returnMeta = {
+        ...(state.returnMeta || {}),
+        source: "dxf_import",
+        dxf: meta,
+        note: "DXF 中心线 + Auto Return；可切 Advanced 精修",
+      };
+      alert(
+        `DXF 已导入并 Auto Return\n\n实体折线点：${meta.point_count}\n平面：${meta.plane}\n节点：${state.nodes.length}`
+      );
+    } catch (err) {
+      alert("DXF 导入失败：\n" + (err?.message || err));
+    }
+  };
+  reader.readAsText(file);
+}
+
+function insertVerticalCurve() {
+  const idx = state.nodes.findIndex((n) => n.id === state.selectedId);
+  if (idx <= 0 || idx >= state.nodes.length - 1) {
+    alert("请先选中一个中间转角点（非端点），再插入竖曲线。");
+    return;
+  }
+  if (isReturnNode(state.nodes[idx]) && !isAdvancedReturn()) {
+    alert("Auto 模式下不能改回程转角。请切 Advanced，或选承载转角。");
+    return;
+  }
+  const kindRaw = (prompt("竖曲线类型：convex=凸弧 / concave=凹弧", "convex") || "convex").toLowerCase();
+  const kind = kindRaw.startsWith("conca") ? "concave" : "convex";
+  const suggest = suggestMinRadius_m({ kind, v_mps: 2 });
+  const R = parseFloat(prompt(`半径 R (m)\n建议最小约 ${suggest.R_min_m} m（示意）`, String(Math.max(suggest.R_min_m, 50))) || "");
+  if (!(R > 0)) return;
+  const segs = parseInt(prompt("弧段离散点数", "6") || "6", 10);
+  try {
+    const { nodes, meta } = insertVerticalCurveAt(state.nodes, idx, {
+      R_m: R,
+      kind,
+      segments: Number.isFinite(segs) ? segs : 6,
+      v_mps: 2,
+    });
+    state.nodes = nodes.map((n) => ({
+      ...n,
+      id: n.id && String(n.id).startsWith("arc_") ? uid() : n.id || uid(),
+      y: n.y ?? 0,
+    }));
+    state.selectedId = state.nodes[Math.min(idx, state.nodes.length - 1)]?.id ?? null;
+    if (!isReturnNode(state.nodes[idx] || {}) && !isAdvancedReturn()) {
+      maybeResyncReturn({ skipFit: true });
+    } else if (isReturnNode(state.nodes.find((n) => n.id === state.selectedId))) {
+      markAdvancedReturnMeta({ source: "vertical_curve" });
+    }
+    rebuildSceneObjects();
+    updateUI();
+    fitView();
+    alert(
+      `已插入${kind === "convex" ? "凸" : "凹"}弧\n\n` +
+        `R=${meta.R_m} m · θ=${meta.theta_deg}° · T=${meta.T_m} m\n` +
+        `建议 Rmin≈${meta.R_min_suggest_m} m · ${meta.ok_vs_suggest ? "满足示意下限" : "小于示意下限，请复核"}`
+    );
+  } catch (err) {
+    alert("插入竖曲线失败：\n" + (err?.message || err));
+  }
+}
+
+function annotateAllWraps() {
+  state.nodes = annotateWrapAngles(state.nodes);
+  rebuildSceneObjects();
+  updateUI();
+  const drums = state.nodes.filter((n) => n.wrap_angle_deg != null);
+  alert(`已重算包角（邻段几何）\n\n写入 ${drums.length} 个滚筒/改向点。\n选中节点可在表单查看 φ。`);
+}
+
+function applyAllDrumOffsets() {
+  if (!confirm("对所有带 D 的中间滚筒按 D/2 角平分线偏移中心线？\n（对标大厂带面绕经修正）")) return;
+  // ensure diameters on drum types
+  state.nodes.forEach((n) => {
+    if (["tail", "head", "drive", "bend", "takeup"].includes(n.type) && !(n.drum_D_mm > 0)) {
+      n.drum_D_mm = n.type === "drive" ? 1000 : 800;
+    }
+  });
+  const { nodes, meta } = applyDrumRadiusOffsets(state.nodes, { outward: true });
+  state.nodes = nodes;
+  if (!isAdvancedReturn()) maybeResyncReturn({ skipFit: true, force: true });
+  else markAdvancedReturnMeta({ source: "drum_D2_offset" });
+  rebuildSceneObjects();
+  updateUI();
+  fitView();
+  alert(`D/2 偏移完成\n\n偏移点数：${meta.offset_count}\n${meta.note}`);
+}
+
+
 function bindChrome() {
   document.querySelectorAll(".btn.mode").forEach((btn) => {
     btn.addEventListener("click", () => applyMode(btn.dataset.mode));
@@ -1031,6 +1208,20 @@ function bindChrome() {
   document.getElementById("btnInsertDualDrive")?.addEventListener("click", insertDualDriveWrap);
   document.getElementById("btnInsertTakeup")?.addEventListener("click", insertGravityTakeup);
   document.getElementById("btnGc01Demo")?.addEventListener("click", loadGc01Demo);
+
+  document.getElementById("btnEasyWizard")?.addEventListener("click", loadEasyWizard);
+  document.getElementById("btnImportDxf")?.addEventListener("click", () => {
+    document.getElementById("dxfFileInput")?.click();
+  });
+  document.getElementById("dxfFileInput")?.addEventListener("change", (ev) => {
+    const f = ev.target.files?.[0];
+    importDxfFile(f);
+    ev.target.value = "";
+  });
+  document.getElementById("btnInsertCurve")?.addEventListener("click", insertVerticalCurve);
+  document.getElementById("btnAnnotateWrap")?.addEventListener("click", annotateAllWraps);
+  document.getElementById("btnDrumOffset")?.addEventListener("click", applyAllDrumOffsets);
+
   document.getElementById("btnAutoReturn")?.addEventListener("click", () => applyAutoReturn());
   document.getElementById("returnOffset")?.addEventListener("change", () => {
     if (getProfileMode() === "auto") applyAutoReturn(null, { quiet: true, skipFit: true });
@@ -1157,6 +1348,10 @@ function bindChrome() {
     node.x = parseFloat(els.fX.value) || 0;
     node.y = parseFloat(els.fY.value) || 0;
     node.z = parseFloat(els.fZ.value) || 0;
+    if (els.fDrumD) {
+      const d = parseFloat(els.fDrumD.value);
+      node.drum_D_mm = Number.isFinite(d) && d > 0 ? d : undefined;
+    }
     if (node.type === "drive") {
       node.mainDrive = els.fMainDrive.checked;
       if (node.mainDrive) {
@@ -1172,7 +1367,7 @@ function bindChrome() {
     if (!isReturnNode(node)) maybeResyncReturn({ skipFit: true });
     updateUI();
   };
-  ["fType", "fX", "fY", "fZ", "fMainDrive"].forEach((id) => {
+  ["fType", "fX", "fY", "fZ", "fMainDrive", "fDrumD"].forEach((id) => {
     document.getElementById(id).addEventListener("change", applyForm);
   });
 
