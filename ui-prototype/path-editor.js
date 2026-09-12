@@ -2,8 +2,13 @@ import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { buildPathExport } from "./path-schema.js";
 import { buildAutoReturnLoop, extractCarryChain } from "./calc/auto-return.js";
+import {
+  buildDualDriveWrapTemplate,
+  buildGravityTakeupTemplate,
+} from "./calc/path-templates.js";
+import { buildGc01ComplexPath } from "./calc/gc01-complex-path.js";
 
-/** @typedef {{ id:string, x:number, y:number, z:number, type:string, mainDrive?:boolean }} PathNode */
+/** @typedef {{ id:string, x:number, y:number, z:number, type:string, mainDrive?:boolean, branch?:string, strand?:string }} PathNode */
 
 const TYPE_LABEL = {
   node: "节点",
@@ -92,6 +97,136 @@ function loadDemo() {
     { id: uid(), x: 280, y: 0, z: 57, type: "head" },
   ];
   applyAutoReturn(carry, { quiet: true });
+}
+
+function mapTemplateNode(n) {
+  return {
+    id: uid(),
+    x: n.x,
+    y: n.y ?? 0,
+    z: n.z,
+    type: n.type || "node",
+    label: n.label,
+    branch: n.branch || "return",
+    strand: n.strand || n.branch || "return",
+    mainDrive: !!n.mainDrive,
+    drum_D_mm: n.drum_D_mm,
+    pulley_no: n.pulley_no,
+    takeup_kind: n.takeup_kind,
+    template: n.template,
+    auto_return: false,
+  };
+}
+
+/** 确保 Advanced，必要时生成初值回程 */
+function ensureAdvancedForEdit(reason) {
+  if (isAdvancedReturn()) return true;
+  const ok = confirm(
+    (reason || "该操作") + " 需要 Advanced 模式（对标 Belt Analyst）。\n是否切换到 Advanced？"
+  );
+  if (!ok) return false;
+  return setProfileMode("advanced", { confirmSwitch: false });
+}
+
+function markAdvancedReturnMeta(extra = {}) {
+  const prev = state.returnMeta || {};
+  state.returnMeta = {
+    ...prev,
+    closed_loop: true,
+    open_path: false,
+    carry_return_offset_m: prev.carry_return_offset_m ?? getReturnOffset(),
+    ...extra,
+    return_mode: "advanced",
+  };
+}
+
+/**
+ * 在选中点后插入局部模板节点（P1；插入后可再改）
+ */
+function insertTemplateNodes(tplNodes, title) {
+  if (!tplNodes?.length) return;
+  if (!ensureAdvancedForEdit(title)) return;
+  if (extractCarryChain(state.nodes).length < 2) {
+    alert("请先绘制承载中心线（至少尾→头），再插入回程局部模板。");
+    return;
+  }
+  // 若尚无回程，先生成 Auto 回程作为可改底稿
+  if (!state.nodes.some(isReturnNode)) {
+    applyAutoReturn(null, { quiet: true, skipFit: true, force: true });
+  }
+
+  let idx = state.nodes.findIndex((n) => n.id === state.selectedId);
+  if (idx < 0) idx = state.nodes.length - 1;
+  const sel = state.nodes[idx];
+  if (sel && !isReturnNode(sel)) {
+    const firstRet = state.nodes.findIndex(isReturnNode);
+    idx = firstRet >= 0 ? firstRet - 1 : state.nodes.length - 1;
+  }
+
+  const mapped = tplNodes.map(mapTemplateNode);
+  // 模板内若含主驱，清掉路径上其它主驱标记（保持唯一主驱）
+  if (mapped.some((n) => n.mainDrive)) {
+    state.nodes.forEach((n) => {
+      if (n.type === "drive") n.mainDrive = false;
+    });
+  }
+  state.nodes.splice(idx + 1, 0, ...mapped);
+  markAdvancedReturnMeta({
+    source: "local_template",
+    last_template: title,
+    note: "局部模板已插入，可在 Advanced 下继续拖改",
+  });
+  state.selectedId = mapped[0].id;
+  rebuildSceneObjects();
+  updateUI();
+  fitView();
+}
+
+function insertDualDriveWrap() {
+  const base = state.nodes.find((n) => n.id === state.selectedId);
+  const anchor = base
+    ? { x: base.x, y: base.y ?? 0, z: base.z }
+    : { x: 64, y: 0, z: 8 };
+  insertTemplateNodes(buildDualDriveWrapTemplate(anchor), "双驱绕法");
+}
+
+function insertGravityTakeup() {
+  const base = state.nodes.find((n) => n.id === state.selectedId);
+  const anchor = base
+    ? { x: base.x, y: base.y ?? 0, z: Math.max(base.z, 6) }
+    : { x: 58, y: 0, z: 10 };
+  insertTemplateNodes(buildGravityTakeupTemplate(anchor), "重锤拉紧");
+}
+
+/** 演示样例：GC-01 复杂回程（非主交互，规则 §3.0） */
+function loadGc01Demo() {
+  const ok = confirm(
+    "载入 GC-01 复杂回程演示样例？\n\n" +
+      "用途：演示/对照（图3-8 多滚筒回程）。\n" +
+      "按规则 §3.0：这不是主录入方式；正式布置请自己画中心线 + Advanced/局部模板。"
+  );
+  if (!ok) return;
+  const { nodes, meta } = buildGc01ComplexPath();
+  const sel = document.getElementById("profileMode");
+  if (sel) sel.value = "advanced";
+  state.returnMode = "advanced";
+  state.nodes = nodes.map((n) => mapTemplateNode({ ...n, id: n.id }));
+  state.returnMeta = {
+    closed_loop: true,
+    open_path: false,
+    return_mode: "advanced",
+    carry_return_offset_m: null,
+    carry_count: meta.carry_count,
+    return_count: meta.return_count,
+    source: "gc01_demo",
+    case_id: meta.case_id,
+    note: meta.note,
+  };
+  state.selectedId = state.nodes[0]?.id ?? null;
+  rebuildSceneObjects();
+  updateUI();
+  fitView();
+  updateReturnModeChip();
 }
 
 function getReturnOffset() {
@@ -193,6 +328,12 @@ function setProfileMode(mode, { confirmSwitch = true } = {}) {
     if (next === "auto" && extractCarryChain(state.nodes).length >= 2) {
       const hasReturn = state.nodes.some(isReturnNode);
       if (!hasReturn) applyAutoReturn(null, { quiet: true, skipFit: true });
+    }
+    if (next === "advanced") {
+      if (!state.nodes.some(isReturnNode) && extractCarryChain(state.nodes).length >= 2) {
+        applyAutoReturn(null, { quiet: true, skipFit: true, force: true });
+      }
+      if (state.returnMeta) markAdvancedReturnMeta({ source: state.returnMeta.source || "advanced_switch" });
     }
   }
   updateReturnModeChip();
@@ -520,12 +661,16 @@ function hitGround() {
 }
 
 function addNodeAt(pt, type = "node") {
+  const selected = state.nodes.find((n) => n.id === state.selectedId);
   // Auto 模式只允许往承载加点（回程由 Auto Return 重算）
-  if (!isAdvancedReturn() && isReturnNode(state.nodes.find((n) => n.id === state.selectedId))) {
-    // 若当前选中回程，改选最后一个承载点
+  if (!isAdvancedReturn() && selected && isReturnNode(selected)) {
     const carry = extractCarryChain(state.nodes);
     state.selectedId = carry.at(-1)?.id ?? null;
   }
+
+  const selAfter = state.nodes.find((n) => n.id === state.selectedId);
+  const asReturn = isAdvancedReturn() && selAfter && isReturnNode(selAfter);
+  const branch = asReturn ? "return" : "carry";
 
   const node = {
     id: uid(),
@@ -534,8 +679,9 @@ function addNodeAt(pt, type = "node") {
     z: state.mode === "2d-xy" ? (extractCarryChain(state.nodes).at(-1)?.z ?? 0) : +pt.z.toFixed(3),
     type,
     mainDrive: type === "drive",
-    branch: "carry",
-    strand: "carry",
+    branch,
+    strand: branch,
+    auto_return: false,
   };
   if (type === "drive") {
     state.nodes.forEach((n) => {
@@ -543,14 +689,26 @@ function addNodeAt(pt, type = "node") {
     });
   }
 
-  if (!isAdvancedReturn() && state.nodes.some(isReturnNode)) {
-    // 插到承载末尾（第一个回程点之前）
+  if (selAfter) {
+    const idx = state.nodes.findIndex((n) => n.id === selAfter.id);
+    if (!isAdvancedReturn() && state.nodes.some(isReturnNode) && !isReturnNode(selAfter)) {
+      // Auto：插到承载末尾（第一个回程点之前）若选中接近回程
+      const firstRet = state.nodes.findIndex(isReturnNode);
+      const insertAt = firstRet >= 0 && idx >= firstRet - 1 ? firstRet : idx + 1;
+      state.nodes.splice(insertAt, 0, node);
+    } else {
+      state.nodes.splice(idx + 1, 0, node);
+    }
+  } else if (!isAdvancedReturn() && state.nodes.some(isReturnNode)) {
     const firstRet = state.nodes.findIndex(isReturnNode);
     const idx = firstRet >= 0 ? firstRet : state.nodes.length;
     state.nodes.splice(idx, 0, node);
   } else {
     state.nodes.push(node);
   }
+
+  if (asReturn) markAdvancedReturnMeta({ source: state.returnMeta?.source || "advanced_edit" });
+
   state.selectedId = node.id;
   rebuildSceneObjects();
   maybeResyncReturn({ skipFit: true });
@@ -566,18 +724,20 @@ function insertAfterSelected() {
     return;
   }
   const b = state.nodes[idx + 1] || { x: a.x + 20, y: a.y, z: a.z };
-  // Auto：若下一点是回程，则插在承载末与回程之间
+  const branch = isAdvancedReturn() && isReturnNode(a) ? "return" : "carry";
   const node = {
     id: uid(),
     x: +((a.x + b.x) / 2).toFixed(3),
     y: +((a.y + b.y) / 2).toFixed(3),
     z: +((a.z + b.z) / 2).toFixed(3),
     type: "node",
-    branch: "carry",
-    strand: "carry",
+    branch,
+    strand: branch,
+    auto_return: false,
   };
   state.nodes.splice(idx + 1, 0, node);
   state.selectedId = node.id;
+  if (branch === "return") markAdvancedReturnMeta({ source: state.returnMeta?.source || "advanced_edit" });
   rebuildSceneObjects();
   maybeResyncReturn({ skipFit: true });
   updateUI();
@@ -663,6 +823,9 @@ function endDrag() {
   state.dragging = false;
   state.dragId = null;
   controls.enabled = true;
+  if (dragged && isReturnNode(dragged)) {
+    markAdvancedReturnMeta({ source: state.returnMeta?.source || "advanced_edit" });
+  }
   if (dragged && !isReturnNode(dragged)) {
     maybeResyncReturn({ skipFit: true });
   }
@@ -768,7 +931,7 @@ function renderTable() {
     tr.dataset.id = n.id;
     tr.innerHTML = `
       <td>${i + 1}</td>
-      <td>${TYPE_LABEL[n.type] || n.type}${n.mainDrive ? "★" : ""}</td>
+      <td>${TYPE_LABEL[n.type] || n.type}${n.mainDrive ? "★" : ""}${isReturnNode(n) ? "·回" : ""}${n.template ? "·模" : ""}</td>
       <td><input data-f="x" type="number" step="0.01" value="${n.x}" /></td>
       <td><input data-f="y" type="number" step="0.01" value="${n.y}" /></td>
       <td><input data-f="z" type="number" step="0.01" value="${n.z}" /></td>
@@ -781,8 +944,16 @@ function renderTable() {
     });
     tr.querySelectorAll("input").forEach((inp) => {
       inp.addEventListener("change", () => {
+        if (!isAdvancedReturn() && isReturnNode(n)) {
+          alert("Auto Return 模式：回程锁定，不能手改。\n请切换 Advanced。");
+          updateUI();
+          return;
+        }
         const f = inp.dataset.f;
         n[f] = parseFloat(inp.value) || 0;
+        if (isReturnNode(n)) markAdvancedReturnMeta({ source: state.returnMeta?.source || "advanced_edit" });
+        rebuildSceneObjects();
+        if (!isReturnNode(n)) maybeResyncReturn({ skipFit: true });
         updateUI();
       });
     });
@@ -857,6 +1028,9 @@ function bindChrome() {
 
   document.getElementById("btnFit").addEventListener("click", fitView);
   document.getElementById("btnDemo").addEventListener("click", loadDemo);
+  document.getElementById("btnInsertDualDrive")?.addEventListener("click", insertDualDriveWrap);
+  document.getElementById("btnInsertTakeup")?.addEventListener("click", insertGravityTakeup);
+  document.getElementById("btnGc01Demo")?.addEventListener("click", loadGc01Demo);
   document.getElementById("btnAutoReturn")?.addEventListener("click", () => applyAutoReturn());
   document.getElementById("returnOffset")?.addEventListener("change", () => {
     if (getProfileMode() === "auto") applyAutoReturn(null, { quiet: true, skipFit: true });
@@ -994,6 +1168,7 @@ function bindChrome() {
       node.mainDrive = false;
     }
     rebuildSceneObjects();
+    if (isReturnNode(node)) markAdvancedReturnMeta({ source: state.returnMeta?.source || "advanced_edit" });
     if (!isReturnNode(node)) maybeResyncReturn({ skipFit: true });
     updateUI();
   };

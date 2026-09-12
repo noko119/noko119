@@ -92,6 +92,7 @@ html, body {
 .btn:hover { border-color: #4b5d78; }
 .btn.active { background: rgba(59,130,246,.2); border-color: var(--primary); color: #bfdbfe; }
 .btn.primary { background: var(--primary); border-color: var(--primary); color: #fff; }
+.btn.muted { opacity: .78; font-size: .82rem; color: var(--muted, #94a3b8); }
 .btn.danger.active, .btn.tool[data-tool="delete"].active {
   background: rgba(239,68,68,.2);
   border-color: var(--bad);

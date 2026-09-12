@@ -12,6 +12,11 @@ import {
   pathToCalcBundle,
 } from "./calc/path-extract.js";
 import { buildAutoReturnLoop } from "./calc/auto-return.js";
+import {
+  buildDualDriveWrapTemplate,
+  buildGravityTakeupTemplate,
+} from "./calc/path-templates.js";
+import { buildGc01ComplexPath } from "./calc/gc01-complex-path.js";
 
 let failed = 0;
 function assert(cond, msg) {
@@ -149,6 +154,48 @@ function near(a, b, tol = 1e-6) {
   assert(path.segments.some((seg) => seg.branch === "return"), "export has return segments");
   assert(path.closure.ok === true, "closed loop closure ok");
   assert(path.segments.length === nodes.length, "closed loop segments = nodes (with closing edge)");
+}
+
+// 9) 局部模板：双驱绕法 / 重锤拉紧（P1，插入后可改）
+{
+  const dual = buildDualDriveWrapTemplate({ x: 10, z: 5 });
+  assert(dual.length >= 4, "dual drive template has nodes");
+  assert(dual.every((n) => n.branch === "return"), "dual drive on return");
+  assert(dual.some((n) => n.type === "drive" && n.mainDrive), "dual drive has main");
+  assert(dual.filter((n) => n.type === "drive").length === 2, "two drive drums");
+
+  const take = buildGravityTakeupTemplate({ x: 20, z: 12 }, 8);
+  assert(take.some((n) => n.type === "takeup" && n.takeup_kind === "gravity"), "gravity takeup node");
+  assert(take.every((n) => n.branch === "return"), "takeup on return");
+  const bot = take.find((n) => n.type === "takeup");
+  assert(near(bot.z, 4, 1e-6), `takeup travel z=4 got ${bot.z}`);
+}
+
+// 10) GC-01 复杂路径演示样例可构建且闭环可导出
+{
+  const { nodes, meta } = buildGc01ComplexPath();
+  assert(meta.return_count > 5, "gc01 complex has multi-pulley return");
+  assert(nodes.some((n) => n.branch === "carry"), "gc01 has carry");
+  assert(nodes.some((n) => n.branch === "return"), "gc01 has return");
+  const path = buildPathExport({
+    nodes,
+    line: {
+      open_path: false,
+      closed_loop: true,
+      line_id: "gc01-demo",
+      name: "GC-01 demo",
+      return_mode: "advanced",
+    },
+    returnMeta: {
+      closed_loop: true,
+      open_path: false,
+      return_mode: "advanced",
+      carry_count: meta.carry_count,
+      return_count: meta.return_count,
+    },
+  });
+  assert(path.closure.ok === true, "gc01 demo closure ok");
+  assert(path.extract?.source === "web_path", "gc01 demo extractable");
 }
 
 if (failed) {
