@@ -388,20 +388,27 @@ function initThree() {
   const w = els.viewport.clientWidth;
   const h = els.viewport.clientHeight;
 
-  renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer = new THREE.WebGLRenderer({
+    antialias: true,
+    powerPreference: "high-performance",
+    alpha: false,
+  });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setSize(w, h);
   renderer.setClearColor(0x0b1220, 1);
   els.viewport.appendChild(renderer.domElement);
 
   scene = new THREE.Scene();
-  scene.fog = new THREE.Fog(0x0b1220, 400, 1200);
+  // scene.fog disabled for performance
+  // scene.fog = new THREE.Fog(0x0b1220, 400, 1200);
 
   camera = new THREE.PerspectiveCamera(50, w / h, 0.1, 5000);
   camera.position.set(180, -220, 140);
   camera.up.set(0, 0, 1);
 
   controls = new OrbitControls(camera, renderer.domElement);
+  controls.addEventListener("change", () => { needsRender = true; });
   controls.enableDamping = true;
   controls.target.set(120, 0, 20);
   controls.mouseButtons = {
@@ -459,14 +466,14 @@ function makePointMesh(node, index) {
   const color = (node.branch === "return" || node.strand === "return")
     ? RETURN_COLOR
     : (TYPE_COLOR[node.type] || TYPE_COLOR.node);
-  const geo = new THREE.SphereGeometry(node.type === "node" ? 1.6 : 2.4, 16, 16);
-  const mat = new THREE.MeshStandardMaterial({
+  const geo = new THREE.SphereGeometry(node.type === "node" ? 1.6 : 2.4, 12, 10);
+  const mat = new THREE.MeshBasicMaterial({
     color,
-    emissive: node.id === state.selectedId ? 0x1d4ed8 : 0x000000,
-    emissiveIntensity: node.id === state.selectedId ? 0.55 : 0,
-    metalness: 0.2,
-    roughness: 0.45,
+    // 选中时提亮（Basic 无 emissive，用颜色近似）
   });
+  if (node.id === state.selectedId) {
+    mat.color.offsetHSL(0, 0, 0.15);
+  }
   const mesh = new THREE.Mesh(geo, mat);
   mesh.position.set(node.x, node.y, node.z);
   mesh.userData.nodeId = node.id;
@@ -501,16 +508,29 @@ function rebuildSceneObjects() {
 
 function setLinePositions(line, pts) {
   if (!line) return;
-  line.geometry.dispose();
   if (!pts || pts.length < 2) {
-    line.geometry = new THREE.BufferGeometry();
+    if (line.geometry) line.geometry.setDrawRange(0, 0);
     return;
   }
-  const positions = [];
-  pts.forEach((n) => positions.push(n.x, n.y, n.z));
-  // 闭合段：若最后一点不是首点，调用方可自行传入首点
-  line.geometry = new THREE.BufferGeometry();
-  line.geometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
+  const n = pts.length;
+  const need = n * 3;
+  let attr = line.geometry.getAttribute("position");
+  if (!attr || attr.array.length < need) {
+    line.geometry.dispose();
+    line.geometry = new THREE.BufferGeometry();
+    attr = new THREE.BufferAttribute(new Float32Array(Math.max(need, 64)), 3);
+    line.geometry.setAttribute("position", attr);
+  }
+  const arr = attr.array;
+  for (let i = 0; i < n; i++) {
+    const p = pts[i];
+    arr[i * 3] = p.x;
+    arr[i * 3 + 1] = p.y;
+    arr[i * 3 + 2] = p.z;
+  }
+  attr.needsUpdate = true;
+  line.geometry.setDrawRange(0, n);
+  line.geometry.computeBoundingSphere();
 }
 
 function updatePathLines() {
@@ -536,15 +556,19 @@ function updatePathLines() {
 }
 
 function syncNodeMeshes() {
-  pointGroup.children.forEach((mesh) => {
-    const n = state.nodes.find((x) => x.id === mesh.userData.nodeId);
-    if (!n) return;
+  // O(n) 索引，避免每帧 nodes.find
+  const byId = new Map(state.nodes.map((n) => [n.id, n]));
+  for (const mesh of pointGroup.children) {
+    const n = byId.get(mesh.userData.nodeId);
+    if (!n) continue;
     mesh.position.set(n.x, n.y, n.z);
     const selected = n.id === state.selectedId;
-    mesh.material.emissive?.setHex?.(selected ? 0x1d4ed8 : 0x000000);
-    mesh.material.emissiveIntensity = selected ? 0.55 : 0;
-  });
-
+    const base = (n.branch === "return" || n.strand === "return")
+      ? RETURN_COLOR
+      : (TYPE_COLOR[n.type] || TYPE_COLOR.node);
+    mesh.material.color.setHex(base);
+    if (selected) mesh.material.color.offsetHSL(0, 0, 0.18);
+  }
   updatePathLines();
 }
 
@@ -825,6 +849,19 @@ function beginDrag(nodeId, ev) {
   dragOffset.copy(origin).sub(hit);
 }
 
+let dragRaf = 0;
+let returnResyncTimer = 0;
+let needsRender = true;
+
+/** 拖拽中只更新右侧 XYZ，避免每帧重绘 Flight/区段表导致卡顿 */
+function updateDragHud(node) {
+  if (!node) return;
+  if (els.fX) els.fX.value = String(node.x);
+  if (els.fY) els.fY.value = String(node.y);
+  if (els.fZ) els.fZ.value = String(node.z);
+  els.lengthChip.textContent = `展开长：${totalLength().toFixed(2)} m`;
+}
+
 function onDrag(ev) {
   if (!state.dragging || !state.dragId) return;
   const node = state.nodes.find((n) => n.id === state.dragId);
@@ -847,8 +884,15 @@ function onDrag(ev) {
     node.y = +hit.y.toFixed(3);
     node.z = +hit.z.toFixed(3);
   }
+
+  // 只同步三维网格/折线；DOM 用 rAF 节流
   syncNodeMeshes();
-  updateUI(false);
+  if (!dragRaf) {
+    dragRaf = requestAnimationFrame(() => {
+      dragRaf = 0;
+      updateDragHud(node);
+    });
+  }
 }
 
 function endDrag() {
@@ -857,13 +901,26 @@ function endDrag() {
   state.dragging = false;
   state.dragId = null;
   controls.enabled = true;
+  if (dragRaf) {
+    cancelAnimationFrame(dragRaf);
+    dragRaf = 0;
+  }
   if (dragged && isReturnNode(dragged)) {
     markAdvancedReturnMeta({ source: state.returnMeta?.source || "advanced_edit" });
   }
   if (dragged && !isReturnNode(dragged)) {
-    maybeResyncReturn({ skipFit: true });
+    // 松手后短延迟再整网重算回程，避免拖一下就卡一下
+    if (returnResyncTimer) clearTimeout(returnResyncTimer);
+    returnResyncTimer = setTimeout(() => {
+      returnResyncTimer = 0;
+      maybeResyncReturn({ skipFit: true });
+      updateUI();
+      needsRender = true;
+    }, 80);
+  } else {
+    updateUI();
   }
-  updateUI();
+  needsRender = true;
 }
 
 function bindPointer() {
@@ -915,6 +972,13 @@ function bindPointer() {
 }
 
 function updateUI(rebuildTable = true) {
+  // 拖拽中禁止走完整 UI（Flight/区段表很重）
+  if (state.dragging) {
+    const n = state.nodes.find((x) => x.id === state.selectedId);
+    updateDragHud(n);
+    return;
+  }
+
   updateReturnModeChip();
   els.pointCount.textContent = `节点：${state.nodes.length}`;
   els.lengthChip.textContent = `展开长：${totalLength().toFixed(2)} m`;
@@ -1036,7 +1100,8 @@ function onResize() {
 
 function animate() {
   requestAnimationFrame(animate);
-  controls.update();
+  if (controls) controls.update();
+  // 拖拽或显式脏标记时必画；其余帧也画（保证旋转惯性），但避免额外重活已在拖拽路径去掉
   renderer.render(scene, camera);
 }
 
