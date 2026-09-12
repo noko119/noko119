@@ -325,3 +325,5 @@ label.inline input[type=number] { background:#0f172a; border:1px solid #334155; 
   background:#0b1220; color:var(--text); border:1px solid var(--line); border-radius:8px; padding:8px 10px; font:inherit;
 }
 .btn.primary { background:var(--primary); border-color:var(--primary); color:#fff; }
+
+#drumGapChip { color: #fde68a; border-color: rgba(253,230,138,.35); }

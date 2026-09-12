@@ -439,6 +439,8 @@ function initThree() {
   scene.add(groundMesh);
 
   pointGroup = new THREE.Group();
+  labelGroup = new THREE.Group();
+  scene.add(labelGroup);
   scene.add(pointGroup);
 
   const lineMat = new THREE.LineBasicMaterial({ color: 0x38bdf8 });
@@ -490,6 +492,108 @@ function makePointMesh(node, index) {
   }
   return mesh;
 }
+
+
+function isDrumType(t) {
+  return ["tail", "head", "drive", "bend", "takeup"].includes(t);
+}
+
+function makeTextSprite(text, opts = {}) {
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+  const fontSize = opts.fontSize || 28;
+  canvas.width = 256;
+  canvas.height = 64;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.font = `bold ${fontSize}px Segoe UI, Microsoft YaHei, sans-serif`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  // background pill
+  const tw = Math.min(240, ctx.measureText(text).width + 24);
+  const x0 = (canvas.width - tw) / 2;
+  ctx.fillStyle = "rgba(15, 23, 42, 0.78)";
+  ctx.strokeStyle = "rgba(148, 163, 184, 0.55)";
+  ctx.lineWidth = 2;
+  const y0 = 14, h = 36, r = 10;
+  ctx.beginPath();
+  ctx.moveTo(x0 + r, y0);
+  ctx.arcTo(x0 + tw, y0, x0 + tw, y0 + h, r);
+  ctx.arcTo(x0 + tw, y0 + h, x0, y0 + h, r);
+  ctx.arcTo(x0, y0 + h, x0, y0, r);
+  ctx.arcTo(x0, y0, x0 + tw, y0, r);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = opts.color || "#e2e8f0";
+  ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.needsUpdate = true;
+  const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false });
+  const spr = new THREE.Sprite(mat);
+  const scale = opts.scale || 12;
+  spr.scale.set(scale, scale * 0.25, 1);
+  spr.renderOrder = 10;
+  return spr;
+}
+
+/** 在相邻节点中点标注段长；滚筒↔滚筒加粗显示 */
+function updateDistLabels() {
+  if (!labelGroup) return;
+  while (labelGroup.children.length) {
+    const c = labelGroup.children.pop();
+    c.material?.map?.dispose?.();
+    c.material?.dispose?.();
+  }
+  const nodes = state.nodes;
+  for (let i = 1; i < nodes.length; i++) {
+    const a = nodes[i - 1];
+    const b = nodes[i];
+    // 回程段标签略弱，避免太乱：只标承载，或两端都是滚筒
+    const bothReturn = isReturnNode(a) && isReturnNode(b);
+    const drumSpan = isDrumType(a.type) && isDrumType(b.type);
+    if (bothReturn && !drumSpan) continue;
+    const L = dist(a, b);
+    if (!(L > 0.05)) continue;
+    const mid = {
+      x: (a.x + b.x) / 2,
+      y: (a.y + b.y) / 2,
+      z: (a.z + b.z) / 2,
+    };
+    const label = drumSpan
+      ? `${TYPE_LABEL[a.type]||a.type}→${TYPE_LABEL[b.type]||b.type} ${L.toFixed(2)}m`
+      : `${L.toFixed(2)} m`;
+    const spr = makeTextSprite(label, {
+      color: drumSpan ? "#fde68a" : bothReturn ? "#fdba74" : "#bfdbfe",
+      scale: drumSpan ? 18 : 12,
+      fontSize: drumSpan ? 26 : 28,
+    });
+    spr.position.set(mid.x, mid.y, mid.z + (drumSpan ? 3.5 : 2.2));
+    spr.userData.isDistLabel = true;
+    labelGroup.add(spr);
+  }
+}
+
+function drumNeighborGaps(node) {
+  if (!node) return null;
+  const carry = state.nodes.filter((n) => !isReturnNode(n));
+  const idx = carry.findIndex((n) => n.id === node.id);
+  if (idx < 0) return null;
+  // find prev/next drum on carry
+  let prev = null, next = null;
+  for (let i = idx - 1; i >= 0; i--) {
+    if (isDrumType(carry[i].type)) { prev = carry[i]; break; }
+  }
+  for (let i = idx + 1; i < carry.length; i++) {
+    if (isDrumType(carry[i].type)) { next = carry[i]; break; }
+  }
+  return {
+    prevDrum: prev,
+    nextDrum: next,
+    dPrev: prev ? dist(prev, node) : null,
+    dNext: next ? dist(node, next) : null,
+  };
+}
+
 
 function rebuildSceneObjects() {
   while (pointGroup.children.length) {
@@ -771,6 +875,16 @@ function addNodeAt(pt, type = "node") {
   rebuildSceneObjects();
   maybeResyncReturn({ skipFit: true });
   updateUI();
+  if (isDrumType(type)) {
+    const gaps = drumNeighborGaps(node);
+    const bits = [];
+    if (gaps?.dPrev != null) bits.push(`距上一滚筒(${TYPE_LABEL[gaps.prevDrum.type]}) ${gaps.dPrev.toFixed(2)} m`);
+    if (gaps?.dNext != null) bits.push(`距下一滚筒(${TYPE_LABEL[gaps.nextDrum.type]}) ${gaps.dNext.toFixed(2)} m`);
+    // 轻提示：不打断拖放流程，写到 HUD
+    if (els.hudHint && bits.length) {
+      els.hudHint.textContent = `已放置${TYPE_LABEL[type] || type} · ` + bits.join(" · ");
+    }
+  }
 }
 
 function insertAfterSelected() {
@@ -1026,6 +1140,40 @@ function updateUI(rebuildTable = true) {
   }
   if (!html) html = "<div>暂无区段</div>";
   els.segSummary.innerHTML = html;
+
+  // 选中滚筒时显示与相邻滚筒间距
+  const gapEl = document.getElementById("drumGapChip");
+  const gaps = drumNeighborGaps(node);
+  if (gapEl) {
+    if (node && isDrumType(node.type) && gaps) {
+      const parts = [];
+      if (gaps.dPrev != null) parts.push(`←${TYPE_LABEL[gaps.prevDrum.type]} ${gaps.dPrev.toFixed(2)}m`);
+      if (gaps.dNext != null) parts.push(`${TYPE_LABEL[gaps.nextDrum.type]}→ ${gaps.dNext.toFixed(2)}m`);
+      gapEl.textContent = parts.length ? `滚筒间距：${parts.join(" · ")}` : "滚筒间距：无相邻滚筒";
+      gapEl.classList.remove("hidden");
+    } else {
+      gapEl.textContent = "滚筒间距：—";
+      gapEl.classList.add("muted");
+    }
+  }
+  updateDistLabels();
+
+  // 选中滚筒时显示与相邻滚筒间距
+  const gapEl = document.getElementById("drumGapChip");
+  const gaps = drumNeighborGaps(node);
+  if (gapEl) {
+    if (node && isDrumType(node.type) && gaps) {
+      const parts = [];
+      if (gaps.dPrev != null) parts.push(`←${TYPE_LABEL[gaps.prevDrum.type]} ${gaps.dPrev.toFixed(2)}m`);
+      if (gaps.dNext != null) parts.push(`${TYPE_LABEL[gaps.nextDrum.type]}→ ${gaps.dNext.toFixed(2)}m`);
+      gapEl.textContent = parts.length ? `滚筒间距：${parts.join(" · ")}` : "滚筒间距：无相邻滚筒";
+      gapEl.classList.remove("hidden");
+    } else {
+      gapEl.textContent = "滚筒间距：—";
+      gapEl.classList.add("muted");
+    }
+  }
+  updateDistLabels();
 
   syncNodeMeshes();
 }
