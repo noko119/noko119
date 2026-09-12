@@ -10,10 +10,23 @@ import { buildGc01ComplexPath } from "./calc/gc01-complex-path.js";
 import { buildEasyInclineConveyor, buildEasyFromPreset, EASY_PRESETS } from "./calc/easy-wizard.js";
 import { parseDxfPolylines, dxfPointsToCarryNodes, exportNodesToDxf } from "./calc/dxf-import.js";
 import { insertVerticalCurveAt, suggestMinRadius_m } from "./calc/vertical-curve.js";
-import { annotateWrapAngles, applyDrumRadiusOffsets, computeWrapAtNode } from "./calc/drum-geometry.js";
-import { buildFlightRows, pairCarryReturnFlights, flightRowsToOverrides, summarizeFlights } from "./calc/flight-model.js";
+import { insertHorizontalCurveAt, suggestHorizontalRmin_m } from "./calc/horizontal-curve.js";
+import {
+  annotateWrapAngles,
+  applyDrumRadiusOffsets,
+  computeWrapAtNode,
+  annotateDriveSlipChecks,
+} from "./calc/drum-geometry.js";
+import {
+  buildFlightRows,
+  pairCarryReturnFlights,
+  flightRowsToOverrides,
+  summarizeFlights,
+  enforcePairedReturnOffset,
+} from "./calc/flight-model.js";
 import { finalizeProfile, checkVerticalCurveDtii, checkWrapDtii } from "./calc/finalize-checks.js";
 import { nodesToCsv, csvToNodes, flightsToCsv, csvToFlightOverrides } from "./calc/excel-io.js";
+import { GC01_INPUT } from "./calc/gc01-case.js";
 
 /** @typedef {{ id:string, x:number, y:number, z:number, type:string, mainDrive?:boolean, branch?:string, strand?:string }} PathNode */
 
@@ -1245,20 +1258,71 @@ function pairFlightsAction() {
   state.finalized = false;
   renderFlightTable();
   updateFinalizeChip();
-  alert(`航段配对完成\n\n配对对数：${meta.paired_pairs}\n${meta.note}`);
+  const lock = confirm(
+    `航段配对完成\n\n配对对数：${meta.paired_pairs}\n${meta.note}\n\n是否强制间距跟随（按承载重算回程）？`
+  );
+  if (lock) enforceSpacingFollowAction({ quiet: true });
+}
+
+function enforceSpacingFollowAction(opts = {}) {
+  const offset = parseFloat(document.getElementById("returnOffset")?.value || "1.2");
+  try {
+    const { nodes, meta } = enforcePairedReturnOffset(state.nodes, offset, { mode: "auto" });
+    const modeEl = document.getElementById("profileMode");
+    if (modeEl) modeEl.value = "auto";
+    state.returnMode = "auto";
+    state.nodes = remapNodeIds(nodes);
+    state.returnMeta = {
+      ...meta,
+      closed_loop: true,
+      open_path: false,
+      return_mode: "auto",
+      spacing_locked: true,
+    };
+    state.selectedId = state.nodes[0]?.id ?? null;
+    state.flightOverrides = {};
+    state.finalized = false;
+    rebuildSceneObjects();
+    updateUI();
+    fitView();
+    updateReturnModeChip();
+    updateFinalizeChip();
+    renderFlightTable();
+    if (!opts.quiet) {
+      alert(`强制间距跟随已应用\n\n${meta.note}\n节点 ${state.nodes.length}`);
+    }
+  } catch (err) {
+    alert("强制间距跟随失败：\n" + (err?.message || err));
+  }
 }
 
 function runFinalizeAction() {
   // ensure wraps annotated
   state.nodes = annotateWrapAngles(state.nodes);
+  const curveOpts = {
+    v_mps: GC01_INPUT.v_mps,
+    T_N: GC01_INPUT.S_carry_sag_N,
+    qB: GC01_INPUT.qB,
+    qG: GC01_INPUT.qG,
+    mu: 0.3,
+    S_tight_N: GC01_INPUT.FU_N ? GC01_INPUT.FU_N + GC01_INPUT.S1min_anchor_N : 200567,
+    S_slack_N: GC01_INPUT.S1min_anchor_N,
+  };
+  // FU not on GC01_INPUT — use expected-ish tight = FU+S1 from case defaults
+  curveOpts.S_tight_N = 175621 + 24946;
   const result = finalizeProfile({
     nodes: state.nodes,
     returnMeta: state.returnMeta,
     flightOverrides: state.flightOverrides,
-    v_mps: 2,
+    ...curveOpts,
   });
-  const wrapChk = checkWrapDtii(state.nodes, { min_drive_wrap_deg: 180 });
-  const curveChk = checkVerticalCurveDtii(result.flights, { v_mps: 2 });
+  const wrapChk = checkWrapDtii(state.nodes, {
+    min_drive_wrap_deg: 180,
+    mu: curveOpts.mu,
+    S_tight_N: curveOpts.S_tight_N,
+    S_slack_N: curveOpts.S_slack_N,
+  });
+  const curveChk = checkVerticalCurveDtii(result.flights, curveOpts);
   state.finalizeResult = result;
   state.finalized = !!result.ok;
   if (result.ok) {
@@ -1272,7 +1336,18 @@ function runFinalizeAction() {
   if (els.finalizeSummary) {
     const lines = result.items.map((i) => `[${i.level}] ${i.code}: ${i.message}`);
     lines.push(`包角校核：${wrapChk.ok ? "通过" : "有告警"}`);
-    lines.push(`竖曲线校核：${curveChk.ok ? "通过" : "有告警/无曲线"}`);
+    lines.push(`竖曲线正式 Rmin：${curveChk.ok ? "通过" : "有告警/无曲线"}`);
+    if (curveChk.items?.[0]?.breakdown) {
+      const b = curveChk.items[0].breakdown;
+      lines.push(
+        `Rmin 分解示例：张力 ${b.R_tension_m} / 速度 ${b.R_velocity_m}` +
+          (b.R_sag_m != null ? ` / 下垂 ${b.R_sag_m}` : "") +
+          " m"
+      );
+    }
+    if (result.slip?.items?.length) {
+      lines.push(`不打滑：${result.slip.ok ? "通过" : "有告警"}`);
+    }
     els.finalizeSummary.innerHTML = `<div><strong>Finalize</strong>：${result.meta.note}</div>` +
       lines.map((l) => `<div>${l}</div>`).join("");
   }
@@ -1394,8 +1469,23 @@ function insertVerticalCurve() {
   }
   const kindRaw = (prompt("竖曲线类型：convex=凸弧 / concave=凹弧", "convex") || "convex").toLowerCase();
   const kind = kindRaw.startsWith("conca") ? "concave" : "convex";
-  const suggest = suggestMinRadius_m({ kind, v_mps: 2 });
-  const R = parseFloat(prompt(`半径 R (m)\n建议最小约 ${suggest.R_min_m} m（示意）`, String(Math.max(suggest.R_min_m, 50))) || "");
+  const suggest = suggestMinRadius_m({
+    kind,
+    v_mps: GC01_INPUT.v_mps,
+    T_N: GC01_INPUT.S_carry_sag_N,
+    qB: GC01_INPUT.qB,
+    qG: GC01_INPUT.qG,
+    a_idler_m: 1.2,
+  });
+  const b = suggest.breakdown;
+  const R = parseFloat(
+    prompt(
+      `半径 R (m)\n正式 Rmin≈${suggest.R_min_m} m\n（张力 ${b.R_tension_m} / 速度 ${b.R_velocity_m}` +
+        (b.R_sag_m != null ? ` / 下垂 ${b.R_sag_m}` : "") +
+        "）",
+      String(Math.max(suggest.R_min_m, 50))
+    ) || ""
+  );
   if (!(R > 0)) return;
   const segs = parseInt(prompt("弧段离散点数", "6") || "6", 10);
   try {
@@ -1403,7 +1493,11 @@ function insertVerticalCurve() {
       R_m: R,
       kind,
       segments: Number.isFinite(segs) ? segs : 6,
-      v_mps: 2,
+      v_mps: GC01_INPUT.v_mps,
+      T_N: GC01_INPUT.S_carry_sag_N,
+      qB: GC01_INPUT.qB,
+      qG: GC01_INPUT.qG,
+      a_idler_m: 1.2,
     });
     state.nodes = nodes.map((n) => ({
       ...n,
@@ -1422,19 +1516,80 @@ function insertVerticalCurve() {
     alert(
       `已插入${kind === "convex" ? "凸" : "凹"}弧\n\n` +
         `R=${meta.R_m} m · θ=${meta.theta_deg}° · T=${meta.T_m} m\n` +
-        `建议 Rmin≈${meta.R_min_suggest_m} m · ${meta.ok_vs_suggest ? "满足示意下限" : "小于示意下限，请复核"}`
+        `正式 Rmin≈${meta.R_min_suggest_m} m · ${meta.ok_vs_suggest ? "满足正式下限" : "小于正式下限，请复核"}\n` +
+        `${meta.note}`
     );
   } catch (err) {
     alert("插入竖曲线失败：\n" + (err?.message || err));
   }
 }
 
+function insertHorizontalCurve() {
+  const idx = state.nodes.findIndex((n) => n.id === state.selectedId);
+  if (idx <= 0 || idx >= state.nodes.length - 1) {
+    alert("请先选中一个中间转角点（非端点），再插入水平弯。");
+    return;
+  }
+  if (isReturnNode(state.nodes[idx]) && !isAdvancedReturn()) {
+    alert("Auto 模式下不能改回程转角。请切 Advanced，或选承载转角。");
+    return;
+  }
+  const suggest = suggestHorizontalRmin_m({ v_mps: GC01_INPUT.v_mps });
+  const R = parseFloat(
+    prompt(`水平弯半径 R (m)\n建议最小约 ${suggest.R_min_m} m`, String(Math.max(suggest.R_min_m, 50))) || ""
+  );
+  if (!(R > 0)) return;
+  const segs = parseInt(prompt("弧段离散点数", "6") || "6", 10);
+  try {
+    const { nodes, meta } = insertHorizontalCurveAt(state.nodes, idx, {
+      R_m: R,
+      segments: Number.isFinite(segs) ? segs : 6,
+      v_mps: GC01_INPUT.v_mps,
+    });
+    state.nodes = nodes.map((n) => ({
+      ...n,
+      id: n.id && String(n.id).startsWith("harc_") ? uid() : n.id || uid(),
+      z: n.z ?? 0,
+    }));
+    state.selectedId = state.nodes[Math.min(idx, state.nodes.length - 1)]?.id ?? null;
+    if (!isReturnNode(state.nodes[idx] || {}) && !isAdvancedReturn()) {
+      maybeResyncReturn({ skipFit: true });
+    } else if (isReturnNode(state.nodes.find((n) => n.id === state.selectedId))) {
+      markAdvancedReturnMeta({ source: "horizontal_curve" });
+    }
+    rebuildSceneObjects();
+    updateUI();
+    fitView();
+    alert(
+      `已插入水平弯\n\n` +
+        `R=${meta.R_m} m · θ=${meta.theta_deg}° · T=${meta.T_m} m\n` +
+        `建议 Rmin≈${meta.R_min_suggest_m} m · ${meta.ok_vs_suggest ? "满足示意下限" : "小于示意下限，请复核"}`
+    );
+  } catch (err) {
+    alert("插入水平弯失败：\n" + (err?.message || err));
+  }
+}
+
 function annotateAllWraps() {
   state.nodes = annotateWrapAngles(state.nodes);
+  const slip = annotateDriveSlipChecks(state.nodes, {
+    mu: 0.3,
+    S_tight_N: 175621 + 24946,
+    S_slack_N: 24946,
+  });
+  state.nodes = slip.nodes;
   rebuildSceneObjects();
   updateUI();
   const drums = state.nodes.filter((n) => n.wrap_angle_deg != null);
-  alert(`已重算包角（邻段几何）\n\n写入 ${drums.length} 个滚筒/改向点。\n选中节点可在表单查看 φ。`);
+  const slipLines = (slip.items || [])
+    .map((it) => `· ${it.node_id}: ${it.message}`)
+    .join("\n");
+  alert(
+    `已重算包角（邻段几何）\n\n写入 ${drums.length} 个滚筒/改向点。\n` +
+      `不打滑校核：${slip.ok ? "通过" : "有告警"}\n` +
+      (slipLines ? `${slipLines}\n` : "") +
+      `选中节点可在表单查看 φ。`
+  );
 }
 
 function applyAllDrumOffsets() {
@@ -1482,6 +1637,7 @@ function bindChrome() {
   document.getElementById("btnEasyApply")?.addEventListener("click", applyEasyFromModal);
   document.getElementById("easyPreset")?.addEventListener("change", onEasyPresetChange);
   document.getElementById("btnPairFlights")?.addEventListener("click", pairFlightsAction);
+  document.getElementById("btnEnforceSpacing")?.addEventListener("click", () => enforceSpacingFollowAction());
   document.getElementById("btnFinalize")?.addEventListener("click", runFinalizeAction);
   document.getElementById("btnExportDxf")?.addEventListener("click", exportDxfAction);
   document.getElementById("btnExportExcel")?.addEventListener("click", exportExcelAction);
@@ -1500,6 +1656,7 @@ function bindChrome() {
     ev.target.value = "";
   });
   document.getElementById("btnInsertCurve")?.addEventListener("click", insertVerticalCurve);
+  document.getElementById("btnInsertHCurve")?.addEventListener("click", insertHorizontalCurve);
   document.getElementById("btnAnnotateWrap")?.addEventListener("click", annotateAllWraps);
   document.getElementById("btnDrumOffset")?.addEventListener("click", applyAllDrumOffsets);
 

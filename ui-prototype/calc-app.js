@@ -1,6 +1,13 @@
 import { GC01_INPUT, GC01_EXPECTED, GC01_TOL } from "./calc/gc01-case.js";
 import { runDtiiP2P, compareToExpected } from "./calc/dtii-engine.js";
 import { buildCalcInputFromExtract } from "./calc/path-extract.js";
+import {
+  DEFAULT_COEFFS,
+  F_DUTY_PRESETS,
+  coeffsToCalcInput,
+  freezeCoeffs,
+  loadFrozenCoeffs,
+} from "./calc/default-coeffs.js";
 
 const els = {
   inputPanel: document.getElementById("inputPanel"),
@@ -12,6 +19,22 @@ const els = {
   sourceChip: document.getElementById("sourceChip"),
   splitSelect: document.getElementById("splitSelect"),
   inputTitle: document.getElementById("inputTitle"),
+  coeffFreezeChip: document.getElementById("coeffFreezeChip"),
+};
+
+const COEFF_IDS = {
+  f: "c_f",
+  C: "c_C",
+  eta: "c_eta",
+  mu: "c_mu",
+  v_mps: "c_v",
+  qRO: "c_qRO",
+  qRU: "c_qRU",
+  qB: "c_qB",
+  qG: "c_qG",
+  FS1_N: "c_FS1",
+  FS2_N: "c_FS2",
+  duty: "c_duty",
 };
 
 let activeMode = "gc01"; // gc01 | path
@@ -104,6 +127,60 @@ function loadPathBundleFromStorage() {
   }
 }
 
+function readCoeffPanel() {
+  const num = (id) => {
+    const v = parseFloat(document.getElementById(id)?.value);
+    return Number.isFinite(v) ? v : undefined;
+  };
+  const duty = document.getElementById("c_duty")?.value || "full";
+  return {
+    f: num("c_f"),
+    C: num("c_C"),
+    eta: num("c_eta"),
+    mu: num("c_mu"),
+    v_mps: num("c_v"),
+    qRO: num("c_qRO"),
+    qRU: num("c_qRU"),
+    qB: num("c_qB"),
+    qG: num("c_qG"),
+    FS1_N: num("c_FS1"),
+    FS2_N: num("c_FS2"),
+    duty,
+    f_duty: duty,
+  };
+}
+
+function fillCoeffPanel(coeffs = DEFAULT_COEFFS) {
+  const set = (id, v) => {
+    const el = document.getElementById(id);
+    if (el && v != null) el.value = v;
+  };
+  set("c_f", coeffs.f);
+  set("c_C", coeffs.C);
+  set("c_eta", coeffs.eta);
+  set("c_mu", coeffs.mu);
+  set("c_v", coeffs.v_mps);
+  set("c_qRO", coeffs.qRO);
+  set("c_qRU", coeffs.qRU);
+  set("c_qB", coeffs.qB);
+  set("c_qG", coeffs.qG);
+  set("c_FS1", coeffs.FS1_N);
+  set("c_FS2", coeffs.FS2_N);
+  const dutyEl = document.getElementById("c_duty");
+  if (dutyEl) dutyEl.value = coeffs.f_duty || coeffs.duty || "full";
+}
+
+function updateFreezeChip(snap) {
+  if (!els.coeffFreezeChip) return;
+  if (snap?.frozen_at) {
+    els.coeffFreezeChip.textContent = `已冻结 ${snap.frozen_at.slice(0, 19)}`;
+    els.coeffFreezeChip.className = "muted ok-text";
+  } else {
+    els.coeffFreezeChip.textContent = "未冻结";
+    els.coeffFreezeChip.className = "muted";
+  }
+}
+
 function setSourceUI() {
   if (activeMode === "path" && pathBundle) {
     if (els.sourceChip) {
@@ -122,20 +199,21 @@ function setSourceUI() {
 
 function run() {
   const split = els.splitSelect?.value || "1:1";
-  let input;
+  let base;
   let cmp = null;
 
   if (activeMode === "path" && pathBundle?.extract) {
-    input = buildCalcInputFromExtract(pathBundle.path, pathBundle.extract, {
+    base = buildCalcInputFromExtract(pathBundle.path, pathBundle.extract, {
       power_split: split,
       FS1_N: pathBundle.path?.line?.FS1_N ?? 0,
       FS2_N: pathBundle.path?.line?.FS2_N ?? 0,
       S22_N: pathBundle.path?.line?.S22_N ?? 0,
     });
   } else {
-    input = { ...GC01_INPUT, power_split: split };
+    base = { ...GC01_INPUT, power_split: split };
   }
 
+  const input = coeffsToCalcInput(readCoeffPanel(), { ...base, power_split: split });
   const out = runDtiiP2P(input);
   if (els.algoChip) els.algoChip.textContent = out.algorithm || "DTII-P2P-v0.2";
   setSourceUI();
@@ -158,6 +236,7 @@ function run() {
     eta: input.eta,
     FS1_N: input.FS1_N,
     FS2_N: input.FS2_N,
+    duty: input.duty,
     power_split: split,
   });
 
@@ -170,6 +249,7 @@ function run() {
     FU_N: out.summary.FU_N,
     PA_kW: out.summary.PA_kW,
     PM_kW: out.summary.PM_kW,
+    motor_kW: out.summary.motor_kW,
     S1min_N: out.summary.S1min_N,
     [`F1(${split})_N`]: a.F1_N ?? out.summary.F1_N,
     [`F2(${split})_N`]: a.F2_N ?? out.summary.F2_N,
@@ -205,6 +285,38 @@ document.getElementById("btnCollapseAll")?.addEventListener("click", () => {
   document.querySelectorAll(".step").forEach((d) => (d.open = false));
 });
 els.splitSelect?.addEventListener("change", () => run());
+
+document.getElementById("btnApplyDuty")?.addEventListener("click", () => {
+  const duty = document.getElementById("c_duty")?.value || "full";
+  const preset = F_DUTY_PRESETS[duty];
+  if (preset && document.getElementById("c_f")) {
+    document.getElementById("c_f").value = preset.f;
+  }
+  run();
+});
+document.getElementById("btnFreezeCoeff")?.addEventListener("click", () => {
+  const snap = freezeCoeffs(readCoeffPanel());
+  updateFreezeChip(snap);
+  alert(`系数已冻结到 sessionStorage\n键：pidm.coeff.freeze.v0\n工况：${snap.duty || snap.f_duty}`);
+});
+document.getElementById("btnLoadFreeze")?.addEventListener("click", () => {
+  const snap = loadFrozenCoeffs();
+  if (!snap) {
+    alert("无冻结快照");
+    return;
+  }
+  fillCoeffPanel(snap);
+  updateFreezeChip(snap);
+  run();
+});
+
+Object.values(COEFF_IDS).forEach((id) => {
+  document.getElementById(id)?.addEventListener("change", () => run());
+});
+
+const frozen = loadFrozenCoeffs();
+fillCoeffPanel(frozen || DEFAULT_COEFFS);
+updateFreezeChip(frozen);
 
 const params = new URLSearchParams(location.search);
 pathBundle = loadPathBundleFromStorage();

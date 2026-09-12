@@ -137,3 +137,83 @@ export function applyDrumRadiusOffsets(nodes, opts = {}) {
     },
   };
 }
+
+/**
+ * 欧拉不打滑校核：e^{μφ} ≥ S_tight / S_slack
+ * @param {{wrap_deg:number, mu:number, S_tight_N:number, S_slack_N:number}} opts
+ */
+export function checkDriveNoSlip(opts = {}) {
+  const wrap_deg = Number(opts.wrap_deg);
+  const mu = Number.isFinite(opts.mu) ? opts.mu : 0.3;
+  const S_tight = Number(opts.S_tight_N);
+  const S_slack = Number(opts.S_slack_N);
+  if (!(wrap_deg > 0) || !(S_tight > 0) || !(S_slack > 0)) {
+    return {
+      ok: false,
+      ratio: null,
+      e_mu_phi: null,
+      wrap_deg: wrap_deg || null,
+      mu,
+      message: "包角或张力不足，无法校核不打滑",
+    };
+  }
+  const phi = (wrap_deg * Math.PI) / 180;
+  const e_mu_phi = Math.exp(mu * phi);
+  const ratio = S_tight / S_slack;
+  const ok = e_mu_phi + 1e-9 >= ratio;
+  return {
+    ok,
+    ratio: +ratio.toFixed(4),
+    e_mu_phi: +e_mu_phi.toFixed(4),
+    wrap_deg: +wrap_deg.toFixed(3),
+    mu,
+    S_tight_N: S_tight,
+    S_slack_N: S_slack,
+    margin: +(e_mu_phi - ratio).toFixed(4),
+    formula: "e^{μφ} ≥ S_tight/S_slack",
+    message: ok
+      ? `不打滑：e^{μφ}=${e_mu_phi.toFixed(3)} ≥ S₁/S₂=${ratio.toFixed(3)}`
+      : `打滑风险：e^{μφ}=${e_mu_phi.toFixed(3)} < S₁/S₂=${ratio.toFixed(3)}`,
+  };
+}
+
+/**
+ * 为驱动节点写入不打滑校核结果
+ * @param {Array} nodes
+ * @param {{mu?:number, S_tight_N?:number, S_slack_N?:number, min_drive_wrap_deg?:number}} [opts]
+ */
+export function annotateDriveSlipChecks(nodes, opts = {}) {
+  const mu = Number.isFinite(opts.mu) ? opts.mu : 0.3;
+  const S_tight = Number.isFinite(opts.S_tight_N) ? opts.S_tight_N : 175621 + 24946;
+  const S_slack = Number.isFinite(opts.S_slack_N) ? opts.S_slack_N : 24946;
+  const items = [];
+  const out = (nodes || []).map((n, i) => {
+    if (n.type !== "drive") return { ...n };
+    const wrap = n.wrap_angle_deg ?? computeWrapAtNode(nodes, i).wrap_angle_deg;
+    const chk = checkDriveNoSlip({
+      wrap_deg: wrap,
+      mu: Number.isFinite(n.mu) ? n.mu : mu,
+      S_tight_N: Number.isFinite(n.S_tight_N) ? n.S_tight_N : S_tight,
+      S_slack_N: Number.isFinite(n.S_slack_N) ? n.S_slack_N : S_slack,
+    });
+    items.push({ node_id: n.id, ...chk });
+    return {
+      ...n,
+      wrap_angle_deg: wrap,
+      no_slip_ok: chk.ok,
+      no_slip_e_mu_phi: chk.e_mu_phi,
+      no_slip_ratio: chk.ratio,
+      no_slip_message: chk.message,
+    };
+  });
+  return {
+    nodes: out,
+    items,
+    ok: items.length ? items.every((x) => x.ok) : true,
+    meta: {
+      source: "euler_no_slip",
+      formula: "e^{μφ} ≥ S_tight/S_slack",
+      note: "欧拉摩擦不打滑校核（驱动节点）",
+    },
+  };
+}

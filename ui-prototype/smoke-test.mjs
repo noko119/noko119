@@ -26,7 +26,26 @@ import { nodesToCsv, csvToNodes, flightsToCsv } from "./calc/excel-io.js";
 import { buildEasyInclineConveyor } from "./calc/easy-wizard.js";
 import { parseDxfPolylines, dxfPointsToCarryNodes } from "./calc/dxf-import.js";
 import { insertVerticalCurveAt, suggestMinRadius_m } from "./calc/vertical-curve.js";
-import { annotateWrapAngles, applyDrumRadiusOffsets, computeWrapAtNode } from "./calc/drum-geometry.js";
+import {
+  annotateWrapAngles,
+  applyDrumRadiusOffsets,
+  computeWrapAtNode,
+  checkDriveNoSlip,
+  annotateDriveSlipChecks,
+} from "./calc/drum-geometry.js";
+import {
+  insertHorizontalCurveAt,
+  suggestHorizontalRmin_m,
+  cornerAngleXY,
+} from "./calc/horizontal-curve.js";
+import {
+  DTII_MAJORS,
+  autoClassifyFlight,
+  classifyFlightRows,
+} from "./calc/dtii-flight-dict.js";
+import { enforcePairedReturnOffset } from "./calc/flight-model.js";
+import { coeffsToCalcInput, DEFAULT_COEFFS } from "./calc/default-coeffs.js";
+import { selectMotorFromPm } from "./calc/dtii-engine.js";
 import { readFileSync } from "fs";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
@@ -243,7 +262,7 @@ function near(a, b, tol = 1e-6) {
   assert(nodes.length > carry.length, "dxf path grew with return");
 }
 
-// 13) 竖曲线 + 最小半径建议
+// 13) 竖曲线 + 正式 Rmin 分解
 {
   const base = [
     { id: "a", x: 0, y: 0, z: 0, type: "tail", branch: "carry" },
@@ -252,10 +271,23 @@ function near(a, b, tol = 1e-6) {
   ];
   const sug = suggestMinRadius_m({ kind: "convex", v_mps: 2 });
   assert(sug.R_min_m > 0, "suggest Rmin > 0");
+  assert(sug.breakdown && sug.breakdown.R_tension_m > 0, "Rmin has tension term");
+  assert(sug.breakdown.R_velocity_m > 0, "Rmin has velocity term");
+  const sugFull = suggestMinRadius_m({
+    kind: "concave",
+    v_mps: 2,
+    T_N: 50000,
+    qB: 47.6,
+    qG: 236.1,
+    a_idler_m: 1.2,
+  });
+  assert(sugFull.breakdown.R_sag_m > 0, "Rmin has sag term when a given");
+  assert(sugFull.note.includes("DTⅡ") || sugFull.note.includes("正式"), "formal Rmin note");
   const { nodes, meta } = insertVerticalCurveAt(base, 1, { R_m: 120, kind: "convex", segments: 4 });
   assert(nodes.length > base.length, "curve inserts points");
   assert(meta.R_m === 120, "curve R recorded");
   assert(meta.kind === "convex", "curve kind convex");
+  assert(meta.R_min_breakdown, "insert meta has Rmin breakdown");
 }
 
 // 14) 包角 + D/2 偏移
@@ -275,7 +307,6 @@ function near(a, b, tol = 1e-6) {
   assert(offNodes[1].offset_applied === true, "bend offset flag");
 }
 
-
 // 15) Easy 机型库 + Flight 配对 + Finalize + DXF/CSV 往返
 {
   assert(EASY_PRESETS.length >= 3, "easy presets >= 3");
@@ -288,6 +319,7 @@ function near(a, b, tol = 1e-6) {
   });
   let flights = buildFlightRows(easy.nodes, { closed_loop: true });
   assert(flights.length >= 3, "flight rows built");
+  assert(flights.every((f) => f.major_id), "flights auto-classified major_id");
   const paired = pairCarryReturnFlights(flights);
   assert(paired.meta.paired_pairs >= 1, "paired flights >= 1");
   const fin = finalizeProfile({
@@ -307,6 +339,82 @@ function near(a, b, tol = 1e-6) {
   assert(fcsv.includes("a_idler_m"), "flight csv header");
   const wrap = checkWrapDtii(easy.nodes, { min_drive_wrap_deg: 1 });
   assert(wrap.items.length >= 1, "wrap dtii has drive item");
+}
+
+// 16) 不打滑欧拉校核
+{
+  const ok = checkDriveNoSlip({ wrap_deg: 210, mu: 0.35, S_tight_N: 100000, S_slack_N: 40000 });
+  assert(ok.ok === true, "no-slip ok when e^{μφ} sufficient");
+  assert(ok.e_mu_phi >= ok.ratio, "e_mu_phi >= ratio");
+  const bad = checkDriveNoSlip({ wrap_deg: 90, mu: 0.2, S_tight_N: 200000, S_slack_N: 20000 });
+  assert(bad.ok === false, "no-slip fails when wrap insufficient");
+  const driveNodes = [
+    { id: "t", x: 0, y: 0, z: 0, type: "tail" },
+    { id: "d", x: 10, y: 0, z: 0, type: "drive", mainDrive: true, wrap_angle_deg: 200 },
+    { id: "h", x: 20, y: 0, z: 0, type: "head" },
+  ];
+  const ann = annotateDriveSlipChecks(driveNodes, { mu: 0.3, S_tight_N: 100000, S_slack_N: 40000 });
+  assert(ann.items.length === 1, "annotate slip one drive");
+  assert(ann.nodes[1].no_slip_ok != null, "drive has no_slip_ok");
+}
+
+// 17) DTⅡ 十二大项分类
+{
+  assert(DTII_MAJORS.length === 12, "12 DTII majors");
+  const cls = autoClassifyFlight({ branch: "carry", delta_deg: 12 });
+  assert(cls.major_id === "carryI", "classify incline carryI");
+  const clsH = autoClassifyFlight({ branch: "return", delta_deg: 0.5 });
+  assert(clsH.major_id === "retH", "classify return retH");
+  const clsCv = autoClassifyFlight({ branch: "carry", curve_kind: "convex", delta_deg: 5 });
+  assert(clsCv.major_id === "convex", "classify convex");
+  const rows = classifyFlightRows([
+    { id: "s1", branch: "carry", delta_deg: 0, from_node_id: "a", to_node_id: "b" },
+  ]);
+  assert(rows[0].major_id === "carryH", "classifyFlightRows carryH");
+}
+
+// 18) 水平弯
+{
+  const base = [
+    { id: "a", x: 0, y: 0, z: 0, type: "tail", branch: "carry" },
+    { id: "b", x: 100, y: 0, z: 2, type: "node", branch: "carry" },
+    { id: "c", x: 100, y: 100, z: 4, type: "head", branch: "carry" },
+  ];
+  const ang = cornerAngleXY(base, 1);
+  assert(ang.ok === true, "horizontal corner ok");
+  const sug = suggestHorizontalRmin_m({ v_mps: 2 });
+  assert(sug.R_min_m >= 30, "horizontal Rmin floor");
+  const { nodes, meta } = insertHorizontalCurveAt(base, 1, { R_m: 50, segments: 4 });
+  assert(nodes.length > base.length, "horizontal curve inserts");
+  assert(meta.kind === "horizontal", "horizontal kind");
+  assert(nodes.some((n) => n.curve === "horizontal"), "nodes marked horizontal");
+  const flights = buildFlightRows(nodes, { closed_loop: false, autoClassify: false });
+  assert(flights.some((f) => f.curve_kind === "horizontal"), "flight curve_kind horizontal");
+}
+
+// 19) 强制间距跟随 + 系数面板映射 + 电机选型
+{
+  const carry = [
+    { id: "t", x: 0, y: 0, z: 0, type: "tail", drum_D_mm: 800 },
+    { id: "n", x: 100, y: 0, z: 20, type: "node" },
+    { id: "d", x: 200, y: 0, z: 40, type: "drive", mainDrive: true, drum_D_mm: 1000 },
+    { id: "h", x: 220, y: 0, z: 40, type: "head", drum_D_mm: 800 },
+  ];
+  const locked = enforcePairedReturnOffset(carry, 1.5);
+  assert(locked.meta.spacing_locked === true, "spacing locked");
+  assert(locked.meta.carry_return_offset_m === 1.5, "offset 1.5");
+  assert(locked.nodes.some((n) => n.branch === "return"), "has return after enforce");
+
+  const mapped = coeffsToCalcInput({ f: 0.02, duty: "empty" }, { ...GC01_INPUT });
+  assert(mapped.f === 0.02, "coeffsToCalcInput f override");
+  assert(mapped.C === DEFAULT_COEFFS.C || mapped.C === GC01_INPUT.C, "coeffs keep C");
+  assert(mapped.v_mps === GC01_INPUT.v_mps, "coeffs keep v from panel default merge");
+
+  const motor = selectMotorFromPm(399.1);
+  assert(motor.P_kW === 400, "motor select 400 for PM 399.1");
+  const out = runDtiiP2P(GC01_INPUT);
+  assert(out.summary.motor_kW >= out.summary.PM_kW, "engine motor >= PM");
+  assert(out.steps.some((s) => s.id === "Motor"), "Motor step present");
 }
 
 if (failed) {

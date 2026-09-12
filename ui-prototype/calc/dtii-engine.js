@@ -52,6 +52,42 @@ function parseSplit(split) {
   return [1, 1];
 }
 
+/** 常用标准电机功率档（kW） */
+export const STANDARD_MOTOR_KW = [
+  0.75, 1.1, 1.5, 2.2, 3, 4, 5.5, 7.5, 11, 15, 18.5, 22, 30, 37, 45, 55, 75, 90, 110, 132, 160, 185, 200, 220, 250, 280, 315, 355, 400, 450, 500, 560, 630, 710, 800,
+];
+
+/**
+ * 按 PM 上靠最近标准电机功率
+ * @param {number} PM_kW
+ * @param {number[]} [series]
+ */
+export function selectMotorFromPm(PM_kW, series = STANDARD_MOTOR_KW) {
+  const pm = Number(PM_kW);
+  if (!(pm > 0)) {
+    return {
+      P_kW: null,
+      PM_kW: pm,
+      ok: false,
+      note: "PM 无效，无法选型",
+      series_label: "IEC/常用 kW",
+      near: [],
+    };
+  }
+  const pick = series.find((p) => p >= pm - 1e-9) ?? series[series.length - 1];
+  const idx = series.indexOf(pick);
+  const near = series.slice(Math.max(0, idx - 1), Math.min(series.length, idx + 2));
+  return {
+    P_kW: pick,
+    PM_kW: +pm.toFixed(2),
+    ok: pick >= pm,
+    margin_kW: +(pick - pm).toFixed(2),
+    series_label: "IEC/常用 kW",
+    near,
+    note: pick >= pm ? `选用 ${pick} kW（≥ PM ${pm.toFixed(2)} kW）` : `超出系列上限，取 ${pick} kW`,
+  };
+}
+
 export function runDtiiP2P(input) {
   const g = input.g ?? 9.81;
   const steps = [];
@@ -184,6 +220,21 @@ export function runDtiiP2P(input) {
     })
   );
 
+  const motor = selectMotorFromPm(PM);
+  steps.push(
+    step({
+      id: "Motor",
+      title: "电动机选型（标准功率上靠）",
+      handbook: "选型示意",
+      formula: "P_motor = min { P ∈ 标准系列 | P ≥ PM }",
+      inputs: { PM_kW: +PM.toFixed(2), series: motor.series_label },
+      intermediates: { candidates_near: motor.near },
+      result: motor.P_kW,
+      unit: "kW",
+      note: motor.note,
+    })
+  );
+
   const emu = input.e_mu_phi;
   const S1_simple = FU / (emu - 1);
   const S1min = input.S1min_anchor_N ?? S1_simple;
@@ -284,6 +335,8 @@ export function runDtiiP2P(input) {
       FU_N: +FU.toFixed(1),
       PA_kW: +PA.toFixed(2),
       PM_kW: +PM.toFixed(2),
+      motor_kW: motor.P_kW,
+      motor_select: motor,
       S1min_N: Number(S1min),
       S_carry_sag_N: S_carry,
       S_return_sag_N: S_return,
