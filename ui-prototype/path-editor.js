@@ -10,6 +10,7 @@ import { buildGc01ComplexPath } from "./calc/gc01-complex-path.js";
 import { buildEasyInclineConveyor, buildEasyFromPreset, EASY_PRESETS } from "./calc/easy-wizard.js";
 import { parseDxfPolylines, dxfPointsToCarryNodes, exportNodesToDxf } from "./calc/dxf-import.js";
 import { insertVerticalCurveAt, suggestMinRadius_m } from "./calc/vertical-curve.js";
+import { resolveDesignLoads } from "./calc/design-loads.js";
 import { insertHorizontalCurveAt, suggestHorizontalRmin_m } from "./calc/horizontal-curve.js";
 import {
   annotateWrapAngles,
@@ -1296,20 +1297,28 @@ function enforceSpacingFollowAction(opts = {}) {
   }
 }
 
+
+function getCurveDesignOpts() {
+  const loads = resolveDesignLoads(GC01_INPUT);
+  return {
+    v_mps: loads.v_mps,
+    T_N: loads.T_N,
+    qB: loads.qB,
+    qG: loads.qG,
+    a_idler_m: loads.a_idler_m,
+    B_mm: loads.B_mm,
+    mu: loads.mu,
+    S_tight_N: loads.S_tight_N,
+    S_slack_N: loads.S_slack_N,
+    _source: loads.source,
+    _note: loads.note,
+  };
+}
+
 function runFinalizeAction() {
   // ensure wraps annotated
   state.nodes = annotateWrapAngles(state.nodes);
-  const curveOpts = {
-    v_mps: GC01_INPUT.v_mps,
-    T_N: GC01_INPUT.S_carry_sag_N,
-    qB: GC01_INPUT.qB,
-    qG: GC01_INPUT.qG,
-    mu: 0.3,
-    S_tight_N: GC01_INPUT.FU_N ? GC01_INPUT.FU_N + GC01_INPUT.S1min_anchor_N : 200567,
-    S_slack_N: GC01_INPUT.S1min_anchor_N,
-  };
-  // FU not on GC01_INPUT — use expected-ish tight = FU+S1 from case defaults
-  curveOpts.S_tight_N = 175621 + 24946;
+  const curveOpts = getCurveDesignOpts();
   const result = finalizeProfile({
     nodes: state.nodes,
     returnMeta: state.returnMeta,
@@ -1469,13 +1478,14 @@ function insertVerticalCurve() {
   }
   const kindRaw = (prompt("竖曲线类型：convex=凸弧 / concave=凹弧", "convex") || "convex").toLowerCase();
   const kind = kindRaw.startsWith("conca") ? "concave" : "convex";
+  const design = getCurveDesignOpts();
   const suggest = suggestMinRadius_m({
     kind,
-    v_mps: GC01_INPUT.v_mps,
-    T_N: GC01_INPUT.S_carry_sag_N,
-    qB: GC01_INPUT.qB,
-    qG: GC01_INPUT.qG,
-    a_idler_m: 1.2,
+    v_mps: design.v_mps,
+    T_N: design.T_N,
+    qB: design.qB,
+    qG: design.qG,
+    a_idler_m: design.a_idler_m,
   });
   const b = suggest.breakdown;
   const R = parseFloat(
@@ -1493,11 +1503,11 @@ function insertVerticalCurve() {
       R_m: R,
       kind,
       segments: Number.isFinite(segs) ? segs : 6,
-      v_mps: GC01_INPUT.v_mps,
-      T_N: GC01_INPUT.S_carry_sag_N,
-      qB: GC01_INPUT.qB,
-      qG: GC01_INPUT.qG,
-      a_idler_m: 1.2,
+      v_mps: design.v_mps,
+      T_N: design.T_N,
+      qB: design.qB,
+      qG: design.qG,
+      a_idler_m: design.a_idler_m,
     });
     state.nodes = nodes.map((n) => ({
       ...n,
@@ -1534,7 +1544,8 @@ function insertHorizontalCurve() {
     alert("Auto 模式下不能改回程转角。请切 Advanced，或选承载转角。");
     return;
   }
-  const suggest = suggestHorizontalRmin_m({ v_mps: GC01_INPUT.v_mps });
+  const designH = getCurveDesignOpts();
+  const suggest = suggestHorizontalRmin_m({ v_mps: designH.v_mps, B_mm: designH.B_mm });
   const R = parseFloat(
     prompt(`水平弯半径 R (m)\n建议最小约 ${suggest.R_min_m} m`, String(Math.max(suggest.R_min_m, 50))) || ""
   );
@@ -1544,7 +1555,8 @@ function insertHorizontalCurve() {
     const { nodes, meta } = insertHorizontalCurveAt(state.nodes, idx, {
       R_m: R,
       segments: Number.isFinite(segs) ? segs : 6,
-      v_mps: GC01_INPUT.v_mps,
+      v_mps: designH.v_mps,
+      B_mm: designH.B_mm,
     });
     state.nodes = nodes.map((n) => ({
       ...n,
@@ -1572,11 +1584,7 @@ function insertHorizontalCurve() {
 
 function annotateAllWraps() {
   state.nodes = annotateWrapAngles(state.nodes);
-  const slip = annotateDriveSlipChecks(state.nodes, {
-    mu: 0.3,
-    S_tight_N: 175621 + 24946,
-    S_slack_N: 24946,
-  });
+  const slip = annotateDriveSlipChecks(state.nodes, { mu: getCurveDesignOpts().mu, S_tight_N: getCurveDesignOpts().S_tight_N, S_slack_N: getCurveDesignOpts().S_slack_N });
   state.nodes = slip.nodes;
   rebuildSceneObjects();
   updateUI();

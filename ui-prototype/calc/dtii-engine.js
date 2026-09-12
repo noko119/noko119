@@ -2,6 +2,8 @@
  * DTⅡ(A) 逐点张力计算引擎 v0（逐步透明）
  * 算法版本：DTII-P2P-v0.2（含双驱 1:1 / 2:1 / 1:2）
  */
+import { selectBeltGrade } from "./selection-catalog.js";
+import { buildDesignLoadsFromP2P } from "./design-loads.js";
 
 function step(partial) {
   return {
@@ -323,33 +325,65 @@ export function runDtiiP2P(input) {
     })
   );
 
+  const S_max_belt = Math.max(F1max, F2max, S_carry, Number(S1min) || 0);
+  const belt = selectBeltGrade({
+    S_max_N: S_max_belt,
+    B_mm: input.B_mm ?? 1400,
+    n1: input.belt_n1 ?? 10,
+  });
+  steps.push(
+    step({
+      id: "Belt",
+      title: "胶带强度档选型（ST 上靠）",
+      handbook: "选型示意",
+      formula: "σ_req = n1·S_max/B ；选 ST ≥ σ_req",
+      inputs: {
+        S_max_N: +S_max_belt.toFixed(0),
+        B_mm: input.B_mm ?? 1400,
+        n1: input.belt_n1 ?? 10,
+      },
+      intermediates: {
+        sigma_req_Npm: belt.sigma_req_Npm,
+        margin_Npm: belt.margin_Npm,
+      },
+      result: belt.grade,
+      unit: "",
+      note: belt.note,
+    })
+  );
+
+  const summary = {
+    FH_N: +FH.toFixed(1),
+    FS1_N: FS1,
+    FS2_N: FS2,
+    FSt_N: +FSt.toFixed(1),
+    FU_N: +FU.toFixed(1),
+    PA_kW: +PA.toFixed(2),
+    PM_kW: +PM.toFixed(2),
+    motor_kW: motor.P_kW,
+    motor_select: motor,
+    belt_grade: belt.grade,
+    belt_select: belt,
+    S1min_N: Number(S1min),
+    S_carry_sag_N: S_carry,
+    S_return_sag_N: S_return,
+    power_split: activeSplit,
+    split_active: active,
+    split_1_1: split11,
+    split_2_1: split21,
+    split_1_2: split12,
+    F1max_N: F1max,
+    F2max_N: F2max,
+    F1_N: split11.F1_N,
+    F2_N: split11.F2_N,
+  };
+  summary.design_loads = buildDesignLoadsFromP2P(summary, input);
+
   return {
     algorithm: "DTII-P2P-v0.2",
     coeff: "coeff-v0",
     steps,
-    summary: {
-      FH_N: +FH.toFixed(1),
-      FS1_N: FS1,
-      FS2_N: FS2,
-      FSt_N: +FSt.toFixed(1),
-      FU_N: +FU.toFixed(1),
-      PA_kW: +PA.toFixed(2),
-      PM_kW: +PM.toFixed(2),
-      motor_kW: motor.P_kW,
-      motor_select: motor,
-      S1min_N: Number(S1min),
-      S_carry_sag_N: S_carry,
-      S_return_sag_N: S_return,
-      power_split: activeSplit,
-      split_active: active,
-      split_1_1: split11,
-      split_2_1: split21,
-      split_1_2: split12,
-      F1max_N: F1max,
-      F2max_N: F2max,
-      F1_N: split11.F1_N,
-      F2_N: split11.F2_N,
-    },
+    summary,
   };
 }
 

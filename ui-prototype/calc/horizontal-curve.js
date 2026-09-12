@@ -50,17 +50,44 @@ export function cornerAngleXY(nodes, i) {
 /**
  * 水平弯最小半径示意：R_min ≈ max(30, 40·v²)
  */
+/**
+ * 水平弯最小半径：
+ * - 速度/横向加速度：R_a = v² / a_lat（默认 a_lat=0.05g）
+ * - 速度经验地板：R_v = max(30, k·v²)
+ * - 带宽经验地板：R_B = max(12, 15·B_m)
+ * R_min = max(R_a, R_v, R_B)
+ */
 export function suggestHorizontalRmin_m(opts = {}) {
   const v = Number.isFinite(opts.v_mps) ? opts.v_mps : 2;
+  const g = Number.isFinite(opts.g) ? opts.g : 9.81;
+  const a_lat = Number.isFinite(opts.a_lat_mps2)
+    ? opts.a_lat_mps2
+    : Number.isFinite(opts.a_lat_g)
+      ? opts.a_lat_g * g
+      : 0.05 * g;
   const k = Number.isFinite(opts.k) ? opts.k : 40;
-  const R = Math.max(30, k * v * v);
+  const B_mm = Number.isFinite(opts.B_mm) ? opts.B_mm : 1000;
+  const B_m = B_mm / 1000;
+  const R_a = a_lat > 0 ? (v * v) / a_lat : 0;
+  const R_v = Math.max(30, k * v * v);
+  const R_B = Math.max(12, 15 * B_m);
+  const R = Math.max(R_a, R_v, R_B);
   return {
     R_min_m: +R.toFixed(2),
     v_mps: v,
     k,
-    note: "水平弯 Rmin 示意（速度地板）；正式设计按横向力/托辊间距校核",
+    B_mm,
+    breakdown: {
+      R_accel_m: +R_a.toFixed(2),
+      R_velocity_m: +R_v.toFixed(2),
+      R_belt_m: +R_B.toFixed(2),
+      a_lat_mps2: +a_lat.toFixed(4),
+      a_lat_g: +(a_lat / g).toFixed(4),
+    },
+    note: "水平弯 Rmin = max(v²/a_lat, 速度地板, 带宽地板)；正式设计按横向力/托辊校核",
   };
 }
+
 
 /**
  * 在节点 i 处插入水平圆弧（XY）；Z 在切点间线性插值
@@ -153,7 +180,7 @@ export function insertHorizontalCurveAt(nodes, i, opts = {}) {
   }
 
   const out = [...nodes.slice(0, i), ...arcPts, ...nodes.slice(i + 1)];
-  const suggest = suggestHorizontalRmin_m({ v_mps: opts.v_mps });
+  const suggest = suggestHorizontalRmin_m({ v_mps: opts.v_mps, B_mm: opts.B_mm, a_lat_mps2: opts.a_lat_mps2, a_lat_g: opts.a_lat_g, k: opts.k });
   return {
     nodes: out,
     meta: {

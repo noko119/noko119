@@ -8,6 +8,7 @@ import {
   freezeCoeffs,
   loadFrozenCoeffs,
 } from "./calc/default-coeffs.js";
+import { saveDesignLoads } from "./calc/design-loads.js";
 
 const els = {
   inputPanel: document.getElementById("inputPanel"),
@@ -215,6 +216,10 @@ function run() {
 
   const input = coeffsToCalcInput(readCoeffPanel(), { ...base, power_split: split });
   const out = runDtiiP2P(input);
+  if (out?.summary) {
+    const loads = out.summary.design_loads || null;
+    if (loads) saveDesignLoads(loads);
+  }
   if (els.algoChip) els.algoChip.textContent = out.algorithm || "DTII-P2P-v0.2";
   setSourceUI();
 
@@ -249,6 +254,8 @@ function run() {
     FU_N: out.summary.FU_N,
     PA_kW: out.summary.PA_kW,
     PM_kW: out.summary.PM_kW,
+    motor_kW: out.summary.motor_kW,
+    belt_grade: out.summary.belt_grade,
     motor_kW: out.summary.motor_kW,
     S1min_N: out.summary.S1min_N,
     [`F1(${split})_N`]: a.F1_N ?? out.summary.F1_N,

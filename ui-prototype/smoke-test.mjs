@@ -2,7 +2,7 @@
  * 轻量回归：路径导出主驱点序 + Web 正确提取 + GC-01 计算
  * 运行：node ui-prototype/smoke-test.mjs
  */
-import { buildPathExport } from "./path-schema.js";
+import { buildPathExport, classifySegmentDraft } from "./path-schema.js";
 import { GC01_INPUT, GC01_EXPECTED, GC01_TOL } from "./calc/gc01-case.js";
 import { runDtiiP2P, compareToExpected, selectMotorFromPm } from "./calc/dtii-engine.js";
 import {
@@ -44,6 +44,8 @@ import {
   classifyFlightRows,
 } from "./calc/dtii-flight-dict.js";
 import { DEFAULT_COEFFS, coeffsToCalcInput } from "./calc/default-coeffs.js";
+import { buildDesignLoadsFromP2P, saveDesignLoads, resolveDesignLoads } from "./calc/design-loads.js";
+import { selectBeltGrade } from "./calc/selection-catalog.js";
 import { readFileSync } from "fs";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
@@ -418,6 +420,30 @@ function near(a, b, tol = 1e-6) {
   assert(out.steps.some((s) => s.id === "Motor" || /选型/.test(s.title || "")), "Motor step present");
 }
 
+
+// 20) P2P 设计荷载桥接 + 水平弯分解 + schema retH + 胶带选型
+{
+  const out = runDtiiP2P(GC01_INPUT);
+  assert(out.summary.design_loads?.source === "p2p_summary", "design loads from P2P");
+  assert(out.summary.design_loads.S_tight_N > out.summary.design_loads.S_slack_N, "tight > slack");
+  assert(out.steps.some((s) => s.id === "Belt"), "Belt step present");
+  assert(!!out.summary.belt_grade, "belt_grade set");
+  const store = { _d: {}, setItem(k,v){this._d[k]=v}, getItem(k){return this._d[k]} };
+  saveDesignLoads(out.summary.design_loads, store);
+  const resolved = resolveDesignLoads(GC01_INPUT, store);
+  assert(resolved.source === "p2p_summary", "resolveDesignLoads from store");
+  const h = suggestHorizontalRmin_m({ v_mps: 2, B_mm: 1400 });
+  assert(h.breakdown?.R_velocity_m > 0, "horizontal R velocity term");
+  assert(h.breakdown?.R_belt_m > 0, "horizontal R belt term");
+  assert(h.breakdown?.R_accel_m > 0, "horizontal R accel term");
+  const draft = classifySegmentDraft(
+    { id: "a", x: 0, y: 0, z: 0, branch: "return" },
+    { id: "b", x: 10, y: 0, z: 0, branch: "return" }
+  );
+  assert(draft.major_id === "retH", "schema draft retH");
+  const belt = selectBeltGrade({ S_max_N: 399000, B_mm: 1400, n1: 10 });
+  assert(belt.ok && belt.grade.startsWith("ST"), "selectBeltGrade ST");
+}
 
 if (failed) {
   console.error(`\n${failed} failure(s)`);
