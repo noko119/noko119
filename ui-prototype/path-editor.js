@@ -1150,24 +1150,7 @@ function updateUI(rebuildTable = true) {
       if (gaps.dPrev != null) parts.push(`←${TYPE_LABEL[gaps.prevDrum.type]} ${gaps.dPrev.toFixed(2)}m`);
       if (gaps.dNext != null) parts.push(`${TYPE_LABEL[gaps.nextDrum.type]}→ ${gaps.dNext.toFixed(2)}m`);
       gapEl.textContent = parts.length ? `滚筒间距：${parts.join(" · ")}` : "滚筒间距：无相邻滚筒";
-      gapEl.classList.remove("hidden");
-    } else {
-      gapEl.textContent = "滚筒间距：—";
-      gapEl.classList.add("muted");
-    }
-  }
-  updateDistLabels();
-
-  // 选中滚筒时显示与相邻滚筒间距
-  const gapEl = document.getElementById("drumGapChip");
-  const gaps = drumNeighborGaps(node);
-  if (gapEl) {
-    if (node && isDrumType(node.type) && gaps) {
-      const parts = [];
-      if (gaps.dPrev != null) parts.push(`←${TYPE_LABEL[gaps.prevDrum.type]} ${gaps.dPrev.toFixed(2)}m`);
-      if (gaps.dNext != null) parts.push(`${TYPE_LABEL[gaps.nextDrum.type]}→ ${gaps.dNext.toFixed(2)}m`);
-      gapEl.textContent = parts.length ? `滚筒间距：${parts.join(" · ")}` : "滚筒间距：无相邻滚筒";
-      gapEl.classList.remove("hidden");
+      gapEl.classList.remove("hidden", "muted");
     } else {
       gapEl.textContent = "滚筒间距：—";
       gapEl.classList.add("muted");
