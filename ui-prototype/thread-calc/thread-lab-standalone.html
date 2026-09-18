@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>螺纹尺寸推导 · 牙顶 / 牙底 / 退刀槽</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Outfit:wght@500;700;800&display=swap" rel="stylesheet" />
+  <style>
+:root {
+  --ink: #1a2420;
+  --muted: #5c6b64;
+  --paper: #eef3ef;
+  --panel: rgba(255, 255, 255, 0.78);
+  --line: rgba(26, 36, 32, 0.12);
+  --accent: #c45c26;
+  --accent-2: #1f6f5b;
+  --steel: #2f4a56;
+  --shadow: 0 18px 40px rgba(31, 52, 44, 0.12);
+  --radius: 18px;
+  --font-display: "Outfit", "Noto Sans SC", sans-serif;
+  --font-body: "Noto Sans SC", "Outfit", sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  min-height: 100%;
+  color: var(--ink);
+  font-family: var(--font-body);
+  background: var(--paper);
+}
+
+.atmosphere {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(900px 500px at 8% -5%, rgba(196, 92, 38, 0.16), transparent 55%),
+    radial-gradient(700px 420px at 92% 8%, rgba(31, 111, 91, 0.14), transparent 50%),
+    linear-gradient(165deg, #f5f7f4 0%, #e7eee9 42%, #dfe8e3 100%);
+  overflow: hidden;
+}
+
+.atmosphere::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.35;
+  background-image:
+    linear-gradient(rgba(47, 74, 86, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(47, 74, 86, 0.05) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: radial-gradient(ellipse at 40% 20%, black 20%, transparent 75%);
+  animation: gridDrift 18s linear infinite;
+}
+
+@keyframes gridDrift {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-28px, -28px, 0); }
+}
+
+.shell {
+  width: min(1120px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 36px 0 64px;
+}
+
+.hero {
+  margin-bottom: 28px;
+  animation: rise 0.7s ease both;
+}
+
+.brand {
+  margin: 0 0 8px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  font-size: 13px;
+  color: var(--accent);
+}
+
+.hero h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(2.2rem, 5vw, 3.4rem);
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  color: var(--steel);
+}
+
+.lede {
+  margin: 12px 0 0;
+  max-width: 36rem;
+  color: var(--muted);
+  font-size: 1.02rem;
+  line-height: 1.55;
+}
+
+.panel {
+  background: var(--panel);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px;
+  animation: rise 0.75s ease 0.08s both;
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: 1.4fr repeat(3, 1fr);
+  gap: 12px;
+}
+
+.field-row.simple {
+  grid-template-columns: 1.8fr 1fr 1fr;
+}
+
+.field-row.free {
+  grid-template-columns: 1fr 1fr 1fr 1.4fr;
+}
+
+.hint {
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.field.grow { grid-column: span 1; }
+
+.field span {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.field input,
+.field select {
+  width: 100%;
+  height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0 12px;
+  font: inherit;
+  font-size: 15px;
+  color: var(--ink);
+  background: #fff;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.field input:focus,
+.field select:focus {
+  border-color: rgba(196, 92, 38, 0.55);
+  box-shadow: 0 0 0 3px rgba(196, 92, 38, 0.15);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.chip {
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--steel);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: transform 0.15s, background 0.15s, border-color 0.15s;
+}
+
+.chip:hover {
+  transform: translateY(-1px);
+  border-color: rgba(31, 111, 91, 0.35);
+  background: #f3faf7;
+}
+
+.chip.active {
+  background: var(--accent-2);
+  border-color: var(--accent-2);
+  color: #fff;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.btn {
+  height: 42px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  padding: 0 16px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s, background 0.15s, box-shadow 0.15s;
+}
+
+.btn:hover { transform: translateY(-1px); }
+
+.btn.primary {
+  background: linear-gradient(135deg, #c45c26, #a84718);
+  color: #fff;
+  box-shadow: 0 10px 22px rgba(196, 92, 38, 0.28);
+}
+
+.btn.ghost {
+  background: #fff;
+  border-color: var(--line);
+  color: var(--steel);
+}
+
+.status {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.status.error { color: #b42318; }
+.status.ok { color: var(--accent-2); }
+
+.result-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 18px;
+  box-shadow: var(--shadow);
+  animation: rise 0.65s ease both;
+}
+
+.card:nth-child(1) { animation-delay: 0.05s; }
+.card:nth-child(2) { animation-delay: 0.1s; }
+.card:nth-child(3) { animation-delay: 0.15s; }
+.card:nth-child(4) { animation-delay: 0.2s; }
+.card:nth-child(5) { animation-delay: 0.25s; }
+.card:nth-child(6) { animation-delay: 0.3s; }
+
+.designation-card {
+  grid-column: 1 / -1;
+}
+
+.span-2 { grid-column: 1 / -1; }
+
+.card h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 2rem;
+  letter-spacing: -0.02em;
+  color: var(--steel);
+}
+
+.card h3 {
+  margin: 0 0 12px;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--steel);
+}
+
+.muted { color: var(--muted); margin: 6px 0 0; font-size: 14px; }
+
+.diagram {
+  width: 100%;
+  height: auto;
+  margin-top: 14px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #f8fbf9, #e8f0eb);
+  border: 1px solid var(--line);
+}
+
+.data {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.data caption {
+  caption-side: top;
+  text-align: left;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--steel);
+}
+
+.data th,
+.data td {
+  padding: 9px 4px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: baseline;
+}
+
+.data th {
+  color: var(--muted);
+  font-weight: 500;
+  width: 58%;
+}
+
+.data td {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.data tr:last-child th,
+.data tr:last-child td { border-bottom: 0; }
+
+.split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.formula {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.footnote {
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 860px) {
+  .field-row,
+  .field-row.simple,
+  .field-row.free {
+    grid-template-columns: 1fr 1fr;
+  }
+  .field.grow { grid-column: 1 / -1; }
+  .result-grid { grid-template-columns: 1fr; }
+  .designation-card,
+  .span-2 { grid-column: auto; }
+  .split { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 520px) {
+  .shell { width: min(100% - 20px, 1120px); padding-top: 24px; }
+  .field-row,
+  .field-row.simple,
+  .field-row.free { grid-template-columns: 1fr; }
+  .actions { align-items: stretch; }
+  .btn { width: 100%; }
+}
+
+  </style>
+</head>
+<body>
+  <div class="atmosphere" aria-hidden="true"></div>
+  <main class="shell">
+    <header class="hero">
+      <p class="brand">THREAD LAB</p>
+      <h1>螺纹尺寸推导</h1>
+      <p class="lede">支持 M320X2、M195×2 等任意代号；也可单独改直径与自定义螺距，即时出牙顶/牙底/退刀槽。</p>
+    </header>
+    <section class="panel input-panel" aria-label="规格输入">
+      <div class="field-row free">
+        <label class="field grow">
+          <span>螺纹代号（可直接写 M320X2 / M195×2）</span>
+          <input id="specInput" type="text" value="M20" placeholder="例如 M320X2、M195×2、M20×1.5" autocomplete="off" spellcheck="false" />
+        </label>
+        <label class="field">
+          <span>直径 d / mm</span>
+          <input id="dInput" type="number" min="0.1" step="any" value="20" />
+        </label>
+        <label class="field">
+          <span>螺距 P / mm（自定义）</span>
+          <input id="pInput" type="number" min="0.01" step="any" value="2.5" />
+        </label>
+        <label class="field">
+          <span>退刀槽长度</span>
+          <select id="grooveLen">
+            <option value="normal" selected>普通 g1</option>
+            <option value="short">短 g2</option>
+            <option value="long">长 g3</option>
+          </select>
+        </label>
+      </div>
+      <p class="hint" id="parsedHint">在代号框输入 M320X2 后回车或点「生成数据」即可。</p>
+      <div class="chips" id="quickChips" aria-label="常用规格"></div>
+      <div class="actions">
+        <button type="button" class="btn primary" id="calcBtn">生成数据</button>
+        <button type="button" class="btn ghost" id="copyBtn">复制结果</button>
+        <button type="button" class="btn ghost" id="coarseBtn">填入粗牙螺距</button>
+        <p class="status" id="status" role="status"></p>
+      </div>
+    </section>
+    <section class="result-grid" id="results" hidden>
+      <article class="card designation-card">
+        <h2 id="desigTitle">—</h2>
+        <p id="desigMeta" class="muted"></p>
+        <svg id="threadSvg" class="diagram" viewBox="0 0 640 280" role="img" aria-label="螺纹剖面示意"></svg>
+      </article>
+      <article class="card">
+        <h3>外螺纹（螺栓 / 轴）</h3>
+        <table class="data"><tbody id="extTable"></tbody></table>
+      </article>
+      <article class="card">
+        <h3>内螺纹（螺母 / 孔）</h3>
+        <table class="data"><tbody id="intTable"></tbody></table>
+      </article>
+      <article class="card span-2">
+        <h3>退刀槽（推导槽 · GB/T 3）</h3>
+        <div class="split">
+          <table class="data"><caption>外螺纹退刀槽</caption><tbody id="extGroove"></tbody></table>
+          <table class="data"><caption>内螺纹退刀槽</caption><tbody id="intGroove"></tbody></table>
+        </div>
+      </article>
+      <article class="card">
+        <h3>加工参考</h3>
+        <table class="data"><tbody id="machTable"></tbody></table>
+      </article>
+      <article class="card">
+        <h3>公式依据</h3>
+        <ul class="formula" id="formulaList"></ul>
+        <p class="footnote">基本牙型按 ISO 68-1 / GB/T 192；基本尺寸按 ISO 724 / GB/T 196；退刀槽按 GB/T 3。公差带未展开。</p>
+      </article>
+    </section>
+  </main>
+  <script>
+/**
+ * 普通螺纹（公制 ISO / GB/T 192·196·3）尺寸推导
+ * - 牙顶 / 牙底 / 中径
+ * - 外螺纹 / 内螺纹
+ * - 退刀槽（按 GB/T 3 常用表，未知螺距插值）
+ */
+
+const SQRT3_2 = Math.sqrt(3) / 2; // H = (√3/2)·P
+
+/** 常用公称直径 → 粗牙螺距（GB/T 193） */
+const COARSE_PITCH = {
+  1: 0.25, 1.2: 0.25, 1.4: 0.3, 1.6: 0.35, 1.8: 0.35,
+  2: 0.4, 2.5: 0.45, 3: 0.5, 3.5: 0.6, 4: 0.7,
+  5: 0.8, 6: 1, 7: 1, 8: 1.25, 9: 1.25, 10: 1.5,
+  11: 1.5, 12: 1.75, 14: 2, 16: 2, 18: 2.5, 20: 2.5,
+  22: 2.5, 24: 3, 27: 3, 30: 3.5, 33: 3.5, 36: 4,
+  39: 4, 42: 4.5, 45: 4.5, 48: 5, 52: 5, 56: 5.5,
+  60: 5.5, 64: 6, 68: 6, 72: 6, 76: 6, 80: 6,
+  85: 6, 90: 6, 95: 6, 100: 6,
+};
+
+/** 常用细牙螺距选项（按公称直径范围） */
+const FINE_PITCH_OPTIONS = [
+  0.2, 0.25, 0.35, 0.5, 0.75, 1, 1.25, 1.5, 2, 3, 4,
+];
+
+/**
+ * GB/T 3 外螺纹退刀槽常用尺寸（按螺距）
+ * g1 普通 / g2 短 / g3 长；df = d − k；r 圆角
+ */
+const EXT_UNDERCUT = [
+  { p: 0.25, g1: 0.8, g2: 0.5, g3: 1.2, k: 0.4, r: 0.1 },
+  { p: 0.3, g1: 0.9, g2: 0.6, g3: 1.5, k: 0.5, r: 0.1 },
+  { p: 0.35, g1: 1.0, g2: 0.7, g3: 1.6, k: 0.6, r: 0.1 },
+  { p: 0.4, g1: 1.2, g2: 0.8, g3: 2.0, k: 0.7, r: 0.2 },
+  { p: 0.45, g1: 1.2, g2: 0.9, g3: 2.0, k: 0.7, r: 0.2 },
+  { p: 0.5, g1: 1.6, g2: 1.0, g3: 2.5, k: 0.8, r: 0.2 },
+  { p: 0.6, g1: 1.6, g2: 1.2, g3: 2.5, k: 0.9, r: 0.3 },
+  { p: 0.7, g1: 2.0, g2: 1.5, g3: 3.0, k: 1.1, r: 0.3 },
+  { p: 0.75, g1: 2.0, g2: 1.5, g3: 3.0, k: 1.2, r: 0.3 },
+  { p: 0.8, g1: 2.0, g2: 1.6, g3: 3.0, k: 1.3, r: 0.3 },
+  { p: 1.0, g1: 2.5, g2: 2.0, g3: 4.0, k: 1.6, r: 0.5 },
+  { p: 1.25, g1: 3.2, g2: 2.5, g3: 5.0, k: 2.0, r: 0.5 },
+  { p: 1.5, g1: 3.2, g2: 2.5, g3: 5.0, k: 2.3, r: 0.5 },
+  { p: 1.75, g1: 4.0, g2: 3.0, g3: 6.0, k: 2.6, r: 0.8 },
+  { p: 2.0, g1: 4.0, g2: 3.0, g3: 6.0, k: 3.0, r: 0.8 },
+  { p: 2.5, g1: 5.0, g2: 4.0, g3: 8.0, k: 3.6, r: 1.0 },
+  { p: 3.0, g1: 5.0, g2: 4.0, g3: 8.0, k: 4.4, r: 1.0 },
+  { p: 3.5, g1: 6.0, g2: 5.0, g3: 10.0, k: 5.0, r: 1.2 },
+  { p: 4.0, g1: 6.0, g2: 5.0, g3: 10.0, k: 5.7, r: 1.2 },
+  { p: 4.5, g1: 8.0, g2: 6.0, g3: 12.0, k: 6.4, r: 1.6 },
+  { p: 5.0, g1: 8.0, g2: 6.0, g3: 12.0, k: 7.0, r: 1.6 },
+  { p: 5.5, g1: 10.0, g2: 8.0, g3: 14.0, k: 7.7, r: 2.0 },
+  { p: 6.0, g1: 10.0, g2: 8.0, g3: 14.0, k: 8.3, r: 2.0 },
+];
+
+/**
+ * GB/T 3 内螺纹退刀槽常用尺寸
+ * D_g 槽底直径 ≈ D + m；宽度同外螺纹量级
+ */
+const INT_UNDERCUT = [
+  { p: 0.25, g1: 0.8, g2: 0.5, g3: 1.2, m: 0.4, r: 0.1 },
+  { p: 0.3, g1: 0.9, g2: 0.6, g3: 1.5, m: 0.5, r: 0.1 },
+  { p: 0.35, g1: 1.0, g2: 0.7, g3: 1.6, m: 0.6, r: 0.1 },
+  { p: 0.4, g1: 1.2, g2: 0.8, g3: 2.0, m: 0.7, r: 0.2 },
+  { p: 0.45, g1: 1.2, g2: 0.9, g3: 2.0, m: 0.7, r: 0.2 },
+  { p: 0.5, g1: 1.6, g2: 1.0, g3: 2.5, m: 0.8, r: 0.2 },
+  { p: 0.6, g1: 1.6, g2: 1.2, g3: 2.5, m: 0.9, r: 0.3 },
+  { p: 0.7, g1: 2.0, g2: 1.5, g3: 3.0, m: 1.1, r: 0.3 },
+  { p: 0.75, g1: 2.0, g2: 1.5, g3: 3.0, m: 1.2, r: 0.3 },
+  { p: 0.8, g1: 2.0, g2: 1.6, g3: 3.0, m: 1.3, r: 0.3 },
+  { p: 1.0, g1: 2.5, g2: 2.0, g3: 4.0, m: 1.6, r: 0.5 },
+  { p: 1.25, g1: 3.2, g2: 2.5, g3: 5.0, m: 2.0, r: 0.5 },
+  { p: 1.5, g1: 3.2, g2: 2.5, g3: 5.0, m: 2.3, r: 0.5 },
+  { p: 1.75, g1: 4.0, g2: 3.0, g3: 6.0, m: 2.6, r: 0.8 },
+  { p: 2.0, g1: 4.0, g2: 3.0, g3: 6.0, m: 3.0, r: 0.8 },
+  { p: 2.5, g1: 5.0, g2: 4.0, g3: 8.0, m: 3.6, r: 1.0 },
+  { p: 3.0, g1: 5.0, g2: 4.0, g3: 8.0, m: 4.4, r: 1.0 },
+  { p: 3.5, g1: 6.0, g2: 5.0, g3: 10.0, m: 5.0, r: 1.2 },
+  { p: 4.0, g1: 6.0, g2: 5.0, g3: 10.0, m: 5.7, r: 1.2 },
+  { p: 4.5, g1: 8.0, g2: 6.0, g3: 12.0, m: 6.4, r: 1.6 },
+  { p: 5.0, g1: 8.0, g2: 6.0, g3: 12.0, m: 7.0, r: 1.6 },
+  { p: 5.5, g1: 10.0, g2: 8.0, g3: 14.0, m: 7.7, r: 2.0 },
+  { p: 6.0, g1: 10.0, g2: 8.0, g3: 14.0, m: 8.3, r: 2.0 },
+];
+
+function round(n, digits = 3) {
+  if (!Number.isFinite(n)) return n;
+  const f = 10 ** digits;
+  return Math.round(n * f) / f;
+}
+
+function lerp(a, b, t) {
+  return a + (b - a) * t;
+}
+
+function lookupPitchRow(table, pitch) {
+  if (!table.length) return null;
+  if (pitch <= table[0].p) return { ...table[0] };
+  if (pitch >= table[table.length - 1].p) return { ...table[table.length - 1] };
+  for (let i = 0; i < table.length - 1; i++) {
+    const a = table[i];
+    const b = table[i + 1];
+    if (pitch >= a.p && pitch <= b.p) {
+      if (Math.abs(pitch - a.p) < 1e-9) return { ...a };
+      if (Math.abs(pitch - b.p) < 1e-9) return { ...b };
+      const t = (pitch - a.p) / (b.p - a.p);
+      const out = { p: pitch };
+      for (const key of Object.keys(a)) {
+        if (key === "p") continue;
+        out[key] = round(lerp(a[key], b[key], t), 3);
+      }
+      return out;
+    }
+  }
+  return { ...table[table.length - 1] };
+}
+
+/** 解析螺纹代号：M20 / M20x1.5 / M320X2 / M195×2 / m12*1.25 */
+function parseThreadSpec(raw) {
+  let s = String(raw || "").trim();
+  if (!s) return { ok: false, error: "请输入螺纹规格，例如 M20、M320X2、M195×2" };
+
+  // 全角/杂字符归一：乘号、连字符、字母 X
+  s = s
+    .replace(/\s+/g, "")
+    .replace(/[×✕✖ｘＸxX＊*－—–−-]/g, "x")
+    .replace(/ｍ/gi, "M");
+
+  const m = s.match(/^M(\d+(?:\.\d+)?)(?:x(\d+(?:\.\d+)?))?$/i);
+  if (!m) {
+    return {
+      ok: false,
+      error: "无法识别规格。支持：M20、M320X2、M195×2、M16*1.5",
+    };
+  }
+
+  const d = Number(m[1]);
+  const pitchGiven = m[2] != null ? Number(m[2]) : null;
+  if (!(d > 0)) return { ok: false, error: "公称直径无效" };
+  if (pitchGiven != null && !(pitchGiven > 0)) {
+    return { ok: false, error: "螺距无效" };
+  }
+
+  return { ok: true, d, pitchGiven };
+}
+
+function defaultPitch(d) {
+  if (d > 100) return 6; // 大直径常用粗牙上限（无专用表时）
+  const keys = Object.keys(COARSE_PITCH).map(Number).sort((a, b) => a - b);
+  if (COARSE_PITCH[d] != null) return COARSE_PITCH[d];
+  let best = keys[0];
+  let bestDist = Math.abs(d - best);
+  for (const k of keys) {
+    const dist = Math.abs(d - k);
+    if (dist < bestDist) {
+      best = k;
+      bestDist = dist;
+    }
+  }
+  return COARSE_PITCH[best];
+}
+
+function suggestFinePitches(d) {
+  const coarse = defaultPitch(d);
+  return FINE_PITCH_OPTIONS.filter((p) => p < coarse && p < d / 2);
+}
+
+/**
+ * 基本牙型与内外螺纹尺寸（公称，未加公差）
+ */
+function computeBasicProfile(d, pitch) {
+  const P = pitch;
+  const H = SQRT3_2 * P;
+  // ISO 724 / GB/T 196
+  const d2 = d - (3 / 4) * H; // = d − 0.649519053·P
+  const d1 = d - (5 / 4) * H; // = d − 1.082531755·P  基本小径
+  const d3 = d - 1.226869322 * P; // 外螺纹牙底（圆底）常用
+
+  const D = d;
+  const D2 = d2;
+  const D1 = d1;
+
+  return {
+    d,
+    P,
+    H: round(H, 4),
+    // 外螺纹
+    external: {
+      crest: round(d, 3), // 牙顶 = 大径 d
+      root: round(d3, 3), // 牙底 = 小径 d3（圆底）
+      minorBasic: round(d1, 3), // 基本小径 d1
+      pitch: round(d2, 3), // 中径 d2
+      labels: {
+        crest: "牙顶 d（大径）",
+        root: "牙底 d3（小径·圆底）",
+        pitch: "中径 d2",
+      },
+    },
+    // 内螺纹
+    internal: {
+      crest: round(D1, 3), // 牙顶 = 小径 D1
+      root: round(D, 3), // 牙底 = 大径 D
+      pitch: round(D2, 3), // 中径 D2
+      labels: {
+        crest: "牙顶 D1（小径）",
+        root: "牙底 D（大径）",
+        pitch: "中径 D2",
+      },
+    },
+  };
+}
+
+/**
+ * 退刀槽（推导槽）尺寸
+ * @param {"normal"|"short"|"long"} lengthKind
+ */
+function computeUndercut(d, pitch, lengthKind = "normal") {
+  const ext = lookupPitchRow(EXT_UNDERCUT, pitch);
+  const int = lookupPitchRow(INT_UNDERCUT, pitch);
+  const widthKey = lengthKind === "short" ? "g2" : lengthKind === "long" ? "g3" : "g1";
+
+  const external = {
+    diameter: round(d - ext.k, 3),
+    width: round(ext[widthKey], 3),
+    radius: round(ext.r, 3),
+    note: "外螺纹退刀槽直径 df ≈ d − k（GB/T 3）",
+  };
+
+  const internal = {
+    diameter: round(d + int.m, 3),
+    width: round(int[widthKey], 3),
+    radius: round(int.r, 3),
+    note: "内螺纹退刀槽直径 Dg ≈ D + m（GB/T 3）",
+  };
+
+  return { external, internal, lengthKind, pitchRef: round(pitch, 3) };
+}
+
+/**
+ * 加工参考：外螺纹毛坯 / 内螺纹底孔
+ */
+function computeMachiningHints(d, pitch) {
+  const basic = computeBasicProfile(d, pitch);
+  // 内螺纹底孔常用 ≈ D1（或略大，视材料；此处给基本小径）
+  const tapDrill = basic.internal.crest;
+  // 外螺纹车前毛坯 ≈ d（留倒角）
+  const blankOd = d;
+  return {
+    externalBlankOd: round(blankOd, 3),
+    internalTapDrill: round(tapDrill, 3),
+    externalRootTurning: basic.external.root,
+    tipAngle: 60,
+  };
+}
+
+/** 一次出全表 */
+function computeThread(spec, options = {}) {
+  const parsed = typeof spec === "string" ? parseThreadSpec(spec) : spec;
+  if (!parsed.ok) return parsed;
+
+  const d = options.d ?? parsed.d;
+  const pitch =
+    options.pitch ??
+    parsed.pitchGiven ??
+    defaultPitch(d);
+  const lengthKind = options.lengthKind || "normal";
+  const isFine = parsed.pitchGiven != null && Math.abs(pitch - defaultPitch(d)) > 1e-9;
+
+  const designation =
+    Math.abs(pitch - defaultPitch(d)) < 1e-9
+      ? `M${trimNum(d)}`
+      : `M${trimNum(d)}×${trimNum(pitch)}`;
+
+  const basic = computeBasicProfile(d, pitch);
+  const undercut = computeUndercut(d, pitch, lengthKind);
+  const machining = computeMachiningHints(d, pitch);
+
+  return {
+    ok: true,
+    designation,
+    d: round(d, 3),
+    pitch: round(pitch, 3),
+    isFine,
+    isCoarse: !isFine,
+    basic,
+    undercut,
+    machining,
+    formula: {
+      H: "H = (√3/2)·P",
+      d2: "d2 = d − (3/4)·H = d − 0.64952·P",
+      d1: "d1 = d − (5/4)·H = d − 1.08253·P",
+      d3: "d3 = d − 1.22687·P（外螺纹牙底）",
+      D1: "D1 = d1（内螺纹牙顶）",
+      D: "D = d（内螺纹牙底）",
+    },
+  };
+}
+
+function trimNum(n) {
+  const s = String(round(Number(n), 4));
+  if (!s.includes(".")) return s;
+  return s.replace(/\.?0+$/, "");
+}
+
+function listCommonSpecs() {
+  return Object.entries(COARSE_PITCH).map(([d, p]) => ({
+    d: Number(d),
+    pitch: p,
+    label: `M${d}`,
+  }));
+}
+
+
+const $ = (id) => document.getElementById(id);
+
+const specInput = $("specInput");
+const dInput = $("dInput");
+const pInput = $("pInput");
+const grooveLen = $("grooveLen");
+const statusEl = $("status");
+const results = $("results");
+const quickChips = $("quickChips");
+const parsedHint = $("parsedHint");
+
+let syncing = false;
+let lastResult = null;
+let debounceTimer = null;
+
+function setStatus(msg, kind = "") {
+  statusEl.textContent = msg || "";
+  statusEl.className = `status${kind ? ` ${kind}` : ""}`;
+}
+
+function fillTable(tbody, rows) {
+  tbody.innerHTML = rows
+    .map(
+      ([k, v]) =>
+        `<tr><th scope="row">${k}</th><td>${formatVal(v)}</td></tr>`
+    )
+    .join("");
+}
+
+function formatVal(v) {
+  if (typeof v === "number") return `${trim(v)} mm`;
+  return String(v);
+}
+
+function trim(n) {
+  const s = String(Number(Number(n).toFixed(3)));
+  if (!s.includes(".")) return s;
+  return s.replace(/\.?0+$/, "");
+}
+
+function makeDesignation(d, p) {
+  const coarse = defaultPitch(d);
+  if (Math.abs(p - coarse) < 1e-9) return `M${trim(d)}`;
+  return `M${trim(d)}×${trim(p)}`;
+}
+
+function renderDiagram(r) {
+  const svg = $("threadSvg");
+  const P = r.pitch;
+  const crestE = r.basic.external.crest;
+  const rootE = r.basic.external.root;
+  const crestI = r.basic.internal.crest;
+  const rootI = r.basic.internal.root;
+  const gW = r.undercut.external.width;
+  const gD = r.undercut.external.diameter;
+
+  const yMaj = 72;
+  const yMin = 128;
+  const yAxis = 198;
+  const pitchPx = 34;
+  const toothCount = 7;
+  const startX = 72;
+
+  const pts = [];
+  for (let i = 0; i <= toothCount; i++) {
+    const x = startX + i * pitchPx;
+    pts.push([x, yMaj]);
+    if (i < toothCount) pts.push([x + pitchPx / 2, yMin]);
+  }
+  const threadEnd = startX + toothCount * pitchPx;
+  const grooveStart = threadEnd + 10;
+  const grooveEnd = grooveStart + Math.max(30, gW * 9);
+  const yGroove = yMin + 10;
+  const poly = pts.map(([x, y]) => `${x},${y}`).join(" ");
+  const pathTeeth = pts.map(([x, y], i) => `${i === 0 ? "M" : "L"} ${x} ${y}`).join(" ");
+
+  svg.innerHTML = `
+    <defs>
+      <linearGradient id="shaftGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#d7e4de"/>
+        <stop offset="100%" stop-color="#b7ccc3"/>
+      </linearGradient>
+    </defs>
+    <text x="24" y="28" fill="#2f4a56" font-size="14" font-weight="700">${r.designation} 剖面示意（示意比例）</text>
+
+    <path d="${pathTeeth}
+      L ${grooveStart} ${yMaj}
+      L ${grooveStart} ${yGroove}
+      Q ${(grooveStart + grooveEnd) / 2} ${yGroove + 10} ${grooveEnd} ${yGroove}
+      L ${grooveEnd} ${yMaj}
+      L 600 ${yMaj}
+      L 600 ${yAxis}
+      L 40 ${yAxis}
+      L 40 ${yMaj}
+      L ${startX} ${yMaj} Z" fill="url(#shaftGrad)" stroke="#2f4a56" stroke-width="1.5"/>
+
+    <polyline points="${poly}" fill="none" stroke="#1f6f5b" stroke-width="2.2"/>
+
+    <line x1="30" y1="${yAxis + 16}" x2="610" y2="${yAxis + 16}" stroke="#5c6b64" stroke-dasharray="6 5" stroke-width="1"/>
+
+    <line x1="118" y1="${yMaj}" x2="118" y2="${yAxis}" stroke="#c45c26" stroke-width="1.2"/>
+    <text x="126" y="${(yMaj + yAxis) / 2}" fill="#c45c26" font-size="12" font-weight="700">牙顶 d=${trim(crestE)}</text>
+
+    <line x1="186" y1="${yMin}" x2="186" y2="${yAxis}" stroke="#1f6f5b" stroke-width="1.2"/>
+    <text x="194" y="${(yMin + yAxis) / 2 + 4}" fill="#1f6f5b" font-size="12" font-weight="700">牙底 d3=${trim(rootE)}</text>
+
+    <line x1="${grooveStart}" y1="${yGroove - 18}" x2="${grooveEnd}" y2="${yGroove - 18}" stroke="#2f4a56" stroke-width="1"/>
+    <text x="${(grooveStart + grooveEnd) / 2 - 36}" y="${yGroove - 24}" fill="#2f4a56" font-size="12" font-weight="700">退刀槽 g=${trim(gW)}</text>
+    <text x="${grooveEnd + 8}" y="${yGroove + 4}" fill="#2f4a56" font-size="12">df=${trim(gD)}</text>
+
+    <text x="40" y="262" fill="#5c6b64" font-size="11">内螺纹：牙顶 D1=${trim(crestI)} · 牙底 D=${trim(rootI)} · P=${trim(P)}</text>
+  `;
+}
+
+function render(r) {
+  lastResult = r;
+  results.hidden = false;
+  $("desigTitle").textContent = r.designation;
+  $("desigMeta").textContent = `d=${trim(r.d)} mm · P=${trim(r.pitch)} mm · ${
+    r.isCoarse ? "粗牙默认螺距" : "自定义螺距"
+  } · 牙型角 60°`;
+
+  fillTable($("extTable"), [
+    ["牙顶（大径 d）", r.basic.external.crest],
+    ["牙底（小径 d3）", r.basic.external.root],
+    ["基本小径 d1", r.basic.external.minorBasic],
+    ["中径 d2", r.basic.external.pitch],
+    ["基本三角高 H", r.basic.H],
+  ]);
+
+  fillTable($("intTable"), [
+    ["牙顶（小径 D1）", r.basic.internal.crest],
+    ["牙底（大径 D）", r.basic.internal.root],
+    ["中径 D2", r.basic.internal.pitch],
+    ["与外螺纹中径", "D2 = d2"],
+  ]);
+
+  const lenLabel =
+    r.undercut.lengthKind === "short"
+      ? "短 g2"
+      : r.undercut.lengthKind === "long"
+        ? "长 g3"
+        : "普通 g1";
+
+  fillTable($("extGroove"), [
+    ["槽底直径 df", r.undercut.external.diameter],
+    [`槽宽（${lenLabel}）`, r.undercut.external.width],
+    ["圆角半径 r", r.undercut.external.radius],
+    ["说明", r.undercut.external.note],
+  ]);
+
+  fillTable($("intGroove"), [
+    ["槽底直径 Dg", r.undercut.internal.diameter],
+    [`槽宽（${lenLabel}）`, r.undercut.internal.width],
+    ["圆角半径 r", r.undercut.internal.radius],
+    ["说明", r.undercut.internal.note],
+  ]);
+
+  fillTable($("machTable"), [
+    ["外螺纹毛坯外径", r.machining.externalBlankOd],
+    ["外螺纹车牙底参考", r.machining.externalRootTurning],
+    ["内螺纹底孔 ≈ D1", r.machining.internalTapDrill],
+    ["牙型角", `${r.machining.tipAngle}°`],
+  ]);
+
+  $("formulaList").innerHTML = Object.entries(r.formula)
+    .map(([, v]) => `<li><code>${v}</code></li>`)
+    .join("");
+
+  renderDiagram(r);
+}
+
+/** 优先吃代号框（M320X2 / M195×2），否则用直径+螺距 */
+function resolveInputs(preferSpec) {
+  const raw = specInput.value.trim();
+  if (preferSpec && raw) {
+    const parsed = parseThreadSpec(raw);
+    if (parsed.ok) {
+      const pitch = parsed.pitchGiven ?? defaultPitch(parsed.d);
+      return { ok: true, d: parsed.d, pitch, from: "spec", designationHint: raw };
+    }
+    // 代号看起来像螺纹但解析失败 → 报错，不要静默用旧 d/P
+    if (/^m/i.test(raw.replace(/\s+/g, ""))) {
+      return { ok: false, error: parsed.error };
+    }
+  }
+
+  const d = Number(dInput.value);
+  const pitch = Number(pInput.value);
+  if (!(d > 0) || !(pitch > 0)) {
+    return { ok: false, error: "请填写有效的直径 d 与螺距 P，或输入代号如 M320X2" };
+  }
+  if (pitch >= d) {
+    return { ok: false, error: "螺距不宜大于或等于直径" };
+  }
+  return { ok: true, d, pitch, from: "fields" };
+}
+
+function runCalc(options = {}) {
+  const preferSpec = options.preferSpec !== false;
+  const resolved = resolveInputs(preferSpec);
+  if (!resolved.ok) {
+    parsedHint.textContent = resolved.error;
+    setStatus(resolved.error, "error");
+    results.hidden = true;
+    return;
+  }
+
+  const { d, pitch } = resolved;
+  const lengthKind = grooveLen.value;
+
+  const result = computeThread(
+    { ok: true, d, pitchGiven: pitch },
+    { d, pitch, lengthKind }
+  );
+  if (!result.ok) {
+    setStatus(result.error || "计算失败", "error");
+    results.hidden = true;
+    return;
+  }
+
+  syncing = true;
+  dInput.value = String(result.d);
+  pInput.value = String(result.pitch);
+  // 保留用户输入的 X 写法时，仍统一显示标准代号
+  specInput.value = result.designation;
+  syncing = false;
+
+  parsedHint.textContent = `已识别 ${result.designation}：d=${trim(d)} · P=${trim(pitch)}（支持 M320X2 / M195×2 等任意自定义）`;
+  render(result);
+  setStatus(`已生成 ${result.designation}`, "ok");
+  highlightChip(result.designation);
+}
+
+function scheduleCalcFromFields() {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(() => runCalc({ preferSpec: false }), 120);
+}
+
+function scheduleCalcFromSpec() {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(() => runCalc({ preferSpec: true }), 120);
+}
+
+function highlightChip(desig) {
+  quickChips.querySelectorAll(".chip").forEach((btn) => {
+    const same =
+      btn.dataset.spec === desig ||
+      btn.dataset.spec === desig.replace("×", "x") ||
+      btn.dataset.spec === desig.replace("×", "X") ||
+      btn.dataset.spec === desig.replace("x", "×");
+    btn.classList.toggle("active", same);
+  });
+}
+
+function buildChips() {
+  const picks = [6, 8, 10, 12, 16, 20, 24, 30, 36, 42];
+  const all = listCommonSpecs().filter((s) => picks.includes(s.d));
+  const extras = [
+    { label: "M20×1.5", d: 20, pitch: 1.5 },
+    { label: "M16×1.5", d: 16, pitch: 1.5 },
+    { label: "M10×1", d: 10, pitch: 1 },
+    { label: "M195×2", d: 195, pitch: 2 },
+    { label: "M320×2", d: 320, pitch: 2 },
+  ];
+  const items = [
+    ...all.map((s) => ({ label: s.label, d: s.d, pitch: s.pitch })),
+    ...extras,
+  ];
+  quickChips.innerHTML = items
+    .map(
+      (s) =>
+        `<button type="button" class="chip" data-spec="${s.label}" data-d="${s.d}" data-p="${s.pitch}">${s.label}</button>`
+    )
+    .join("");
+
+  quickChips.addEventListener("click", (e) => {
+    const btn = e.target.closest(".chip");
+    if (!btn) return;
+    syncing = true;
+    dInput.value = btn.dataset.d;
+    pInput.value = btn.dataset.p;
+    specInput.value = btn.dataset.spec;
+    syncing = false;
+    runCalc({ preferSpec: true });
+  });
+}
+
+async function copyResult() {
+  if (!lastResult) {
+    setStatus("请先生成数据", "error");
+    return;
+  }
+  const r = lastResult;
+  const text = [
+    `${r.designation} 螺纹尺寸（公称 / 自定义）`,
+    `直径 d = ${r.d} mm`,
+    `螺距 P = ${r.pitch} mm`,
+    "",
+    "【外螺纹】",
+    `牙顶 d = ${r.basic.external.crest} mm`,
+    `牙底 d3 = ${r.basic.external.root} mm`,
+    `中径 d2 = ${r.basic.external.pitch} mm`,
+    `基本小径 d1 = ${r.basic.external.minorBasic} mm`,
+    "",
+    "【内螺纹】",
+    `牙顶 D1 = ${r.basic.internal.crest} mm`,
+    `牙底 D = ${r.basic.internal.root} mm`,
+    `中径 D2 = ${r.basic.internal.pitch} mm`,
+    "",
+    "【退刀槽】",
+    `外：df=${r.undercut.external.diameter}, 宽=${r.undercut.external.width}, r=${r.undercut.external.radius}`,
+    `内：Dg=${r.undercut.internal.diameter}, 宽=${r.undercut.internal.width}, r=${r.undercut.internal.radius}`,
+    "",
+    "【加工参考】",
+    `毛坯外径 ≈ ${r.machining.externalBlankOd} mm`,
+    `底孔 ≈ ${r.machining.internalTapDrill} mm`,
+  ].join("\n");
+
+  try {
+    await navigator.clipboard.writeText(text);
+    setStatus("结果已复制到剪贴板", "ok");
+  } catch {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.setAttribute("readonly", "");
+    ta.style.position = "fixed";
+    ta.style.left = "-9999px";
+    document.body.appendChild(ta);
+    ta.select();
+    try {
+      document.execCommand("copy");
+      setStatus("结果已复制到剪贴板", "ok");
+    } catch {
+      setStatus("复制失败，请手动选择文本", "error");
+    }
+    document.body.removeChild(ta);
+  }
+}
+
+$("calcBtn").addEventListener("click", () => runCalc({ preferSpec: true }));
+$("copyBtn").addEventListener("click", copyResult);
+$("coarseBtn").addEventListener("click", () => {
+  const d = Number(dInput.value) || parseThreadSpec(specInput.value.trim()).d;
+  if (!(d > 0)) {
+    setStatus("请先填写直径或代号", "error");
+    return;
+  }
+  const coarse = defaultPitch(d);
+  syncing = true;
+  dInput.value = String(d);
+  pInput.value = String(coarse);
+  specInput.value = makeDesignation(d, coarse);
+  syncing = false;
+  runCalc({ preferSpec: false });
+});
+
+dInput.addEventListener("input", () => {
+  if (syncing) return;
+  scheduleCalcFromFields();
+});
+pInput.addEventListener("input", () => {
+  if (syncing) return;
+  scheduleCalcFromFields();
+});
+grooveLen.addEventListener("change", () => runCalc({ preferSpec: false }));
+
+specInput.addEventListener("input", () => {
+  if (syncing) return;
+  scheduleCalcFromSpec();
+});
+specInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    runCalc({ preferSpec: true });
+  }
+});
+
+buildChips();
+runCalc({ preferSpec: true });
+
+  </script>
+</body>
+</html>
