@@ -106,6 +106,21 @@ html, body {
   gap: 12px;
 }
 
+.field-row.simple {
+  grid-template-columns: 1.8fr 1fr 1fr;
+}
+
+.field-row.free {
+  grid-template-columns: 1fr 1fr 1fr 1.4fr;
+}
+
+.hint {
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
 .field {
   display: flex;
   flex-direction: column;
@@ -339,7 +354,9 @@ html, body {
 }
 
 @media (max-width: 860px) {
-  .field-row {
+  .field-row,
+  .field-row.simple,
+  .field-row.free {
     grid-template-columns: 1fr 1fr;
   }
   .field.grow { grid-column: 1 / -1; }
@@ -351,7 +368,9 @@ html, body {
 
 @media (max-width: 520px) {
   .shell { width: min(100% - 20px, 1120px); padding-top: 24px; }
-  .field-row { grid-template-columns: 1fr; }
+  .field-row,
+  .field-row.simple,
+  .field-row.free { grid-template-columns: 1fr; }
   .actions { align-items: stretch; }
   .btn { width: 100%; }
 }

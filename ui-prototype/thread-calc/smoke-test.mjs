@@ -44,6 +44,11 @@ assert(approx(fine.basic.external.pitch, 19.026), "fine d2");
 const shortG = computeThread("M12", { lengthKind: "short" });
 assert(approx(shortG.undercut.external.width, 3.0) || shortG.undercut.external.width < 4, "short groove");
 
+const custom = computeThread({ ok: true, d: 320, pitchGiven: 2 }, { d: 320, pitch: 2 });
+assert(custom.ok, "custom M320×2");
+assert(approx(custom.basic.external.crest, 320), "custom crest");
+assert(approx(custom.basic.external.pitch, 318.701), "custom d2"); // 320 - 0.649519*2
+
 console.log("thread-math smoke OK");
 console.log(
   JSON.stringify(
@@ -55,6 +60,12 @@ console.log(
         d3: m20.basic.external.root,
         D1: m20.basic.internal.crest,
         groove: m20.undercut.external,
+      },
+      custom320x2: {
+        d: custom.basic.external.crest,
+        d2: custom.basic.external.pitch,
+        d3: custom.basic.external.root,
+        D1: custom.basic.internal.crest,
       },
     },
     null,

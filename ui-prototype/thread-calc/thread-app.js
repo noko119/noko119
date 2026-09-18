@@ -14,9 +14,11 @@ const grooveLen = $("grooveLen");
 const statusEl = $("status");
 const results = $("results");
 const quickChips = $("quickChips");
+const parsedHint = $("parsedHint");
 
 let syncing = false;
 let lastResult = null;
+let debounceTimer = null;
 
 function setStatus(msg, kind = "") {
   statusEl.textContent = msg || "";
@@ -41,6 +43,12 @@ function trim(n) {
   const s = String(Number(Number(n).toFixed(3)));
   if (!s.includes(".")) return s;
   return s.replace(/\.?0+$/, "");
+}
+
+function makeDesignation(d, p) {
+  const coarse = defaultPitch(d);
+  if (Math.abs(p - coarse) < 1e-9) return `M${trim(d)}`;
+  return `M${trim(d)}×${trim(p)}`;
 }
 
 function renderDiagram(r) {
@@ -115,8 +123,8 @@ function render(r) {
   lastResult = r;
   results.hidden = false;
   $("desigTitle").textContent = r.designation;
-  $("desigMeta").textContent = `公称直径 d=${trim(r.d)} mm · 螺距 P=${trim(r.pitch)} mm · ${
-    r.isCoarse ? "粗牙" : "细牙"
+  $("desigMeta").textContent = `自定义输入：d=${trim(r.d)} mm · P=${trim(r.pitch)} mm · ${
+    r.isCoarse ? "等于粗牙默认" : "自定义/细牙螺距"
   } · 牙型角 60°`;
 
   fillTable($("extTable"), [
@@ -170,78 +178,80 @@ function render(r) {
 }
 
 function runCalc() {
-  const raw = specInput.value.trim();
-  const parsed = parseThreadSpec(raw);
   const d = Number(dInput.value);
   const pitch = Number(pInput.value);
   const lengthKind = grooveLen.value;
 
-  // Prefer explicit d/P fields if valid; otherwise parse designation
-  let result;
-  if (Number.isFinite(d) && d > 0 && Number.isFinite(pitch) && pitch > 0) {
-    result = computeThread({ ok: true, d, pitchGiven: pitch }, { d, pitch, lengthKind });
-  } else if (parsed.ok) {
-    result = computeThread(parsed, { lengthKind });
-  } else {
-    setStatus(parsed.error, "error");
+  if (!(d > 0) || !(pitch > 0)) {
+    parsedHint.textContent = "请填写有效的直径 d 与螺距 P（均可自定义，不限标准系列）。";
+    setStatus("请填写直径和螺距", "error");
     results.hidden = true;
     return;
   }
 
+  if (pitch >= d) {
+    parsedHint.textContent = "螺距通常应小于直径；请检查自定义螺距是否过大。";
+    setStatus("螺距不宜大于或等于直径", "error");
+    results.hidden = true;
+    return;
+  }
+
+  const result = computeThread(
+    { ok: true, d, pitchGiven: pitch },
+    { d, pitch, lengthKind }
+  );
   if (!result.ok) {
     setStatus(result.error || "计算失败", "error");
     results.hidden = true;
     return;
   }
 
-  syncing = true;
-  specInput.value = result.designation;
-  dInput.value = String(result.d);
-  pInput.value = String(result.pitch);
-  syncing = false;
+  if (!syncing) {
+    syncing = true;
+    specInput.value = result.designation;
+    syncing = false;
+  }
 
+  parsedHint.textContent = `当前按自定义计算：d=${trim(d)} · P=${trim(pitch)} → ${result.designation}`;
   render(result);
-  setStatus(`已生成 ${result.designation} 全套尺寸`, "ok");
+  setStatus(`已生成 ${result.designation}`, "ok");
   highlightChip(result.designation);
+}
+
+function scheduleCalc() {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(runCalc, 120);
+}
+
+function applySpecToFields(raw) {
+  const parsed = parseThreadSpec(raw);
+  if (!parsed.ok) return parsed;
+  const pitch = parsed.pitchGiven ?? defaultPitch(parsed.d);
+  syncing = true;
+  dInput.value = String(parsed.d);
+  pInput.value = String(pitch);
+  syncing = false;
+  return { ok: true, d: parsed.d, pitch };
 }
 
 function highlightChip(desig) {
   quickChips.querySelectorAll(".chip").forEach((btn) => {
-    btn.classList.toggle("active", btn.dataset.spec === desig || btn.dataset.spec === desig.replace("×", "x"));
+    const same =
+      btn.dataset.spec === desig ||
+      btn.dataset.spec === desig.replace("×", "x") ||
+      btn.dataset.spec === desig.replace("x", "×");
+    btn.classList.toggle("active", same);
   });
-}
-
-function syncFromSpec() {
-  if (syncing) return;
-  const parsed = parseThreadSpec(specInput.value);
-  if (!parsed.ok) return;
-  syncing = true;
-  dInput.value = String(parsed.d);
-  pInput.value = String(parsed.pitchGiven ?? defaultPitch(parsed.d));
-  syncing = false;
-}
-
-function syncFromFields() {
-  if (syncing) return;
-  const d = Number(dInput.value);
-  const p = Number(pInput.value);
-  if (!(d > 0) || !(p > 0)) return;
-  const coarse = defaultPitch(d);
-  const desig =
-    Math.abs(p - coarse) < 1e-9 ? `M${trim(d)}` : `M${trim(d)}×${trim(p)}`;
-  syncing = true;
-  specInput.value = desig;
-  syncing = false;
 }
 
 function buildChips() {
   const picks = [6, 8, 10, 12, 16, 20, 24, 30, 36, 42];
   const all = listCommonSpecs().filter((s) => picks.includes(s.d));
-  // also a few fine examples
   const extras = [
     { label: "M20×1.5", d: 20, pitch: 1.5 },
     { label: "M16×1.5", d: 16, pitch: 1.5 },
     { label: "M10×1", d: 10, pitch: 1 },
+    { label: "M320×2", d: 320, pitch: 2 },
   ];
   const items = [
     ...all.map((s) => ({ label: s.label, d: s.d, pitch: s.pitch })),
@@ -258,9 +268,9 @@ function buildChips() {
     const btn = e.target.closest(".chip");
     if (!btn) return;
     syncing = true;
-    specInput.value = btn.dataset.spec;
     dInput.value = btn.dataset.d;
     pInput.value = btn.dataset.p;
+    specInput.value = btn.dataset.spec;
     syncing = false;
     runCalc();
   });
@@ -273,7 +283,8 @@ async function copyResult() {
   }
   const r = lastResult;
   const text = [
-    `${r.designation} 螺纹尺寸（公称）`,
+    `${r.designation} 螺纹尺寸（公称 / 自定义）`,
+    `直径 d = ${r.d} mm`,
     `螺距 P = ${r.pitch} mm`,
     "",
     "【外螺纹】",
@@ -300,7 +311,6 @@ async function copyResult() {
     await navigator.clipboard.writeText(text);
     setStatus("结果已复制到剪贴板", "ok");
   } catch {
-    // Fallback for restricted clipboard environments
     const ta = document.createElement("textarea");
     ta.value = text;
     ta.setAttribute("readonly", "");
@@ -322,28 +332,41 @@ $("calcBtn").addEventListener("click", runCalc);
 $("copyBtn").addEventListener("click", copyResult);
 $("coarseBtn").addEventListener("click", () => {
   const d = Number(dInput.value);
-  if (!(d > 0)) return;
-  pInput.value = String(defaultPitch(d));
-  syncFromFields();
+  if (!(d > 0)) {
+    setStatus("请先填写直径", "error");
+    return;
+  }
+  const coarse = defaultPitch(d);
+  syncing = true;
+  pInput.value = String(coarse);
+  specInput.value = makeDesignation(d, coarse);
+  syncing = false;
   runCalc();
 });
 
+dInput.addEventListener("input", scheduleCalc);
+pInput.addEventListener("input", scheduleCalc);
+grooveLen.addEventListener("change", runCalc);
+
 specInput.addEventListener("change", () => {
-  syncFromSpec();
+  if (syncing) return;
+  const applied = applySpecToFields(specInput.value.trim());
+  if (!applied.ok) {
+    setStatus(applied.error, "error");
+    return;
+  }
   runCalc();
 });
 specInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
-    syncFromSpec();
+    e.preventDefault();
+    const applied = applySpecToFields(specInput.value.trim());
+    if (!applied.ok) {
+      setStatus(applied.error, "error");
+      return;
+    }
     runCalc();
   }
-});
-
-[dInput, pInput, grooveLen].forEach((el) => {
-  el.addEventListener("change", () => {
-    syncFromFields();
-    runCalc();
-  });
 });
 
 buildChips();

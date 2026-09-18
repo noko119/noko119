@@ -16,22 +16,18 @@
     <header class="hero">
       <p class="brand">THREAD LAB</p>
       <h1>螺纹尺寸推导</h1>
-      <p class="lede">任意给定公制螺纹规格，瞬时给出内外螺纹牙顶、牙底、中径与退刀槽数据。</p>
+      <p class="lede">随意填写直径与自定义螺距，即时给出内外螺纹牙顶、牙底、中径与退刀槽。</p>
     </header>
 
     <section class="panel input-panel" aria-label="规格输入">
-      <div class="field-row">
-        <label class="field grow">
-          <span>螺纹规格</span>
-          <input id="specInput" type="text" value="M20" placeholder="例如 M20、M20×1.5、M16*1" autocomplete="off" spellcheck="false" />
+      <div class="field-row free">
+        <label class="field">
+          <span>直径 d / mm（随意填）</span>
+          <input id="dInput" type="number" min="0.1" step="any" value="20" />
         </label>
         <label class="field">
-          <span>公称直径 d / mm</span>
-          <input id="dInput" type="number" min="0.5" step="0.1" value="20" />
-        </label>
-        <label class="field">
-          <span>螺距 P / mm</span>
-          <input id="pInput" type="number" min="0.1" step="0.05" value="2.5" />
+          <span>螺距 P / mm（自定义）</span>
+          <input id="pInput" type="number" min="0.01" step="any" value="2.5" />
         </label>
         <label class="field">
           <span>退刀槽长度</span>
@@ -41,14 +37,19 @@
             <option value="long">长 g3</option>
           </select>
         </label>
+        <label class="field grow">
+          <span>快捷代号（可选，会填入上面的 d / P）</span>
+          <input id="specInput" type="text" value="M20" placeholder="例如 M20、M20×1.5、M320×2" autocomplete="off" spellcheck="false" />
+        </label>
       </div>
+      <p class="hint" id="parsedHint">改直径或螺距即出结果；螺距可任意自定义，不限标准系列。</p>
 
       <div class="chips" id="quickChips" aria-label="常用规格"></div>
 
       <div class="actions">
         <button type="button" class="btn primary" id="calcBtn">生成数据</button>
         <button type="button" class="btn ghost" id="copyBtn">复制结果</button>
-        <button type="button" class="btn ghost" id="coarseBtn">用粗牙螺距</button>
+        <button type="button" class="btn ghost" id="coarseBtn">填入粗牙螺距</button>
         <p class="status" id="status" role="status"></p>
       </div>
     </section>

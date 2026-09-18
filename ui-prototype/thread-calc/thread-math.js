@@ -140,9 +140,9 @@ export function parseThreadSpec(raw) {
 }
 
 export function defaultPitch(d) {
+  if (d > 100) return 6; // 大直径常用粗牙上限（无专用表时）
   const keys = Object.keys(COARSE_PITCH).map(Number).sort((a, b) => a - b);
   if (COARSE_PITCH[d] != null) return COARSE_PITCH[d];
-  // 最近邻
   let best = keys[0];
   let bestDist = Math.abs(d - best);
   for (const k of keys) {
