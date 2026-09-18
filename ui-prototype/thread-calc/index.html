@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>螺纹尺寸推导 · 牙顶 / 牙底 / 退刀槽</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Outfit:wght@500;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./thread-calc.css" />
+</head>
+<body>
+  <div class="atmosphere" aria-hidden="true"></div>
+
+  <main class="shell">
+    <header class="hero">
+      <p class="brand">THREAD LAB</p>
+      <h1>螺纹尺寸推导</h1>
+      <p class="lede">任意给定公制螺纹规格，瞬时给出内外螺纹牙顶、牙底、中径与退刀槽数据。</p>
+    </header>
+
+    <section class="panel input-panel" aria-label="规格输入">
+      <div class="field-row">
+        <label class="field grow">
+          <span>螺纹规格</span>
+          <input id="specInput" type="text" value="M20" placeholder="例如 M20、M20×1.5、M16*1" autocomplete="off" spellcheck="false" />
+        </label>
+        <label class="field">
+          <span>公称直径 d / mm</span>
+          <input id="dInput" type="number" min="0.5" step="0.1" value="20" />
+        </label>
+        <label class="field">
+          <span>螺距 P / mm</span>
+          <input id="pInput" type="number" min="0.1" step="0.05" value="2.5" />
+        </label>
+        <label class="field">
+          <span>退刀槽长度</span>
+          <select id="grooveLen">
+            <option value="normal" selected>普通 g1</option>
+            <option value="short">短 g2</option>
+            <option value="long">长 g3</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="chips" id="quickChips" aria-label="常用规格"></div>
+
+      <div class="actions">
+        <button type="button" class="btn primary" id="calcBtn">生成数据</button>
+        <button type="button" class="btn ghost" id="copyBtn">复制结果</button>
+        <button type="button" class="btn ghost" id="coarseBtn">用粗牙螺距</button>
+        <p class="status" id="status" role="status"></p>
+      </div>
+    </section>
+
+    <section class="result-grid" id="results" hidden>
+      <article class="card designation-card">
+        <h2 id="desigTitle">—</h2>
+        <p id="desigMeta" class="muted"></p>
+        <svg id="threadSvg" class="diagram" viewBox="0 0 640 280" role="img" aria-label="螺纹剖面示意"></svg>
+      </article>
+
+      <article class="card">
+        <h3>外螺纹（螺栓 / 轴）</h3>
+        <table class="data">
+          <tbody id="extTable"></tbody>
+        </table>
+      </article>
+
+      <article class="card">
+        <h3>内螺纹（螺母 / 孔）</h3>
+        <table class="data">
+          <tbody id="intTable"></tbody>
+        </table>
+      </article>
+
+      <article class="card span-2">
+        <h3>退刀槽（推导槽 · GB/T 3）</h3>
+        <div class="split">
+          <table class="data">
+            <caption>外螺纹退刀槽</caption>
+            <tbody id="extGroove"></tbody>
+          </table>
+          <table class="data">
+            <caption>内螺纹退刀槽</caption>
+            <tbody id="intGroove"></tbody>
+          </table>
+        </div>
+      </article>
+
+      <article class="card">
+        <h3>加工参考</h3>
+        <table class="data">
+          <tbody id="machTable"></tbody>
+        </table>
+      </article>
+
+      <article class="card">
+        <h3>公式依据</h3>
+        <ul class="formula" id="formulaList"></ul>
+        <p class="footnote">基本牙型按 ISO 68-1 / GB/T 192；基本尺寸按 ISO 724 / GB/T 196；退刀槽按 GB/T 3 常用表（中间螺距线性插值）。公差带未展开，表列为公称基本尺寸。</p>
+      </article>
+    </section>
+  </main>
+
+  <script type="module" src="./thread-app.js"></script>
+</body>
+</html>

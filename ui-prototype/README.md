@@ -7,6 +7,7 @@
 | `index.html` | SolidWorks 薄插件五面板（分类 / 点序 / 提取 / 审核 / 发送） |
 | `path-editor.html` | **网页路径编辑器**：2D + 3D，**正确提取几何**，导出 `pidm.path.v0` |
 | `calc.html` | **逐步透明计算**：GC-01 对照 **或** 路径提取包计算 |
+| `thread-calc/` | **螺纹尺寸推导**：给定规格输出内外螺纹牙顶/牙底/中径与退刀槽 |
 
 ## 定稿流程
 
@@ -89,6 +90,7 @@ node smoke-test.mjs
 - 五面板：`http://localhost:8080/`
 - 路径编辑：`http://localhost:8080/path-editor.html`
 - 计算：`http://localhost:8080/calc.html`
+- 螺纹推导：`http://localhost:8080/thread-calc/`
 
 > 请用本地 HTTP 服务打开（勿直接 `file://`）。
 
