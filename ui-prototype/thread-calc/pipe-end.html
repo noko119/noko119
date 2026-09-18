@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>接管端头螺纹计算</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Outfit:wght@500;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./thread-calc.css" />
+  <style>
+    .const-bar {
+      display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 14px;
+    }
+    .const-bar span {
+      font-size: 12px; padding: 6px 10px; border-radius: 999px;
+      background: #fff; border: 1px solid var(--line); color: var(--steel);
+    }
+    .warn-box {
+      margin-top: 12px; padding: 12px 14px; border-radius: 12px;
+      background: #fff4f0; border: 1px solid #f0b090; color: #8a2e0e;
+      font-weight: 700; display: none;
+    }
+    .warn-box.show { display: block; }
+    .ok-box {
+      margin-top: 12px; padding: 12px 14px; border-radius: 12px;
+      background: #eef8f3; border: 1px solid #9dceb8; color: #1f6f5b;
+      font-weight: 700; display: none;
+    }
+    .ok-box.show { display: block; }
+    .field-row.four { grid-template-columns: repeat(4, 1fr); }
+    @media (max-width: 860px) {
+      .field-row.four { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="atmosphere" aria-hidden="true"></div>
+  <main class="shell">
+    <header class="hero">
+      <p class="brand">PIPE END THREAD</p>
+      <h1>接管端头螺纹计算</h1>
+      <p class="lede">四项手录：小管/大管外径与壁厚。螺纹中心在小管壁厚中心，并校验大管不击穿；大径就近取整；P=2 固定。</p>
+    </header>
+
+    <section class="panel">
+      <div class="const-bar" aria-label="固定常量">
+        <span>止口 10mm</span>
+        <span>P=2 · 6圈 · 旋合 12mm</span>
+        <span>60° 三角螺纹 · GB/T 196</span>
+        <span>接管总长 210mm（含止口+螺纹+退刀槽）</span>
+      </div>
+
+      <div class="field-row four">
+        <label class="field">
+          <span>① 小管外径 D₁ / mm</span>
+          <input id="D1" type="number" min="0.1" step="any" value="168" />
+        </label>
+        <label class="field">
+          <span>② 小管壁厚 t₁ / mm</span>
+          <input id="t1" type="number" min="0.1" step="any" value="8" />
+        </label>
+        <label class="field">
+          <span>③ 大管外径 D₂ / mm</span>
+          <input id="D2" type="number" min="0.1" step="any" value="180" />
+        </label>
+        <label class="field">
+          <span>④ 大管壁厚 t₂ / mm</span>
+          <input id="t2" type="number" min="0.1" step="any" value="12" />
+        </label>
+      </div>
+
+      <div class="field-row" style="margin-top:12px;grid-template-columns:1fr 1fr auto">
+        <label class="field">
+          <span>退刀槽长度档</span>
+          <select id="grooveKind">
+            <option value="normal" selected>普通 g1</option>
+            <option value="short">短 g2</option>
+            <option value="long">长 g3</option>
+          </select>
+        </label>
+        <p class="hint" id="hint" style="align-self:end;margin:0">相邻规格与跨规格共用同一套逻辑；同时兼顾小管、大管壁厚空间。</p>
+        <div class="actions" style="margin:0;align-self:end">
+          <button type="button" class="btn primary" id="calcBtn">生成数据</button>
+          <button type="button" class="btn ghost" id="copyBtn">复制结果</button>
+        </div>
+      </div>
+      <p class="status" id="status" role="status"></p>
+      <div class="warn-box" id="warnBox"></div>
+      <div class="ok-box" id="okBox"></div>
+    </section>
+
+    <section class="result-grid" id="results" hidden>
+      <article class="card designation-card">
+        <h2 id="title">—</h2>
+        <p class="muted" id="meta"></p>
+      </article>
+      <article class="card span-2">
+        <h3>输出结果</h3>
+        <table class="data"><tbody id="outTable"></tbody></table>
+      </article>
+      <article class="card">
+        <h3>公扣端头结构（计入 210）</h3>
+        <table class="data"><tbody id="maleTable"></tbody></table>
+      </article>
+      <article class="card">
+        <h3>母扣端头内腔（计入 210）</h3>
+        <table class="data"><tbody id="femaleTable"></tbody></table>
+      </article>
+      <article class="card span-2">
+        <h3>装配说明</h3>
+        <p class="footnote" id="assy" style="margin:0;font-size:14px;color:var(--muted)"></p>
+      </article>
+    </section>
+  </main>
+  <script type="module" src="./pipe-end-app.js"></script>
+</body>
+</html>
