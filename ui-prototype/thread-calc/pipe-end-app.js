@@ -130,6 +130,8 @@ function run(forceManual) {
   fill($("maleTable"), [
     ["定位止口", `${r.maleEnd.locator} mm`],
     ["螺纹有效旋合段", `${r.maleEnd.thread} mm`],
+    ["外螺纹牙顶（大径）", `${r.crest.external} mm`],
+    ["外螺纹牙底（小径）", `${r.root.external} mm`],
     ["外螺纹退刀槽宽", `${r.maleEnd.undercutWidth} mm`],
     ["退刀槽底径 df", `${r.maleEnd.undercutDf} mm`],
     ["端头合计", `${r.maleEnd.total} mm`],
@@ -137,6 +139,8 @@ function run(forceManual) {
   fill($("femaleTable"), [
     ["定位止口接收段", `${r.femaleEnd.locator} mm`],
     ["内螺纹旋合段", `${r.femaleEnd.thread} mm`],
+    ["内螺纹牙顶（小径）", `${r.crest.internal} mm`],
+    ["内螺纹牙底（大径）", `${r.root.internal} mm`],
     ["内螺纹退刀槽宽", `${r.femaleEnd.undercutWidth} mm`],
     ["退刀槽底径 Dg", `${r.femaleEnd.undercutDg} mm`],
     ["内腔合计", `${r.femaleEnd.total} mm`],

@@ -120,6 +120,11 @@ export function computePipeEndThread(input, opt = {}) {
 
   // 选定规格后：母扣内螺纹小径按工作牙高对称匹配（大径 − 2h）
   const internalMinor = round3(majorDia - 2 * h);
+  // 牙顶：外螺纹=大径；内螺纹=小径
+  const externalCrest = majorDia;
+  const internalCrest = internalMinor;
+  const externalRoot = internalMinor; // 与工作牙高对称匹配的牙底参考
+  const internalRoot = majorDia; // 内螺纹牙底=大径
   // GB/T 196 基本小径（对照）
   const gbD1 = round3(majorDia - 1.082531755 * P);
   const gbD2 = round3(majorDia - 0.649519053 * P);
@@ -217,13 +222,24 @@ export function computePipeEndThread(input, opt = {}) {
     isManual,
     majorDia,
     designation,
+    // 牙顶 / 牙底（内外都给出）
+    crest: {
+      external: externalCrest, // 外螺纹牙顶 = 大径
+      internal: internalCrest, // 内螺纹牙顶 = 小径
+    },
+    root: {
+      external: externalRoot,
+      internal: internalRoot,
+    },
     nearby,
     femaleInternal: {
       designation,
       minor: internalMinor,
+      crest: internalCrest,
       pitchDia: gbD2,
       major: majorDia,
-      note: "母扣内螺纹配套公扣所选规格，小径按中心对称（大径−2h）匹配",
+      root: internalRoot,
+      note: "母扣内螺纹配套公扣所选规格；内螺纹牙顶=小径，牙底=大径",
     },
     gbBasic: { d: majorDia, d2: gbD2, d1: gbD1, d3: gbD3, D1: gbD1, D2: gbD2, D: majorDia },
     wallCheck: {
@@ -284,7 +300,11 @@ export function pipeEndToRows(r) {
     ["采用规格来源", r.isManual ? "手动给定" : "系统推荐"],
     ["螺纹大径（最终）", `${r.majorDia} mm`],
     ["螺纹规格标记", r.designation],
-    ["母扣内螺纹", `${r.femaleInternal.designation}（小径 ${r.femaleInternal.minor} mm）`],
+    ["外螺纹牙顶（大径）", `${r.crest.external} mm`],
+    ["外螺纹牙底（小径）", `${r.root.external} mm`],
+    ["内螺纹牙顶（小径）", `${r.crest.internal} mm`],
+    ["内螺纹牙底（大径）", `${r.root.internal} mm`],
+    ["母扣内螺纹", `${r.femaleInternal.designation}（牙顶 ${r.crest.internal} mm）`],
     ["校验结果", r.checkPass ? `通过：${r.checkMessage}` : `警告：${r.checkMessage}`],
     ["公扣端头总长（止口+螺纹+退刀槽）", `${r.maleEnd.total} mm`],
     ["母扣端头内腔总长（止口+内螺纹+内退刀槽）", `${r.femaleEnd.total} mm`],

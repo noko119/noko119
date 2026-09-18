@@ -109,6 +109,9 @@ export function renderMaleDiagram(r) {
     ${tick(xUg + 28, yDf)}
     ${tick(xThr + 40, yMin)}
     ${tick(xEnd - 8, yMaj)}
+    <!-- 牙顶参考线（外螺纹牙顶=大径） -->
+    <line x1="${xThr}" y1="${yMaj}" x2="${xLoc}" y2="${yMaj}" stroke="#c45c26" stroke-width="1.2" stroke-dasharray="4 2" opacity="0.85"/>
+    <text x="${(xThr + xLoc) / 2}" y="${yMaj - 4}" text-anchor="middle" fill="#c45c26" font-size="9" font-weight="700">牙顶 ø${t(major)}</text>
 
     <text x="${(xUg + xThr) / 2}" y="${axis + 16}" text-anchor="middle" fill="#2f4a56" font-size="9">退刀槽</text>
     <text x="${(xThr + xLoc) / 2}" y="${axis + 16}" text-anchor="middle" fill="#c45c26" font-size="9">外螺纹</text>
@@ -117,8 +120,8 @@ export function renderMaleDiagram(r) {
     ${legendRow(
       [
         { label: `D₁ 外径 ø${t(od)}`, color: "#5c6b64" },
-        { label: `大径 ø${t(major)}`, color: "#c45c26" },
-        { label: `牙底/小径 ø${t(minor)}`, color: "#1f6f5b" },
+        { label: `外螺纹牙顶 ø${t(major)}`, color: "#c45c26" },
+        { label: `外螺纹牙底 ø${t(minor)}`, color: "#1f6f5b" },
         { label: `槽底 df ø${t(df)}`, color: "#2f4a56" },
         { label: `端头合计 ${t(loc)}+${t(thr)}+${t(ug)}=${t(r.maleEnd.total)}`, color: "#5c6b64" },
         { label: `退刀槽按 GB/T 3（P=${t(r.P)}）查表`, color: "#5c6b64" },
@@ -190,6 +193,9 @@ export function renderFemaleDiagram(r) {
     ${tick(xUg + 28, yDg)}
     ${tick(xBody + 50, yBore)}
     ${tick(xEnd - 10, yOd)}
+    <!-- 牙顶参考线（内螺纹牙顶=小径） -->
+    <line x1="${xThr}" y1="${yMin}" x2="${xUg}" y2="${yMin}" stroke="#1f6f5b" stroke-width="1.2" stroke-dasharray="4 2" opacity="0.85"/>
+    <text x="${(xThr + xUg) / 2}" y="${yMin - 4}" text-anchor="middle" fill="#1f6f5b" font-size="9" font-weight="700">牙顶 ø${t(minor)}</text>
 
     <text x="${(xFace + xThr) / 2}" y="${axis + 16}" text-anchor="middle" fill="#1f6f5b" font-size="9">子口接收</text>
     <text x="${(xThr + xUg) / 2}" y="${axis + 16}" text-anchor="middle" fill="#c45c26" font-size="9">内螺纹</text>
@@ -198,12 +204,12 @@ export function renderFemaleDiagram(r) {
     ${legendRow(
       [
         { label: `D₂ 外径 ø${t(od)}`, color: "#5c6b64" },
-        { label: `牙底大径 ø${t(major)}`, color: "#c45c26" },
-        { label: `牙顶小径 ø${t(minor)}`, color: "#1f6f5b" },
+        { label: `内螺纹牙顶 ø${t(minor)}`, color: "#1f6f5b" },
+        { label: `内螺纹牙底 ø${t(major)}`, color: "#c45c26" },
         { label: `槽底 Dg ø${t(dg)}`, color: "#2f4a56" },
         { label: `内孔 ø${t(bore)}`, color: "#8a5a2a" },
         { label: `内腔合计 ${t(loc)}+${t(thr)}+${t(ug)}=${t(r.femaleEnd.total)}`, color: "#5c6b64" },
-        { label: `校验：小径 ${t(minor)} ${r.wallCheck.pierceOk ? ">" : "≯"} 内孔 ${t(bore)}`, color: r.wallCheck.pierceOk ? "#1f6f5b" : "#8a2e0e" },
+        { label: `校验：牙顶 ${t(minor)} ${r.wallCheck.pierceOk ? ">" : "≯"} 内孔 ${t(bore)}`, color: r.wallCheck.pierceOk ? "#1f6f5b" : "#8a2e0e" },
       ],
       axis + 36
     )}

@@ -462,7 +462,7 @@ input[readonly]{background:#f3f6f4;color:var(--steel)}
         </div>
       </div>
       <div class="chips" id="nearbyChips" aria-label="邻近规格" style="margin-top:12px"></div>
-      <p class="hint" id="hint" style="margin-top:10px">流程：填管径壁厚 → 看推荐 → 可手动改规格 → 点生成/重算，刷新数据与示意图。</p>
+      <p class="hint" id="hint" style="margin-top:10px">流程：填管径壁厚 → 看推荐 → 可手动改规格 → 点生成/重算。螺纹旋合长=6×P；退刀槽按 GB/T 3 依螺距 P 查表（本工具 P=2），不是与旋合段成固定几何比例。</p>
       <p class="status" id="status" role="status"></p>
       <div class="warn-box" id="warnBox"></div>
       <div class="ok-box" id="okBox"></div>
@@ -617,6 +617,11 @@ function computePipeEndThread(input, opt = {}) {
 
   // 选定规格后：母扣内螺纹小径按工作牙高对称匹配（大径 − 2h）
   const internalMinor = round3(majorDia - 2 * h);
+  // 牙顶：外螺纹=大径；内螺纹=小径
+  const externalCrest = majorDia;
+  const internalCrest = internalMinor;
+  const externalRoot = internalMinor; // 与工作牙高对称匹配的牙底参考
+  const internalRoot = majorDia; // 内螺纹牙底=大径
   // GB/T 196 基本小径（对照）
   const gbD1 = round3(majorDia - 1.082531755 * P);
   const gbD2 = round3(majorDia - 0.649519053 * P);
@@ -714,13 +719,24 @@ function computePipeEndThread(input, opt = {}) {
     isManual,
     majorDia,
     designation,
+    // 牙顶 / 牙底（内外都给出）
+    crest: {
+      external: externalCrest, // 外螺纹牙顶 = 大径
+      internal: internalCrest, // 内螺纹牙顶 = 小径
+    },
+    root: {
+      external: externalRoot,
+      internal: internalRoot,
+    },
     nearby,
     femaleInternal: {
       designation,
       minor: internalMinor,
+      crest: internalCrest,
       pitchDia: gbD2,
       major: majorDia,
-      note: "母扣内螺纹配套公扣所选规格，小径按中心对称（大径−2h）匹配",
+      root: internalRoot,
+      note: "母扣内螺纹配套公扣所选规格；内螺纹牙顶=小径，牙底=大径",
     },
     gbBasic: { d: majorDia, d2: gbD2, d1: gbD1, d3: gbD3, D1: gbD1, D2: gbD2, D: majorDia },
     wallCheck: {
@@ -781,7 +797,11 @@ function pipeEndToRows(r) {
     ["采用规格来源", r.isManual ? "手动给定" : "系统推荐"],
     ["螺纹大径（最终）", `${r.majorDia} mm`],
     ["螺纹规格标记", r.designation],
-    ["母扣内螺纹", `${r.femaleInternal.designation}（小径 ${r.femaleInternal.minor} mm）`],
+    ["外螺纹牙顶（大径）", `${r.crest.external} mm`],
+    ["外螺纹牙底（小径）", `${r.root.external} mm`],
+    ["内螺纹牙顶（小径）", `${r.crest.internal} mm`],
+    ["内螺纹牙底（大径）", `${r.root.internal} mm`],
+    ["母扣内螺纹", `${r.femaleInternal.designation}（牙顶 ${r.crest.internal} mm）`],
     ["校验结果", r.checkPass ? `通过：${r.checkMessage}` : `警告：${r.checkMessage}`],
     ["公扣端头总长（止口+螺纹+退刀槽）", `${r.maleEnd.total} mm`],
     ["母扣端头内腔总长（止口+内螺纹+内退刀槽）", `${r.femaleEnd.total} mm`],
@@ -902,6 +922,9 @@ function renderMaleDiagram(r) {
     ${tick(xUg + 28, yDf)}
     ${tick(xThr + 40, yMin)}
     ${tick(xEnd - 8, yMaj)}
+    <!-- 牙顶参考线（外螺纹牙顶=大径） -->
+    <line x1="${xThr}" y1="${yMaj}" x2="${xLoc}" y2="${yMaj}" stroke="#c45c26" stroke-width="1.2" stroke-dasharray="4 2" opacity="0.85"/>
+    <text x="${(xThr + xLoc) / 2}" y="${yMaj - 4}" text-anchor="middle" fill="#c45c26" font-size="9" font-weight="700">牙顶 ø${t(major)}</text>
 
     <text x="${(xUg + xThr) / 2}" y="${axis + 16}" text-anchor="middle" fill="#2f4a56" font-size="9">退刀槽</text>
     <text x="${(xThr + xLoc) / 2}" y="${axis + 16}" text-anchor="middle" fill="#c45c26" font-size="9">外螺纹</text>
@@ -910,8 +933,8 @@ function renderMaleDiagram(r) {
     ${legendRow(
       [
         { label: `D₁ 外径 ø${t(od)}`, color: "#5c6b64" },
-        { label: `大径 ø${t(major)}`, color: "#c45c26" },
-        { label: `牙底/小径 ø${t(minor)}`, color: "#1f6f5b" },
+        { label: `外螺纹牙顶 ø${t(major)}`, color: "#c45c26" },
+        { label: `外螺纹牙底 ø${t(minor)}`, color: "#1f6f5b" },
         { label: `槽底 df ø${t(df)}`, color: "#2f4a56" },
         { label: `端头合计 ${t(loc)}+${t(thr)}+${t(ug)}=${t(r.maleEnd.total)}`, color: "#5c6b64" },
         { label: `退刀槽按 GB/T 3（P=${t(r.P)}）查表`, color: "#5c6b64" },
@@ -983,6 +1006,9 @@ function renderFemaleDiagram(r) {
     ${tick(xUg + 28, yDg)}
     ${tick(xBody + 50, yBore)}
     ${tick(xEnd - 10, yOd)}
+    <!-- 牙顶参考线（内螺纹牙顶=小径） -->
+    <line x1="${xThr}" y1="${yMin}" x2="${xUg}" y2="${yMin}" stroke="#1f6f5b" stroke-width="1.2" stroke-dasharray="4 2" opacity="0.85"/>
+    <text x="${(xThr + xUg) / 2}" y="${yMin - 4}" text-anchor="middle" fill="#1f6f5b" font-size="9" font-weight="700">牙顶 ø${t(minor)}</text>
 
     <text x="${(xFace + xThr) / 2}" y="${axis + 16}" text-anchor="middle" fill="#1f6f5b" font-size="9">子口接收</text>
     <text x="${(xThr + xUg) / 2}" y="${axis + 16}" text-anchor="middle" fill="#c45c26" font-size="9">内螺纹</text>
@@ -991,12 +1017,12 @@ function renderFemaleDiagram(r) {
     ${legendRow(
       [
         { label: `D₂ 外径 ø${t(od)}`, color: "#5c6b64" },
-        { label: `牙底大径 ø${t(major)}`, color: "#c45c26" },
-        { label: `牙顶小径 ø${t(minor)}`, color: "#1f6f5b" },
+        { label: `内螺纹牙顶 ø${t(minor)}`, color: "#1f6f5b" },
+        { label: `内螺纹牙底 ø${t(major)}`, color: "#c45c26" },
         { label: `槽底 Dg ø${t(dg)}`, color: "#2f4a56" },
         { label: `内孔 ø${t(bore)}`, color: "#8a5a2a" },
         { label: `内腔合计 ${t(loc)}+${t(thr)}+${t(ug)}=${t(r.femaleEnd.total)}`, color: "#5c6b64" },
-        { label: `校验：小径 ${t(minor)} ${r.wallCheck.pierceOk ? ">" : "≯"} 内孔 ${t(bore)}`, color: r.wallCheck.pierceOk ? "#1f6f5b" : "#8a2e0e" },
+        { label: `校验：牙顶 ${t(minor)} ${r.wallCheck.pierceOk ? ">" : "≯"} 内孔 ${t(bore)}`, color: r.wallCheck.pierceOk ? "#1f6f5b" : "#8a2e0e" },
       ],
       axis + 36
     )}
@@ -1145,6 +1171,8 @@ function run(forceManual) {
   fill($("maleTable"), [
     ["定位止口", `${r.maleEnd.locator} mm`],
     ["螺纹有效旋合段", `${r.maleEnd.thread} mm`],
+    ["外螺纹牙顶（大径）", `${r.crest.external} mm`],
+    ["外螺纹牙底（小径）", `${r.root.external} mm`],
     ["外螺纹退刀槽宽", `${r.maleEnd.undercutWidth} mm`],
     ["退刀槽底径 df", `${r.maleEnd.undercutDf} mm`],
     ["端头合计", `${r.maleEnd.total} mm`],
@@ -1152,6 +1180,8 @@ function run(forceManual) {
   fill($("femaleTable"), [
     ["定位止口接收段", `${r.femaleEnd.locator} mm`],
     ["内螺纹旋合段", `${r.femaleEnd.thread} mm`],
+    ["内螺纹牙顶（小径）", `${r.crest.internal} mm`],
+    ["内螺纹牙底（大径）", `${r.root.internal} mm`],
     ["内螺纹退刀槽宽", `${r.femaleEnd.undercutWidth} mm`],
     ["退刀槽底径 Dg", `${r.femaleEnd.undercutDg} mm`],
     ["内腔合计", `${r.femaleEnd.total} mm`],
