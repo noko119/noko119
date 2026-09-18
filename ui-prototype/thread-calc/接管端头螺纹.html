@@ -396,6 +396,8 @@ html, body {
 .ok-box.show{display:block}
 .field-row.four{grid-template-columns:repeat(4,1fr)}
 @media(max-width:860px){.field-row.four{grid-template-columns:1fr 1fr}}
+.diagram-wrap{margin-top:14px}
+.diagram-wrap .diagram{display:block;width:100%;height:auto;margin-top:10px}
 
 </style>
 </head>
@@ -459,9 +461,9 @@ html, body {
       <article class="card designation-card">
         <h2 id="title">—</h2>
         <p class="muted" id="meta"></p>
-        <div id="maleSvg" style="margin-top:12px"></div>
-        <div id="femaleSvg" style="margin-top:12px"></div>
-        <div id="assySvg" style="margin-top:12px"></div>
+        <div id="maleSvg" class="diagram-wrap"></div>
+        <div id="femaleSvg" class="diagram-wrap"></div>
+        <div id="assySvg" class="diagram-wrap"></div>
       </article>
       <article class="card span-2">
         <h3>输出结果</h3>
@@ -952,12 +954,6 @@ function renderAssemblyDiagram(r) {
     <text x="24" y="180" fill="#5c6b64" font-size="12">${r.checkPass ? "校验通过" : "校验警告"}：${r.checkMessage}</text>
   </svg>`;
 }
-
-import {
-  renderAssemblyDiagram,
-  renderFemaleDiagram,
-  renderMaleDiagram,
-} from "./pipe-end-diagram.js";
 
 const $ = (id) => document.getElementById(id);
 

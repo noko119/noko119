@@ -32,7 +32,10 @@
     @media (max-width: 860px) {
       .field-row.four { grid-template-columns: 1fr 1fr; }
     }
-  </style>
+  
+.diagram-wrap{margin-top:14px}
+.diagram-wrap .diagram{display:block;width:100%;height:auto;margin-top:10px}
+</style>
 </head>
 <body>
   <div class="atmosphere" aria-hidden="true"></div>
@@ -94,9 +97,9 @@
       <article class="card designation-card">
         <h2 id="title">—</h2>
         <p class="muted" id="meta"></p>
-        <div id="maleSvg" style="margin-top:12px"></div>
-        <div id="femaleSvg" style="margin-top:12px"></div>
-        <div id="assySvg" style="margin-top:12px"></div>
+        <div id="maleSvg" class="diagram-wrap"></div>
+        <div id="femaleSvg" class="diagram-wrap"></div>
+        <div id="assySvg" class="diagram-wrap"></div>
       </article>
       <article class="card span-2">
         <h3>输出结果</h3>
