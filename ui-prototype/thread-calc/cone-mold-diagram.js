@@ -212,5 +212,5 @@ export function renderConeMoldDiagram(r) {
   </svg>`;
 }
 
-/** 别名：组装后示意图 */
+/** 别名：组装后示意图（app 入口） */
 export const renderAssembledConeDiagram = renderConeMoldDiagram;

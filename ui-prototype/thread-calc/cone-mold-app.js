@@ -127,6 +127,7 @@ function run() {
     $("status").textContent = r.error;
     $("status").className = "status error";
     $("warnBox").classList.remove("show");
+    $("assyDiagram").innerHTML = "";
     return;
   }
 
