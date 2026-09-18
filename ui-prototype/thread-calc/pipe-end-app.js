@@ -1,4 +1,9 @@
 import { computePipeEndThread, pipeEndToRows } from "./pipe-end-math.js";
+import {
+  renderAssemblyDiagram,
+  renderFemaleDiagram,
+  renderMaleDiagram,
+} from "./pipe-end-diagram.js";
 
 const $ = (id) => document.getElementById(id);
 
@@ -39,6 +44,10 @@ function run() {
   $("results").hidden = false;
   $("title").textContent = r.designation;
   $("meta").textContent = `${r.jointKind} · ${r.jointCombo} · 壁中心径 ${r.smallCenterDia} mm · 理论大径 ${r.theoryMajor} → 取整 ${r.majorDia}`;
+
+  $("maleSvg").innerHTML = renderMaleDiagram(r);
+  $("femaleSvg").innerHTML = renderFemaleDiagram(r);
+  $("assySvg").innerHTML = renderAssemblyDiagram(r);
 
   fill($("outTable"), pipeEndToRows(r));
   fill($("maleTable"), [
