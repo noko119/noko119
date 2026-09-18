@@ -89,9 +89,11 @@ async function copy() {
     $("status").className = "status error";
     return;
   }
+  const nl = String.fromCharCode(10);
+  const tab = String.fromCharCode(9);
   const text = pipeEndToRows(last)
-    .map(([k, v]) => `${k}\t${v}`)
-    .join("\n");
+    .map(([k, v]) => `${k}${tab}${v}`)
+    .join(nl);
   try {
     await navigator.clipboard.writeText(text);
     $("status").textContent = "结果已复制";
