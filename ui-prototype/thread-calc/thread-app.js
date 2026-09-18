@@ -300,7 +300,21 @@ async function copyResult() {
     await navigator.clipboard.writeText(text);
     setStatus("结果已复制到剪贴板", "ok");
   } catch {
-    setStatus("复制失败，请手动选择文本", "error");
+    // Fallback for restricted clipboard environments
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.setAttribute("readonly", "");
+    ta.style.position = "fixed";
+    ta.style.left = "-9999px";
+    document.body.appendChild(ta);
+    ta.select();
+    try {
+      document.execCommand("copy");
+      setStatus("结果已复制到剪贴板", "ok");
+    } catch {
+      setStatus("复制失败，请手动选择文本", "error");
+    }
+    document.body.removeChild(ta);
   }
 }
 
