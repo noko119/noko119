@@ -1,4 +1,5 @@
 import { designConeMold, CONE_MOLD_DEFAULTS } from "./cone-mold-math.js";
+import { renderAssembledConeDiagram } from "./cone-mold-diagram.js";
 
 const $ = (id) => document.getElementById(id);
 let last = null;
@@ -134,7 +135,8 @@ function run() {
   $("status").textContent = `已生成 ${r.segmentCount} 节 / ${r.summary.jointCount} 道螺纹，总高 ${r.summary.moldHeight} mm`;
   $("status").className = "status ok";
   $("summaryLine").textContent =
-    `总高 ${r.summary.moldHeight}（校核 ${r.summary.heightOk ? "OK" : "异常"}）· 219面→108面类距 ${r.summary.faceToFace} mm · P=${r.summary.pitch}`;
+    `总高 ${r.summary.moldHeight}（校核 ${r.summary.heightOk ? "OK" : "异常"}）· 大头面→小头面 ${r.summary.faceToFace} mm · P=${r.summary.pitch}`;
+  $("assyDiagram").innerHTML = renderAssembledConeDiagram(r);
   renderSchema(r.segments);
   fillSegTable(r.segments);
   fillJointTable(r.joints);

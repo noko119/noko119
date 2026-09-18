@@ -44,6 +44,12 @@
     .schema .arrow {
       align-self: center; color: var(--accent); font-weight: 800; font-family: var(--font-display);
     }
+    .diagram-wrap { margin-top: 12px; }
+    .diagram-wrap .diagram {
+      display: block; width: 100%; height: auto; margin-top: 8px;
+      background: linear-gradient(180deg, #f8fbf9, #e8f0eb);
+      border: 1px solid var(--line); border-radius: 14px;
+    }
     @media (max-width: 860px) {
       .field-row.five { grid-template-columns: 1fr 1fr; }
       .card-pair { grid-template-columns: 1fr; }
@@ -115,8 +121,13 @@
 
     <div id="results" class="stack" hidden>
       <article class="card">
-        <h3>分段示意</h3>
+        <h3>组装后示意图</h3>
         <p class="muted" id="summaryLine"></p>
+        <div class="diagram-wrap" id="assyDiagram"></div>
+      </article>
+
+      <article class="card">
+        <h3>分段一览</h3>
         <div class="schema" id="schema"></div>
       </article>
 

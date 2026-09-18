@@ -14,6 +14,7 @@ const pipeMath = read("pipe-end-math.js").replace(/export\s+/g, "");
 const coneMath = read("cone-mold-math.js")
   .replace(/import\s*\{[^}]+\}\s*from\s*["'][^"']+["']\s*;?\s*/g, "")
   .replace(/export\s+/g, "");
+const coneDiagram = read("cone-mold-diagram.js").replace(/export\s+/g, "");
 const app = read("cone-mold-app.js").replace(
   /import\s*\{[^}]+\}\s*from\s*["'][^"']+["']\s*;?\s*/g,
   ""
@@ -29,7 +30,7 @@ html = html.replace(
 
 html = html.replace(
   /<script type="module" src="\.\/cone-mold-app\.js"><\/script>/,
-  `<script>\n${pipeMath}\n\n${coneMath}\n\n${app}\n</script>`
+  `<script>\n${pipeMath}\n\n${coneMath}\n\n${coneDiagram}\n\n${app}\n</script>`
 );
 
 fs.writeFileSync(path.join(dir, "cone-mold-online.html"), html, "utf8");
