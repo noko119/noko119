@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>螺纹型号 → 端头结构表</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Outfit:wght@500;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./thread-calc.css" />
+  <style>
+    .const-bar { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 14px; }
+    .const-bar span {
+      font-size: 12px; padding: 6px 10px; border-radius: 999px;
+      background: #fff; border: 1px solid var(--line); color: var(--steel);
+    }
+    .card-pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 16px;
+    }
+    .card-pair .card h3 { margin: 0 0 4px; }
+    .card-pair .card .sub {
+      margin: 0 0 12px; color: var(--muted); font-size: 12px;
+    }
+    .status.error { color: #b42318; }
+    .status.ok { color: var(--accent-2); }
+    @media (max-width: 860px) {
+      .card-pair { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="atmosphere" aria-hidden="true"></div>
+  <main class="shell">
+    <header class="hero">
+      <p class="brand">THREAD END CARD · <a href="./pipe-end.html" style="color:inherit">接管计算</a> · <a href="./index.html" style="color:inherit">通用螺纹</a></p>
+      <h1>螺纹型号 → 端头结构</h1>
+      <p class="lede">手动输入螺纹型号（如 M200×2），直接生成公扣端头与母扣内腔结构表（计入 210）。</p>
+    </header>
+
+    <section class="panel">
+      <div class="const-bar">
+        <span>止口 10mm</span>
+        <span>P=2 · 6圈 · 旋合 12mm</span>
+        <span>退刀槽按 GB/T 3（P=2）</span>
+        <span>计入总长 210mm</span>
+      </div>
+
+      <div class="field-row" style="grid-template-columns:1.6fr 1fr auto">
+        <label class="field grow">
+          <span>螺纹型号</span>
+          <input id="specInput" type="text" value="M200×2" placeholder="例如 M200×2、M200X2、200" autocomplete="off" spellcheck="false" />
+        </label>
+        <label class="field">
+          <span>退刀槽长度档</span>
+          <select id="grooveKind">
+            <option value="normal" selected>普通 g1</option>
+            <option value="short">短 g2</option>
+            <option value="long">长 g3</option>
+          </select>
+        </label>
+        <div class="actions" style="margin:0;align-self:end">
+          <button type="button" class="btn primary" id="calcBtn">生成结构表</button>
+          <button type="button" class="btn ghost" id="copyBtn">复制</button>
+        </div>
+      </div>
+      <p class="hint" style="margin-top:10px">只需螺纹型号；牙顶/牙底/退刀槽底径随型号自动计算。</p>
+      <p class="status" id="status" role="status"></p>
+    </section>
+
+    <div id="cards" class="card-pair" hidden>
+      <article class="card">
+        <h3 id="maleTitle">公扣端头结构（计入 210）</h3>
+        <p class="sub" id="maleSub"></p>
+        <table class="data"><tbody id="maleTable"></tbody></table>
+      </article>
+      <article class="card">
+        <h3 id="femaleTitle">母扣端头内腔（计入 210）</h3>
+        <p class="sub" id="femaleSub"></p>
+        <table class="data"><tbody id="femaleTable"></tbody></table>
+      </article>
+    </div>
+  </main>
+  <script type="module" src="./thread-card-app.js"></script>
+</body>
+</html>
