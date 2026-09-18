@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>锥管模具分段设计</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Outfit:wght@500;700;800&display=swap" rel="stylesheet" />
+  <style>
+:root {
+  --ink: #1a2420;
+  --muted: #5c6b64;
+  --paper: #eef3ef;
+  --panel: rgba(255, 255, 255, 0.78);
+  --line: rgba(26, 36, 32, 0.12);
+  --accent: #c45c26;
+  --accent-2: #1f6f5b;
+  --steel: #2f4a56;
+  --shadow: 0 18px 40px rgba(31, 52, 44, 0.12);
+  --radius: 18px;
+  --font-display: "Outfit", "Noto Sans SC", sans-serif;
+  --font-body: "Noto Sans SC", "Outfit", sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  min-height: 100%;
+  color: var(--ink);
+  font-family: var(--font-body);
+  background: var(--paper);
+}
+
+.atmosphere {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(900px 500px at 8% -5%, rgba(196, 92, 38, 0.16), transparent 55%),
+    radial-gradient(700px 420px at 92% 8%, rgba(31, 111, 91, 0.14), transparent 50%),
+    linear-gradient(165deg, #f5f7f4 0%, #e7eee9 42%, #dfe8e3 100%);
+  overflow: hidden;
+}
+
+.atmosphere::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.35;
+  background-image:
+    linear-gradient(rgba(47, 74, 86, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(47, 74, 86, 0.05) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: radial-gradient(ellipse at 40% 20%, black 20%, transparent 75%);
+  animation: gridDrift 18s linear infinite;
+}
+
+@keyframes gridDrift {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-28px, -28px, 0); }
+}
+
+.shell {
+  width: min(1120px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 36px 0 64px;
+}
+
+.hero {
+  margin-bottom: 28px;
+  animation: rise 0.7s ease both;
+}
+
+.brand {
+  margin: 0 0 8px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  font-size: 13px;
+  color: var(--accent);
+}
+
+.hero h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(2.2rem, 5vw, 3.4rem);
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  color: var(--steel);
+}
+
+.lede {
+  margin: 12px 0 0;
+  max-width: 36rem;
+  color: var(--muted);
+  font-size: 1.02rem;
+  line-height: 1.55;
+}
+
+.panel {
+  background: var(--panel);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px;
+  animation: rise 0.75s ease 0.08s both;
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: 1.4fr repeat(3, 1fr);
+  gap: 12px;
+}
+
+.field-row.simple {
+  grid-template-columns: 1.8fr 1fr 1fr;
+}
+
+.field-row.free {
+  grid-template-columns: 1fr 1fr 1fr 1.4fr;
+}
+
+.hint {
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.field.grow { grid-column: span 1; }
+
+.field span {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.field input,
+.field select {
+  width: 100%;
+  height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0 12px;
+  font: inherit;
+  font-size: 15px;
+  color: var(--ink);
+  background: #fff;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.field input:focus,
+.field select:focus {
+  border-color: rgba(196, 92, 38, 0.55);
+  box-shadow: 0 0 0 3px rgba(196, 92, 38, 0.15);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.chip {
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--steel);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: transform 0.15s, background 0.15s, border-color 0.15s;
+}
+
+.chip:hover {
+  transform: translateY(-1px);
+  border-color: rgba(31, 111, 91, 0.35);
+  background: #f3faf7;
+}
+
+.chip.active {
+  background: var(--accent-2);
+  border-color: var(--accent-2);
+  color: #fff;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.btn {
+  height: 42px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  padding: 0 16px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s, background 0.15s, box-shadow 0.15s;
+}
+
+.btn:hover { transform: translateY(-1px); }
+
+.btn.primary {
+  background: linear-gradient(135deg, #c45c26, #a84718);
+  color: #fff;
+  box-shadow: 0 10px 22px rgba(196, 92, 38, 0.28);
+}
+
+.btn.ghost {
+  background: #fff;
+  border-color: var(--line);
+  color: var(--steel);
+}
+
+.status {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.status.error { color: #b42318; }
+.status.ok { color: var(--accent-2); }
+
+.result-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 18px;
+  box-shadow: var(--shadow);
+  animation: rise 0.65s ease both;
+}
+
+.card:nth-child(1) { animation-delay: 0.05s; }
+.card:nth-child(2) { animation-delay: 0.1s; }
+.card:nth-child(3) { animation-delay: 0.15s; }
+.card:nth-child(4) { animation-delay: 0.2s; }
+.card:nth-child(5) { animation-delay: 0.25s; }
+.card:nth-child(6) { animation-delay: 0.3s; }
+
+.designation-card {
+  grid-column: 1 / -1;
+}
+
+.span-2 { grid-column: 1 / -1; }
+
+.card h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 2rem;
+  letter-spacing: -0.02em;
+  color: var(--steel);
+}
+
+.card h3 {
+  margin: 0 0 12px;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--steel);
+}
+
+.muted { color: var(--muted); margin: 6px 0 0; font-size: 14px; }
+
+.diagram {
+  width: 100%;
+  height: auto;
+  margin-top: 14px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #f8fbf9, #e8f0eb);
+  border: 1px solid var(--line);
+}
+
+.data {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.data caption {
+  caption-side: top;
+  text-align: left;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--steel);
+}
+
+.data th,
+.data td {
+  padding: 9px 4px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: baseline;
+}
+
+.data th {
+  color: var(--muted);
+  font-weight: 500;
+  width: 58%;
+}
+
+.data td {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.data tr:last-child th,
+.data tr:last-child td { border-bottom: 0; }
+
+.split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.formula {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.footnote {
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 860px) {
+  .field-row,
+  .field-row.simple,
+  .field-row.free {
+    grid-template-columns: 1fr 1fr;
+  }
+  .field.grow { grid-column: 1 / -1; }
+  .result-grid { grid-template-columns: 1fr; }
+  .designation-card,
+  .span-2 { grid-column: auto; }
+  .split { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 520px) {
+  .shell { width: min(100% - 20px, 1120px); padding-top: 24px; }
+  .field-row,
+  .field-row.simple,
+  .field-row.free { grid-template-columns: 1fr; }
+  .actions { align-items: stretch; }
+  .btn { width: 100%; }
+}
+
+
+    .const-bar { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 14px; }
+    .const-bar span {
+      font-size: 12px; padding: 6px 10px; border-radius: 999px;
+      background: #fff; border: 1px solid var(--line); color: var(--steel);
+    }
+    .field-row.five { grid-template-columns: repeat(5, 1fr); }
+    .stack { display: flex; flex-direction: column; gap: 14px; margin-top: 16px; }
+    .joint-block { margin-top: 8px; }
+    .joint-block h4 {
+      margin: 0 0 10px; font-family: var(--font-display); color: var(--steel); font-size: 1rem;
+    }
+    .card-pair {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+    }
+    .warn-box {
+      margin-top: 12px; padding: 12px 14px; border-radius: 12px;
+      background: #fff4f0; border: 1px solid #f0b090; color: #8a2e0e;
+      font-weight: 700; display: none;
+    }
+    .warn-box.show { display: block; }
+    .schema {
+      display: flex; flex-wrap: wrap; align-items: stretch; gap: 8px; margin-top: 8px;
+    }
+    .schema .seg {
+      flex: 1 1 120px; min-width: 110px; background: #fff;
+      border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px;
+      box-shadow: var(--shadow);
+    }
+    .schema .seg strong {
+      display: block; font-family: var(--font-display); font-size: 1.25rem; color: var(--steel);
+    }
+    .schema .seg span { color: var(--muted); font-size: 12px; }
+    .schema .arrow {
+      align-self: center; color: var(--accent); font-weight: 800; font-family: var(--font-display);
+    }
+    @media (max-width: 860px) {
+      .field-row.five { grid-template-columns: 1fr 1fr; }
+      .card-pair { grid-template-columns: 1fr; }
+    }
+  
+</style>
+</head>
+<body>
+  <div class="atmosphere" aria-hidden="true"></div>
+  <main class="shell">
+    <header class="hero">
+      <p class="brand">CONE MOLD · <a href="./thread-card.html" style="color:inherit">端头表</a> · <a href="./pipe-end.html" style="color:inherit">接管计算</a></p>
+      <h1>锥管模具分段</h1>
+      <p class="lede">输入大头 / 小头 / 模具总高，自动分节（大节标准 210、小节非标），并给出圆整螺纹与公母扣端头表。</p>
+    </header>
+
+    <section class="panel">
+      <div class="const-bar">
+        <span>大节标准长 210（含上口余量）</span>
+        <span>小节非标凑总高（含下口余量）</span>
+        <span>P=2 · 螺纹尾数圆整 0/5</span>
+        <span>止口 10 + 旋合 12 + 退刀槽 4</span>
+      </div>
+
+      <div class="field-row five">
+        <label class="field">
+          <span>大头外径 / mm</span>
+          <input id="bigOd" type="number" min="1" step="any" value="219" />
+        </label>
+        <label class="field">
+          <span>小头外径 / mm</span>
+          <input id="smallOd" type="number" min="1" step="any" value="108" />
+        </label>
+        <label class="field">
+          <span>模具总高 / mm</span>
+          <input id="moldHeight" type="number" min="1" step="any" value="930" />
+        </label>
+        <label class="field">
+          <span>上口余量（计入大节）</span>
+          <input id="topAllowance" type="number" min="0" step="any" value="45" />
+        </label>
+        <label class="field">
+          <span>下口余量（计入小节）</span>
+          <input id="bottomAllowance" type="number" min="0" step="any" value="5" />
+        </label>
+      </div>
+
+      <div class="field-row" style="margin-top:12px;grid-template-columns:1fr 1fr 1fr auto">
+        <label class="field">
+          <span>标准节长 / mm</span>
+          <input id="standardLen" type="number" min="50" step="any" value="210" />
+        </label>
+        <label class="field">
+          <span>强制节数（可空）</span>
+          <input id="segmentCount" type="number" min="2" step="1" placeholder="自动" />
+        </label>
+        <label class="field">
+          <span>中间管径（可选，逗号分隔）</span>
+          <input id="midOds" type="text" placeholder="例如 168,133" autocomplete="off" />
+        </label>
+        <div class="actions" style="margin:0;align-self:end">
+          <button type="button" class="btn primary" id="calcBtn">生成方案</button>
+          <button type="button" class="btn ghost" id="copyBtn">复制</button>
+        </div>
+      </div>
+      <p class="hint" style="margin-top:10px">默认按你此前确认的规则：大直径节 210，最小节非标；螺纹尽量圆整。</p>
+      <p class="status" id="status" role="status"></p>
+      <div class="warn-box" id="warnBox"></div>
+    </section>
+
+    <div id="results" class="stack" hidden>
+      <article class="card">
+        <h3>分段示意</h3>
+        <p class="muted" id="summaryLine"></p>
+        <div class="schema" id="schema"></div>
+      </article>
+
+      <article class="card">
+        <h3>各节明细</h3>
+        <table class="data">
+          <thead>
+            <tr><th>节</th><th>外径</th><th>长度</th><th>类型</th><th>建议壁厚</th><th>端头</th><th>余量说明</th></tr>
+          </thead>
+          <tbody id="segTable"></tbody>
+        </table>
+      </article>
+
+      <article class="card">
+        <h3>螺纹接头</h3>
+        <table class="data">
+          <thead>
+            <tr><th>道</th><th>母→公</th><th>自动</th><th>圆整规格</th><th>牙顶外/内</th><th>df / Dg</th><th>母端局部壁厚</th></tr>
+          </thead>
+          <tbody id="jointTable"></tbody>
+        </table>
+      </article>
+
+      <div id="jointCards" class="stack"></div>
+    </div>
+  </main>
+  <script>
+/**
+ * 接管端头螺纹完整计算逻辑
+ * - P=2 固定；60° 三角螺纹；牙型按 GB/T 196
+ * - 螺纹中心线落在小管管壁中心；同时校验大管壁不击穿
+ * - 螺纹大径就近取整数（不强制尾数 0/5）
+ */
+
+/** @typedef {{ D1: number, t1: number, D2: number, t2: number }} PipeEndInput */
+
+const PIPE_END_CONST = {
+  locatorLen: 10, // 定位止口 mm
+  pitch: 2, // 螺距 P mm
+  turns: 6, // 旋合圈数
+  engageLen: 12, // 6×P
+  bodyTotalLen: 210, // 接管本体总长 mm
+  tipAngle: 60,
+  // GB/T 196 / 常用牙型系数（相对螺距）
+  H_factor: 0.866, // 原始牙高 H = 0.8660×P
+  h_factor: 0.5413, // 工作牙高 h
+  R_factor: 0.144, // 牙底最大圆角 R
+};
+
+/** GB/T 3 退刀槽（P=2 常用） */
+const UNDERCUT_P2 = {
+  external: { g1: 4.0, g2: 3.0, g3: 6.0, k: 3.0, r: 0.8 },
+  internal: { g1: 4.0, g2: 3.0, g3: 6.0, m: 3.0, r: 0.8 },
+};
+
+function round3(n) {
+  return Math.round(n * 1000) / 1000;
+}
+
+function nearInt(n) {
+  return Math.round(n);
+}
+
+/** 解析手动规格：M161×2 / M161X2 / 161 */
+function parseManualMajor(raw, defaultPitch = PIPE_END_CONST.pitch) {
+  const s = String(raw || "")
+    .trim()
+    .replace(/\s+/g, "")
+    .replace(/[×✕✖ｘＸxX＊*－—–−-]/g, "x");
+  if (!s) return { ok: false, error: "请输入手动规格，如 M161×2 或 161" };
+  let m = s.match(/^M(\d+(?:\.\d+)?)(?:x(\d+(?:\.\d+)?))?$/i);
+  if (m) {
+    const major = Math.round(Number(m[1]));
+    const pitch = m[2] != null ? Number(m[2]) : defaultPitch;
+    if (!(major > 0)) return { ok: false, error: "螺纹大径无效" };
+    if (Math.abs(pitch - defaultPitch) > 1e-9) {
+      return { ok: false, error: `本工具螺距固定为 P=${defaultPitch}，请写 M${major}×${defaultPitch}` };
+    }
+    return { ok: true, majorDia: major, pitch: defaultPitch };
+  }
+  if (/^\d+(?:\.\d+)?$/.test(s)) {
+    const major = Math.round(Number(s));
+    if (!(major > 0)) return { ok: false, error: "螺纹大径无效" };
+    return { ok: true, majorDia: major, pitch: defaultPitch };
+  }
+  return { ok: false, error: "无法识别。支持：M161×2、M161X2、161" };
+}
+
+/**
+ * @param {PipeEndInput} input
+ * @param {{ grooveKind?: 'normal'|'short'|'long', majorDia?: number, designation?: string }} [opt]
+ */
+function computePipeEndThread(input, opt = {}) {
+  const { D1, t1, D2, t2 } = input;
+  const errors = [];
+  const warnings = [];
+
+  if (!(D1 > 0) || !(t1 > 0) || !(D2 > 0) || !(t2 > 0)) {
+    return { ok: false, error: "请完整填写 D₁、t₁、D₂、t₂（均须大于 0）" };
+  }
+  if (t1 * 2 >= D1) {
+    return { ok: false, error: "小管壁厚无效：2×t₁ 不得大于等于 D₁" };
+  }
+  if (t2 * 2 >= D2) {
+    return { ok: false, error: "大管壁厚无效：2×t₂ 不得大于等于 D₂" };
+  }
+  if (D1 >= D2) {
+    warnings.push("通常公头小管外径 D₁ 应小于母头大管外径 D₂，请确认录入是否正确");
+  }
+
+  const P = PIPE_END_CONST.pitch;
+  const H = round3(PIPE_END_CONST.H_factor * P);
+  const h = round3(PIPE_END_CONST.h_factor * P);
+  const R = round3(PIPE_END_CONST.R_factor * P);
+
+  // 1. 小管管壁中心直径
+  const smallCenterDia = round3(D1 - t1);
+
+  // 3–4. 理论外螺纹大径 / 内螺纹小径
+  const theoryMajor = round3(smallCenterDia + h);
+  const theoryMinor = round3(smallCenterDia - h);
+
+  // 5. 大管内孔
+  const largeBore = round3(D2 - 2 * t2);
+
+  // 推荐大径（就近取整）
+  const recommendedMajor = nearInt(theoryMajor);
+  const recommendedDesignation = `M${recommendedMajor}×${P}`;
+
+  // 最终采用：手动覆盖 > 推荐
+  let majorDia = recommendedMajor;
+  let isManual = false;
+  if (opt.majorDia != null && Number.isFinite(Number(opt.majorDia))) {
+    majorDia = Math.round(Number(opt.majorDia));
+    isManual = majorDia !== recommendedMajor;
+  } else if (opt.designation) {
+    const parsed = parseManualMajor(opt.designation, P);
+    if (!parsed.ok) return parsed;
+    majorDia = parsed.majorDia;
+    isManual = majorDia !== recommendedMajor;
+  }
+  if (!(majorDia > 0)) {
+    return { ok: false, error: "螺纹大径无效" };
+  }
+
+  const designation = `M${majorDia}×${P}`;
+
+  // 选定规格后：母扣内螺纹小径按工作牙高对称匹配（大径 − 2h）
+  const internalMinor = round3(majorDia - 2 * h);
+  // 牙顶：外螺纹=大径；内螺纹=小径
+  const externalCrest = majorDia;
+  const internalCrest = internalMinor;
+  const externalRoot = internalMinor; // 与工作牙高对称匹配的牙底参考
+  const internalRoot = majorDia; // 内螺纹牙底=大径
+  // GB/T 196 基本小径（对照）
+  const gbD1 = round3(majorDia - 1.082531755 * P);
+  const gbD2 = round3(majorDia - 0.649519053 * P);
+  const gbD3 = round3(majorDia - 1.226869322 * P);
+
+  // 校验：内螺纹小径须大于大管内孔，保证加工在实体内、不打穿
+  const pierceOk = internalMinor > largeBore;
+  // 螺纹不超出大管外径实体
+  const withinLargeOd = majorDia < D2;
+  // 螺纹大致落在大管壁厚实体带内（大径小于外径，啮合区高于内孔）
+  const withinLargeWall = majorDia <= D2 && internalMinor >= largeBore;
+  // 相对小管：大径不超过小管外径，小径不低于小管内孔
+  const smallBore = round3(D1 - 2 * t1);
+  const withinSmall = majorDia <= D1 && internalMinor >= smallBore;
+
+  let checkPass = true;
+  let checkMessage = "满足：内螺纹位于大管实体内，未击穿管壁";
+
+  if (!pierceOk) {
+    checkPass = false;
+    checkMessage = "当前参数无法加工，管壁厚度不足";
+    warnings.push(checkMessage);
+  } else if (!withinLargeOd) {
+    checkPass = false;
+    checkMessage = "当前参数无法加工，管壁厚度不足（螺纹大径超出大管外径）";
+    warnings.push(checkMessage);
+  } else if (!withinSmall) {
+    warnings.push("提示：螺纹相对小管壁中心偏移后，可能接近或超出小管壁实体边界，请复核");
+  }
+
+  if (isManual) {
+    warnings.push(`当前为手动规格 ${designation}（系统推荐 ${recommendedDesignation}）`);
+  }
+
+  const grooveKind = opt.grooveKind || "normal";
+  const widthKey = grooveKind === "short" ? "g2" : grooveKind === "long" ? "g3" : "g1";
+  const extGrooveW = UNDERCUT_P2.external[widthKey];
+  const intGrooveW = UNDERCUT_P2.internal[widthKey];
+  const extGrooveDf = round3(majorDia - UNDERCUT_P2.external.k);
+  const intGrooveDg = round3(majorDia + UNDERCUT_P2.internal.m);
+
+  const maleEndLen = round3(
+    PIPE_END_CONST.locatorLen + PIPE_END_CONST.engageLen + extGrooveW
+  );
+  const femaleEndLen = round3(
+    PIPE_END_CONST.locatorLen + PIPE_END_CONST.engageLen + intGrooveW
+  );
+
+  const fitInBody =
+    maleEndLen <= PIPE_END_CONST.bodyTotalLen &&
+    femaleEndLen <= PIPE_END_CONST.bodyTotalLen;
+  if (!fitInBody) {
+    warnings.push("端头结构长度超过接管总长 210mm，请检查退刀槽长度档");
+  }
+
+  const jointLabel = `${trim(D1)}×${trim(t1)} → ${trim(D2)}×${trim(t2)}`;
+  const jointKind =
+    D2 > D1 ? (D2 / D1 <= 1.25 ? "相邻规格对接" : "跨规格对接") : "对接组合";
+
+  // 邻近可选规格（推荐 ±2）
+  const nearby = [-2, -1, 0, 1, 2].map((d) => {
+    const maj = recommendedMajor + d;
+    return {
+      majorDia: maj,
+      designation: `M${maj}×${P}`,
+      isRecommended: d === 0,
+    };
+  });
+
+  return {
+    ok: true,
+    checkPass,
+    checkMessage,
+    warnings,
+    errors,
+    constants: { ...PIPE_END_CONST, H, h, R },
+    input: { D1, t1, D2, t2 },
+    jointCombo: jointLabel,
+    jointKind,
+    D1,
+    D2,
+    t1,
+    t2,
+    P,
+    H,
+    h,
+    R,
+    smallCenterDia,
+    theoryMajor,
+    theoryMinor,
+    largeBore,
+    smallBore,
+    recommendedMajor,
+    recommendedDesignation,
+    isManual,
+    majorDia,
+    designation,
+    // 牙顶 / 牙底（内外都给出）
+    crest: {
+      external: externalCrest, // 外螺纹牙顶 = 大径
+      internal: internalCrest, // 内螺纹牙顶 = 小径
+    },
+    root: {
+      external: externalRoot,
+      internal: internalRoot,
+    },
+    nearby,
+    femaleInternal: {
+      designation,
+      minor: internalMinor,
+      crest: internalCrest,
+      pitchDia: gbD2,
+      major: majorDia,
+      root: internalRoot,
+      note: "母扣内螺纹配套公扣所选规格；内螺纹牙顶=小径，牙底=大径",
+    },
+    gbBasic: { d: majorDia, d2: gbD2, d1: gbD1, d3: gbD3, D1: gbD1, D2: gbD2, D: majorDia },
+    wallCheck: {
+      pierceOk,
+      withinLargeOd,
+      withinLargeWall,
+      withinSmall,
+      pass: checkPass,
+      message: checkMessage,
+    },
+    maleEnd: {
+      locator: PIPE_END_CONST.locatorLen,
+      thread: PIPE_END_CONST.engageLen,
+      undercutWidth: extGrooveW,
+      undercutDf: extGrooveDf,
+      undercutR: UNDERCUT_P2.external.r,
+      total: maleEndLen,
+    },
+    femaleEnd: {
+      locator: PIPE_END_CONST.locatorLen,
+      thread: PIPE_END_CONST.engageLen,
+      undercutWidth: intGrooveW,
+      undercutDg: intGrooveDg,
+      undercutR: UNDERCUT_P2.internal.r,
+      total: femaleEndLen,
+    },
+    bodyTotalLen: PIPE_END_CONST.bodyTotalLen,
+    fitInBody,
+    assemblyNote:
+      "装配时公头定位止口先插入母扣止口导向，再旋入实现 12mm 完全啮合；退刀槽供车削退刀。工况：静止装配、无载荷、仅定位锁紧。",
+  };
+}
+
+function trim(n) {
+  const s = String(Number(Number(n).toFixed(3)));
+  if (!s.includes(".")) return s;
+  return s.replace(/\.?0+$/, "");
+}
+
+/** 扁平输出表（便于复制） */
+function pipeEndToRows(r) {
+  if (!r.ok) return [["错误", r.error]];
+  return [
+    ["对接组合", r.jointCombo],
+    ["对接类型", r.jointKind],
+    ["小管外径 D₁", `${r.D1} mm`],
+    ["大管外径 D₂", `${r.D2} mm`],
+    ["小管壁厚 t₁", `${r.t1} mm`],
+    ["大管壁厚 t₂", `${r.t2} mm`],
+    ["螺距 P", `${r.P} mm`],
+    ["基础牙高 H", `${r.H} mm`],
+    ["工作牙高 h", `${r.h} mm`],
+    ["牙底圆角 R", `${r.R} mm`],
+    ["小管壁中心径", `${r.smallCenterDia} mm`],
+    ["理论外螺纹大径", `${r.theoryMajor} mm`],
+    ["理论内螺纹小径", `${r.theoryMinor} mm`],
+    ["系统推荐规格", r.recommendedDesignation],
+    ["采用规格来源", r.isManual ? "手动给定" : "系统推荐"],
+    ["螺纹大径（最终）", `${r.majorDia} mm`],
+    ["螺纹规格标记", r.designation],
+    ["外螺纹牙顶（大径）", `${r.crest.external} mm`],
+    ["外螺纹牙底（小径）", `${r.root.external} mm`],
+    ["内螺纹牙顶（小径）", `${r.crest.internal} mm`],
+    ["内螺纹牙底（大径）", `${r.root.internal} mm`],
+    ["母扣内螺纹", `${r.femaleInternal.designation}（牙顶 ${r.crest.internal} mm）`],
+    ["校验结果", r.checkPass ? `通过：${r.checkMessage}` : `警告：${r.checkMessage}`],
+    ["公扣端头总长（止口+螺纹+退刀槽）", `${r.maleEnd.total} mm`],
+    ["母扣端头内腔总长（止口+内螺纹+内退刀槽）", `${r.femaleEnd.total} mm`],
+    ["外螺纹退刀槽宽度", `${r.maleEnd.undercutWidth} mm`],
+    ["内螺纹退刀槽宽度", `${r.femaleEnd.undercutWidth} mm`],
+    ["接管本体总长", `${r.bodyTotalLen} mm`],
+  ];
+}
+
+/**
+ * 仅按螺纹型号生成公/母扣端头结构表（不需要管径壁厚）
+ * @param {string} designationRaw 如 M200×2 / M200X2 / 200
+ * @param {{ grooveKind?: 'normal'|'short'|'long' }} [opt]
+ */
+function computeThreadEndCards(designationRaw, opt = {}) {
+  const parsed = parseManualMajor(designationRaw);
+  if (!parsed.ok) return parsed;
+
+  const P = PIPE_END_CONST.pitch;
+  const h = round3(PIPE_END_CONST.h_factor * P);
+  const H = round3(PIPE_END_CONST.H_factor * P);
+  const R = round3(PIPE_END_CONST.R_factor * P);
+  const majorDia = parsed.majorDia;
+  const designation = `M${majorDia}×${P}`;
+
+  const externalCrest = majorDia;
+  const internalCrest = round3(majorDia - 2 * h);
+  const externalRoot = internalCrest;
+  const internalRoot = majorDia;
+
+  const grooveKind = opt.grooveKind || "normal";
+  const widthKey = grooveKind === "short" ? "g2" : grooveKind === "long" ? "g3" : "g1";
+  const extGrooveW = UNDERCUT_P2.external[widthKey];
+  const intGrooveW = UNDERCUT_P2.internal[widthKey];
+  const undercutDf = round3(majorDia - UNDERCUT_P2.external.k);
+  const undercutDg = round3(majorDia + UNDERCUT_P2.internal.m);
+
+  const locator = PIPE_END_CONST.locatorLen;
+  const engage = PIPE_END_CONST.engageLen;
+  const maleTotal = round3(locator + engage + extGrooveW);
+  const femaleTotal = round3(locator + engage + intGrooveW);
+
+  return {
+    ok: true,
+    designation,
+    majorDia,
+    P,
+    H,
+    h,
+    R,
+    bodyTotalLen: PIPE_END_CONST.bodyTotalLen,
+    grooveKind,
+    crest: { external: externalCrest, internal: internalCrest },
+    root: { external: externalRoot, internal: internalRoot },
+    male: {
+      title: `公扣端头结构（计入 ${PIPE_END_CONST.bodyTotalLen}）`,
+      rows: [
+        ["定位止口", `${locator} mm`],
+        ["螺纹有效旋合段", `${engage} mm`],
+        ["外螺纹牙顶（大径）", `${externalCrest} mm`],
+        ["外螺纹牙底（小径）", `${externalRoot} mm`],
+        ["外螺纹退刀槽宽", `${extGrooveW} mm`],
+        ["退刀槽底径 df", `${undercutDf} mm`],
+        ["端头合计", `${maleTotal} mm`],
+      ],
+      locator,
+      engage,
+      undercutWidth: extGrooveW,
+      undercutDf,
+      total: maleTotal,
+    },
+    female: {
+      title: `母扣端头内腔（计入 ${PIPE_END_CONST.bodyTotalLen}）`,
+      rows: [
+        ["定位止口接收段", `${locator} mm`],
+        ["内螺纹旋合段", `${engage} mm`],
+        ["内螺纹牙顶（小径）", `${internalCrest} mm`],
+        ["内螺纹牙底（大径）", `${internalRoot} mm`],
+        ["内螺纹退刀槽宽", `${intGrooveW} mm`],
+        ["退刀槽底径 Dg", `${undercutDg} mm`],
+        ["内腔合计", `${femaleTotal} mm`],
+      ],
+      locator,
+      engage,
+      undercutWidth: intGrooveW,
+      undercutDg,
+      total: femaleTotal,
+    },
+  };
+}
+
+
+
+/**
+ * 锥管模具分段设计
+ * - 大直径节优先标准长（默认 210，含上口余量）
+ * - 最小直径节用非标长度凑满模具总高（含下口余量）
+ * - 段间螺纹 P=2，大径就近圆整到 0/5
+ */
+
+/** 常用无缝管外径（mm） */
+const STD_PIPE_ODS = [
+  89, 102, 108, 114, 121, 127, 133, 140, 152, 159, 168, 180, 194, 203, 219, 245, 273, 299, 325,
+];
+
+const CONE_MOLD_DEFAULTS = {
+  bigOd: 219,
+  smallOd: 108,
+  moldHeight: 930,
+  topAllowance: 45, // 计入最大节
+  bottomAllowance: 5, // 计入最小节
+  standardLen: 210,
+  pitch: 2,
+  defaultWall: {
+    219: 8,
+    180: 8,
+    168: 8,
+    159: 6,
+    140: 6,
+    133: 6,
+    121: 6,
+    114: 6,
+    108: 6,
+  },
+};
+
+function round3(n) {
+  return Math.round(n * 1000) / 1000;
+}
+
+/** 就近圆整到尾数 0 或 5 */
+function roundMajor05(n) {
+  return Math.round(Number(n) / 5) * 5;
+}
+
+function nearestOd(target, catalog) {
+  let best = catalog[0];
+  let bestD = Math.abs(catalog[0] - target);
+  for (const od of catalog) {
+    const d = Math.abs(od - target);
+    if (d < bestD) {
+      best = od;
+      bestD = d;
+    }
+  }
+  return best;
+}
+
+/**
+ * 在 [small, big] 内选 count 个外径（含两端）
+ * 按「两端 + 中间标准管目录」下标均匀取样
+ */
+function pickSegmentOds(bigOd, smallOd, count, catalog = STD_PIPE_ODS) {
+  const big = Number(bigOd);
+  const small = Number(smallOd);
+  if (!(big > small) || count < 2) {
+    return { ok: false, error: "大头须大于小头，且至少 2 节" };
+  }
+
+  const mid = [...new Set(catalog.filter((d) => d < big && d > small))].sort((a, b) => b - a);
+  const chain = [big, ...mid, small];
+  const ods = new Array(count);
+  ods[0] = big;
+  ods[count - 1] = small;
+
+  if (count === 2) return { ok: true, ods };
+
+  if (chain.length >= count) {
+    for (let i = 1; i <= count - 2; i++) {
+      const idx = Math.round((i * (chain.length - 1)) / (count - 1));
+      let cand = chain[Math.min(idx, chain.length - 2)];
+      // 保持严格介于相邻已定点之间（末端稍后写入）
+      const prev = ods[i - 1];
+      const minLeft = small + (count - 1 - i);
+      if (cand >= prev) cand = prev - 1;
+      if (cand <= minLeft) cand = minLeft;
+      // 贴回目录
+      const pool = mid.filter((d) => d < prev && d > small);
+      if (pool.length) cand = nearestOd(cand, pool);
+      if (cand >= prev || cand <= small) {
+        const t = i / (count - 1);
+        cand = nearestOd(big + (small - big) * t, pool.length ? pool : [Math.round(big + (small - big) * t)]);
+      }
+      ods[i] = cand;
+    }
+  } else {
+    for (let i = 1; i <= count - 2; i++) {
+      const t = i / (count - 1);
+      ods[i] = Math.round(big + (small - big) * t);
+    }
+  }
+
+  for (let i = 1; i < count - 1; i++) {
+    if (!(ods[i] < ods[i - 1])) ods[i] = ods[i - 1] - 1;
+    if (!(ods[i] > (ods[i + 1] ?? small))) {
+      const hi = ods[i - 1];
+      const lo = i + 1 < count - 1 ? ods[i + 1] : small;
+      ods[i] = Math.round((hi + lo) / 2);
+      if (!(ods[i] < hi)) ods[i] = hi - 1;
+      if (!(ods[i] > lo)) ods[i] = lo + 1;
+    }
+  }
+  ods[0] = big;
+  ods[count - 1] = small;
+  return { ok: true, ods };
+}
+
+/**
+ * 计算节数与长度：大节=standardLen，小节=剩余非标
+ */
+function planSegmentLengths(moldHeight, standardLen = 210, minSmall = 120, maxSmall = 400) {
+  const H = Number(moldHeight);
+  const S = Number(standardLen);
+  if (!(H > 0) || !(S > 0)) return { ok: false, error: "模具总高与标准节长须大于 0" };
+
+  const candidates = [];
+  // 大节数量 k = n-1，n 从 2 到合理上限
+  for (let k = 1; k <= 12; k++) {
+    const smallLen = round3(H - k * S);
+    if (smallLen <= 0) break;
+    const n = k + 1;
+    const inPrefer = smallLen >= 150 && smallLen <= 210;
+    const inAllow = smallLen >= minSmall && smallLen <= maxSmall;
+    if (!inAllow) continue;
+    candidates.push({
+      segmentCount: n,
+      largeCount: k,
+      standardLen: S,
+      smallLen,
+      inPrefer,
+      score: inPrefer ? 0 : Math.min(Math.abs(smallLen - 150), Math.abs(smallLen - 210)) + (n > 5 ? n : 0),
+    });
+  }
+  if (!candidates.length) {
+    return {
+      ok: false,
+      error: `总高 ${H} 无法用「大节 ${S} + 小节非标」凑齐（小节需在 ${minSmall}～${maxSmall}）`,
+    };
+  }
+  candidates.sort((a, b) => a.score - b.score || a.segmentCount - b.segmentCount);
+  return { ok: true, plan: candidates[0], alternatives: candidates.slice(0, 5) };
+}
+
+function defaultWallFor(od, map) {
+  if (map && map[od] != null) return Number(map[od]);
+  if (od >= 180) return 8;
+  if (od >= 140) return 6;
+  return 6;
+}
+
+/** 求使校验通过的最小母端壁厚 */
+function minFemaleWall(D1, t1, D2, majorDia) {
+  for (let t2 = 4; t2 <= 60; t2 += 0.5) {
+    const r = computePipeEndThread(
+      { D1, t1, D2, t2 },
+      majorDia != null ? { majorDia } : {}
+    );
+    if (r.ok && r.checkPass) return t2;
+  }
+  return null;
+}
+
+/**
+ * @param {{
+ *   bigOd: number, smallOd: number, moldHeight: number,
+ *   topAllowance?: number, bottomAllowance?: number,
+ *   standardLen?: number, segmentCount?: number,
+ *   walls?: Record<number, number>, roundThread?: boolean
+ * }} input
+ */
+function designConeMold(input) {
+  const bigOd = Number(input.bigOd);
+  const smallOd = Number(input.smallOd);
+  const moldHeight = Number(input.moldHeight);
+  const topAllowance = Number(input.topAllowance ?? CONE_MOLD_DEFAULTS.topAllowance);
+  const bottomAllowance = Number(input.bottomAllowance ?? CONE_MOLD_DEFAULTS.bottomAllowance);
+  const standardLen = Number(input.standardLen ?? CONE_MOLD_DEFAULTS.standardLen);
+  const roundThread = input.roundThread !== false;
+  const walls = input.walls || CONE_MOLD_DEFAULTS.defaultWall;
+
+  if (!(bigOd > smallOd)) return { ok: false, error: "大头外径须大于小头外径" };
+  if (!(moldHeight > 0)) return { ok: false, error: "模具总高须大于 0" };
+  if (topAllowance < 0 || bottomAllowance < 0) return { ok: false, error: "上/下余量不能为负" };
+  if (topAllowance >= standardLen) {
+    return { ok: false, error: `上口余量 ${topAllowance} 须小于标准节长 ${standardLen}` };
+  }
+  if (bottomAllowance >= moldHeight) {
+    return { ok: false, error: "下口余量过大" };
+  }
+
+  const lengthPlan = planSegmentLengths(moldHeight, standardLen);
+  if (!lengthPlan.ok) return lengthPlan;
+
+  let segmentCount = lengthPlan.plan.segmentCount;
+  if (input.segmentCount != null && Number(input.segmentCount) >= 2) {
+    const forced = Number(input.segmentCount);
+    const smallLen = round3(moldHeight - (forced - 1) * standardLen);
+    if (smallLen <= 0) {
+      return { ok: false, error: `节数 ${forced} 过大，剩余小节长度不足` };
+    }
+    segmentCount = forced;
+    lengthPlan.plan = {
+      segmentCount: forced,
+      largeCount: forced - 1,
+      standardLen,
+      smallLen,
+      inPrefer: smallLen >= 150 && smallLen <= 210,
+      score: 0,
+    };
+  }
+
+  const odPick = input.preferredOds && Array.isArray(input.preferredOds) && input.preferredOds.length === segmentCount
+    ? { ok: true, ods: input.preferredOds.map(Number) }
+    : pickSegmentOds(bigOd, smallOd, segmentCount);
+  if (!odPick.ok) return odPick;
+  if (odPick.ods[0] !== bigOd || odPick.ods[odPick.ods.length - 1] !== smallOd) {
+    odPick.ods[0] = bigOd;
+    odPick.ods[odPick.ods.length - 1] = smallOd;
+  }
+
+  const smallLen = lengthPlan.plan.smallLen;
+  const segments = odPick.ods.map((od, i) => {
+    const isFirst = i === 0;
+    const isLast = i === odPick.ods.length - 1;
+    const length = isLast ? smallLen : standardLen;
+    const kind = isLast ? "非标" : "标准";
+    const wall = defaultWallFor(od, walls);
+    return {
+      index: i + 1,
+      od,
+      length,
+      kind,
+      wall,
+      topFaceOffset: isFirst ? topAllowance : null,
+      belowTopFace: isFirst ? round3(length - topAllowance) : null,
+      bottomFaceOffset: isLast ? bottomAllowance : null,
+      aboveBottomFace: isLast ? round3(length - bottomAllowance) : null,
+      femaleEnd: !isLast,
+      maleEnd: !isFirst,
+    };
+  });
+
+  const faceToFace = round3(
+    segments[0].belowTopFace +
+      segments.slice(1, -1).reduce((s, seg) => s + seg.length, 0) +
+      segments[segments.length - 1].aboveBottomFace
+  );
+
+  const joints = [];
+  for (let i = 0; i < segments.length - 1; i++) {
+    const female = segments[i];
+    const male = segments[i + 1];
+    const D1 = male.od;
+    const t1 = male.wall;
+    const D2 = female.od;
+    const auto = computePipeEndThread({ D1, t1, D2, t2: 40 });
+    if (!auto.ok) {
+      joints.push({ ok: false, error: auto.error, fromOd: D2, toOd: D1 });
+      continue;
+    }
+    const majorDia = roundThread ? roundMajor05(auto.recommendedMajor) : auto.recommendedMajor;
+    // 圆整后若为 0，回退自动值
+    const major = majorDia > 0 ? majorDia : auto.recommendedMajor;
+    const minT2 = minFemaleWall(D1, t1, D2, major);
+    const check = computePipeEndThread(
+      { D1, t1, D2, t2: minT2 || 40 },
+      { majorDia: major }
+    );
+    const cards = computeThreadEndCards(`M${major}×${PIPE_END_CONST.pitch}`);
+    joints.push({
+      ok: true,
+      index: i + 1,
+      fromOd: D2,
+      toOd: D1,
+      maleWall: t1,
+      autoDesignation: auto.recommendedDesignation,
+      designation: `M${major}×${PIPE_END_CONST.pitch}`,
+      majorDia: major,
+      crest: check.crest,
+      root: check.root,
+      undercutDf: major - 3,
+      undercutDg: major + 3,
+      endStructure: 26,
+      minFemaleWall: minT2,
+      checkPass: !!minT2,
+      checkMessage: minT2
+        ? `母端局部壁厚建议 ≥ ${minT2} mm`
+        : "无法满足母端壁厚校验，请加厚或改规格",
+      maleCard: cards.ok ? cards.male : null,
+      femaleCard: cards.ok ? cards.female : null,
+      theoryMajor: auto.theoryMajor,
+      smallCenterDia: auto.smallCenterDia,
+    });
+  }
+
+  const sumLen = round3(segments.reduce((s, seg) => s + seg.length, 0));
+
+  return {
+    ok: true,
+    input: { bigOd, smallOd, moldHeight, topAllowance, bottomAllowance, standardLen, roundThread },
+    segmentCount,
+    segments,
+    joints,
+    summary: {
+      moldHeight: sumLen,
+      heightOk: Math.abs(sumLen - moldHeight) < 1e-6,
+      faceToFace,
+      expectedFaceToFace: round3(moldHeight - topAllowance - bottomAllowance),
+      jointCount: joints.length,
+      pitch: PIPE_END_CONST.pitch,
+      locator: PIPE_END_CONST.locatorLen,
+      engage: PIPE_END_CONST.engageLen,
+      undercut: 4,
+    },
+    alternatives: lengthPlan.alternatives,
+  };
+}
+
+
+const $ = (id) => document.getElementById(id);
+let last = null;
+
+function num(id, fallback) {
+  const v = Number($(id).value);
+  return Number.isFinite(v) ? v : fallback;
+}
+
+function fillSegTable(segments) {
+  $("segTable").innerHTML = segments
+    .map((s) => {
+      const ends = [s.femaleEnd ? "下母" : "", s.maleEnd ? "上公" : ""].filter(Boolean).join("+") || "—";
+      let note = "—";
+      if (s.topFaceOffset != null) {
+        note = `含上口 ${s.topFaceOffset}；面下 ${s.belowTopFace}`;
+      } else if (s.bottomFaceOffset != null) {
+        note = `含下口 ${s.bottomFaceOffset}；面上 ${s.aboveBottomFace}`;
+      }
+      return `<tr>
+        <th scope="row">${s.index}</th>
+        <td>φ${s.od}</td>
+        <td>${s.length} mm</td>
+        <td>${s.kind}</td>
+        <td>${s.wall} mm</td>
+        <td>${ends}</td>
+        <td>${note}</td>
+      </tr>`;
+    })
+    .join("");
+}
+
+function fillJointTable(joints) {
+  $("jointTable").innerHTML = joints
+    .map((j) => {
+      if (!j.ok) {
+        return `<tr><th>${j.index || "—"}</th><td colspan="6">${j.error}</td></tr>`;
+      }
+      return `<tr>
+        <th scope="row">${j.index}</th>
+        <td>φ${j.fromOd} → φ${j.toOd}</td>
+        <td>${j.autoDesignation}</td>
+        <td><strong>${j.designation}</strong></td>
+        <td>${j.crest.external} / ${j.crest.internal}</td>
+        <td>${j.undercutDf} / ${j.undercutDg}</td>
+        <td>≥ ${j.minFemaleWall ?? "—"} mm</td>
+      </tr>`;
+    })
+    .join("");
+}
+
+function renderSchema(segments) {
+  const parts = [];
+  segments.forEach((s, i) => {
+    parts.push(`<div class="seg"><strong>φ${s.od}</strong><span>${s.length} mm · ${s.kind}</span></div>`);
+    if (i < segments.length - 1) parts.push(`<div class="arrow">→</div>`);
+  });
+  $("schema").innerHTML = parts.join("");
+}
+
+function renderJointCards(joints) {
+  const host = $("jointCards");
+  host.innerHTML = joints
+    .filter((j) => j.ok && j.maleCard && j.femaleCard)
+    .map((j) => {
+      const maleRows = j.maleCard.rows
+        .map(([k, v]) => `<tr><th scope="row">${k}</th><td>${v}</td></tr>`)
+        .join("");
+      const femaleRows = j.femaleCard.rows
+        .map(([k, v]) => `<tr><th scope="row">${k}</th><td>${v}</td></tr>`)
+        .join("");
+      return `<article class="card joint-block">
+        <h4>第 ${j.index} 道 · ${j.designation}（φ${j.fromOd} 母 ← φ${j.toOd} 公）</h4>
+        <p class="muted" style="margin:0 0 10px">${j.checkMessage}</p>
+        <div class="card-pair">
+          <div>
+            <h3 style="margin-top:0">${j.maleCard.title}</h3>
+            <table class="data"><tbody>${maleRows}</tbody></table>
+          </div>
+          <div>
+            <h3 style="margin-top:0">${j.femaleCard.title}</h3>
+            <table class="data"><tbody>${femaleRows}</tbody></table>
+          </div>
+        </div>
+      </article>`;
+    })
+    .join("");
+}
+
+function run() {
+  const midRaw = $("midOds").value.trim();
+  const bigOd = num("bigOd", CONE_MOLD_DEFAULTS.bigOd);
+  const smallOd = num("smallOd", CONE_MOLD_DEFAULTS.smallOd);
+  const moldHeight = num("moldHeight", CONE_MOLD_DEFAULTS.moldHeight);
+  const topAllowance = num("topAllowance", CONE_MOLD_DEFAULTS.topAllowance);
+  const bottomAllowance = num("bottomAllowance", CONE_MOLD_DEFAULTS.bottomAllowance);
+  const standardLen = num("standardLen", CONE_MOLD_DEFAULTS.standardLen);
+  const segCountRaw = $("segmentCount").value.trim();
+  const segmentCount = segCountRaw === "" ? undefined : Number(segCountRaw);
+
+  let preferredOds;
+  if (midRaw) {
+    const mids = midRaw
+      .split(/[,，\s]+/)
+      .map((x) => Number(x))
+      .filter((x) => Number.isFinite(x) && x > 0);
+    if (mids.length) preferredOds = [bigOd, ...mids, smallOd];
+  }
+
+  const r = designConeMold({
+    bigOd,
+    smallOd,
+    moldHeight,
+    topAllowance,
+    bottomAllowance,
+    standardLen,
+    segmentCount,
+    preferredOds,
+    roundThread: true,
+  });
+
+  if (!r.ok) {
+    last = null;
+    $("results").hidden = true;
+    $("status").textContent = r.error;
+    $("status").className = "status error";
+    $("warnBox").classList.remove("show");
+    return;
+  }
+
+  last = r;
+  $("results").hidden = false;
+  $("status").textContent = `已生成 ${r.segmentCount} 节 / ${r.summary.jointCount} 道螺纹，总高 ${r.summary.moldHeight} mm`;
+  $("status").className = "status ok";
+  $("summaryLine").textContent =
+    `总高 ${r.summary.moldHeight}（校核 ${r.summary.heightOk ? "OK" : "异常"}）· 219面→108面类距 ${r.summary.faceToFace} mm · P=${r.summary.pitch}`;
+  renderSchema(r.segments);
+  fillSegTable(r.segments);
+  fillJointTable(r.joints);
+  renderJointCards(r.joints);
+
+  const warns = r.joints.filter((j) => j.ok && j.minFemaleWall != null).map((j) => `第${j.index}道母端局部 ≥${j.minFemaleWall}mm`);
+  if (warns.length) {
+    $("warnBox").textContent = "母扣需局部加厚，不能按薄壁管直车：" + warns.join("；");
+    $("warnBox").classList.add("show");
+  } else {
+    $("warnBox").classList.remove("show");
+  }
+}
+
+async function copy() {
+  if (!last) {
+    $("status").textContent = "请先生成方案";
+    $("status").className = "status error";
+    return;
+  }
+  const nl = String.fromCharCode(10);
+  const tab = String.fromCharCode(9);
+  const lines = [
+    `锥管模具 ${last.input.bigOd}→${last.input.smallOd} 总高 ${last.summary.moldHeight}`,
+    "各节",
+    ...last.segments.map((s) => `第${s.index}${tab}φ${s.od}${tab}${s.length}${tab}${s.kind}${tab}t≈${s.wall}`),
+    "",
+    "螺纹",
+    ...last.joints.filter((j) => j.ok).map(
+      (j) => `第${j.index}${tab}φ${j.fromOd}→φ${j.toOd}${tab}${j.designation}${tab}母端≥${j.minFemaleWall}`
+    ),
+  ];
+  const text = lines.join(nl);
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand("copy");
+    document.body.removeChild(ta);
+  }
+  $("status").textContent = "已复制";
+  $("status").className = "status ok";
+}
+
+$("calcBtn").addEventListener("click", run);
+$("copyBtn").addEventListener("click", copy);
+["bigOd", "smallOd", "moldHeight", "topAllowance", "bottomAllowance", "standardLen", "segmentCount", "midOds"].forEach(
+  (id) => {
+    $(id).addEventListener("change", run);
+    $(id).addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        run();
+      }
+    });
+  }
+);
+
+run();
+
+</script>
+</body>
+</html>
