@@ -116,16 +116,22 @@ function lookupPitchRow(table, pitch) {
   return { ...table[table.length - 1] };
 }
 
-/** 解析螺纹代号：M20 / M20x1.5 / M20×2.5 / m12*1.25 */
+/** 解析螺纹代号：M20 / M20x1.5 / M320X2 / M195×2 / m12*1.25 */
 export function parseThreadSpec(raw) {
-  const s = String(raw || "").trim().replace(/\s+/g, "");
-  if (!s) return { ok: false, error: "请输入螺纹规格，例如 M20 或 M20×1.5" };
+  let s = String(raw || "").trim();
+  if (!s) return { ok: false, error: "请输入螺纹规格，例如 M20、M320X2、M195×2" };
 
-  const m = s.match(/^M(\d+(?:\.\d+)?)(?:[x×*](\d+(?:\.\d+)?))?$/i);
+  // 全角/杂字符归一：乘号、连字符、字母 X
+  s = s
+    .replace(/\s+/g, "")
+    .replace(/[×✕✖ｘＸxX＊*－—–−-]/g, "x")
+    .replace(/ｍ/gi, "M");
+
+  const m = s.match(/^M(\d+(?:\.\d+)?)(?:x(\d+(?:\.\d+)?))?$/i);
   if (!m) {
     return {
       ok: false,
-      error: "无法识别规格。支持：M20、M20×1.5、M16*1.5",
+      error: "无法识别规格。支持：M20、M320X2、M195×2、M16*1.5",
     };
   }
 

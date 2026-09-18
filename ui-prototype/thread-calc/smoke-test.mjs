@@ -44,10 +44,18 @@ assert(approx(fine.basic.external.pitch, 19.026), "fine d2");
 const shortG = computeThread("M12", { lengthKind: "short" });
 assert(approx(shortG.undercut.external.width, 3.0) || shortG.undercut.external.width < 4, "short groove");
 
-const custom = computeThread({ ok: true, d: 320, pitchGiven: 2 }, { d: 320, pitch: 2 });
+assert(parseThreadSpec("M320X2").ok && parseThreadSpec("M320X2").d === 320, "M320X2");
+assert(parseThreadSpec("M320X2").pitchGiven === 2, "M320X2 pitch");
+assert(parseThreadSpec("M195X2").ok && parseThreadSpec("M195X2").d === 195, "M195X2");
+assert(parseThreadSpec("M195×2").pitchGiven === 2, "M195×2");
+
+const custom = computeThread("M320X2");
 assert(custom.ok, "custom M320×2");
 assert(approx(custom.basic.external.crest, 320), "custom crest");
 assert(approx(custom.basic.external.pitch, 318.701), "custom d2"); // 320 - 0.649519*2
+
+const m195 = computeThread("M195X2");
+assert(m195.ok && approx(m195.basic.external.root, 192.546), "M195 root");
 
 console.log("thread-math smoke OK");
 console.log(

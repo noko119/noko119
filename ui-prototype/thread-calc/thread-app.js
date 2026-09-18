@@ -123,8 +123,8 @@ function render(r) {
   lastResult = r;
   results.hidden = false;
   $("desigTitle").textContent = r.designation;
-  $("desigMeta").textContent = `自定义输入：d=${trim(r.d)} mm · P=${trim(r.pitch)} mm · ${
-    r.isCoarse ? "等于粗牙默认" : "自定义/细牙螺距"
+  $("desigMeta").textContent = `d=${trim(r.d)} mm · P=${trim(r.pitch)} mm · ${
+    r.isCoarse ? "粗牙默认螺距" : "自定义螺距"
   } · 牙型角 60°`;
 
   fillTable($("extTable"), [
@@ -177,24 +177,44 @@ function render(r) {
   renderDiagram(r);
 }
 
-function runCalc() {
+/** 优先吃代号框（M320X2 / M195×2），否则用直径+螺距 */
+function resolveInputs(preferSpec) {
+  const raw = specInput.value.trim();
+  if (preferSpec && raw) {
+    const parsed = parseThreadSpec(raw);
+    if (parsed.ok) {
+      const pitch = parsed.pitchGiven ?? defaultPitch(parsed.d);
+      return { ok: true, d: parsed.d, pitch, from: "spec", designationHint: raw };
+    }
+    // 代号看起来像螺纹但解析失败 → 报错，不要静默用旧 d/P
+    if (/^m/i.test(raw.replace(/\s+/g, ""))) {
+      return { ok: false, error: parsed.error };
+    }
+  }
+
   const d = Number(dInput.value);
   const pitch = Number(pInput.value);
-  const lengthKind = grooveLen.value;
-
   if (!(d > 0) || !(pitch > 0)) {
-    parsedHint.textContent = "请填写有效的直径 d 与螺距 P（均可自定义，不限标准系列）。";
-    setStatus("请填写直径和螺距", "error");
+    return { ok: false, error: "请填写有效的直径 d 与螺距 P，或输入代号如 M320X2" };
+  }
+  if (pitch >= d) {
+    return { ok: false, error: "螺距不宜大于或等于直径" };
+  }
+  return { ok: true, d, pitch, from: "fields" };
+}
+
+function runCalc(options = {}) {
+  const preferSpec = options.preferSpec !== false;
+  const resolved = resolveInputs(preferSpec);
+  if (!resolved.ok) {
+    parsedHint.textContent = resolved.error;
+    setStatus(resolved.error, "error");
     results.hidden = true;
     return;
   }
 
-  if (pitch >= d) {
-    parsedHint.textContent = "螺距通常应小于直径；请检查自定义螺距是否过大。";
-    setStatus("螺距不宜大于或等于直径", "error");
-    results.hidden = true;
-    return;
-  }
+  const { d, pitch } = resolved;
+  const lengthKind = grooveLen.value;
 
   const result = computeThread(
     { ok: true, d, pitchGiven: pitch },
@@ -206,32 +226,27 @@ function runCalc() {
     return;
   }
 
-  if (!syncing) {
-    syncing = true;
-    specInput.value = result.designation;
-    syncing = false;
-  }
+  syncing = true;
+  dInput.value = String(result.d);
+  pInput.value = String(result.pitch);
+  // 保留用户输入的 X 写法时，仍统一显示标准代号
+  specInput.value = result.designation;
+  syncing = false;
 
-  parsedHint.textContent = `当前按自定义计算：d=${trim(d)} · P=${trim(pitch)} → ${result.designation}`;
+  parsedHint.textContent = `已识别 ${result.designation}：d=${trim(d)} · P=${trim(pitch)}（支持 M320X2 / M195×2 等任意自定义）`;
   render(result);
   setStatus(`已生成 ${result.designation}`, "ok");
   highlightChip(result.designation);
 }
 
-function scheduleCalc() {
+function scheduleCalcFromFields() {
   clearTimeout(debounceTimer);
-  debounceTimer = setTimeout(runCalc, 120);
+  debounceTimer = setTimeout(() => runCalc({ preferSpec: false }), 120);
 }
 
-function applySpecToFields(raw) {
-  const parsed = parseThreadSpec(raw);
-  if (!parsed.ok) return parsed;
-  const pitch = parsed.pitchGiven ?? defaultPitch(parsed.d);
-  syncing = true;
-  dInput.value = String(parsed.d);
-  pInput.value = String(pitch);
-  syncing = false;
-  return { ok: true, d: parsed.d, pitch };
+function scheduleCalcFromSpec() {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(() => runCalc({ preferSpec: true }), 120);
 }
 
 function highlightChip(desig) {
@@ -239,6 +254,7 @@ function highlightChip(desig) {
     const same =
       btn.dataset.spec === desig ||
       btn.dataset.spec === desig.replace("×", "x") ||
+      btn.dataset.spec === desig.replace("×", "X") ||
       btn.dataset.spec === desig.replace("x", "×");
     btn.classList.toggle("active", same);
   });
@@ -251,6 +267,7 @@ function buildChips() {
     { label: "M20×1.5", d: 20, pitch: 1.5 },
     { label: "M16×1.5", d: 16, pitch: 1.5 },
     { label: "M10×1", d: 10, pitch: 1 },
+    { label: "M195×2", d: 195, pitch: 2 },
     { label: "M320×2", d: 320, pitch: 2 },
   ];
   const items = [
@@ -272,7 +289,7 @@ function buildChips() {
     pInput.value = btn.dataset.p;
     specInput.value = btn.dataset.spec;
     syncing = false;
-    runCalc();
+    runCalc({ preferSpec: true });
   });
 }
 
@@ -328,46 +345,43 @@ async function copyResult() {
   }
 }
 
-$("calcBtn").addEventListener("click", runCalc);
+$("calcBtn").addEventListener("click", () => runCalc({ preferSpec: true }));
 $("copyBtn").addEventListener("click", copyResult);
 $("coarseBtn").addEventListener("click", () => {
-  const d = Number(dInput.value);
+  const d = Number(dInput.value) || parseThreadSpec(specInput.value.trim()).d;
   if (!(d > 0)) {
-    setStatus("请先填写直径", "error");
+    setStatus("请先填写直径或代号", "error");
     return;
   }
   const coarse = defaultPitch(d);
   syncing = true;
+  dInput.value = String(d);
   pInput.value = String(coarse);
   specInput.value = makeDesignation(d, coarse);
   syncing = false;
-  runCalc();
+  runCalc({ preferSpec: false });
 });
 
-dInput.addEventListener("input", scheduleCalc);
-pInput.addEventListener("input", scheduleCalc);
-grooveLen.addEventListener("change", runCalc);
-
-specInput.addEventListener("change", () => {
+dInput.addEventListener("input", () => {
   if (syncing) return;
-  const applied = applySpecToFields(specInput.value.trim());
-  if (!applied.ok) {
-    setStatus(applied.error, "error");
-    return;
-  }
-  runCalc();
+  scheduleCalcFromFields();
+});
+pInput.addEventListener("input", () => {
+  if (syncing) return;
+  scheduleCalcFromFields();
+});
+grooveLen.addEventListener("change", () => runCalc({ preferSpec: false }));
+
+specInput.addEventListener("input", () => {
+  if (syncing) return;
+  scheduleCalcFromSpec();
 });
 specInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
     e.preventDefault();
-    const applied = applySpecToFields(specInput.value.trim());
-    if (!applied.ok) {
-      setStatus(applied.error, "error");
-      return;
-    }
-    runCalc();
+    runCalc({ preferSpec: true });
   }
 });
 
 buildChips();
-runCalc();
+runCalc({ preferSpec: true });
