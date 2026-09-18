@@ -398,6 +398,7 @@ html, body {
 @media(max-width:860px){.field-row.four{grid-template-columns:1fr 1fr}}
 .diagram-wrap{margin-top:14px}
 .diagram-wrap .diagram{display:block;width:100%;min-height:280px;height:auto;margin-top:10px;background:linear-gradient(180deg,#f8fbf9,#e8f0eb);border:1px solid rgba(26,36,32,.12);border-radius:14px}
+input[readonly]{background:#f3f6f4;color:var(--steel)}
 
 </style>
 </head>
@@ -407,7 +408,7 @@ html, body {
     <header class="hero">
       <p class="brand">PIPE END THREAD</p>
       <h1>接管端头螺纹计算</h1>
-      <p class="lede">四项手录：小管/大管外径与壁厚。螺纹中心在小管壁厚中心，并校验大管不击穿；大径就近取整；P=2 固定。</p>
+      <p class="lede">先按管径壁厚推荐螺纹；也可手动改规格后重新出数据与剖面尺寸图。P=2 固定，大径就近取整。</p>
     </header>
 
     <section class="panel">
@@ -437,7 +438,15 @@ html, body {
         </label>
       </div>
 
-      <div class="field-row" style="margin-top:12px;grid-template-columns:1fr 1fr auto">
+      <div class="field-row" style="margin-top:12px;grid-template-columns:1.2fr 1.4fr 1fr auto">
+        <label class="field">
+          <span>系统推荐规格</span>
+          <input id="recommendOut" type="text" value="" readonly />
+        </label>
+        <label class="field">
+          <span>手动给定规格（可改，如 M160×2 或 160）</span>
+          <input id="manualSpec" type="text" value="" placeholder="留空=用推荐；或输入 M160×2" autocomplete="off" spellcheck="false" />
+        </label>
         <label class="field">
           <span>退刀槽长度档</span>
           <select id="grooveKind">
@@ -446,12 +455,14 @@ html, body {
             <option value="long">长 g3</option>
           </select>
         </label>
-        <p class="hint" id="hint" style="align-self:end;margin:0">相邻规格与跨规格共用同一套逻辑；同时兼顾小管、大管壁厚空间。</p>
-        <div class="actions" style="margin:0;align-self:end">
-          <button type="button" class="btn primary" id="calcBtn">生成数据</button>
+        <div class="actions" style="margin:0;align-self:end;flex-wrap:wrap">
+          <button type="button" class="btn primary" id="calcBtn">生成/重算</button>
+          <button type="button" class="btn ghost" id="useRecBtn">采用推荐</button>
           <button type="button" class="btn ghost" id="copyBtn">复制结果</button>
         </div>
       </div>
+      <div class="chips" id="nearbyChips" aria-label="邻近规格" style="margin-top:12px"></div>
+      <p class="hint" id="hint" style="margin-top:10px">流程：填管径壁厚 → 看推荐 → 可手动改规格 → 点生成/重算，刷新数据与示意图。</p>
       <p class="status" id="status" role="status"></p>
       <div class="warn-box" id="warnBox"></div>
       <div class="ok-box" id="okBox"></div>
@@ -520,9 +531,34 @@ function nearInt(n) {
   return Math.round(n);
 }
 
+/** 解析手动规格：M161×2 / M161X2 / 161 */
+function parseManualMajor(raw, defaultPitch = PIPE_END_CONST.pitch) {
+  const s = String(raw || "")
+    .trim()
+    .replace(/\s+/g, "")
+    .replace(/[×✕✖ｘＸxX＊*－—–−-]/g, "x");
+  if (!s) return { ok: false, error: "请输入手动规格，如 M161×2 或 161" };
+  let m = s.match(/^M(\d+(?:\.\d+)?)(?:x(\d+(?:\.\d+)?))?$/i);
+  if (m) {
+    const major = Math.round(Number(m[1]));
+    const pitch = m[2] != null ? Number(m[2]) : defaultPitch;
+    if (!(major > 0)) return { ok: false, error: "螺纹大径无效" };
+    if (Math.abs(pitch - defaultPitch) > 1e-9) {
+      return { ok: false, error: `本工具螺距固定为 P=${defaultPitch}，请写 M${major}×${defaultPitch}` };
+    }
+    return { ok: true, majorDia: major, pitch: defaultPitch };
+  }
+  if (/^\d+(?:\.\d+)?$/.test(s)) {
+    const major = Math.round(Number(s));
+    if (!(major > 0)) return { ok: false, error: "螺纹大径无效" };
+    return { ok: true, majorDia: major, pitch: defaultPitch };
+  }
+  return { ok: false, error: "无法识别。支持：M161×2、M161X2、161" };
+}
+
 /**
  * @param {PipeEndInput} input
- * @param {{ grooveKind?: 'normal'|'short'|'long' }} [opt]
+ * @param {{ grooveKind?: 'normal'|'short'|'long', majorDia?: number, designation?: string }} [opt]
  */
 function computePipeEndThread(input, opt = {}) {
   const { D1, t1, D2, t2 } = input;
@@ -557,8 +593,26 @@ function computePipeEndThread(input, opt = {}) {
   // 5. 大管内孔
   const largeBore = round3(D2 - 2 * t2);
 
-  // 6. 大径就近取整（无小数，不强制 0/5）
-  const majorDia = nearInt(theoryMajor);
+  // 推荐大径（就近取整）
+  const recommendedMajor = nearInt(theoryMajor);
+  const recommendedDesignation = `M${recommendedMajor}×${P}`;
+
+  // 最终采用：手动覆盖 > 推荐
+  let majorDia = recommendedMajor;
+  let isManual = false;
+  if (opt.majorDia != null && Number.isFinite(Number(opt.majorDia))) {
+    majorDia = Math.round(Number(opt.majorDia));
+    isManual = majorDia !== recommendedMajor;
+  } else if (opt.designation) {
+    const parsed = parseManualMajor(opt.designation, P);
+    if (!parsed.ok) return parsed;
+    majorDia = parsed.majorDia;
+    isManual = majorDia !== recommendedMajor;
+  }
+  if (!(majorDia > 0)) {
+    return { ok: false, error: "螺纹大径无效" };
+  }
+
   const designation = `M${majorDia}×${P}`;
 
   // 选定规格后：母扣内螺纹小径按工作牙高对称匹配（大径 − 2h）
@@ -593,6 +647,10 @@ function computePipeEndThread(input, opt = {}) {
     warnings.push("提示：螺纹相对小管壁中心偏移后，可能接近或超出小管壁实体边界，请复核");
   }
 
+  if (isManual) {
+    warnings.push(`当前为手动规格 ${designation}（系统推荐 ${recommendedDesignation}）`);
+  }
+
   const grooveKind = opt.grooveKind || "normal";
   const widthKey = grooveKind === "short" ? "g2" : grooveKind === "long" ? "g3" : "g1";
   const extGrooveW = UNDERCUT_P2.external[widthKey];
@@ -618,6 +676,16 @@ function computePipeEndThread(input, opt = {}) {
   const jointKind =
     D2 > D1 ? (D2 / D1 <= 1.25 ? "相邻规格对接" : "跨规格对接") : "对接组合";
 
+  // 邻近可选规格（推荐 ±2）
+  const nearby = [-2, -1, 0, 1, 2].map((d) => {
+    const maj = recommendedMajor + d;
+    return {
+      majorDia: maj,
+      designation: `M${maj}×${P}`,
+      isRecommended: d === 0,
+    };
+  });
+
   return {
     ok: true,
     checkPass,
@@ -626,7 +694,6 @@ function computePipeEndThread(input, opt = {}) {
     errors,
     constants: { ...PIPE_END_CONST, H, h, R },
     input: { D1, t1, D2, t2 },
-    // 输出字段
     jointCombo: jointLabel,
     jointKind,
     D1,
@@ -642,8 +709,12 @@ function computePipeEndThread(input, opt = {}) {
     theoryMinor,
     largeBore,
     smallBore,
+    recommendedMajor,
+    recommendedDesignation,
+    isManual,
     majorDia,
     designation,
+    nearby,
     femaleInternal: {
       designation,
       minor: internalMinor,
@@ -706,7 +777,9 @@ function pipeEndToRows(r) {
     ["小管壁中心径", `${r.smallCenterDia} mm`],
     ["理论外螺纹大径", `${r.theoryMajor} mm`],
     ["理论内螺纹小径", `${r.theoryMinor} mm`],
-    ["螺纹大径（取整）", `${r.majorDia} mm`],
+    ["系统推荐规格", r.recommendedDesignation],
+    ["采用规格来源", r.isManual ? "手动给定" : "系统推荐"],
+    ["螺纹大径（最终）", `${r.majorDia} mm`],
     ["螺纹规格标记", r.designation],
     ["母扣内螺纹", `${r.femaleInternal.designation}（小径 ${r.femaleInternal.minor} mm）`],
     ["校验结果", r.checkPass ? `通过：${r.checkMessage}` : `警告：${r.checkMessage}`],
@@ -958,6 +1031,7 @@ function renderAssemblyDiagram(r) {
 const $ = (id) => document.getElementById(id);
 
 let last = null;
+let syncing = false;
 
 function num(id) {
   return Number($(id).value);
@@ -969,17 +1043,83 @@ function fill(tbody, rows) {
     .join("");
 }
 
-function run() {
-  const r = computePipeEndThread(
-    { D1: num("D1"), t1: num("t1"), D2: num("D2"), t2: num("t2") },
-    { grooveKind: $("grooveKind").value }
-  );
+function baseInput() {
+  return { D1: num("D1"), t1: num("t1"), D2: num("D2"), t2: num("t2") };
+}
 
+/** 仅刷新推荐框（不强制覆盖手动输入） */
+function refreshRecommend() {
+  const preview = computePipeEndThread(baseInput(), {
+    grooveKind: $("grooveKind").value,
+  });
+  if (!preview.ok) {
+    $("recommendOut").value = "";
+    return null;
+  }
+  $("recommendOut").value = preview.recommendedDesignation;
+  return preview;
+}
+
+function renderNearby(r) {
+  const box = $("nearbyChips");
+  if (!r?.nearby) {
+    box.innerHTML = "";
+    return;
+  }
+  box.innerHTML = r.nearby
+    .map((n) => {
+      const active = n.majorDia === r.majorDia ? " active" : "";
+      const tag = n.isRecommended ? "（推荐）" : "";
+      return `<button type="button" class="chip${active}" data-maj="${n.majorDia}">${n.designation}${tag}</button>`;
+    })
+    .join("");
+}
+
+function run(forceManual) {
   const warnBox = $("warnBox");
   const okBox = $("okBox");
   warnBox.classList.remove("show");
   okBox.classList.remove("show");
 
+  const preview = refreshRecommend();
+  if (!preview) {
+    const bad = computePipeEndThread(baseInput());
+    $("results").hidden = true;
+    $("status").textContent = bad.error || "输入无效";
+    $("status").className = "status error";
+    warnBox.textContent = bad.error || "输入无效";
+    warnBox.classList.add("show");
+    last = null;
+    return;
+  }
+
+  const opt = { grooveKind: $("grooveKind").value };
+  const manualRaw = $("manualSpec").value.trim();
+
+  if (forceManual === false) {
+    // 采用推荐
+    opt.majorDia = preview.recommendedMajor;
+    syncing = true;
+    $("manualSpec").value = preview.recommendedDesignation;
+    syncing = false;
+  } else if (manualRaw) {
+    const parsed = parseManualMajor(manualRaw);
+    if (!parsed.ok) {
+      $("status").textContent = parsed.error;
+      $("status").className = "status error";
+      warnBox.textContent = parsed.error;
+      warnBox.classList.add("show");
+      return;
+    }
+    opt.majorDia = parsed.majorDia;
+  } else {
+    opt.majorDia = preview.recommendedMajor;
+    syncing = true;
+    $("manualSpec").value = preview.recommendedDesignation;
+    syncing = false;
+  }
+
+  const r = computePipeEndThread(baseInput(), opt);
   if (!r.ok) {
     $("results").hidden = true;
     $("status").textContent = r.error;
@@ -993,11 +1133,17 @@ function run() {
   last = r;
   $("results").hidden = false;
   $("title").textContent = r.designation;
-  $("meta").textContent = `${r.jointKind} · ${r.jointCombo} · 壁中心径 ${r.smallCenterDia} mm · 理论大径 ${r.theoryMajor} → 取整 ${r.majorDia}`;
+  $("meta").textContent = `${r.isManual ? "手动规格" : "推荐规格"} · ${r.jointKind} · ${r.jointCombo} · 推荐 ${r.recommendedDesignation} · 理论大径 ${r.theoryMajor} → 采用 ${r.majorDia}`;
+
+  syncing = true;
+  $("manualSpec").value = r.designation;
+  $("recommendOut").value = r.recommendedDesignation;
+  syncing = false;
 
   $("maleSvg").innerHTML = renderMaleDiagram(r);
   $("femaleSvg").innerHTML = renderFemaleDiagram(r);
   $("assySvg").innerHTML = renderAssemblyDiagram(r);
+  renderNearby(r);
 
   fill($("outTable"), pipeEndToRows(r));
   fill($("maleTable"), [
@@ -1024,10 +1170,13 @@ function run() {
   } else {
     okBox.textContent = r.checkMessage;
     okBox.classList.add("show");
-    $("status").textContent = `已生成 ${r.designation}`;
+    $("status").textContent = r.isManual
+      ? `已按手动规格重算 ${r.designation}（推荐 ${r.recommendedDesignation}）`
+      : `已按推荐生成 ${r.designation}`;
     $("status").className = "status ok";
-    if (r.warnings.length) {
-      warnBox.textContent = r.warnings.join("；");
+    const extra = r.warnings.filter((w) => !w.includes("手动规格"));
+    if (extra.length) {
+      warnBox.textContent = extra.join("；");
       warnBox.classList.add("show");
     }
   }
@@ -1060,17 +1209,38 @@ async function copy() {
   }
 }
 
-$("calcBtn").addEventListener("click", run);
+$("calcBtn").addEventListener("click", () => run(true));
+$("useRecBtn").addEventListener("click", () => run(false));
 $("copyBtn").addEventListener("click", copy);
+
+$("nearbyChips").addEventListener("click", (e) => {
+  const btn = e.target.closest(".chip");
+  if (!btn) return;
+  syncing = true;
+  $("manualSpec").value = `M${btn.dataset.maj}×2`;
+  syncing = false;
+  run(true);
+});
+
 ["D1", "t1", "D2", "t2", "grooveKind"].forEach((id) => {
-  $(id).addEventListener("change", run);
+  $(id).addEventListener("change", () => run(true));
   $(id).addEventListener("input", () => {
     clearTimeout($(id)._t);
-    $(id)._t = setTimeout(run, 150);
+    $(id)._t = setTimeout(() => {
+      refreshRecommend();
+      run(true);
+    }, 150);
   });
 });
 
-run();
+$("manualSpec").addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    run(true);
+  }
+});
+
+run(false);
 
 </script>
 </body>

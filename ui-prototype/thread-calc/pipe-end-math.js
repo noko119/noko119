@@ -34,9 +34,34 @@ function nearInt(n) {
   return Math.round(n);
 }
 
+/** 解析手动规格：M161×2 / M161X2 / 161 */
+export function parseManualMajor(raw, defaultPitch = PIPE_END_CONST.pitch) {
+  const s = String(raw || "")
+    .trim()
+    .replace(/\s+/g, "")
+    .replace(/[×✕✖ｘＸxX＊*－—–−-]/g, "x");
+  if (!s) return { ok: false, error: "请输入手动规格，如 M161×2 或 161" };
+  let m = s.match(/^M(\d+(?:\.\d+)?)(?:x(\d+(?:\.\d+)?))?$/i);
+  if (m) {
+    const major = Math.round(Number(m[1]));
+    const pitch = m[2] != null ? Number(m[2]) : defaultPitch;
+    if (!(major > 0)) return { ok: false, error: "螺纹大径无效" };
+    if (Math.abs(pitch - defaultPitch) > 1e-9) {
+      return { ok: false, error: `本工具螺距固定为 P=${defaultPitch}，请写 M${major}×${defaultPitch}` };
+    }
+    return { ok: true, majorDia: major, pitch: defaultPitch };
+  }
+  if (/^\d+(?:\.\d+)?$/.test(s)) {
+    const major = Math.round(Number(s));
+    if (!(major > 0)) return { ok: false, error: "螺纹大径无效" };
+    return { ok: true, majorDia: major, pitch: defaultPitch };
+  }
+  return { ok: false, error: "无法识别。支持：M161×2、M161X2、161" };
+}
+
 /**
  * @param {PipeEndInput} input
- * @param {{ grooveKind?: 'normal'|'short'|'long' }} [opt]
+ * @param {{ grooveKind?: 'normal'|'short'|'long', majorDia?: number, designation?: string }} [opt]
  */
 export function computePipeEndThread(input, opt = {}) {
   const { D1, t1, D2, t2 } = input;
@@ -71,8 +96,26 @@ export function computePipeEndThread(input, opt = {}) {
   // 5. 大管内孔
   const largeBore = round3(D2 - 2 * t2);
 
-  // 6. 大径就近取整（无小数，不强制 0/5）
-  const majorDia = nearInt(theoryMajor);
+  // 推荐大径（就近取整）
+  const recommendedMajor = nearInt(theoryMajor);
+  const recommendedDesignation = `M${recommendedMajor}×${P}`;
+
+  // 最终采用：手动覆盖 > 推荐
+  let majorDia = recommendedMajor;
+  let isManual = false;
+  if (opt.majorDia != null && Number.isFinite(Number(opt.majorDia))) {
+    majorDia = Math.round(Number(opt.majorDia));
+    isManual = majorDia !== recommendedMajor;
+  } else if (opt.designation) {
+    const parsed = parseManualMajor(opt.designation, P);
+    if (!parsed.ok) return parsed;
+    majorDia = parsed.majorDia;
+    isManual = majorDia !== recommendedMajor;
+  }
+  if (!(majorDia > 0)) {
+    return { ok: false, error: "螺纹大径无效" };
+  }
+
   const designation = `M${majorDia}×${P}`;
 
   // 选定规格后：母扣内螺纹小径按工作牙高对称匹配（大径 − 2h）
@@ -107,6 +150,10 @@ export function computePipeEndThread(input, opt = {}) {
     warnings.push("提示：螺纹相对小管壁中心偏移后，可能接近或超出小管壁实体边界，请复核");
   }
 
+  if (isManual) {
+    warnings.push(`当前为手动规格 ${designation}（系统推荐 ${recommendedDesignation}）`);
+  }
+
   const grooveKind = opt.grooveKind || "normal";
   const widthKey = grooveKind === "short" ? "g2" : grooveKind === "long" ? "g3" : "g1";
   const extGrooveW = UNDERCUT_P2.external[widthKey];
@@ -132,6 +179,16 @@ export function computePipeEndThread(input, opt = {}) {
   const jointKind =
     D2 > D1 ? (D2 / D1 <= 1.25 ? "相邻规格对接" : "跨规格对接") : "对接组合";
 
+  // 邻近可选规格（推荐 ±2）
+  const nearby = [-2, -1, 0, 1, 2].map((d) => {
+    const maj = recommendedMajor + d;
+    return {
+      majorDia: maj,
+      designation: `M${maj}×${P}`,
+      isRecommended: d === 0,
+    };
+  });
+
   return {
     ok: true,
     checkPass,
@@ -140,7 +197,6 @@ export function computePipeEndThread(input, opt = {}) {
     errors,
     constants: { ...PIPE_END_CONST, H, h, R },
     input: { D1, t1, D2, t2 },
-    // 输出字段
     jointCombo: jointLabel,
     jointKind,
     D1,
@@ -156,8 +212,12 @@ export function computePipeEndThread(input, opt = {}) {
     theoryMinor,
     largeBore,
     smallBore,
+    recommendedMajor,
+    recommendedDesignation,
+    isManual,
     majorDia,
     designation,
+    nearby,
     femaleInternal: {
       designation,
       minor: internalMinor,
@@ -220,7 +280,9 @@ export function pipeEndToRows(r) {
     ["小管壁中心径", `${r.smallCenterDia} mm`],
     ["理论外螺纹大径", `${r.theoryMajor} mm`],
     ["理论内螺纹小径", `${r.theoryMinor} mm`],
-    ["螺纹大径（取整）", `${r.majorDia} mm`],
+    ["系统推荐规格", r.recommendedDesignation],
+    ["采用规格来源", r.isManual ? "手动给定" : "系统推荐"],
+    ["螺纹大径（最终）", `${r.majorDia} mm`],
     ["螺纹规格标记", r.designation],
     ["母扣内螺纹", `${r.femaleInternal.designation}（小径 ${r.femaleInternal.minor} mm）`],
     ["校验结果", r.checkPass ? `通过：${r.checkMessage}` : `警告：${r.checkMessage}`],

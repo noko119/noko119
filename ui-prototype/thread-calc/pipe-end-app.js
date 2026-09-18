@@ -1,4 +1,8 @@
-import { computePipeEndThread, pipeEndToRows } from "./pipe-end-math.js";
+import {
+  computePipeEndThread,
+  parseManualMajor,
+  pipeEndToRows,
+} from "./pipe-end-math.js";
 import {
   renderAssemblyDiagram,
   renderFemaleDiagram,
@@ -8,6 +12,7 @@ import {
 const $ = (id) => document.getElementById(id);
 
 let last = null;
+let syncing = false;
 
 function num(id) {
   return Number($(id).value);
@@ -19,17 +24,83 @@ function fill(tbody, rows) {
     .join("");
 }
 
-function run() {
-  const r = computePipeEndThread(
-    { D1: num("D1"), t1: num("t1"), D2: num("D2"), t2: num("t2") },
-    { grooveKind: $("grooveKind").value }
-  );
+function baseInput() {
+  return { D1: num("D1"), t1: num("t1"), D2: num("D2"), t2: num("t2") };
+}
 
+/** 仅刷新推荐框（不强制覆盖手动输入） */
+function refreshRecommend() {
+  const preview = computePipeEndThread(baseInput(), {
+    grooveKind: $("grooveKind").value,
+  });
+  if (!preview.ok) {
+    $("recommendOut").value = "";
+    return null;
+  }
+  $("recommendOut").value = preview.recommendedDesignation;
+  return preview;
+}
+
+function renderNearby(r) {
+  const box = $("nearbyChips");
+  if (!r?.nearby) {
+    box.innerHTML = "";
+    return;
+  }
+  box.innerHTML = r.nearby
+    .map((n) => {
+      const active = n.majorDia === r.majorDia ? " active" : "";
+      const tag = n.isRecommended ? "（推荐）" : "";
+      return `<button type="button" class="chip${active}" data-maj="${n.majorDia}">${n.designation}${tag}</button>`;
+    })
+    .join("");
+}
+
+function run(forceManual) {
   const warnBox = $("warnBox");
   const okBox = $("okBox");
   warnBox.classList.remove("show");
   okBox.classList.remove("show");
 
+  const preview = refreshRecommend();
+  if (!preview) {
+    const bad = computePipeEndThread(baseInput());
+    $("results").hidden = true;
+    $("status").textContent = bad.error || "输入无效";
+    $("status").className = "status error";
+    warnBox.textContent = bad.error || "输入无效";
+    warnBox.classList.add("show");
+    last = null;
+    return;
+  }
+
+  const opt = { grooveKind: $("grooveKind").value };
+  const manualRaw = $("manualSpec").value.trim();
+
+  if (forceManual === false) {
+    // 采用推荐
+    opt.majorDia = preview.recommendedMajor;
+    syncing = true;
+    $("manualSpec").value = preview.recommendedDesignation;
+    syncing = false;
+  } else if (manualRaw) {
+    const parsed = parseManualMajor(manualRaw);
+    if (!parsed.ok) {
+      $("status").textContent = parsed.error;
+      $("status").className = "status error";
+      warnBox.textContent = parsed.error;
+      warnBox.classList.add("show");
+      return;
+    }
+    opt.majorDia = parsed.majorDia;
+  } else {
+    opt.majorDia = preview.recommendedMajor;
+    syncing = true;
+    $("manualSpec").value = preview.recommendedDesignation;
+    syncing = false;
+  }
+
+  const r = computePipeEndThread(baseInput(), opt);
   if (!r.ok) {
     $("results").hidden = true;
     $("status").textContent = r.error;
@@ -43,11 +114,17 @@ function run() {
   last = r;
   $("results").hidden = false;
   $("title").textContent = r.designation;
-  $("meta").textContent = `${r.jointKind} · ${r.jointCombo} · 壁中心径 ${r.smallCenterDia} mm · 理论大径 ${r.theoryMajor} → 取整 ${r.majorDia}`;
+  $("meta").textContent = `${r.isManual ? "手动规格" : "推荐规格"} · ${r.jointKind} · ${r.jointCombo} · 推荐 ${r.recommendedDesignation} · 理论大径 ${r.theoryMajor} → 采用 ${r.majorDia}`;
+
+  syncing = true;
+  $("manualSpec").value = r.designation;
+  $("recommendOut").value = r.recommendedDesignation;
+  syncing = false;
 
   $("maleSvg").innerHTML = renderMaleDiagram(r);
   $("femaleSvg").innerHTML = renderFemaleDiagram(r);
   $("assySvg").innerHTML = renderAssemblyDiagram(r);
+  renderNearby(r);
 
   fill($("outTable"), pipeEndToRows(r));
   fill($("maleTable"), [
@@ -74,10 +151,13 @@ function run() {
   } else {
     okBox.textContent = r.checkMessage;
     okBox.classList.add("show");
-    $("status").textContent = `已生成 ${r.designation}`;
+    $("status").textContent = r.isManual
+      ? `已按手动规格重算 ${r.designation}（推荐 ${r.recommendedDesignation}）`
+      : `已按推荐生成 ${r.designation}`;
     $("status").className = "status ok";
-    if (r.warnings.length) {
-      warnBox.textContent = r.warnings.join("；");
+    const extra = r.warnings.filter((w) => !w.includes("手动规格"));
+    if (extra.length) {
+      warnBox.textContent = extra.join("；");
       warnBox.classList.add("show");
     }
   }
@@ -110,14 +190,35 @@ async function copy() {
   }
 }
 
-$("calcBtn").addEventListener("click", run);
+$("calcBtn").addEventListener("click", () => run(true));
+$("useRecBtn").addEventListener("click", () => run(false));
 $("copyBtn").addEventListener("click", copy);
+
+$("nearbyChips").addEventListener("click", (e) => {
+  const btn = e.target.closest(".chip");
+  if (!btn) return;
+  syncing = true;
+  $("manualSpec").value = `M${btn.dataset.maj}×2`;
+  syncing = false;
+  run(true);
+});
+
 ["D1", "t1", "D2", "t2", "grooveKind"].forEach((id) => {
-  $(id).addEventListener("change", run);
+  $(id).addEventListener("change", () => run(true));
   $(id).addEventListener("input", () => {
     clearTimeout($(id)._t);
-    $(id)._t = setTimeout(run, 150);
+    $(id)._t = setTimeout(() => {
+      refreshRecommend();
+      run(true);
+    }, 150);
   });
 });
 
-run();
+$("manualSpec").addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    run(true);
+  }
+});
+
+run(false);

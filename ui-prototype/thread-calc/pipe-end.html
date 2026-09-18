@@ -43,7 +43,7 @@
     <header class="hero">
       <p class="brand">PIPE END THREAD</p>
       <h1>接管端头螺纹计算</h1>
-      <p class="lede">四项手录：小管/大管外径与壁厚。螺纹中心在小管壁厚中心，并校验大管不击穿；大径就近取整；P=2 固定。</p>
+      <p class="lede">先按管径壁厚推荐螺纹；也可手动改规格后重新出数据与剖面尺寸图。P=2 固定，大径就近取整。</p>
     </header>
 
     <section class="panel">
@@ -73,7 +73,15 @@
         </label>
       </div>
 
-      <div class="field-row" style="margin-top:12px;grid-template-columns:1fr 1fr auto">
+      <div class="field-row" style="margin-top:12px;grid-template-columns:1.2fr 1.4fr 1fr auto">
+        <label class="field">
+          <span>系统推荐规格</span>
+          <input id="recommendOut" type="text" value="" readonly />
+        </label>
+        <label class="field">
+          <span>手动给定规格（可改，如 M160×2 或 160）</span>
+          <input id="manualSpec" type="text" value="" placeholder="留空=用推荐；或输入 M160×2" autocomplete="off" spellcheck="false" />
+        </label>
         <label class="field">
           <span>退刀槽长度档</span>
           <select id="grooveKind">
@@ -82,12 +90,14 @@
             <option value="long">长 g3</option>
           </select>
         </label>
-        <p class="hint" id="hint" style="align-self:end;margin:0">相邻规格与跨规格共用同一套逻辑；同时兼顾小管、大管壁厚空间。</p>
-        <div class="actions" style="margin:0;align-self:end">
-          <button type="button" class="btn primary" id="calcBtn">生成数据</button>
+        <div class="actions" style="margin:0;align-self:end;flex-wrap:wrap">
+          <button type="button" class="btn primary" id="calcBtn">生成/重算</button>
+          <button type="button" class="btn ghost" id="useRecBtn">采用推荐</button>
           <button type="button" class="btn ghost" id="copyBtn">复制结果</button>
         </div>
       </div>
+      <div class="chips" id="nearbyChips" aria-label="邻近规格" style="margin-top:12px"></div>
+      <p class="hint" id="hint" style="margin-top:10px">流程：填管径壁厚 → 看推荐 → 可手动改规格 → 点生成/重算，刷新数据与示意图。</p>
       <p class="status" id="status" role="status"></p>
       <div class="warn-box" id="warnBox"></div>
       <div class="ok-box" id="okBox"></div>

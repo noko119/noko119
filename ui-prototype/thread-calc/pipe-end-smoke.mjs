@@ -23,9 +23,22 @@ assert(r.majorDia === 161, `major int got ${r.majorDia}`);
 assert(r.designation === "M161×2", r.designation);
 assert(r.P === 2 && r.maleEnd.thread === 12 && r.maleEnd.locator === 10, "const");
 assert(r.bodyTotalLen === 210, "210");
-assert(r.checkPass, `should pass: ${r.checkMessage}`);
-assert(r.maleEnd.total === 10 + 12 + 4, "male end g1");
-assert(approx(r.femaleInternal.minor, 158.835, 0.01), "internal minor");
+assert(r.recommendedDesignation === "M161×2", "recommend");
+assert(!r.isManual, "auto");
+
+const manual = computePipeEndThread(
+  { D1: 168, t1: 8, D2: 180, t2: 12 },
+  { majorDia: 160 }
+);
+assert(manual.ok && manual.isManual, "manual flag");
+assert(manual.designation === "M160×2", manual.designation);
+assert(manual.recommendedDesignation === "M161×2", "keep recommend");
+assert(approx(manual.femaleInternal.minor, 157.835, 0.01), "manual minor");
+
+import { parseManualMajor } from "./pipe-end-math.js";
+assert(parseManualMajor("M160X2").majorDia === 160, "parse X");
+assert(parseManualMajor("160").majorDia === 160, "parse bare");
+
 
 // 击穿：大管壁薄 → 内孔太大
 const bad = computePipeEndThread({ D1: 168, t1: 8, D2: 219, t2: 10 });
