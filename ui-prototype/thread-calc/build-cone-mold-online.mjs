@@ -1,14 +1,30 @@
 /**
  * Build single-file cone-mold-online.html for htmlpreview / 双击打开.
+ * Pre-injects default assembled SVG so the diagram is visible even if script is delayed.
  */
 import fs from "node:fs";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 const dir = path.dirname(fileURLToPath(import.meta.url));
 const read = (name) => fs.readFileSync(path.join(dir, name), "utf8");
 
-let html = read("cone-mold.html");
+const { designConeMold } = await import(pathToFileURL(path.join(dir, "cone-mold-math.js")).href);
+const { renderAssembledConeDiagram } = await import(
+  pathToFileURL(path.join(dir, "cone-mold-diagram.js")).href
+);
+const defaultSvg = renderAssembledConeDiagram(
+  designConeMold({
+    bigOd: 219,
+    smallOd: 108,
+    moldHeight: 930,
+    topAllowance: 45,
+    bottomAllowance: 5,
+    standardLen: 210,
+  })
+);
+
+let html = read("cone-mold.html").replace("<!--DEFAULT_ASSY_SVG-->", defaultSvg);
 const css = read("thread-calc.css");
 const pipeMath = read("pipe-end-math.js").replace(/export\s+/g, "");
 const coneMath = read("cone-mold-math.js")
@@ -35,4 +51,4 @@ html = html.replace(
 
 fs.writeFileSync(path.join(dir, "cone-mold-online.html"), html, "utf8");
 fs.writeFileSync(path.join(dir, "锥管模具分段.html"), html, "utf8");
-console.log("wrote cone-mold-online.html + 锥管模具分段.html", html.length);
+console.log("wrote cone-mold-online.html + 锥管模具分段.html", html.length, "svg", defaultSvg.length);

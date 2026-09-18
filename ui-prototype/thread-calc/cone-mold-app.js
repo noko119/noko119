@@ -123,16 +123,15 @@ function run() {
 
   if (!r.ok) {
     last = null;
-    $("results").hidden = true;
     $("status").textContent = r.error;
     $("status").className = "status error";
     $("warnBox").classList.remove("show");
-    $("assyDiagram").innerHTML = "";
+    $("assyDiagram").innerHTML = `<p class="muted">无法绘图：${r.error}</p>`;
+    $("summaryLine").textContent = "";
     return;
   }
 
   last = r;
-  $("results").hidden = false;
   $("status").textContent = `已生成 ${r.segmentCount} 节 / ${r.summary.jointCount} 道螺纹，总高 ${r.summary.moldHeight} mm`;
   $("status").className = "status ok";
   $("summaryLine").textContent =
