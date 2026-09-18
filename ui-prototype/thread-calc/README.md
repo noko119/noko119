@@ -1,12 +1,19 @@
-# 螺纹尺寸推导（THREAD LAB）
+# 螺纹尺寸推导（THREAD LAB）· Windows
 
-给定公制螺纹规格，生成内外螺纹**牙顶 / 牙底 / 中径**与**退刀槽（推导槽）**数据。
+给定公制螺纹规格，生成内外螺纹**牙顶 / 牙底 / 中径**与**退刀槽**数据。
+
+**仅 Windows。** 双击 `启动工具.bat` 即可（需已安装 Python）。
 
 ## 打开
 
-```bash
-cd ui-prototype && python3 -m http.server 8080
-# http://localhost:8080/thread-calc/
+1. 解压本目录  
+2. 双击 `启动工具.bat`  
+3. 浏览器打开 http://127.0.0.1:8080/
+
+或在本目录命令行：
+
+```bat
+python -m http.server 8080
 ```
 
 ## 输入
@@ -22,10 +29,10 @@ cd ui-prototype && python3 -m http.server 8080
 | 外螺纹 | 大径 d | 小径 d3（圆底） | d2 |
 | 内螺纹 | 小径 D1 | 大径 D | D2 |
 
-另附 GB/T 3 退刀槽 df/Dg、槽宽、圆角，以及毛坯/底孔加工参考。
+另附 GB/T 3 退刀槽与毛坯/底孔加工参考。
 
 ## 自测
 
-```bash
-node ui-prototype/thread-calc/smoke-test.mjs
+```bat
+node smoke-test.mjs
 ```
