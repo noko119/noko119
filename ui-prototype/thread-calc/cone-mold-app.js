@@ -39,7 +39,7 @@ function fillJointTable(joints) {
       return `<tr>
         <th scope="row">${j.index}</th>
         <td>套外ø${j.fromOd} → ø${j.toOd}</td>
-        <td>锥 ø${j.coneDia}</td>
+        <td>对接内径 ø${Number(j.coneDia).toFixed(3)}</td>
         <td>${stack}</td>
         <td><strong>${j.designation}</strong></td>
         <td>${j.crest.external} / ${j.crest.internal}</td>
@@ -153,7 +153,7 @@ async function copy() {
       const male = s.maleEndLen ? `公${s.maleEndLen}` : "无公";
       return `套${s.index}${tab}外${s.outerOd}${tab}总高${pl}${tab}${male}${tab}锥${s.coneAtTop}→${s.coneAtBot}`;
     }),
-    ...last.joints.filter((j) => j.ok).map((j) => `接头${j.index}${tab}${j.designation}${tab}锥${j.coneDia}`),
+    ...last.joints.filter((j) => j.ok).map((j) => `接头${j.index}${tab}${j.designation}${tab}对接内径${Number(j.coneDia).toFixed(3)}`),
   ];
   const text = lines.join(nl);
   try {

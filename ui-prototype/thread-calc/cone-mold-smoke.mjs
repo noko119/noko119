@@ -52,7 +52,11 @@ assert(svg.includes(`止口 ${loc}`) || svg.includes(`止口${loc}`), "locator m
 assert(svg.includes("退刀槽"), "undercut mark");
 assert(svg.includes("螺纹"), "thread mark");
 assert(svg.includes("df") && svg.includes("Dg"), "male/female undercut");
-assert(svg.includes("公") || svg.includes("母"), "male/female labels");
+assert(svg.includes("对接内径"), "joint ID mark");
+assert(/对接内径 ø\d+\.\d{3}/.test(svg), "joint ID 3 decimals");
+const ids = r.joints.map((j) => Number(j.coneDia).toFixed(3));
+assert(ids.every((s) => /^\d+\.\d{3}$/.test(s)), `id precision ${ids}`);
+assert(ids.every((s) => svg.includes(`ø${s}`)), `svg has ids ${ids}`);
 
 console.log("cone-mold smoke OK", {
   pipes: r.sleeves.map((s) => s.pipeLabel),

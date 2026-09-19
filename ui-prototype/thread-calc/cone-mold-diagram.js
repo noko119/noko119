@@ -12,6 +12,24 @@ function t(n) {
   return s.includes(".") ? s.replace(/\.?0+$/, "") : s;
 }
 
+/** 固定三位小数（对接内径等精密尺寸） */
+function t3(n) {
+  return Number(n).toFixed(3);
+}
+
+/** 水平内径尺寸：跨锥腔标注 øx.xxx */
+function dimHId(axis, y, dia, scaleR, label, color = "#e67e22") {
+  const half = (Number(dia) / 2) * scaleR;
+  const x1 = axis - half;
+  const x2 = axis + half;
+  return `
+    <line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="${color}" stroke-width="1.15"/>
+    <line x1="${x1}" y1="${y - 5}" x2="${x1}" y2="${y + 5}" stroke="${color}" stroke-width="1.15"/>
+    <line x1="${x2}" y1="${y - 5}" x2="${x2}" y2="${y + 5}" stroke="${color}" stroke-width="1.15"/>
+    <text x="${axis}" y="${y - 7}" text-anchor="middle" fill="${color}" font-size="11" font-weight="800">${label}</text>
+  `;
+}
+
 function dimV(x, y1, y2, label, color = "#2f4a56", prefer = "auto") {
   const top = Math.min(y1, y2);
   const bot = Math.max(y1, y2);
@@ -114,7 +132,7 @@ export function renderConeMoldDiagram(r) {
   const labelColX = axis + maxOutR + 36;
   const labelBoxW = 160;
   const jointCardX = labelColX + labelBoxW + 32;
-  const jointCardW = 200;
+  const jointCardW = 220;
   const dimColor = "#c45c26";
   const LINE_H = 22;
   const CARD_PAD = 14;
@@ -265,7 +283,10 @@ export function renderConeMoldDiagram(r) {
         fill="#8a2e0e" fill-opacity="0.22" stroke="#8a2e0e" stroke-width="0.85"/>`;
 
     // 接头标注：收成一张卡片，行距固定，避免叠字
+    const coneDia = joint.coneDia ?? joint.cavityAtJoint;
+    const xConeId = axis + xR(coneDia);
     const rows = [
+      { x: xConeId, y: yShoulder - 2, color: "#e67e22", text: `对接内径 ø${t3(coneDia)}` },
       { x: xLoc, y: (yTip + yLoc1) / 2, color: "#1f6f5b", text: `止口 ${t(locH)}` },
       { x: xMaj, y: (yLoc1 + yEng1) / 2, color: "#8a2e0e", text: `螺纹 ${joint.designation} · ${t(engH)}` },
       { x: xDf, y: (yEng1 + yUnd1) / 2, color: "#2f4a56", text: `退刀槽 ${t(undH)}  df${t(df)}/Dg${t(dg)}` },
@@ -277,6 +298,8 @@ export function renderConeMoldDiagram(r) {
 
     jointParts.push({
       joint,
+      coneDia,
+      yShoulder,
       uColor,
       lColor,
       mask,
@@ -406,6 +429,16 @@ export function renderConeMoldDiagram(r) {
     dims += dimV(192, yAt(s.z0), yAt(s.z1), lab, "#8a5a2a");
   });
 
+  // 节间对接处：锥腔内径，固定三位小数
+  let jointIdDims = "";
+  joints.forEach((j, ji) => {
+    const dia = j.coneDia ?? j.cavityAtJoint;
+    if (!(dia > 0)) return;
+    // 略偏上台肩，避免与公扣牙型挤在一起；多接头上下错开文字
+    const yDim = yAt(j.z) - 10 - (ji % 2) * 6;
+    jointIdDims += dimHId(axis, yDim, dia, scaleR, `对接内径 ø${t3(dia)}`);
+  });
+
   const detail = renderJointDetail(16, yH + 40, joints[0], r.summary);
   const legendY = yH + 288;
   const items = [
@@ -415,10 +448,10 @@ export function renderConeMoldDiagram(r) {
       const male = s.maleEndLen > 0 ? `含公扣${t(s.maleEndLen)}` : "无公扣";
       return `套${s.index} ø${t(s.outerOd)} · 总高${t(pl)}（${male}）· ${s.kind}`;
     }),
-    ...joints.map(
-      (j) =>
-        `接头${j.index} ${j.designation}：止口${t(j.locator)}+螺纹${t(j.engage)}+退刀${t(j.locatorDim?.undercut ?? undercut0)}(df${t(j.undercutDf)}/Dg${t(j.undercutDg)})`
-    ),
+    ...joints.map((j) => {
+      const id = t3(j.coneDia ?? j.cavityAtJoint ?? 0);
+      return `接头${j.index} ${j.designation}：对接内径ø${id}；止口${t(j.locator)}+螺纹${t(j.engage)}+退刀${t(j.locatorDim?.undercut ?? undercut0)}`;
+    }),
   ];
   const legend = items
     .map((label, i) => {
@@ -437,8 +470,9 @@ export function renderConeMoldDiagram(r) {
     ${green}
     ${odCallouts}
     ${dims}
-    <text x="${axis}" y="${yCone0 - 16}" text-anchor="middle" fill="#e67e22" font-size="12" font-weight="800">锥上口 ø${t(cone.topDia)}</text>
-    <text x="${axis}" y="${yH + 24}" text-anchor="middle" fill="#e67e22" font-size="12" font-weight="800">锥下口 ø${t(cone.bottomDia)}</text>
+    ${jointIdDims}
+    <text x="${axis}" y="${yCone0 - 16}" text-anchor="middle" fill="#e67e22" font-size="12" font-weight="800">锥上口 ø${t3(cone.topDia)}</text>
+    <text x="${axis}" y="${yH + 24}" text-anchor="middle" fill="#e67e22" font-size="12" font-weight="800">锥下口 ø${t3(cone.bottomDia)}</text>
     <line x1="${axis}" y1="${y0}" x2="${axis}" y2="${yH}" stroke="#9aa8a1" stroke-dasharray="4 3"/>
     ${detail}
     ${legend}
