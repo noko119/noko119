@@ -62,24 +62,24 @@
     <header class="hero">
       <p class="brand">CONE MOLD · <a href="./thread-card.html" style="color:inherit">端头表</a> · <a href="./pipe-end.html" style="color:inherit">接管计算</a> · <a href="./index.html" style="color:inherit">通用螺纹</a></p>
       <h1>锥管模具分段</h1>
-      <p class="lede">输入大头 / 小头 / 模具总高，自动分节（大节标准 210、小节非标），并给出圆整螺纹与公母扣端头表。</p>
+      <p class="lede">按<strong>内锥型腔</strong>分段：上口/下口是型腔口径；模具外圈嵌套（上外套 / 下公颈），内壁连续共锥。</p>
     </header>
 
     <section class="panel">
       <div class="const-bar">
+        <span>型腔内锥连续</span>
         <span>大节标准长 210（含上口余量）</span>
         <span>小节非标凑总高（含下口余量）</span>
-        <span>P=2 · 螺纹尾数圆整 0/5</span>
-        <span>止口 10 + 旋合 12 + 退刀槽 4</span>
+        <span>接头：止口嵌套 + P=2 螺纹</span>
       </div>
 
       <div class="field-row five">
         <label class="field">
-          <span>大头外径 / mm</span>
+          <span>型腔上口 / mm</span>
           <input id="bigOd" type="number" min="1" step="any" value="219" />
         </label>
         <label class="field">
-          <span>小头外径 / mm</span>
+          <span>型腔下口 / mm</span>
           <input id="smallOd" type="number" min="1" step="any" value="108" />
         </label>
         <label class="field">
@@ -96,25 +96,29 @@
         </label>
       </div>
 
-      <div class="field-row" style="margin-top:12px;grid-template-columns:1fr 1fr 1fr auto">
+      <div class="field-row" style="margin-top:12px;grid-template-columns:1fr 1fr 1fr 1fr auto">
         <label class="field">
           <span>标准节长 / mm</span>
           <input id="standardLen" type="number" min="50" step="any" value="210" />
+        </label>
+        <label class="field">
+          <span>名义壁厚 / mm</span>
+          <input id="wall" type="number" min="1" step="any" value="25" />
         </label>
         <label class="field">
           <span>强制节数（可空）</span>
           <input id="segmentCount" type="number" min="2" step="1" placeholder="自动" />
         </label>
         <label class="field">
-          <span>中间管径（可选，逗号分隔）</span>
-          <input id="midOds" type="text" placeholder="例如 168,133" autocomplete="off" />
+          <span>外圆序列（可选）</span>
+          <input id="midOds" type="text" placeholder="如 273,245,219,194" autocomplete="off" />
         </label>
         <div class="actions" style="margin:0;align-self:end">
           <button type="button" class="btn primary" id="calcBtn">生成方案</button>
           <button type="button" class="btn ghost" id="copyBtn">复制</button>
         </div>
       </div>
-      <p class="hint" style="margin-top:10px">默认按你此前确认的规则：大直径节 210，最小节非标；螺纹尽量圆整。</p>
+      <p class="hint" style="margin-top:10px">外圆按「型腔+2×壁厚」就近标准管坯；接头为上段外套止口坐在下段公颈上，螺纹圆整到 0/5。</p>
       <p class="status" id="status" role="status"></p>
       <div class="warn-box" id="warnBox"></div>
     </section>
@@ -135,7 +139,7 @@
         <h3>各节明细</h3>
         <table class="data">
           <thead>
-            <tr><th>节</th><th>外径</th><th>长度</th><th>类型</th><th>建议壁厚</th><th>端头</th><th>余量说明</th></tr>
+            <tr><th>节</th><th>型腔</th><th>外圆</th><th>长度</th><th>类型</th><th>壁厚</th><th>端头</th><th>余量说明</th></tr>
           </thead>
           <tbody id="segTable"></tbody>
         </table>
@@ -145,7 +149,7 @@
         <h3>螺纹接头</h3>
         <table class="data">
           <thead>
-            <tr><th>道</th><th>母→公</th><th>自动</th><th>圆整规格</th><th>牙顶外/内</th><th>df / Dg</th><th>母端局部壁厚</th></tr>
+            <tr><th>道</th><th>外套→公颈</th><th>接头处型腔</th><th>自动</th><th>圆整规格</th><th>牙顶外/内</th><th>外套局部壁厚</th></tr>
           </thead>
           <tbody id="jointTable"></tbody>
         </table>

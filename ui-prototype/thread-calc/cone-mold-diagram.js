@@ -1,8 +1,8 @@
 /**
- * 锥管模具分段尺寸示意图
- * - 大→小：左→右（上口→下口）
- * - 轴向长度标在轮廓上方
- * - 外径 / 螺纹 / 余量放图下图例，避免压字
+ * 锥管模具 — 组装后嵌套剖面示意图
+ * - 竖直：上大口 / 下小口
+ * - 内壁：连续共锥
+ * - 外壁：分段台阶 + 上套下止口嵌套（接头细节）
  */
 
 function t(n) {
@@ -10,207 +10,209 @@ function t(n) {
   return s.includes(".") ? s.replace(/\.?0+$/, "") : s;
 }
 
-function dimH(x1, x2, y, label, color = "#c45c26") {
-  const mid = (x1 + x2) / 2;
-  return `
-    <line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="${color}" stroke-width="1"/>
-    <line x1="${x1}" y1="${y - 3}" x2="${x1}" y2="${y + 3}" stroke="${color}" stroke-width="1"/>
-    <line x1="${x2}" y1="${y - 3}" x2="${x2}" y2="${y + 3}" stroke="${color}" stroke-width="1"/>
-    <text x="${mid}" y="${y - 5}" text-anchor="middle" fill="${color}" font-size="9" font-weight="600">${label}</text>
-  `;
-}
-
-function dimV(x, y1, y2, label, color = "#2f4a56", anchor = "start") {
+function dimV(x, y1, y2, label, color = "#c45c26") {
   const mid = (y1 + y2) / 2;
-  const tx = anchor === "end" ? x - 6 : x + 6;
   return `
     <line x1="${x}" y1="${y1}" x2="${x}" y2="${y2}" stroke="${color}" stroke-width="1"/>
     <line x1="${x - 3}" y1="${y1}" x2="${x + 3}" y2="${y1}" stroke="${color}" stroke-width="1"/>
     <line x1="${x - 3}" y1="${y2}" x2="${x + 3}" y2="${y2}" stroke="${color}" stroke-width="1"/>
-    <text x="${tx}" y="${mid + 3}" text-anchor="${anchor}" fill="${color}" font-size="9" font-weight="600">${label}</text>
+    <text x="${x - 6}" y="${mid + 3}" text-anchor="end" fill="${color}" font-size="9" font-weight="600">${label}</text>
   `;
 }
 
-function legendRow(items, y0) {
-  const colW = 190;
-  const x0 = 24;
-  return items
-    .map((it, i) => {
-      const x = x0 + (i % 4) * colW;
-      const y = y0 + Math.floor(i / 4) * 16;
-      return `<text x="${x}" y="${y}" fill="${it.color}" font-size="9" font-weight="600">${it.label}</text>`;
-    })
-    .join("");
-}
+const SEG_COLORS = ["#c45c5c", "#b8a06a", "#6a9ec9", "#5cbf6a", "#c49a6c", "#8a7bb8"];
 
 /**
- * @param {ReturnType<typeof import("./cone-mold-math.js").designConeMold>} r
+ * @param {object} r designConeMold 成功返回值
  */
 export function renderConeMoldDiagram(r) {
-  if (!r?.ok) return "";
+  if (!r?.ok || !r.segments?.length) return "";
 
-  const segments = r.segments;
-  const joints = r.joints;
-  const { moldHeight, faceToFace, expectedFaceToFace } = r.summary;
-  const topA = r.input.topAllowance;
-  const botA = r.input.bottomAllowance;
+  const segs = r.segments;
+  const joints = (r.joints || []).filter((j) => j.ok);
+  const Hmold = r.summary.moldHeight;
+  const topA = r.input.topAllowance ?? 0;
+  const botA = r.input.bottomAllowance ?? 0;
+  const nestH = r.summary.locator + r.summary.engage; // 止口+旋合示意重叠
+  const sleeveT = r.input.nestSleeve ?? 8;
 
-  const W = 780;
-  const axis = 168;
-  const maxOd = Math.max(...segments.map((s) => s.od));
-  const scaleY = Math.min(0.48, 105 / (maxOd / 2));
-  const plotLeft = 56;
-  const plotRight = 700;
-  const plotW = plotRight - plotLeft;
-  const sumLen = segments.reduce((s, seg) => s + seg.length, 0) || 1;
+  const W = 760;
+  const padT = 40;
+  const plotH = 480;
+  const axis = 400;
+  const scaleY = plotH / Hmold;
+  const maxOuter = Math.max(...segs.map((s) => s.outerOd));
+  const scaleR = Math.min(1.15, 150 / (maxOuter / 2));
 
-  // 轴向按真实长度比例；径向按外径比例（示意，可压缩）
-  const xs = [plotLeft];
-  for (const seg of segments) {
-    xs.push(xs[xs.length - 1] + (seg.length / sumLen) * plotW);
-  }
+  const yAt = (z) => padT + z * scaleY;
+  const xR = (dia) => (dia / 2) * scaleR;
 
-  const yOd = (od) => axis - (od / 2) * scaleY;
-  const yId = (od, wall) => axis - ((od - 2 * wall) / 2) * scaleY;
+  // 连续内锥左右壁
+  const cavTop = r.input.cavityTop;
+  const cavBot = r.input.cavityBottom;
+  const y0 = yAt(0);
+  const yH = yAt(Hmold);
+  const innerL = [
+    [axis - xR(cavTop), y0],
+    [axis - xR(cavBot), yH],
+  ];
+  const innerR = [
+    [axis + xR(cavTop), y0],
+    [axis + xR(cavBot), yH],
+  ];
 
-  // 外轮廓（上半 + 下半对称）
-  const topPts = [];
-  const botPts = [];
-  for (let i = 0; i < segments.length; i++) {
-    const od = segments[i].od;
-    const y = yOd(od);
-    topPts.push([xs[i], y], [xs[i + 1], y]);
-    botPts.push([xs[i], 2 * axis - y], [xs[i + 1], 2 * axis - y]);
-  }
-  const pathOuter = [
-    `M ${topPts[0][0]} ${topPts[0][1]}`,
-    ...topPts.slice(1).map(([x, y]) => `L ${x} ${y}`),
-    `L ${botPts[botPts.length - 1][0]} ${botPts[botPts.length - 1][1]}`,
-    ...botPts
-      .slice(0, -1)
-      .reverse()
-      .map(([x, y]) => `L ${x} ${y}`),
-    "Z",
-  ].join(" ");
+  // 各节实体：左/右对称多边形（含下端外套唇 / 上端公颈台阶）
+  const bodies = segs
+    .map((s, i) => {
+      const color = SEG_COLORS[i % SEG_COLORS.length];
+      const yA = yAt(s.z0);
+      const yB = yAt(s.z1);
+      const out = xR(s.outerOd);
+      const cavA = xR(s.cavityTop);
+      const cavB = xR(s.cavityBottom);
 
-  // 内孔折线（示意壁厚）
-  const innerTop = [];
-  for (let i = 0; i < segments.length; i++) {
-    const y = yId(segments[i].od, segments[i].wall);
-    innerTop.push([xs[i], y], [xs[i + 1], y]);
-  }
-  const pathInner = [
-    `M ${innerTop[0][0]} ${innerTop[0][1]}`,
-    ...innerTop.slice(1).map(([x, y]) => `L ${x} ${y}`),
-    ...innerTop
-      .slice()
-      .reverse()
-      .map(([x, y]) => `L ${x} ${2 * axis - y}`),
-    "Z",
-  ].join(" ");
+      // 下端若有外套：唇伸入下一节 nestH
+      const hasSleeve = s.femaleSleeve && i < segs.length - 1;
+      const hasNeck = s.maleNeck && i > 0;
+      const nestPx = Math.min(nestH * scaleY, (yB - yA) * 0.35);
+      const sleeveIn = xR(sleeveT);
 
-  // 各节长度标注（上方错层，避免相邻太挤）
-  const lenDims = segments
-    .map((seg, i) => {
-      const y = 48 + (i % 2) * 18;
-      const color = seg.kind === "非标" ? "#8a5a2a" : "#c45c26";
-      return dimH(xs[i], xs[i + 1], y, `L${seg.index} ${t(seg.length)}`, color);
-    })
-    .join("");
+      // 右侧轮廓点（顺时针，从左上内壁开始绕外）
+      // 简化为左右各一块 path
+      let rightOuter = [];
+      let leftOuter = [];
 
-  // 段间螺纹标记（接头竖线 + 短标签）
-  const jointMarks = joints
-    .map((j, i) => {
-      if (!j.ok) return "";
-      const x = xs[i + 1];
-      const yTop = yOd(Math.max(segments[i].od, segments[i + 1].od));
-      const labelY = axis - 8 - (i % 2) * 12;
+      if (hasNeck) {
+        // 公颈：顶部缩进
+        const neckOut = out - sleeveIn;
+        rightOuter.push([axis + neckOut, yA], [axis + neckOut, yA + nestPx], [axis + out, yA + nestPx]);
+        leftOuter.push([axis - neckOut, yA], [axis - neckOut, yA + nestPx], [axis - out, yA + nestPx]);
+      } else {
+        rightOuter.push([axis + out, yA]);
+        leftOuter.push([axis - out, yA]);
+      }
+
+      if (hasSleeve) {
+        rightOuter.push([axis + out, yB], [axis + out, yB + nestPx], [axis + out - sleeveIn, yB + nestPx], [axis + out - sleeveIn, yB]);
+        leftOuter.push([axis - out, yB], [axis - out, yB + nestPx], [axis - (out - sleeveIn), yB + nestPx], [axis - (out - sleeveIn), yB]);
+      } else {
+        rightOuter.push([axis + out, yB]);
+        leftOuter.push([axis - out, yB]);
+      }
+
+      // 闭合：外轮廓 → 底部内壁 → 顶部内壁
+      const rightPath = [
+        ...rightOuter.map((p, idx) => (idx ? `L${p[0]},${p[1]}` : `M${p[0]},${p[1]}`)),
+        `L${axis + cavB},${yB}`,
+        `L${axis + cavA},${yA}`,
+        "Z",
+      ].join(" ");
+      const leftPath = [
+        ...leftOuter.map((p, idx) => (idx ? `L${p[0]},${p[1]}` : `M${p[0]},${p[1]}`)),
+        `L${axis - cavB},${yB}`,
+        `L${axis - cavA},${yA}`,
+        "Z",
+      ].join(" ");
+
       return `
-        <line x1="${x}" y1="${yTop - 4}" x2="${x}" y2="${2 * axis - yTop + 4}"
-          stroke="#1f6f5b" stroke-width="1.2" stroke-dasharray="3 2"/>
-        <text x="${x}" y="${labelY}" text-anchor="middle" fill="#1f6f5b" font-size="9" font-weight="700">${j.designation}</text>
+        <path d="${rightPath}" fill="${color}" fill-opacity="0.85" stroke="#2f4a56" stroke-width="1.2"/>
+        <path d="${leftPath}" fill="${color}" fill-opacity="0.85" stroke="#2f4a56" stroke-width="1.2"/>
+        <text x="${axis + out + 8}" y="${(yA + yB) / 2 + 4}" fill="#2f4a56" font-size="10" font-weight="700">§${s.index}</text>
       `;
     })
     .join("");
 
-  // 上口 / 下口余量（在首末节内再画小段）
-  const first = segments[0];
-  const last = segments[segments.length - 1];
-  const xTopFace = plotLeft + (topA / sumLen) * plotW;
-  const xBotFace = plotRight - (botA / sumLen) * plotW;
-  const allowMarks = `
-    <line x1="${xTopFace}" y1="${yOd(first.od)}" x2="${xTopFace}" y2="${2 * axis - yOd(first.od)}"
-      stroke="#2f4a56" stroke-width="1" stroke-dasharray="2 2"/>
-    ${dimH(plotLeft, xTopFace, 88, `上口 ${t(topA)}`, "#2f4a56")}
-    <line x1="${xBotFace}" y1="${yOd(last.od)}" x2="${xBotFace}" y2="${2 * axis - yOd(last.od)}"
-      stroke="#2f4a56" stroke-width="1" stroke-dasharray="2 2"/>
-    ${dimH(xBotFace, plotRight, 88, `下口 ${t(botA)}`, "#2f4a56")}
+  // 内锥强调线
+  const coneLines = `
+    <line x1="${innerL[0][0]}" y1="${innerL[0][1]}" x2="${innerL[1][0]}" y2="${innerL[1][1]}"
+      stroke="#e67e22" stroke-width="2.2"/>
+    <line x1="${innerR[0][0]}" y1="${innerR[0][1]}" x2="${innerR[1][0]}" y2="${innerR[1][1]}"
+      stroke="#e67e22" stroke-width="2.2"/>
   `;
 
-  // 总高 + 面距（图下方轴向）
-  const overallDims = `
-    ${dimH(plotLeft, plotRight, axis + 78, `模具总高 ${t(moldHeight)}`, "#2f4a56")}
-    ${dimH(xTopFace, xBotFace, axis + 98, `面距 ${t(faceToFace)}（期望 ${t(expectedFaceToFace)}）`, "#1f6f5b")}
-  `;
-
-  // 节号 + φ 短标在轴线上（不放径向数字，避免挤）
-  const segLabels = segments
-    .map((seg, i) => {
-      const mid = (xs[i] + xs[i + 1]) / 2;
-      return `<text x="${mid}" y="${axis + 14}" text-anchor="middle" fill="#5c6b64" font-size="9">φ${t(seg.od)}</text>`;
+  // 接头螺纹标注
+  const jointLabels = joints
+    .map((j) => {
+      const y = yAt(j.z);
+      return `<text x="${axis - xR(maxOuter) - 10}" y="${y + 3}" text-anchor="end"
+        fill="#1f6f5b" font-size="9" font-weight="700">${j.designation}</text>`;
     })
     .join("");
 
-  const legendItems = [
-    ...segments.map((s) => ({
-      label: `第${s.index}节 φ${t(s.od)}×${t(s.length)}（${s.kind}）`,
-      color: s.kind === "非标" ? "#8a5a2a" : "#2f4a56",
-    })),
-    ...joints
-      .filter((j) => j.ok)
-      .map((j) => ({
-        label: `接头${j.index} ${j.designation}（φ${t(j.fromOd)}→φ${t(j.toOd)}）`,
-        color: "#1f6f5b",
-      })),
-    { label: `上口余量 ${t(topA)}（计入大节）`, color: "#2f4a56" },
-    { label: `下口余量 ${t(botA)}（计入小节）`, color: "#2f4a56" },
-  ];
+  // 尺寸
+  let dims = dimV(70, y0, yH, `总高 ${t(Hmold)}`, "#2f4a56");
+  segs.forEach((s) => {
+    dims += dimV(100, yAt(s.z0), yAt(s.z1), `${t(s.length)}`, "#c45c26");
+  });
+  if (topA > 0) dims += dimV(130, y0, yAt(topA), `上 ${t(topA)}`, "#1f6f5b");
+  if (botA > 0) dims += dimV(130, yAt(Hmold - botA), yH, `下 ${t(botA)}`, "#1f6f5b");
+  dims += dimV(48, yAt(topA), yAt(Hmold - botA), `面距 ${t(r.summary.faceToFace)}`, "#5c6b64");
 
-  const legendRows = Math.ceil(legendItems.length / 4);
-  const H = axis + 118 + legendRows * 16 + 12;
-
-  // 左右端径向示意（仅两端画短竖尺，数字进图例）
-  const leftOdY = yOd(first.od);
-  const rightOdY = yOd(last.od);
-  const endOdTicks = `
-    ${dimV(plotLeft - 14, leftOdY, 2 * axis - leftOdY, `φ${t(first.od)}`, "#5c6b64", "end")}
-    ${dimV(plotRight + 14, rightOdY, 2 * axis - rightOdY, `φ${t(last.od)}`, "#5c6b64", "start")}
+  // 型腔口径
+  const cavLabels = `
+    <text x="${axis}" y="${y0 - 10}" text-anchor="middle" fill="#e67e22" font-size="11" font-weight="800">型腔上口 ø${t(cavTop)}</text>
+    <text x="${axis}" y="${yH + 18}" text-anchor="middle" fill="#e67e22" font-size="11" font-weight="800">型腔下口 ø${t(cavBot)}</text>
   `;
 
+  // 接头细节小图（右下）
+  const detail = renderJointDetailInset(520, yH - 110, joints[0]);
+
+  const legendY = yH + 36;
+  const legendItems = [
+    ...segs.map(
+      (s, i) =>
+        `§${s.index} 外圆ø${t(s.outerOd)} · 型腔 ${t(s.cavityTop)}→${t(s.cavityBottom)} · ${t(s.length)}mm（${s.kind}）`
+    ),
+    ...joints.map((j) => `接头${j.index} ${j.designation} @z=${t(j.z)} 型腔ø${t(j.cavityAtJoint)}`),
+    `橙线=连续内锥；外套止口嵌套（上母下公）`,
+  ];
+  const legend = legendItems
+    .map((label, i) => {
+      const col = i % 2;
+      const row = Math.floor(i / 2);
+      return `<text x="${24 + col * 360}" y="${legendY + row * 15}" fill="#5c6b64" font-size="9" font-weight="600">${label}</text>`;
+    })
+    .join("");
+  const legendRows = Math.ceil(legendItems.length / 2);
+  const H = legendY + legendRows * 15 + 20;
+
   return `
-  <svg viewBox="0 0 ${W} ${H}" class="diagram" role="img" aria-label="锥管模具组装后示意图">
-    <defs>
-      <linearGradient id="coneFill" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#d7e4de"/><stop offset="100%" stop-color="#b7ccc3"/>
-      </linearGradient>
-    </defs>
-    <text x="20" y="18" fill="#2f4a56" font-size="12" font-weight="700">组装后示意图 · φ${t(r.input.bigOd)} → φ${t(r.input.smallOd)}</text>
-    <text x="20" y="34" fill="#5c6b64" font-size="9">左=上口大端 → 右=下口小端（各节已拧合；轴向按实长比例；径向示意）</text>
-
-    <path d="${pathOuter}" fill="url(#coneFill)" stroke="#2f4a56" stroke-width="1.3"/>
-    <path d="${pathInner}" fill="#f7faf8" stroke="#93a09a" stroke-width="0.9" stroke-dasharray="3 2" opacity="0.95"/>
-    <line x1="${plotLeft - 8}" y1="${axis}" x2="${plotRight + 10}" y2="${axis}" stroke="#5c6b64" stroke-dasharray="4 3"/>
-
-    ${lenDims}
-    ${allowMarks}
-    ${jointMarks}
-    ${segLabels}
-    ${endOdTicks}
-    ${overallDims}
-
-    ${legendRow(legendItems, axis + 118)}
+  <svg viewBox="0 0 ${W} ${H}" class="diagram" role="img" aria-label="锥管模具组装后嵌套示意图">
+    <text x="20" y="22" fill="#2f4a56" font-size="13" font-weight="800">组装后示意图 · 内锥型腔 + 止口嵌套</text>
+    <text x="20" y="36" fill="#5c6b64" font-size="9">内壁连续共锥；外壁分段外套（细节见图中接头示意）</text>
+    ${bodies}
+    ${coneLines}
+    ${jointLabels}
+    ${dims}
+    ${cavLabels}
+    <line x1="${axis}" y1="${y0}" x2="${axis}" y2="${yH}" stroke="#9aa8a1" stroke-dasharray="4 3"/>
+    ${detail}
+    ${legend}
   </svg>`;
 }
 
-/** 别名：组装后示意图（app 入口） */
+/** 接头局部：上外套 / 下公颈 / 内锥连续 */
+function renderJointDetailInset(x0, y0, joint) {
+  if (!joint) return "";
+  const w = 200;
+  const h = 100;
+  return `
+    <g transform="translate(${x0},${y0})">
+      <rect x="0" y="0" width="${w}" height="${h}" rx="8" fill="#fff" stroke="#2f4a56" stroke-width="1"/>
+      <text x="10" y="16" fill="#2f4a56" font-size="10" font-weight="700">接头细节 · ${joint.designation || ""}</text>
+      <!-- 上段（母套） -->
+      <path d="M30,28 L90,28 L90,55 L78,55 L78,48 L42,48 L42,55 L30,55 Z" fill="#c45c5c" stroke="#2f4a56"/>
+      <!-- 下段（公颈） -->
+      <path d="M42,48 L78,48 L78,55 L88,55 L88,88 L32,88 L32,55 L42,55 Z" fill="#b8a06a" stroke="#2f4a56"/>
+      <!-- 内锥线 -->
+      <line x1="55" y1="28" x2="48" y2="88" stroke="#e67e22" stroke-width="2"/>
+      <line x1="65" y1="28" x2="72" y2="88" stroke="#e67e22" stroke-width="2"/>
+      <text x="100" y="42" fill="#c45c5c" font-size="9" font-weight="700">上段外套</text>
+      <text x="100" y="58" fill="#5c6b64" font-size="8">止口坐肩</text>
+      <text x="100" y="78" fill="#b8a06a" font-size="9" font-weight="700">下段公颈</text>
+      <text x="100" y="92" fill="#e67e22" font-size="8">内壁连续锥</text>
+    </g>
+  `;
+}
+
 export const renderAssembledConeDiagram = renderConeMoldDiagram;

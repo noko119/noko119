@@ -440,24 +440,24 @@ html, body {
     <header class="hero">
       <p class="brand">CONE MOLD · <a href="./thread-card.html" style="color:inherit">端头表</a> · <a href="./pipe-end.html" style="color:inherit">接管计算</a> · <a href="./index.html" style="color:inherit">通用螺纹</a></p>
       <h1>锥管模具分段</h1>
-      <p class="lede">输入大头 / 小头 / 模具总高，自动分节（大节标准 210、小节非标），并给出圆整螺纹与公母扣端头表。</p>
+      <p class="lede">按<strong>内锥型腔</strong>分段：上口/下口是型腔口径；模具外圈嵌套（上外套 / 下公颈），内壁连续共锥。</p>
     </header>
 
     <section class="panel">
       <div class="const-bar">
+        <span>型腔内锥连续</span>
         <span>大节标准长 210（含上口余量）</span>
         <span>小节非标凑总高（含下口余量）</span>
-        <span>P=2 · 螺纹尾数圆整 0/5</span>
-        <span>止口 10 + 旋合 12 + 退刀槽 4</span>
+        <span>接头：止口嵌套 + P=2 螺纹</span>
       </div>
 
       <div class="field-row five">
         <label class="field">
-          <span>大头外径 / mm</span>
+          <span>型腔上口 / mm</span>
           <input id="bigOd" type="number" min="1" step="any" value="219" />
         </label>
         <label class="field">
-          <span>小头外径 / mm</span>
+          <span>型腔下口 / mm</span>
           <input id="smallOd" type="number" min="1" step="any" value="108" />
         </label>
         <label class="field">
@@ -474,25 +474,29 @@ html, body {
         </label>
       </div>
 
-      <div class="field-row" style="margin-top:12px;grid-template-columns:1fr 1fr 1fr auto">
+      <div class="field-row" style="margin-top:12px;grid-template-columns:1fr 1fr 1fr 1fr auto">
         <label class="field">
           <span>标准节长 / mm</span>
           <input id="standardLen" type="number" min="50" step="any" value="210" />
+        </label>
+        <label class="field">
+          <span>名义壁厚 / mm</span>
+          <input id="wall" type="number" min="1" step="any" value="25" />
         </label>
         <label class="field">
           <span>强制节数（可空）</span>
           <input id="segmentCount" type="number" min="2" step="1" placeholder="自动" />
         </label>
         <label class="field">
-          <span>中间管径（可选，逗号分隔）</span>
-          <input id="midOds" type="text" placeholder="例如 168,133" autocomplete="off" />
+          <span>外圆序列（可选）</span>
+          <input id="midOds" type="text" placeholder="如 273,245,219,194" autocomplete="off" />
         </label>
         <div class="actions" style="margin:0;align-self:end">
           <button type="button" class="btn primary" id="calcBtn">生成方案</button>
           <button type="button" class="btn ghost" id="copyBtn">复制</button>
         </div>
       </div>
-      <p class="hint" style="margin-top:10px">默认按你此前确认的规则：大直径节 210，最小节非标；螺纹尽量圆整。</p>
+      <p class="hint" style="margin-top:10px">外圆按「型腔+2×壁厚」就近标准管坯；接头为上段外套止口坐在下段公颈上，螺纹圆整到 0/5。</p>
       <p class="status" id="status" role="status"></p>
       <div class="warn-box" id="warnBox"></div>
     </section>
@@ -502,102 +506,100 @@ html, body {
         <h3>组装后示意图</h3>
         <p class="muted" id="summaryLine">生成方案后显示总高 / 面距摘要</p>
         <div class="diagram-wrap" id="assyDiagram">
-  <svg viewBox="0 0 780 346" class="diagram" role="img" aria-label="锥管模具组装后示意图">
-    <defs>
-      <linearGradient id="coneFill" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#d7e4de"/><stop offset="100%" stop-color="#b7ccc3"/>
-      </linearGradient>
-    </defs>
-    <text x="20" y="18" fill="#2f4a56" font-size="12" font-weight="700">组装后示意图 · φ219 → φ108</text>
-    <text x="20" y="34" fill="#5c6b64" font-size="9">左=上口大端 → 右=下口小端（各节已拧合；轴向按实长比例；径向示意）</text>
-
-    <path d="M 56 115.44 L 201.41935483870967 115.44 L 201.41935483870967 127.68 L 346.83870967741933 127.68 L 346.83870967741933 136.08 L 492.258064516129 136.08 L 492.258064516129 142.08 L 700 142.08 L 700 193.92 L 492.258064516129 193.92 L 492.258064516129 199.92 L 346.83870967741933 199.92 L 346.83870967741933 208.32 L 201.41935483870967 208.32 L 201.41935483870967 220.56 L 56 220.56 Z" fill="url(#coneFill)" stroke="#2f4a56" stroke-width="1.3"/>
-    <path d="M 56 119.28 L 201.41935483870967 119.28 L 201.41935483870967 131.52 L 346.83870967741933 131.52 L 346.83870967741933 138.96 L 492.258064516129 138.96 L 492.258064516129 144.96 L 700 144.96 L 700 191.04 L 492.258064516129 191.04 L 492.258064516129 197.04 L 346.83870967741933 197.04 L 346.83870967741933 204.48 L 201.41935483870967 204.48 L 201.41935483870967 216.72 L 56 216.72 Z" fill="#f7faf8" stroke="#93a09a" stroke-width="0.9" stroke-dasharray="3 2" opacity="0.95"/>
-    <line x1="48" y1="168" x2="710" y2="168" stroke="#5c6b64" stroke-dasharray="4 3"/>
-
+  <svg viewBox="0 0 760 636" class="diagram" role="img" aria-label="锥管模具组装后嵌套示意图">
+    <text x="20" y="22" fill="#2f4a56" font-size="13" font-weight="800">组装后示意图 · 内锥型腔 + 止口嵌套</text>
+    <text x="20" y="36" fill="#5c6b64" font-size="9">内壁连续共锥；外壁分段外套（细节见图中接头示意）</text>
     
-    <line x1="56" y1="48" x2="201.41935483870967" y2="48" stroke="#c45c26" stroke-width="1"/>
-    <line x1="56" y1="45" x2="56" y2="51" stroke="#c45c26" stroke-width="1"/>
-    <line x1="201.41935483870967" y1="45" x2="201.41935483870967" y2="51" stroke="#c45c26" stroke-width="1"/>
-    <text x="128.70967741935482" y="43" text-anchor="middle" fill="#c45c26" font-size="9" font-weight="600">L1 210</text>
-  
-    <line x1="201.41935483870967" y1="66" x2="346.83870967741933" y2="66" stroke="#c45c26" stroke-width="1"/>
-    <line x1="201.41935483870967" y1="63" x2="201.41935483870967" y2="69" stroke="#c45c26" stroke-width="1"/>
-    <line x1="346.83870967741933" y1="63" x2="346.83870967741933" y2="69" stroke="#c45c26" stroke-width="1"/>
-    <text x="274.1290322580645" y="61" text-anchor="middle" fill="#c45c26" font-size="9" font-weight="600">L2 210</text>
-  
-    <line x1="346.83870967741933" y1="48" x2="492.258064516129" y2="48" stroke="#c45c26" stroke-width="1"/>
-    <line x1="346.83870967741933" y1="45" x2="346.83870967741933" y2="51" stroke="#c45c26" stroke-width="1"/>
-    <line x1="492.258064516129" y1="45" x2="492.258064516129" y2="51" stroke="#c45c26" stroke-width="1"/>
-    <text x="419.54838709677415" y="43" text-anchor="middle" fill="#c45c26" font-size="9" font-weight="600">L3 210</text>
-  
-    <line x1="492.258064516129" y1="66" x2="700" y2="66" stroke="#8a5a2a" stroke-width="1"/>
-    <line x1="492.258064516129" y1="63" x2="492.258064516129" y2="69" stroke="#8a5a2a" stroke-width="1"/>
-    <line x1="700" y1="63" x2="700" y2="69" stroke="#8a5a2a" stroke-width="1"/>
-    <text x="596.1290322580645" y="61" text-anchor="middle" fill="#8a5a2a" font-size="9" font-weight="600">L4 300</text>
-  
-    
-    <line x1="87.16129032258064" y1="115.44" x2="87.16129032258064" y2="220.56"
-      stroke="#2f4a56" stroke-width="1" stroke-dasharray="2 2"/>
-    
-    <line x1="56" y1="88" x2="87.16129032258064" y2="88" stroke="#2f4a56" stroke-width="1"/>
-    <line x1="56" y1="85" x2="56" y2="91" stroke="#2f4a56" stroke-width="1"/>
-    <line x1="87.16129032258064" y1="85" x2="87.16129032258064" y2="91" stroke="#2f4a56" stroke-width="1"/>
-    <text x="71.58064516129032" y="83" text-anchor="middle" fill="#2f4a56" font-size="9" font-weight="600">上口 45</text>
-  
-    <line x1="696.5376344086021" y1="142.08" x2="696.5376344086021" y2="193.92"
-      stroke="#2f4a56" stroke-width="1" stroke-dasharray="2 2"/>
-    
-    <line x1="696.5376344086021" y1="88" x2="700" y2="88" stroke="#2f4a56" stroke-width="1"/>
-    <line x1="696.5376344086021" y1="85" x2="696.5376344086021" y2="91" stroke="#2f4a56" stroke-width="1"/>
-    <line x1="700" y1="85" x2="700" y2="91" stroke="#2f4a56" stroke-width="1"/>
-    <text x="698.2688172043011" y="83" text-anchor="middle" fill="#2f4a56" font-size="9" font-weight="600">下口 5</text>
-  
-  
-    
-        <line x1="201.41935483870967" y1="111.44" x2="201.41935483870967" y2="224.56"
-          stroke="#1f6f5b" stroke-width="1.2" stroke-dasharray="3 2"/>
-        <text x="201.41935483870967" y="160" text-anchor="middle" fill="#1f6f5b" font-size="9" font-weight="700">M160×2</text>
+        <path d="M550,40 L550,148.38709677419354 L550,159.74193548387095 L545.6043956043956,159.74193548387095 L545.6043956043956,148.38709677419354 L506.5576923076923,148.38709677419354 L520.3296703296703,40 Z" fill="#c45c5c" fill-opacity="0.85" stroke="#2f4a56" stroke-width="1.2"/>
+        <path d="M250,40 L250,148.38709677419354 L250,159.74193548387095 L254.3956043956044,159.74193548387095 L254.3956043956044,148.38709677419354 L293.4423076923077,148.38709677419354 L279.6703296703297,40 Z" fill="#c45c5c" fill-opacity="0.85" stroke="#2f4a56" stroke-width="1.2"/>
+        <text x="558" y="98.19354838709677" fill="#2f4a56" font-size="10" font-weight="700">§1</text>
       
-        <line x1="346.83870967741933" y1="123.68" x2="346.83870967741933" y2="212.32"
-          stroke="#1f6f5b" stroke-width="1.2" stroke-dasharray="3 2"/>
-        <text x="346.83870967741933" y="148" text-anchor="middle" fill="#1f6f5b" font-size="9" font-weight="700">M130×2</text>
+        <path d="M530.2197802197802,148.38709677419354 L530.2197802197802,159.74193548387095 L534.6153846153846,159.74193548387095 L534.6153846153846,256.7741935483871 L534.6153846153846,268.1290322580645 L530.2197802197802,268.1290322580645 L530.2197802197802,256.7741935483871 L492.7862637362638,256.7741935483871 L506.5576923076923,148.38709677419354 Z" fill="#b8a06a" fill-opacity="0.85" stroke="#2f4a56" stroke-width="1.2"/>
+        <path d="M269.7802197802198,148.38709677419354 L269.7802197802198,159.74193548387095 L265.38461538461536,159.74193548387095 L265.38461538461536,256.7741935483871 L265.38461538461536,268.1290322580645 L269.7802197802198,268.1290322580645 L269.7802197802198,256.7741935483871 L307.2137362637362,256.7741935483871 L293.4423076923077,148.38709677419354 Z" fill="#b8a06a" fill-opacity="0.85" stroke="#2f4a56" stroke-width="1.2"/>
+        <text x="542.6153846153846" y="206.5806451612903" fill="#2f4a56" font-size="10" font-weight="700">§2</text>
       
-        <line x1="492.258064516129" y1="132.08" x2="492.258064516129" y2="203.92"
-          stroke="#1f6f5b" stroke-width="1.2" stroke-dasharray="3 2"/>
-        <text x="492.258064516129" y="160" text-anchor="middle" fill="#1f6f5b" font-size="9" font-weight="700">M105×2</text>
+        <path d="M515.934065934066,256.7741935483871 L515.934065934066,268.1290322580645 L520.3296703296703,268.1290322580645 L520.3296703296703,365.1612903225806 L520.3296703296703,376.51612903225805 L515.9340659340659,376.51612903225805 L515.9340659340659,365.1612903225806 L479.01428571428573,365.1612903225806 L492.7862637362638,256.7741935483871 Z" fill="#6a9ec9" fill-opacity="0.85" stroke="#2f4a56" stroke-width="1.2"/>
+        <path d="M284.0659340659341,256.7741935483871 L284.0659340659341,268.1290322580645 L279.6703296703297,268.1290322580645 L279.6703296703297,365.1612903225806 L279.6703296703297,376.51612903225805 L284.0659340659341,376.51612903225805 L284.0659340659341,365.1612903225806 L320.98571428571427,365.1612903225806 L307.2137362637362,256.7741935483871 Z" fill="#6a9ec9" fill-opacity="0.85" stroke="#2f4a56" stroke-width="1.2"/>
+        <text x="528.3296703296703" y="314.96774193548384" fill="#2f4a56" font-size="10" font-weight="700">§3</text>
       
-    <text x="128.70967741935482" y="182" text-anchor="middle" fill="#5c6b64" font-size="9">φ219</text><text x="274.1290322580645" y="182" text-anchor="middle" fill="#5c6b64" font-size="9">φ168</text><text x="419.54838709677415" y="182" text-anchor="middle" fill="#5c6b64" font-size="9">φ133</text><text x="596.1290322580645" y="182" text-anchor="middle" fill="#5c6b64" font-size="9">φ108</text>
+        <path d="M502.1978021978022,365.1612903225806 L502.1978021978022,376.51612903225805 L506.5934065934066,376.51612903225805 L506.5934065934066,520 L459.34065934065933,520 L479.01428571428573,365.1612903225806 Z" fill="#5cbf6a" fill-opacity="0.85" stroke="#2f4a56" stroke-width="1.2"/>
+        <path d="M297.8021978021978,365.1612903225806 L297.8021978021978,376.51612903225805 L293.4065934065934,376.51612903225805 L293.4065934065934,520 L340.65934065934067,520 L320.98571428571427,365.1612903225806 Z" fill="#5cbf6a" fill-opacity="0.85" stroke="#2f4a56" stroke-width="1.2"/>
+        <text x="514.5934065934066" y="446.5806451612903" fill="#2f4a56" font-size="10" font-weight="700">§4</text>
+      
     
+    <line x1="279.6703296703297" y1="40" x2="340.65934065934067" y2="520"
+      stroke="#e67e22" stroke-width="2.2"/>
+    <line x1="520.3296703296703" y1="40" x2="459.34065934065933" y2="520"
+      stroke="#e67e22" stroke-width="2.2"/>
+  
+    <text x="240" y="151.38709677419354" text-anchor="end"
+        fill="#1f6f5b" font-size="9" font-weight="700">M220×2</text><text x="240" y="259.7741935483871" text-anchor="end"
+        fill="#1f6f5b" font-size="9" font-weight="700">M195×2</text><text x="240" y="368.1612903225806" text-anchor="end"
+        fill="#1f6f5b" font-size="9" font-weight="700">M170×2</text>
     
-    <line x1="42" y1="115.44" x2="42" y2="220.56" stroke="#5c6b64" stroke-width="1"/>
-    <line x1="39" y1="115.44" x2="45" y2="115.44" stroke="#5c6b64" stroke-width="1"/>
-    <line x1="39" y1="220.56" x2="45" y2="220.56" stroke="#5c6b64" stroke-width="1"/>
-    <text x="36" y="171" text-anchor="end" fill="#5c6b64" font-size="9" font-weight="600">φ219</text>
+    <line x1="70" y1="40" x2="70" y2="520" stroke="#2f4a56" stroke-width="1"/>
+    <line x1="67" y1="40" x2="73" y2="40" stroke="#2f4a56" stroke-width="1"/>
+    <line x1="67" y1="520" x2="73" y2="520" stroke="#2f4a56" stroke-width="1"/>
+    <text x="64" y="283" text-anchor="end" fill="#2f4a56" font-size="9" font-weight="600">总高 930</text>
+  
+    <line x1="100" y1="40" x2="100" y2="148.38709677419354" stroke="#c45c26" stroke-width="1"/>
+    <line x1="97" y1="40" x2="103" y2="40" stroke="#c45c26" stroke-width="1"/>
+    <line x1="97" y1="148.38709677419354" x2="103" y2="148.38709677419354" stroke="#c45c26" stroke-width="1"/>
+    <text x="94" y="97.19354838709677" text-anchor="end" fill="#c45c26" font-size="9" font-weight="600">210</text>
+  
+    <line x1="100" y1="148.38709677419354" x2="100" y2="256.7741935483871" stroke="#c45c26" stroke-width="1"/>
+    <line x1="97" y1="148.38709677419354" x2="103" y2="148.38709677419354" stroke="#c45c26" stroke-width="1"/>
+    <line x1="97" y1="256.7741935483871" x2="103" y2="256.7741935483871" stroke="#c45c26" stroke-width="1"/>
+    <text x="94" y="205.5806451612903" text-anchor="end" fill="#c45c26" font-size="9" font-weight="600">210</text>
+  
+    <line x1="100" y1="256.7741935483871" x2="100" y2="365.1612903225806" stroke="#c45c26" stroke-width="1"/>
+    <line x1="97" y1="256.7741935483871" x2="103" y2="256.7741935483871" stroke="#c45c26" stroke-width="1"/>
+    <line x1="97" y1="365.1612903225806" x2="103" y2="365.1612903225806" stroke="#c45c26" stroke-width="1"/>
+    <text x="94" y="313.96774193548384" text-anchor="end" fill="#c45c26" font-size="9" font-weight="600">210</text>
+  
+    <line x1="100" y1="365.1612903225806" x2="100" y2="520" stroke="#c45c26" stroke-width="1"/>
+    <line x1="97" y1="365.1612903225806" x2="103" y2="365.1612903225806" stroke="#c45c26" stroke-width="1"/>
+    <line x1="97" y1="520" x2="103" y2="520" stroke="#c45c26" stroke-width="1"/>
+    <text x="94" y="445.5806451612903" text-anchor="end" fill="#c45c26" font-size="9" font-weight="600">300</text>
+  
+    <line x1="130" y1="40" x2="130" y2="63.225806451612904" stroke="#1f6f5b" stroke-width="1"/>
+    <line x1="127" y1="40" x2="133" y2="40" stroke="#1f6f5b" stroke-width="1"/>
+    <line x1="127" y1="63.225806451612904" x2="133" y2="63.225806451612904" stroke="#1f6f5b" stroke-width="1"/>
+    <text x="124" y="54.61290322580645" text-anchor="end" fill="#1f6f5b" font-size="9" font-weight="600">上 45</text>
+  
+    <line x1="130" y1="517.4193548387096" x2="130" y2="520" stroke="#1f6f5b" stroke-width="1"/>
+    <line x1="127" y1="517.4193548387096" x2="133" y2="517.4193548387096" stroke="#1f6f5b" stroke-width="1"/>
+    <line x1="127" y1="520" x2="133" y2="520" stroke="#1f6f5b" stroke-width="1"/>
+    <text x="124" y="521.7096774193549" text-anchor="end" fill="#1f6f5b" font-size="9" font-weight="600">下 5</text>
+  
+    <line x1="48" y1="63.225806451612904" x2="48" y2="517.4193548387096" stroke="#5c6b64" stroke-width="1"/>
+    <line x1="45" y1="63.225806451612904" x2="51" y2="63.225806451612904" stroke="#5c6b64" stroke-width="1"/>
+    <line x1="45" y1="517.4193548387096" x2="51" y2="517.4193548387096" stroke="#5c6b64" stroke-width="1"/>
+    <text x="42" y="293.3225806451613" text-anchor="end" fill="#5c6b64" font-size="9" font-weight="600">面距 880</text>
   
     
-    <line x1="714" y1="142.08" x2="714" y2="193.92" stroke="#5c6b64" stroke-width="1"/>
-    <line x1="711" y1="142.08" x2="717" y2="142.08" stroke="#5c6b64" stroke-width="1"/>
-    <line x1="711" y1="193.92" x2="717" y2="193.92" stroke="#5c6b64" stroke-width="1"/>
-    <text x="720" y="171" text-anchor="start" fill="#5c6b64" font-size="9" font-weight="600">φ108</text>
+    <text x="400" y="30" text-anchor="middle" fill="#e67e22" font-size="11" font-weight="800">型腔上口 ø219</text>
+    <text x="400" y="538" text-anchor="middle" fill="#e67e22" font-size="11" font-weight="800">型腔下口 ø108</text>
   
-  
+    <line x1="400" y1="40" x2="400" y2="520" stroke="#9aa8a1" stroke-dasharray="4 3"/>
     
-    
-    <line x1="56" y1="246" x2="700" y2="246" stroke="#2f4a56" stroke-width="1"/>
-    <line x1="56" y1="243" x2="56" y2="249" stroke="#2f4a56" stroke-width="1"/>
-    <line x1="700" y1="243" x2="700" y2="249" stroke="#2f4a56" stroke-width="1"/>
-    <text x="378" y="241" text-anchor="middle" fill="#2f4a56" font-size="9" font-weight="600">模具总高 930</text>
+    <g transform="translate(520,410)">
+      <rect x="0" y="0" width="200" height="100" rx="8" fill="#fff" stroke="#2f4a56" stroke-width="1"/>
+      <text x="10" y="16" fill="#2f4a56" font-size="10" font-weight="700">接头细节 · M220×2</text>
+      <!-- 上段（母套） -->
+      <path d="M30,28 L90,28 L90,55 L78,55 L78,48 L42,48 L42,55 L30,55 Z" fill="#c45c5c" stroke="#2f4a56"/>
+      <!-- 下段（公颈） -->
+      <path d="M42,48 L78,48 L78,55 L88,55 L88,88 L32,88 L32,55 L42,55 Z" fill="#b8a06a" stroke="#2f4a56"/>
+      <!-- 内锥线 -->
+      <line x1="55" y1="28" x2="48" y2="88" stroke="#e67e22" stroke-width="2"/>
+      <line x1="65" y1="28" x2="72" y2="88" stroke="#e67e22" stroke-width="2"/>
+      <text x="100" y="42" fill="#c45c5c" font-size="9" font-weight="700">上段外套</text>
+      <text x="100" y="58" fill="#5c6b64" font-size="8">止口坐肩</text>
+      <text x="100" y="78" fill="#b8a06a" font-size="9" font-weight="700">下段公颈</text>
+      <text x="100" y="92" fill="#e67e22" font-size="8">内壁连续锥</text>
+    </g>
   
-    
-    <line x1="87.16129032258064" y1="266" x2="696.5376344086021" y2="266" stroke="#1f6f5b" stroke-width="1"/>
-    <line x1="87.16129032258064" y1="263" x2="87.16129032258064" y2="269" stroke="#1f6f5b" stroke-width="1"/>
-    <line x1="696.5376344086021" y1="263" x2="696.5376344086021" y2="269" stroke="#1f6f5b" stroke-width="1"/>
-    <text x="391.84946236559136" y="261" text-anchor="middle" fill="#1f6f5b" font-size="9" font-weight="600">面距 880（期望 880）</text>
-  
-  
-
-    <text x="24" y="286" fill="#2f4a56" font-size="9" font-weight="600">第1节 φ219×210（标准）</text><text x="214" y="286" fill="#2f4a56" font-size="9" font-weight="600">第2节 φ168×210（标准）</text><text x="404" y="286" fill="#2f4a56" font-size="9" font-weight="600">第3节 φ133×210（标准）</text><text x="594" y="286" fill="#8a5a2a" font-size="9" font-weight="600">第4节 φ108×300（非标）</text><text x="24" y="302" fill="#1f6f5b" font-size="9" font-weight="600">接头1 M160×2（φ219→φ168）</text><text x="214" y="302" fill="#1f6f5b" font-size="9" font-weight="600">接头2 M130×2（φ168→φ133）</text><text x="404" y="302" fill="#1f6f5b" font-size="9" font-weight="600">接头3 M105×2（φ133→φ108）</text><text x="594" y="302" fill="#2f4a56" font-size="9" font-weight="600">上口余量 45（计入大节）</text><text x="24" y="318" fill="#2f4a56" font-size="9" font-weight="600">下口余量 5（计入小节）</text>
+    <text x="24" y="556" fill="#5c6b64" font-size="9" font-weight="600">§1 外圆ø273 · 型腔 219→193.935 · 210mm（标准）</text><text x="384" y="556" fill="#5c6b64" font-size="9" font-weight="600">§2 外圆ø245 · 型腔 193.935→168.871 · 210mm（标准）</text><text x="24" y="571" fill="#5c6b64" font-size="9" font-weight="600">§3 外圆ø219 · 型腔 168.871→143.806 · 210mm（标准）</text><text x="384" y="571" fill="#5c6b64" font-size="9" font-weight="600">§4 外圆ø194 · 型腔 143.806→108 · 300mm（非标）</text><text x="24" y="586" fill="#5c6b64" font-size="9" font-weight="600">接头1 M220×2 @z=210 型腔ø193.935</text><text x="384" y="586" fill="#5c6b64" font-size="9" font-weight="600">接头2 M195×2 @z=420 型腔ø168.871</text><text x="24" y="601" fill="#5c6b64" font-size="9" font-weight="600">接头3 M170×2 @z=630 型腔ø143.806</text><text x="384" y="601" fill="#5c6b64" font-size="9" font-weight="600">橙线=连续内锥；外套止口嵌套（上母下公）</text>
   </svg></div>
       </article>
 
@@ -610,7 +612,7 @@ html, body {
         <h3>各节明细</h3>
         <table class="data">
           <thead>
-            <tr><th>节</th><th>外径</th><th>长度</th><th>类型</th><th>建议壁厚</th><th>端头</th><th>余量说明</th></tr>
+            <tr><th>节</th><th>型腔</th><th>外圆</th><th>长度</th><th>类型</th><th>壁厚</th><th>端头</th><th>余量说明</th></tr>
           </thead>
           <tbody id="segTable"></tbody>
         </table>
@@ -620,7 +622,7 @@ html, body {
         <h3>螺纹接头</h3>
         <table class="data">
           <thead>
-            <tr><th>道</th><th>母→公</th><th>自动</th><th>圆整规格</th><th>牙顶外/内</th><th>df / Dg</th><th>母端局部壁厚</th></tr>
+            <tr><th>道</th><th>外套→公颈</th><th>接头处型腔</th><th>自动</th><th>圆整规格</th><th>牙顶外/内</th><th>外套局部壁厚</th></tr>
           </thead>
           <tbody id="jointTable"></tbody>
         </table>
@@ -1031,53 +1033,46 @@ function computeThreadEndCards(designationRaw, opt = {}) {
 
 
 /**
- * 锥管模具分段设计
- * - 大直径节优先标准长（默认 210，含上口余量）
- * - 最小直径节用非标长度凑满模具总高（含下口余量）
- * - 段间螺纹 P=2，大径就近圆整到 0/5
+ * 锥管模具分段设计（内锥型腔 + 外圈嵌套）
+ *
+ * 正确模型：
+ * - 上口/下口是型腔口径（连续内锥），不是外径阶梯接管
+ * - 模具沿高度分段；上段套下段（止口嵌套 + 螺纹）
+ * - 内壁跨接头连续共线；外壁台阶嵌套（见接头细节）
+ * - 大节标准长 210（含上口余量）；小节非标凑总高（含下口余量）
  */
 
-/** 常用无缝管外径（mm） */
+/** 常用管坯外径，用于模具外圆就近取材 */
 const STD_PIPE_ODS = [
-  89, 102, 108, 114, 121, 127, 133, 140, 152, 159, 168, 180, 194, 203, 219, 245, 273, 299, 325,
+  89, 102, 108, 114, 121, 127, 133, 140, 152, 159, 168, 180, 194, 203, 219, 245, 273, 299, 325, 351, 377,
 ];
 
 const CONE_MOLD_DEFAULTS = {
-  bigOd: 219,
-  smallOd: 108,
+  cavityTop: 219,
+  cavityBottom: 108,
   moldHeight: 930,
-  topAllowance: 45, // 计入最大节
-  bottomAllowance: 5, // 计入最小节
+  topAllowance: 45,
+  bottomAllowance: 5,
   standardLen: 210,
+  wall: 25, // 型腔到外圆名义壁厚
+  nestSleeve: 8, // 上段外套止口径向厚度（示意）
   pitch: 2,
-  defaultWall: {
-    219: 8,
-    180: 8,
-    168: 8,
-    159: 6,
-    140: 6,
-    133: 6,
-    121: 6,
-    114: 6,
-    108: 6,
-  },
 };
 
 function round3(n) {
   return Math.round(n * 1000) / 1000;
 }
 
-/** 就近圆整到尾数 0 或 5 */
 function roundMajor05(n) {
   return Math.round(Number(n) / 5) * 5;
 }
 
-function nearestOd(target, catalog) {
+function nearestOd(target, catalog = STD_PIPE_ODS) {
   let best = catalog[0];
   let bestD = Math.abs(catalog[0] - target);
   for (const od of catalog) {
     const d = Math.abs(od - target);
-    if (d < bestD) {
+    if (d < bestD || (d === bestD && od >= target)) {
       best = od;
       bestD = d;
     }
@@ -1085,67 +1080,15 @@ function nearestOd(target, catalog) {
   return best;
 }
 
-/**
- * 在 [small, big] 内选 count 个外径（含两端）
- * 按「两端 + 中间标准管目录」下标均匀取样
- */
-function pickSegmentOds(bigOd, smallOd, count, catalog = STD_PIPE_ODS) {
-  const big = Number(bigOd);
-  const small = Number(smallOd);
-  if (!(big > small) || count < 2) {
-    return { ok: false, error: "大头须大于小头，且至少 2 节" };
-  }
-
-  const mid = [...new Set(catalog.filter((d) => d < big && d > small))].sort((a, b) => b - a);
-  const chain = [big, ...mid, small];
-  const ods = new Array(count);
-  ods[0] = big;
-  ods[count - 1] = small;
-
-  if (count === 2) return { ok: true, ods };
-
-  if (chain.length >= count) {
-    for (let i = 1; i <= count - 2; i++) {
-      const idx = Math.round((i * (chain.length - 1)) / (count - 1));
-      let cand = chain[Math.min(idx, chain.length - 2)];
-      // 保持严格介于相邻已定点之间（末端稍后写入）
-      const prev = ods[i - 1];
-      const minLeft = small + (count - 1 - i);
-      if (cand >= prev) cand = prev - 1;
-      if (cand <= minLeft) cand = minLeft;
-      // 贴回目录
-      const pool = mid.filter((d) => d < prev && d > small);
-      if (pool.length) cand = nearestOd(cand, pool);
-      if (cand >= prev || cand <= small) {
-        const t = i / (count - 1);
-        cand = nearestOd(big + (small - big) * t, pool.length ? pool : [Math.round(big + (small - big) * t)]);
-      }
-      ods[i] = cand;
-    }
-  } else {
-    for (let i = 1; i <= count - 2; i++) {
-      const t = i / (count - 1);
-      ods[i] = Math.round(big + (small - big) * t);
-    }
-  }
-
-  for (let i = 1; i < count - 1; i++) {
-    if (!(ods[i] < ods[i - 1])) ods[i] = ods[i - 1] - 1;
-    if (!(ods[i] > (ods[i + 1] ?? small))) {
-      const hi = ods[i - 1];
-      const lo = i + 1 < count - 1 ? ods[i + 1] : small;
-      ods[i] = Math.round((hi + lo) / 2);
-      if (!(ods[i] < hi)) ods[i] = hi - 1;
-      if (!(ods[i] > lo)) ods[i] = lo + 1;
-    }
-  }
-  ods[0] = big;
-  ods[count - 1] = small;
-  return { ok: true, ods };
+/** 沿模具轴向 z（自上而下 0…H）的型腔直径 */
+function cavityDiaAt(z, cavityTop, cavityBottom, moldHeight) {
+  const H = Number(moldHeight);
+  const zt = Math.min(Math.max(Number(z), 0), H);
+  return round3(cavityTop + (cavityBottom - cavityTop) * (zt / H));
 }
 
 /**
- * 计算节数与长度：大节=standardLen，小节=剩余非标
+ * 大节=standardLen，小节=剩余非标
  */
 function planSegmentLengths(moldHeight, standardLen = 210, minSmall = 120, maxSmall = 400) {
   const H = Number(moldHeight);
@@ -1153,7 +1096,6 @@ function planSegmentLengths(moldHeight, standardLen = 210, minSmall = 120, maxSm
   if (!(H > 0) || !(S > 0)) return { ok: false, error: "模具总高与标准节长须大于 0" };
 
   const candidates = [];
-  // 大节数量 k = n-1，n 从 2 到合理上限
   for (let k = 1; k <= 12; k++) {
     const smallLen = round3(H - k * S);
     if (smallLen <= 0) break;
@@ -1180,16 +1122,8 @@ function planSegmentLengths(moldHeight, standardLen = 210, minSmall = 120, maxSm
   return { ok: true, plan: candidates[0], alternatives: candidates.slice(0, 5) };
 }
 
-function defaultWallFor(od, map) {
-  if (map && map[od] != null) return Number(map[od]);
-  if (od >= 180) return 8;
-  if (od >= 140) return 6;
-  return 6;
-}
-
-/** 求使校验通过的最小母端壁厚 */
 function minFemaleWall(D1, t1, D2, majorDia) {
-  for (let t2 = 4; t2 <= 60; t2 += 0.5) {
+  for (let t2 = 4; t2 <= 80; t2 += 0.5) {
     const r = computePipeEndThread(
       { D1, t1, D2, t2 },
       majorDia != null ? { majorDia } : {}
@@ -1201,30 +1135,33 @@ function minFemaleWall(D1, t1, D2, majorDia) {
 
 /**
  * @param {{
- *   bigOd: number, smallOd: number, moldHeight: number,
+ *   cavityTop?: number, cavityBottom?: number,
+ *   bigOd?: number, smallOd?: number, // 兼容旧字段名=型腔上/下口
+ *   moldHeight: number,
  *   topAllowance?: number, bottomAllowance?: number,
  *   standardLen?: number, segmentCount?: number,
- *   walls?: Record<number, number>, roundThread?: boolean
+ *   wall?: number, nestSleeve?: number,
+ *   preferredOuterOds?: number[],
+ *   roundThread?: boolean
  * }} input
  */
 function designConeMold(input) {
-  const bigOd = Number(input.bigOd);
-  const smallOd = Number(input.smallOd);
+  const cavityTop = Number(input.cavityTop ?? input.bigOd ?? CONE_MOLD_DEFAULTS.cavityTop);
+  const cavityBottom = Number(input.cavityBottom ?? input.smallOd ?? CONE_MOLD_DEFAULTS.cavityBottom);
   const moldHeight = Number(input.moldHeight);
   const topAllowance = Number(input.topAllowance ?? CONE_MOLD_DEFAULTS.topAllowance);
   const bottomAllowance = Number(input.bottomAllowance ?? CONE_MOLD_DEFAULTS.bottomAllowance);
   const standardLen = Number(input.standardLen ?? CONE_MOLD_DEFAULTS.standardLen);
+  const wall = Number(input.wall ?? CONE_MOLD_DEFAULTS.wall);
+  const nestSleeve = Number(input.nestSleeve ?? CONE_MOLD_DEFAULTS.nestSleeve);
   const roundThread = input.roundThread !== false;
-  const walls = input.walls || CONE_MOLD_DEFAULTS.defaultWall;
 
-  if (!(bigOd > smallOd)) return { ok: false, error: "大头外径须大于小头外径" };
+  if (!(cavityTop > cavityBottom)) return { ok: false, error: "型腔上口须大于下口" };
   if (!(moldHeight > 0)) return { ok: false, error: "模具总高须大于 0" };
+  if (!(wall > 0)) return { ok: false, error: "名义壁厚须大于 0" };
   if (topAllowance < 0 || bottomAllowance < 0) return { ok: false, error: "上/下余量不能为负" };
   if (topAllowance >= standardLen) {
     return { ok: false, error: `上口余量 ${topAllowance} 须小于标准节长 ${standardLen}` };
-  }
-  if (bottomAllowance >= moldHeight) {
-    return { ok: false, error: "下口余量过大" };
   }
 
   const lengthPlan = planSegmentLengths(moldHeight, standardLen);
@@ -1234,9 +1171,7 @@ function designConeMold(input) {
   if (input.segmentCount != null && Number(input.segmentCount) >= 2) {
     const forced = Number(input.segmentCount);
     const smallLen = round3(moldHeight - (forced - 1) * standardLen);
-    if (smallLen <= 0) {
-      return { ok: false, error: `节数 ${forced} 过大，剩余小节长度不足` };
-    }
+    if (smallLen <= 0) return { ok: false, error: `节数 ${forced} 过大，剩余小节长度不足` };
     segmentCount = forced;
     lengthPlan.plan = {
       segmentCount: forced,
@@ -1248,70 +1183,120 @@ function designConeMold(input) {
     };
   }
 
-  const odPick = input.preferredOds && Array.isArray(input.preferredOds) && input.preferredOds.length === segmentCount
-    ? { ok: true, ods: input.preferredOds.map(Number) }
-    : pickSegmentOds(bigOd, smallOd, segmentCount);
-  if (!odPick.ok) return odPick;
-  if (odPick.ods[0] !== bigOd || odPick.ods[odPick.ods.length - 1] !== smallOd) {
-    odPick.ods[0] = bigOd;
-    odPick.ods[odPick.ods.length - 1] = smallOd;
-  }
-
   const smallLen = lengthPlan.plan.smallLen;
-  const segments = odPick.ods.map((od, i) => {
+  const lengths = Array.from({ length: segmentCount }, (_, i) =>
+    i === segmentCount - 1 ? smallLen : standardLen
+  );
+
+  // 累计轴向（自上而下）
+  let z = 0;
+  const segments = lengths.map((length, i) => {
+    const z0 = z;
+    const z1 = round3(z + length);
+    z = z1;
+    const cavTop = cavityDiaAt(z0, cavityTop, cavityBottom, moldHeight);
+    const cavBot = cavityDiaAt(z1, cavityTop, cavityBottom, moldHeight);
+    const cavMid = cavityDiaAt((z0 + z1) / 2, cavityTop, cavityBottom, moldHeight);
+    // 外圆：按本节最大型腔 + 2壁厚，就近标准管坯（保证外套得住）
+    const needOuter = cavTop + 2 * wall;
+    let outerOd = nearestOd(needOuter);
+    if (outerOd < needOuter) {
+      const bigger = STD_PIPE_ODS.find((d) => d >= needOuter);
+      if (bigger != null) outerOd = bigger;
+    }
     const isFirst = i === 0;
-    const isLast = i === odPick.ods.length - 1;
-    const length = isLast ? smallLen : standardLen;
-    const kind = isLast ? "非标" : "标准";
-    const wall = defaultWallFor(od, walls);
+    const isLast = i === segmentCount - 1;
     return {
       index: i + 1,
-      od,
       length,
-      kind,
+      kind: isLast ? "非标" : "标准",
+      z0,
+      z1,
+      cavityTop: cavTop,
+      cavityBottom: cavBot,
+      cavityMid: cavMid,
+      outerOd,
       wall,
+      // 嵌套：上段有下母套，下段有上公颈
+      femaleSleeve: !isLast,
+      maleNeck: !isFirst,
       topFaceOffset: isFirst ? topAllowance : null,
       belowTopFace: isFirst ? round3(length - topAllowance) : null,
       bottomFaceOffset: isLast ? bottomAllowance : null,
       aboveBottomFace: isLast ? round3(length - bottomAllowance) : null,
-      femaleEnd: !isLast,
-      maleEnd: !isFirst,
+      // 兼容旧 UI 字段
+      od: outerOd,
     };
   });
 
-  const faceToFace = round3(
-    segments[0].belowTopFace +
-      segments.slice(1, -1).reduce((s, seg) => s + seg.length, 0) +
-      segments[segments.length - 1].aboveBottomFace
-  );
+  // 可选强制外圆序列
+  if (input.preferredOuterOds && input.preferredOuterOds.length === segmentCount) {
+    input.preferredOuterOds.forEach((od, i) => {
+      segments[i].outerOd = Number(od);
+      segments[i].od = Number(od);
+    });
+  }
+
+  // 保证外圆自上而下非增（嵌套外观）
+  for (let i = 1; i < segments.length; i++) {
+    if (segments[i].outerOd > segments[i - 1].outerOd) {
+      segments[i].outerOd = segments[i - 1].outerOd;
+      segments[i].od = segments[i].outerOd;
+    }
+  }
+
+  const faceToFace = round3(moldHeight - topAllowance - bottomAllowance);
+  const taper = round3((cavityTop - cavityBottom) / moldHeight); // 每 mm 收径
 
   const joints = [];
   for (let i = 0; i < segments.length - 1; i++) {
-    const female = segments[i];
-    const male = segments[i + 1];
-    const D1 = male.od;
-    const t1 = male.wall;
-    const D2 = female.od;
-    const auto = computePipeEndThread({ D1, t1, D2, t2: 40 });
-    if (!auto.ok) {
-      joints.push({ ok: false, error: auto.error, fromOd: D2, toOd: D1 });
+    const upper = segments[i];
+    const lower = segments[i + 1];
+    const zJoint = lower.z0;
+    const cavAtJoint = cavityDiaAt(zJoint, cavityTop, cavityBottom, moldHeight);
+
+    // 嵌套公颈外径 ≈ 下节外圆；外套内径侧壁落在公颈上
+    const D1 = lower.outerOd; // 公（下）
+    const D2 = upper.outerOd; // 母（上）外套外径
+    // 公壁厚：外圆到型腔
+    const t1 = round3((D1 - cavAtJoint) / 2);
+    if (!(t1 > 1)) {
+      joints.push({
+        ok: false,
+        index: i + 1,
+        error: `第${i + 1}道接头壁厚不足（型腔 ${cavAtJoint} / 外圆 ${D1}）`,
+        cavityAtJoint: cavAtJoint,
+      });
       continue;
     }
-    const majorDia = roundThread ? roundMajor05(auto.recommendedMajor) : auto.recommendedMajor;
-    // 圆整后若为 0，回退自动值
-    const major = majorDia > 0 ? majorDia : auto.recommendedMajor;
+
+    const auto = computePipeEndThread({ D1, t1, D2, t2: 40 });
+    if (!auto.ok) {
+      joints.push({ ok: false, index: i + 1, error: auto.error, cavityAtJoint: cavAtJoint });
+      continue;
+    }
+    let major = roundThread ? roundMajor05(auto.recommendedMajor) : auto.recommendedMajor;
+    if (!(major > 0)) major = auto.recommendedMajor;
+    // 螺纹须落在公颈实体：小于 D1，且大于型腔
+    if (major >= D1) major = roundMajor05(D1 - 5);
+    if (major <= cavAtJoint) major = roundMajor05(cavAtJoint + 5);
+
     const minT2 = minFemaleWall(D1, t1, D2, major);
-    const check = computePipeEndThread(
-      { D1, t1, D2, t2: minT2 || 40 },
-      { majorDia: major }
-    );
+    const check = computePipeEndThread({ D1, t1, D2, t2: minT2 || Math.max(40, nestSleeve * 2) }, { majorDia: major });
     const cards = computeThreadEndCards(`M${major}×${PIPE_END_CONST.pitch}`);
+
     joints.push({
       ok: true,
       index: i + 1,
+      z: zJoint,
+      cavityAtJoint: cavAtJoint,
       fromOd: D2,
       toOd: D1,
+      upperOuter: D2,
+      lowerOuter: D1,
       maleWall: t1,
+      nestSleeve,
+      nestStyle: "上段外套止口 + 下段公颈（内壁连续锥）",
       autoDesignation: auto.recommendedDesignation,
       designation: `M${major}×${PIPE_END_CONST.pitch}`,
       majorDia: major,
@@ -1319,12 +1304,15 @@ function designConeMold(input) {
       root: check.root,
       undercutDf: major - 3,
       undercutDg: major + 3,
-      endStructure: 26,
+      endStructure: PIPE_END_CONST.locatorLen + PIPE_END_CONST.engageLen + 4,
+      locator: PIPE_END_CONST.locatorLen,
+      engage: PIPE_END_CONST.engageLen,
+      undercut: 4,
       minFemaleWall: minT2,
       checkPass: !!minT2,
       checkMessage: minT2
-        ? `母端局部壁厚建议 ≥ ${minT2} mm`
-        : "无法满足母端壁厚校验，请加厚或改规格",
+        ? `外套止口局部壁厚建议 ≥ ${minT2} mm（螺纹 ${`M${major}×2`}）`
+        : "外套止口壁厚无法满足螺纹实体，请加厚或改外圆",
       maleCard: cards.ok ? cards.male : null,
       femaleCard: cards.ok ? cards.female : null,
       theoryMajor: auto.theoryMajor,
@@ -1336,7 +1324,21 @@ function designConeMold(input) {
 
   return {
     ok: true,
-    input: { bigOd, smallOd, moldHeight, topAllowance, bottomAllowance, standardLen, roundThread },
+    model: "cavity-cone-nested",
+    input: {
+      cavityTop,
+      cavityBottom,
+      moldHeight,
+      topAllowance,
+      bottomAllowance,
+      standardLen,
+      wall,
+      nestSleeve,
+      roundThread,
+      // 兼容
+      bigOd: cavityTop,
+      smallOd: cavityBottom,
+    },
     segmentCount,
     segments,
     joints,
@@ -1344,23 +1346,40 @@ function designConeMold(input) {
       moldHeight: sumLen,
       heightOk: Math.abs(sumLen - moldHeight) < 1e-6,
       faceToFace,
-      expectedFaceToFace: round3(moldHeight - topAllowance - bottomAllowance),
+      expectedFaceToFace: faceToFace,
+      cavityTop,
+      cavityBottom,
+      taperPerMm: taper,
       jointCount: joints.length,
       pitch: PIPE_END_CONST.pitch,
       locator: PIPE_END_CONST.locatorLen,
       engage: PIPE_END_CONST.engageLen,
       undercut: 4,
+      nestNote: "接头：上母套 / 下公颈；型腔内壁连续共锥",
     },
     alternatives: lengthPlan.alternatives,
   };
 }
 
+/** @deprecated 旧外径阶梯选取，保留导出以免旧引用报错 */
+function pickSegmentOds(bigOd, smallOd, count, catalog = STD_PIPE_ODS) {
+  const big = Number(bigOd);
+  const small = Number(smallOd);
+  if (!(big > small) || count < 2) return { ok: false, error: "参数无效" };
+  const ods = [];
+  for (let i = 0; i < count; i++) {
+    const t = i / (count - 1);
+    ods.push(i === 0 ? big : i === count - 1 ? small : nearestOd(big + (small - big) * t, catalog));
+  }
+  return { ok: true, ods };
+}
+
 
 /**
- * 锥管模具分段尺寸示意图
- * - 大→小：左→右（上口→下口）
- * - 轴向长度标在轮廓上方
- * - 外径 / 螺纹 / 余量放图下图例，避免压字
+ * 锥管模具 — 组装后嵌套剖面示意图
+ * - 竖直：上大口 / 下小口
+ * - 内壁：连续共锥
+ * - 外壁：分段台阶 + 上套下止口嵌套（接头细节）
  */
 
 function t(n) {
@@ -1368,209 +1387,211 @@ function t(n) {
   return s.includes(".") ? s.replace(/\.?0+$/, "") : s;
 }
 
-function dimH(x1, x2, y, label, color = "#c45c26") {
-  const mid = (x1 + x2) / 2;
-  return `
-    <line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="${color}" stroke-width="1"/>
-    <line x1="${x1}" y1="${y - 3}" x2="${x1}" y2="${y + 3}" stroke="${color}" stroke-width="1"/>
-    <line x1="${x2}" y1="${y - 3}" x2="${x2}" y2="${y + 3}" stroke="${color}" stroke-width="1"/>
-    <text x="${mid}" y="${y - 5}" text-anchor="middle" fill="${color}" font-size="9" font-weight="600">${label}</text>
-  `;
-}
-
-function dimV(x, y1, y2, label, color = "#2f4a56", anchor = "start") {
+function dimV(x, y1, y2, label, color = "#c45c26") {
   const mid = (y1 + y2) / 2;
-  const tx = anchor === "end" ? x - 6 : x + 6;
   return `
     <line x1="${x}" y1="${y1}" x2="${x}" y2="${y2}" stroke="${color}" stroke-width="1"/>
     <line x1="${x - 3}" y1="${y1}" x2="${x + 3}" y2="${y1}" stroke="${color}" stroke-width="1"/>
     <line x1="${x - 3}" y1="${y2}" x2="${x + 3}" y2="${y2}" stroke="${color}" stroke-width="1"/>
-    <text x="${tx}" y="${mid + 3}" text-anchor="${anchor}" fill="${color}" font-size="9" font-weight="600">${label}</text>
+    <text x="${x - 6}" y="${mid + 3}" text-anchor="end" fill="${color}" font-size="9" font-weight="600">${label}</text>
   `;
 }
 
-function legendRow(items, y0) {
-  const colW = 190;
-  const x0 = 24;
-  return items
-    .map((it, i) => {
-      const x = x0 + (i % 4) * colW;
-      const y = y0 + Math.floor(i / 4) * 16;
-      return `<text x="${x}" y="${y}" fill="${it.color}" font-size="9" font-weight="600">${it.label}</text>`;
-    })
-    .join("");
-}
+const SEG_COLORS = ["#c45c5c", "#b8a06a", "#6a9ec9", "#5cbf6a", "#c49a6c", "#8a7bb8"];
 
 /**
- * @param {ReturnType<typeof import("./cone-mold-math.js").designConeMold>} r
+ * @param {object} r designConeMold 成功返回值
  */
 function renderConeMoldDiagram(r) {
-  if (!r?.ok) return "";
+  if (!r?.ok || !r.segments?.length) return "";
 
-  const segments = r.segments;
-  const joints = r.joints;
-  const { moldHeight, faceToFace, expectedFaceToFace } = r.summary;
-  const topA = r.input.topAllowance;
-  const botA = r.input.bottomAllowance;
+  const segs = r.segments;
+  const joints = (r.joints || []).filter((j) => j.ok);
+  const Hmold = r.summary.moldHeight;
+  const topA = r.input.topAllowance ?? 0;
+  const botA = r.input.bottomAllowance ?? 0;
+  const nestH = r.summary.locator + r.summary.engage; // 止口+旋合示意重叠
+  const sleeveT = r.input.nestSleeve ?? 8;
 
-  const W = 780;
-  const axis = 168;
-  const maxOd = Math.max(...segments.map((s) => s.od));
-  const scaleY = Math.min(0.48, 105 / (maxOd / 2));
-  const plotLeft = 56;
-  const plotRight = 700;
-  const plotW = plotRight - plotLeft;
-  const sumLen = segments.reduce((s, seg) => s + seg.length, 0) || 1;
+  const W = 760;
+  const padT = 40;
+  const plotH = 480;
+  const axis = 400;
+  const scaleY = plotH / Hmold;
+  const maxOuter = Math.max(...segs.map((s) => s.outerOd));
+  const scaleR = Math.min(1.15, 150 / (maxOuter / 2));
 
-  // 轴向按真实长度比例；径向按外径比例（示意，可压缩）
-  const xs = [plotLeft];
-  for (const seg of segments) {
-    xs.push(xs[xs.length - 1] + (seg.length / sumLen) * plotW);
-  }
+  const yAt = (z) => padT + z * scaleY;
+  const xR = (dia) => (dia / 2) * scaleR;
 
-  const yOd = (od) => axis - (od / 2) * scaleY;
-  const yId = (od, wall) => axis - ((od - 2 * wall) / 2) * scaleY;
+  // 连续内锥左右壁
+  const cavTop = r.input.cavityTop;
+  const cavBot = r.input.cavityBottom;
+  const y0 = yAt(0);
+  const yH = yAt(Hmold);
+  const innerL = [
+    [axis - xR(cavTop), y0],
+    [axis - xR(cavBot), yH],
+  ];
+  const innerR = [
+    [axis + xR(cavTop), y0],
+    [axis + xR(cavBot), yH],
+  ];
 
-  // 外轮廓（上半 + 下半对称）
-  const topPts = [];
-  const botPts = [];
-  for (let i = 0; i < segments.length; i++) {
-    const od = segments[i].od;
-    const y = yOd(od);
-    topPts.push([xs[i], y], [xs[i + 1], y]);
-    botPts.push([xs[i], 2 * axis - y], [xs[i + 1], 2 * axis - y]);
-  }
-  const pathOuter = [
-    `M ${topPts[0][0]} ${topPts[0][1]}`,
-    ...topPts.slice(1).map(([x, y]) => `L ${x} ${y}`),
-    `L ${botPts[botPts.length - 1][0]} ${botPts[botPts.length - 1][1]}`,
-    ...botPts
-      .slice(0, -1)
-      .reverse()
-      .map(([x, y]) => `L ${x} ${y}`),
-    "Z",
-  ].join(" ");
+  // 各节实体：左/右对称多边形（含下端外套唇 / 上端公颈台阶）
+  const bodies = segs
+    .map((s, i) => {
+      const color = SEG_COLORS[i % SEG_COLORS.length];
+      const yA = yAt(s.z0);
+      const yB = yAt(s.z1);
+      const out = xR(s.outerOd);
+      const cavA = xR(s.cavityTop);
+      const cavB = xR(s.cavityBottom);
 
-  // 内孔折线（示意壁厚）
-  const innerTop = [];
-  for (let i = 0; i < segments.length; i++) {
-    const y = yId(segments[i].od, segments[i].wall);
-    innerTop.push([xs[i], y], [xs[i + 1], y]);
-  }
-  const pathInner = [
-    `M ${innerTop[0][0]} ${innerTop[0][1]}`,
-    ...innerTop.slice(1).map(([x, y]) => `L ${x} ${y}`),
-    ...innerTop
-      .slice()
-      .reverse()
-      .map(([x, y]) => `L ${x} ${2 * axis - y}`),
-    "Z",
-  ].join(" ");
+      // 下端若有外套：唇伸入下一节 nestH
+      const hasSleeve = s.femaleSleeve && i < segs.length - 1;
+      const hasNeck = s.maleNeck && i > 0;
+      const nestPx = Math.min(nestH * scaleY, (yB - yA) * 0.35);
+      const sleeveIn = xR(sleeveT);
 
-  // 各节长度标注（上方错层，避免相邻太挤）
-  const lenDims = segments
-    .map((seg, i) => {
-      const y = 48 + (i % 2) * 18;
-      const color = seg.kind === "非标" ? "#8a5a2a" : "#c45c26";
-      return dimH(xs[i], xs[i + 1], y, `L${seg.index} ${t(seg.length)}`, color);
-    })
-    .join("");
+      // 右侧轮廓点（顺时针，从左上内壁开始绕外）
+      // 简化为左右各一块 path
+      let rightOuter = [];
+      let leftOuter = [];
 
-  // 段间螺纹标记（接头竖线 + 短标签）
-  const jointMarks = joints
-    .map((j, i) => {
-      if (!j.ok) return "";
-      const x = xs[i + 1];
-      const yTop = yOd(Math.max(segments[i].od, segments[i + 1].od));
-      const labelY = axis - 8 - (i % 2) * 12;
+      if (hasNeck) {
+        // 公颈：顶部缩进
+        const neckOut = out - sleeveIn;
+        rightOuter.push([axis + neckOut, yA], [axis + neckOut, yA + nestPx], [axis + out, yA + nestPx]);
+        leftOuter.push([axis - neckOut, yA], [axis - neckOut, yA + nestPx], [axis - out, yA + nestPx]);
+      } else {
+        rightOuter.push([axis + out, yA]);
+        leftOuter.push([axis - out, yA]);
+      }
+
+      if (hasSleeve) {
+        rightOuter.push([axis + out, yB], [axis + out, yB + nestPx], [axis + out - sleeveIn, yB + nestPx], [axis + out - sleeveIn, yB]);
+        leftOuter.push([axis - out, yB], [axis - out, yB + nestPx], [axis - (out - sleeveIn), yB + nestPx], [axis - (out - sleeveIn), yB]);
+      } else {
+        rightOuter.push([axis + out, yB]);
+        leftOuter.push([axis - out, yB]);
+      }
+
+      // 闭合：外轮廓 → 底部内壁 → 顶部内壁
+      const rightPath = [
+        ...rightOuter.map((p, idx) => (idx ? `L${p[0]},${p[1]}` : `M${p[0]},${p[1]}`)),
+        `L${axis + cavB},${yB}`,
+        `L${axis + cavA},${yA}`,
+        "Z",
+      ].join(" ");
+      const leftPath = [
+        ...leftOuter.map((p, idx) => (idx ? `L${p[0]},${p[1]}` : `M${p[0]},${p[1]}`)),
+        `L${axis - cavB},${yB}`,
+        `L${axis - cavA},${yA}`,
+        "Z",
+      ].join(" ");
+
       return `
-        <line x1="${x}" y1="${yTop - 4}" x2="${x}" y2="${2 * axis - yTop + 4}"
-          stroke="#1f6f5b" stroke-width="1.2" stroke-dasharray="3 2"/>
-        <text x="${x}" y="${labelY}" text-anchor="middle" fill="#1f6f5b" font-size="9" font-weight="700">${j.designation}</text>
+        <path d="${rightPath}" fill="${color}" fill-opacity="0.85" stroke="#2f4a56" stroke-width="1.2"/>
+        <path d="${leftPath}" fill="${color}" fill-opacity="0.85" stroke="#2f4a56" stroke-width="1.2"/>
+        <text x="${axis + out + 8}" y="${(yA + yB) / 2 + 4}" fill="#2f4a56" font-size="10" font-weight="700">§${s.index}</text>
       `;
     })
     .join("");
 
-  // 上口 / 下口余量（在首末节内再画小段）
-  const first = segments[0];
-  const last = segments[segments.length - 1];
-  const xTopFace = plotLeft + (topA / sumLen) * plotW;
-  const xBotFace = plotRight - (botA / sumLen) * plotW;
-  const allowMarks = `
-    <line x1="${xTopFace}" y1="${yOd(first.od)}" x2="${xTopFace}" y2="${2 * axis - yOd(first.od)}"
-      stroke="#2f4a56" stroke-width="1" stroke-dasharray="2 2"/>
-    ${dimH(plotLeft, xTopFace, 88, `上口 ${t(topA)}`, "#2f4a56")}
-    <line x1="${xBotFace}" y1="${yOd(last.od)}" x2="${xBotFace}" y2="${2 * axis - yOd(last.od)}"
-      stroke="#2f4a56" stroke-width="1" stroke-dasharray="2 2"/>
-    ${dimH(xBotFace, plotRight, 88, `下口 ${t(botA)}`, "#2f4a56")}
+  // 内锥强调线
+  const coneLines = `
+    <line x1="${innerL[0][0]}" y1="${innerL[0][1]}" x2="${innerL[1][0]}" y2="${innerL[1][1]}"
+      stroke="#e67e22" stroke-width="2.2"/>
+    <line x1="${innerR[0][0]}" y1="${innerR[0][1]}" x2="${innerR[1][0]}" y2="${innerR[1][1]}"
+      stroke="#e67e22" stroke-width="2.2"/>
   `;
 
-  // 总高 + 面距（图下方轴向）
-  const overallDims = `
-    ${dimH(plotLeft, plotRight, axis + 78, `模具总高 ${t(moldHeight)}`, "#2f4a56")}
-    ${dimH(xTopFace, xBotFace, axis + 98, `面距 ${t(faceToFace)}（期望 ${t(expectedFaceToFace)}）`, "#1f6f5b")}
-  `;
-
-  // 节号 + φ 短标在轴线上（不放径向数字，避免挤）
-  const segLabels = segments
-    .map((seg, i) => {
-      const mid = (xs[i] + xs[i + 1]) / 2;
-      return `<text x="${mid}" y="${axis + 14}" text-anchor="middle" fill="#5c6b64" font-size="9">φ${t(seg.od)}</text>`;
+  // 接头螺纹标注
+  const jointLabels = joints
+    .map((j) => {
+      const y = yAt(j.z);
+      return `<text x="${axis - xR(maxOuter) - 10}" y="${y + 3}" text-anchor="end"
+        fill="#1f6f5b" font-size="9" font-weight="700">${j.designation}</text>`;
     })
     .join("");
 
-  const legendItems = [
-    ...segments.map((s) => ({
-      label: `第${s.index}节 φ${t(s.od)}×${t(s.length)}（${s.kind}）`,
-      color: s.kind === "非标" ? "#8a5a2a" : "#2f4a56",
-    })),
-    ...joints
-      .filter((j) => j.ok)
-      .map((j) => ({
-        label: `接头${j.index} ${j.designation}（φ${t(j.fromOd)}→φ${t(j.toOd)}）`,
-        color: "#1f6f5b",
-      })),
-    { label: `上口余量 ${t(topA)}（计入大节）`, color: "#2f4a56" },
-    { label: `下口余量 ${t(botA)}（计入小节）`, color: "#2f4a56" },
-  ];
+  // 尺寸
+  let dims = dimV(70, y0, yH, `总高 ${t(Hmold)}`, "#2f4a56");
+  segs.forEach((s) => {
+    dims += dimV(100, yAt(s.z0), yAt(s.z1), `${t(s.length)}`, "#c45c26");
+  });
+  if (topA > 0) dims += dimV(130, y0, yAt(topA), `上 ${t(topA)}`, "#1f6f5b");
+  if (botA > 0) dims += dimV(130, yAt(Hmold - botA), yH, `下 ${t(botA)}`, "#1f6f5b");
+  dims += dimV(48, yAt(topA), yAt(Hmold - botA), `面距 ${t(r.summary.faceToFace)}`, "#5c6b64");
 
-  const legendRows = Math.ceil(legendItems.length / 4);
-  const H = axis + 118 + legendRows * 16 + 12;
-
-  // 左右端径向示意（仅两端画短竖尺，数字进图例）
-  const leftOdY = yOd(first.od);
-  const rightOdY = yOd(last.od);
-  const endOdTicks = `
-    ${dimV(plotLeft - 14, leftOdY, 2 * axis - leftOdY, `φ${t(first.od)}`, "#5c6b64", "end")}
-    ${dimV(plotRight + 14, rightOdY, 2 * axis - rightOdY, `φ${t(last.od)}`, "#5c6b64", "start")}
+  // 型腔口径
+  const cavLabels = `
+    <text x="${axis}" y="${y0 - 10}" text-anchor="middle" fill="#e67e22" font-size="11" font-weight="800">型腔上口 ø${t(cavTop)}</text>
+    <text x="${axis}" y="${yH + 18}" text-anchor="middle" fill="#e67e22" font-size="11" font-weight="800">型腔下口 ø${t(cavBot)}</text>
   `;
 
+  // 接头细节小图（右下）
+  const detail = renderJointDetailInset(520, yH - 110, joints[0]);
+
+  const legendY = yH + 36;
+  const legendItems = [
+    ...segs.map(
+      (s, i) =>
+        `§${s.index} 外圆ø${t(s.outerOd)} · 型腔 ${t(s.cavityTop)}→${t(s.cavityBottom)} · ${t(s.length)}mm（${s.kind}）`
+    ),
+    ...joints.map((j) => `接头${j.index} ${j.designation} @z=${t(j.z)} 型腔ø${t(j.cavityAtJoint)}`),
+    `橙线=连续内锥；外套止口嵌套（上母下公）`,
+  ];
+  const legend = legendItems
+    .map((label, i) => {
+      const col = i % 2;
+      const row = Math.floor(i / 2);
+      return `<text x="${24 + col * 360}" y="${legendY + row * 15}" fill="#5c6b64" font-size="9" font-weight="600">${label}</text>`;
+    })
+    .join("");
+  const legendRows = Math.ceil(legendItems.length / 2);
+  const H = legendY + legendRows * 15 + 20;
+
   return `
-  <svg viewBox="0 0 ${W} ${H}" class="diagram" role="img" aria-label="锥管模具组装后示意图">
-    <defs>
-      <linearGradient id="coneFill" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#d7e4de"/><stop offset="100%" stop-color="#b7ccc3"/>
-      </linearGradient>
-    </defs>
-    <text x="20" y="18" fill="#2f4a56" font-size="12" font-weight="700">组装后示意图 · φ${t(r.input.bigOd)} → φ${t(r.input.smallOd)}</text>
-    <text x="20" y="34" fill="#5c6b64" font-size="9">左=上口大端 → 右=下口小端（各节已拧合；轴向按实长比例；径向示意）</text>
-
-    <path d="${pathOuter}" fill="url(#coneFill)" stroke="#2f4a56" stroke-width="1.3"/>
-    <path d="${pathInner}" fill="#f7faf8" stroke="#93a09a" stroke-width="0.9" stroke-dasharray="3 2" opacity="0.95"/>
-    <line x1="${plotLeft - 8}" y1="${axis}" x2="${plotRight + 10}" y2="${axis}" stroke="#5c6b64" stroke-dasharray="4 3"/>
-
-    ${lenDims}
-    ${allowMarks}
-    ${jointMarks}
-    ${segLabels}
-    ${endOdTicks}
-    ${overallDims}
-
-    ${legendRow(legendItems, axis + 118)}
+  <svg viewBox="0 0 ${W} ${H}" class="diagram" role="img" aria-label="锥管模具组装后嵌套示意图">
+    <text x="20" y="22" fill="#2f4a56" font-size="13" font-weight="800">组装后示意图 · 内锥型腔 + 止口嵌套</text>
+    <text x="20" y="36" fill="#5c6b64" font-size="9">内壁连续共锥；外壁分段外套（细节见图中接头示意）</text>
+    ${bodies}
+    ${coneLines}
+    ${jointLabels}
+    ${dims}
+    ${cavLabels}
+    <line x1="${axis}" y1="${y0}" x2="${axis}" y2="${yH}" stroke="#9aa8a1" stroke-dasharray="4 3"/>
+    ${detail}
+    ${legend}
   </svg>`;
 }
 
-/** 别名：组装后示意图（app 入口） */
+/** 接头局部：上外套 / 下公颈 / 内锥连续 */
+function renderJointDetailInset(x0, y0, joint) {
+  if (!joint) return "";
+  const w = 200;
+  const h = 100;
+  return `
+    <g transform="translate(${x0},${y0})">
+      <rect x="0" y="0" width="${w}" height="${h}" rx="8" fill="#fff" stroke="#2f4a56" stroke-width="1"/>
+      <text x="10" y="16" fill="#2f4a56" font-size="10" font-weight="700">接头细节 · ${joint.designation || ""}</text>
+      <!-- 上段（母套） -->
+      <path d="M30,28 L90,28 L90,55 L78,55 L78,48 L42,48 L42,55 L30,55 Z" fill="#c45c5c" stroke="#2f4a56"/>
+      <!-- 下段（公颈） -->
+      <path d="M42,48 L78,48 L78,55 L88,55 L88,88 L32,88 L32,55 L42,55 Z" fill="#b8a06a" stroke="#2f4a56"/>
+      <!-- 内锥线 -->
+      <line x1="55" y1="28" x2="48" y2="88" stroke="#e67e22" stroke-width="2"/>
+      <line x1="65" y1="28" x2="72" y2="88" stroke="#e67e22" stroke-width="2"/>
+      <text x="100" y="42" fill="#c45c5c" font-size="9" font-weight="700">上段外套</text>
+      <text x="100" y="58" fill="#5c6b64" font-size="8">止口坐肩</text>
+      <text x="100" y="78" fill="#b8a06a" font-size="9" font-weight="700">下段公颈</text>
+      <text x="100" y="92" fill="#e67e22" font-size="8">内壁连续锥</text>
+    </g>
+  `;
+}
+
 const renderAssembledConeDiagram = renderConeMoldDiagram;
 
 
@@ -1585,16 +1606,14 @@ function num(id, fallback) {
 function fillSegTable(segments) {
   $("segTable").innerHTML = segments
     .map((s) => {
-      const ends = [s.femaleEnd ? "下母" : "", s.maleEnd ? "上公" : ""].filter(Boolean).join("+") || "—";
+      const ends = [s.femaleSleeve ? "下母套" : "", s.maleNeck ? "上公颈" : ""].filter(Boolean).join("+") || "—";
       let note = "—";
-      if (s.topFaceOffset != null) {
-        note = `含上口 ${s.topFaceOffset}；面下 ${s.belowTopFace}`;
-      } else if (s.bottomFaceOffset != null) {
-        note = `含下口 ${s.bottomFaceOffset}；面上 ${s.aboveBottomFace}`;
-      }
+      if (s.topFaceOffset != null) note = `含上口余量 ${s.topFaceOffset}；面下 ${s.belowTopFace}`;
+      else if (s.bottomFaceOffset != null) note = `含下口余量 ${s.bottomFaceOffset}；面上 ${s.aboveBottomFace}`;
       return `<tr>
         <th scope="row">${s.index}</th>
-        <td>φ${s.od}</td>
+        <td>ø${s.cavityTop}→ø${s.cavityBottom}</td>
+        <td>ø${s.outerOd}</td>
         <td>${s.length} mm</td>
         <td>${s.kind}</td>
         <td>${s.wall} mm</td>
@@ -1613,11 +1632,11 @@ function fillJointTable(joints) {
       }
       return `<tr>
         <th scope="row">${j.index}</th>
-        <td>φ${j.fromOd} → φ${j.toOd}</td>
+        <td>外ø${j.fromOd}套 → ø${j.toOd}颈</td>
+        <td>型腔 ø${j.cavityAtJoint}</td>
         <td>${j.autoDesignation}</td>
         <td><strong>${j.designation}</strong></td>
         <td>${j.crest.external} / ${j.crest.internal}</td>
-        <td>${j.undercutDf} / ${j.undercutDg}</td>
         <td>≥ ${j.minFemaleWall ?? "—"} mm</td>
       </tr>`;
     })
@@ -1627,8 +1646,10 @@ function fillJointTable(joints) {
 function renderSchema(segments) {
   const parts = [];
   segments.forEach((s, i) => {
-    parts.push(`<div class="seg"><strong>φ${s.od}</strong><span>${s.length} mm · ${s.kind}</span></div>`);
-    if (i < segments.length - 1) parts.push(`<div class="arrow">→</div>`);
+    parts.push(
+      `<div class="seg"><strong>§${s.index}</strong><span>型腔 ${s.cavityTop}→${s.cavityBottom}<br/>外圆 ø${s.outerOd} · ${s.length} mm · ${s.kind}</span></div>`
+    );
+    if (i < segments.length - 1) parts.push(`<div class="arrow">↕</div>`);
   });
   $("schema").innerHTML = parts.join("");
 }
@@ -1638,22 +1659,18 @@ function renderJointCards(joints) {
   host.innerHTML = joints
     .filter((j) => j.ok && j.maleCard && j.femaleCard)
     .map((j) => {
-      const maleRows = j.maleCard.rows
-        .map(([k, v]) => `<tr><th scope="row">${k}</th><td>${v}</td></tr>`)
-        .join("");
-      const femaleRows = j.femaleCard.rows
-        .map(([k, v]) => `<tr><th scope="row">${k}</th><td>${v}</td></tr>`)
-        .join("");
+      const maleRows = j.maleCard.rows.map(([k, v]) => `<tr><th scope="row">${k}</th><td>${v}</td></tr>`).join("");
+      const femaleRows = j.femaleCard.rows.map(([k, v]) => `<tr><th scope="row">${k}</th><td>${v}</td></tr>`).join("");
       return `<article class="card joint-block">
-        <h4>第 ${j.index} 道 · ${j.designation}（φ${j.fromOd} 母 ← φ${j.toOd} 公）</h4>
-        <p class="muted" style="margin:0 0 10px">${j.checkMessage}</p>
+        <h4>第 ${j.index} 道 · ${j.designation}（上外套 ← 下公颈，型腔 ø${j.cavityAtJoint}）</h4>
+        <p class="muted" style="margin:0 0 10px">${j.nestStyle}。${j.checkMessage}</p>
         <div class="card-pair">
           <div>
-            <h3 style="margin-top:0">${j.maleCard.title}</h3>
+            <h3 style="margin-top:0">公颈端头（下段）</h3>
             <table class="data"><tbody>${maleRows}</tbody></table>
           </div>
           <div>
-            <h3 style="margin-top:0">${j.femaleCard.title}</h3>
+            <h3 style="margin-top:0">外套内腔（上段）</h3>
             <table class="data"><tbody>${femaleRows}</tbody></table>
           </div>
         </div>
@@ -1664,33 +1681,35 @@ function renderJointCards(joints) {
 
 function run() {
   const midRaw = $("midOds").value.trim();
-  const bigOd = num("bigOd", CONE_MOLD_DEFAULTS.bigOd);
-  const smallOd = num("smallOd", CONE_MOLD_DEFAULTS.smallOd);
+  const cavityTop = num("bigOd", CONE_MOLD_DEFAULTS.cavityTop);
+  const cavityBottom = num("smallOd", CONE_MOLD_DEFAULTS.cavityBottom);
   const moldHeight = num("moldHeight", CONE_MOLD_DEFAULTS.moldHeight);
   const topAllowance = num("topAllowance", CONE_MOLD_DEFAULTS.topAllowance);
   const bottomAllowance = num("bottomAllowance", CONE_MOLD_DEFAULTS.bottomAllowance);
   const standardLen = num("standardLen", CONE_MOLD_DEFAULTS.standardLen);
+  const wall = num("wall", CONE_MOLD_DEFAULTS.wall);
   const segCountRaw = $("segmentCount").value.trim();
   const segmentCount = segCountRaw === "" ? undefined : Number(segCountRaw);
 
-  let preferredOds;
+  let preferredOuterOds;
   if (midRaw) {
-    const mids = midRaw
+    const ods = midRaw
       .split(/[,，\s]+/)
       .map((x) => Number(x))
       .filter((x) => Number.isFinite(x) && x > 0);
-    if (mids.length) preferredOds = [bigOd, ...mids, smallOd];
+    if (ods.length) preferredOuterOds = ods;
   }
 
   const r = designConeMold({
-    bigOd,
-    smallOd,
+    cavityTop,
+    cavityBottom,
     moldHeight,
     topAllowance,
     bottomAllowance,
     standardLen,
+    wall,
     segmentCount,
-    preferredOds,
+    preferredOuterOds,
     roundThread: true,
   });
 
@@ -1705,19 +1724,21 @@ function run() {
   }
 
   last = r;
-  $("status").textContent = `已生成 ${r.segmentCount} 节 / ${r.summary.jointCount} 道螺纹，总高 ${r.summary.moldHeight} mm`;
+  $("status").textContent = `已生成 ${r.segmentCount} 节嵌套模具 / ${r.summary.jointCount} 道接头，总高 ${r.summary.moldHeight} mm`;
   $("status").className = "status ok";
   $("summaryLine").textContent =
-    `总高 ${r.summary.moldHeight}（校核 ${r.summary.heightOk ? "OK" : "异常"}）· 大头面→小头面 ${r.summary.faceToFace} mm · P=${r.summary.pitch}`;
+    `型腔 ø${r.summary.cavityTop}→ø${r.summary.cavityBottom} · 总高 ${r.summary.moldHeight} · 面距 ${r.summary.faceToFace} · ${r.summary.nestNote}`;
   $("assyDiagram").innerHTML = renderAssembledConeDiagram(r);
   renderSchema(r.segments);
   fillSegTable(r.segments);
   fillJointTable(r.joints);
   renderJointCards(r.joints);
 
-  const warns = r.joints.filter((j) => j.ok && j.minFemaleWall != null).map((j) => `第${j.index}道母端局部 ≥${j.minFemaleWall}mm`);
+  const warns = r.joints
+    .filter((j) => j.ok && j.minFemaleWall != null)
+    .map((j) => `第${j.index}道外套局部 ≥${j.minFemaleWall}mm`);
   if (warns.length) {
-    $("warnBox").textContent = "母扣需局部加厚，不能按薄壁管直车：" + warns.join("；");
+    $("warnBox").textContent = "嵌套外套需局部加厚以保证螺纹实体：" + warns.join("；");
     $("warnBox").classList.add("show");
   } else {
     $("warnBox").classList.remove("show");
@@ -1733,14 +1754,17 @@ async function copy() {
   const nl = String.fromCharCode(10);
   const tab = String.fromCharCode(9);
   const lines = [
-    `锥管模具 ${last.input.bigOd}→${last.input.smallOd} 总高 ${last.summary.moldHeight}`,
+    `锥管模具（内锥嵌套）型腔 ${last.summary.cavityTop}→${last.summary.cavityBottom} 总高 ${last.summary.moldHeight}`,
     "各节",
-    ...last.segments.map((s) => `第${s.index}${tab}φ${s.od}${tab}${s.length}${tab}${s.kind}${tab}t≈${s.wall}`),
-    "",
-    "螺纹",
-    ...last.joints.filter((j) => j.ok).map(
-      (j) => `第${j.index}${tab}φ${j.fromOd}→φ${j.toOd}${tab}${j.designation}${tab}母端≥${j.minFemaleWall}`
+    ...last.segments.map(
+      (s) =>
+        `第${s.index}${tab}型腔${s.cavityTop}→${s.cavityBottom}${tab}外圆${s.outerOd}${tab}${s.length}${tab}${s.kind}`
     ),
+    "",
+    "接头",
+    ...last.joints
+      .filter((j) => j.ok)
+      .map((j) => `第${j.index}${tab}${j.designation}${tab}型腔${j.cavityAtJoint}${tab}外套≥${j.minFemaleWall}`),
   ];
   const text = lines.join(nl);
   try {
@@ -1759,10 +1783,12 @@ async function copy() {
 
 $("calcBtn").addEventListener("click", run);
 $("copyBtn").addEventListener("click", copy);
-["bigOd", "smallOd", "moldHeight", "topAllowance", "bottomAllowance", "standardLen", "segmentCount", "midOds"].forEach(
+["bigOd", "smallOd", "moldHeight", "topAllowance", "bottomAllowance", "standardLen", "segmentCount", "midOds", "wall"].forEach(
   (id) => {
-    $(id).addEventListener("change", run);
-    $(id).addEventListener("keydown", (e) => {
+    const el = $(id);
+    if (!el) return;
+    el.addEventListener("change", run);
+    el.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
         e.preventDefault();
         run();

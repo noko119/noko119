@@ -1,44 +1,48 @@
 /**
- * 锥管模具分段 — 冒烟（无浏览器）
+ * 锥管模具（内锥嵌套）— 冒烟
  */
-import { designConeMold, pickSegmentOds, roundMajor05 } from "./cone-mold-math.js";
+import { designConeMold, cavityDiaAt, roundMajor05 } from "./cone-mold-math.js";
+import { renderAssembledConeDiagram } from "./cone-mold-diagram.js";
 
 function assert(c, m) {
   if (!c) throw new Error(m);
 }
 
-assert(roundMajor05(161) === 160, "round 161");
-assert(roundMajor05(128) === 130, "round 128");
-assert(roundMajor05(103) === 105, "round 103");
-
-const ods = pickSegmentOds(219, 108, 4);
-assert(ods.ok && ods.ods.join(",") === "219,168,133,108", `ods ${ods.ods}`);
+assert(roundMajor05(161) === 160, "round");
+assert(Math.abs(cavityDiaAt(0, 219, 108, 930) - 219) < 1e-9, "cav top");
+assert(Math.abs(cavityDiaAt(930, 219, 108, 930) - 108) < 1e-9, "cav bot");
 
 const r = designConeMold({
-  bigOd: 219,
-  smallOd: 108,
+  cavityTop: 219,
+  cavityBottom: 108,
   moldHeight: 930,
   topAllowance: 45,
   bottomAllowance: 5,
   standardLen: 210,
+  wall: 25,
 });
 assert(r.ok, r.error);
-assert(r.summary.moldHeight === 930, "height");
-assert(r.summary.faceToFace === 880, `face ${r.summary.faceToFace}`);
+assert(r.model === "cavity-cone-nested", "model");
+assert(r.summary.moldHeight === 930, "H");
+assert(r.summary.faceToFace === 880, "face");
+assert(r.segments.length === 4, "n");
 assert(r.segments.map((s) => s.length).join(",") === "210,210,210,300", "lens");
-assert(r.segments[3].kind === "非标", "small nonstd");
-assert(r.joints.map((j) => j.designation).join(",") === "M160×2,M130×2,M105×2", "threads");
-assert(r.segments[0].topFaceOffset === 45 && r.segments[0].belowTopFace === 165, "top");
-assert(r.segments[3].bottomFaceOffset === 5 && r.segments[3].aboveBottomFace === 295, "bottom");
+assert(r.segments[0].cavityTop === 219, "seg0 cav");
+assert(r.segments[3].cavityBottom === 108, "seg3 cav");
+// 外圆应大于型腔
+r.segments.forEach((s) => {
+  assert(s.outerOd > s.cavityTop, `outer ${s.outerOd} vs cav ${s.cavityTop}`);
+});
+assert(r.joints.every((j) => j.ok), "joints ok");
+assert(r.joints[0].nestStyle.includes("外套"), "nest style");
 
-const { renderAssembledConeDiagram } = await import("./cone-mold-diagram.js");
 const svg = renderAssembledConeDiagram(r);
-assert(svg.includes("<svg"), "diagram svg");
-assert(svg.includes("M160×2") && svg.includes("M130×2") && svg.includes("M105×2"), "diagram threads");
-assert(svg.includes("930") && svg.includes("880"), "diagram heights");
-assert(svg.includes("上口") && svg.includes("下口"), "diagram allowances");
+assert(svg.includes("内锥"), "svg title");
+assert(svg.includes("接头细节"), "joint detail");
+assert(svg.includes("型腔上口"), "cav label");
 
 console.log("cone-mold smoke OK", {
-  segs: r.segments.map((s) => `φ${s.od}×${s.length}`),
+  outers: r.segments.map((s) => s.outerOd),
   threads: r.joints.map((j) => j.designation),
+  cavAtJoints: r.joints.map((j) => j.cavityAtJoint),
 });
