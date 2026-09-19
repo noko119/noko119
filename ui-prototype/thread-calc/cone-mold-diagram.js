@@ -30,10 +30,10 @@ export function renderConeMoldDiagram(r) {
   const topA = r.input.topAllowance;
   const botA = r.input.bottomAllowance;
 
-  const W = 780;
+  const W = 860;
   const padT = 44;
   const plotH = 500;
-  const axis = 410;
+  const axis = 380;
   const scaleY = plotH / Htot;
   const maxOut = Math.max(...sleeves.map((s) => s.outerOd), cone.topDia);
   const scaleR = Math.min(1.2, 155 / (maxOut / 2));
@@ -139,7 +139,7 @@ export function renderConeMoldDiagram(r) {
   });
 
   // 接头细节小图
-  const detail = renderJointDetail(520, yH - 120, joints[0]);
+  const detail = renderJointDetail(600, yH - 120, joints[0]);
 
   const legendY = yH + 34;
   const items = [

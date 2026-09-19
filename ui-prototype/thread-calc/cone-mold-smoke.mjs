@@ -27,8 +27,8 @@ assert(r.joints.every((j) => j.ok), "joints");
 assert(r.joints[0].jointStackHeight === 24, "12+1+10+1");
 
 const svg = renderAssembledConeDiagram(r);
-assert(svg.includes("内锥"), "svg");
-assert(svg.includes("接头细节"), "detail");
+assert(svg.includes("外径"), "od mark");
+assert(svg.includes("自动"), "auto mark");
 
 console.log("cone-mold smoke OK", {
   pipes: r.sleeves.map((s) => s.pipeLabel),
