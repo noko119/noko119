@@ -10,6 +10,12 @@ cd sw-plugin\addin
 .\tools\selfcheck.ps1         # 期望：无 [FAIL]
 ```
 
+## 0.5 无界面冒烟（优先）
+```powershell
+.\tools\sw-smoke.ps1         # 期望：报告全 [OK]，末行 结果：PASS
+```
+通过则 §2 模板流基本已验证，可直接跳到 §3 手画流测交互。
+
 ## 1 加载
 | # | 操作 | 期望 | 结果 |
 |---|---|---|---|

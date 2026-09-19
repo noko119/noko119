@@ -45,6 +45,16 @@ cd sw-plugin\addin
 
 卸载：`.\tools\register.ps1 -Unregister`。
 
+### 真机无界面冒烟（推荐先跑）
+
+```powershell
+.\tools\sw-smoke.ps1              # 启动 SW → 新建零件 → 生成侧型 C1 → 写属性 → 读回校验 → 门禁 → 导出 JSON → 保存重开
+.\tools\sw-smoke.ps1 -SideType L1 -KeepOpen
+```
+
+全程不点按钮，输出 `tools\sw-smoke-report.txt`，末行 `结果：PASS/FAIL`。原理：插件公开了 COM 方法 `RunSmokeTest(outDir, sideType)` 与 `Ping()`，脚本用 `GetAddInObject("PidmPath.AddIn.SwAddin")` 调用。
+在 Windows 上用 Cursor 打开本仓库，让本地 agent 运行此脚本即可自动测试并根据报告修复。
+
 > 若 SW 提示"无法加载插件"：① 确认用的是 `Framework64\v4.0.30319\RegAsm.exe`；② DLL 所在目录含 `PidmPath.Core.dll`、`Newtonsoft.Json.dll`、`Icons\`；③ 右键 DLL → 属性 → 解除锁定（脚本已自动 `Unblock-File`）。
 
 ---

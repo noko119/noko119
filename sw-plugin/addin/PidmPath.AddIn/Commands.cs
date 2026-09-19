@@ -699,5 +699,100 @@ namespace PidmPath.AddIn
             var w = new List<string>(); var m = Load(doc, w, quiet: true);
             if (m != null) { Checks.Run(m); _pane()?.Update(m); }
         }
+
+        // ================================================================== 无界面自测（COM 调用，不弹对话框）
+        /// <summary>
+        /// 真机冒烟：新建零件 → 生成侧型 C1 → 画草图写属性 → 从草图读回 → 门禁 → 导出 JSON → 保存零件。
+        /// 返回多行报告；任何一步失败返回含 "FAIL" 的报告。
+        /// </summary>
+        public string RunSmokeTest(string outDir, string sideType = "C1")
+        {
+            var sb = new StringBuilder();
+            void Ok(string s) => sb.AppendLine("[OK]   " + s);
+            void Fail(string s) => sb.AppendLine("[FAIL] " + s);
+            void Info(string s) => sb.AppendLine("[INFO] " + s);
+            var sw = System.Diagnostics.Stopwatch.StartNew();
+            try
+            {
+                if (string.IsNullOrWhiteSpace(outDir)) outDir = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "pidm-sw-smoke");
+                System.IO.Directory.CreateDirectory(outDir);
+                Info($"SolidWorks {_sw.RevisionNumber()}  输出目录 {outDir}");
+
+                // 1 新建零件
+                var tpl = _sw.GetUserPreferenceStringValue((int)SolidWorks.Interop.swconst.swUserPreferenceStringValue_e.swDefaultTemplatePart);
+                if (string.IsNullOrEmpty(tpl) || !System.IO.File.Exists(tpl)) { Fail("默认零件模板不存在: " + tpl); return sb.ToString(); }
+                var doc = (ModelDoc2)_sw.NewDocument(tpl, 0, 0, 0);
+                if (doc == null) { Fail("NewDocument 返回 null"); return sb.ToString(); }
+                Ok("新建零件 " + doc.GetTitle());
+
+                // 2 生成模板
+                var line = new LineParams { Name = "smoke-" + sideType, B = 1000, V = 2.0, Rho = 1600 };
+                var m = SideTypes.Build(sideType, new SideTypes.Params { Ln = 120, H = 15, TailFlat = 8, HeadFlat = 6, ArcR = 60, Gap = 1.0, DriveD = 800, Line = line });
+                Ok($"侧型 {sideType} 内存模型：节点 {m.Nodes.Count} 段 {m.Segments.Count} 滚筒 {m.Drums.Count()} 附件 {m.Attachments.Count}");
+
+                // 3 画草图 + 写属性
+                Save(doc, m, true);
+                var feat = _io.FindPathSketch(doc);
+                if (feat == null) { Fail("草图 PIDM_PATH_SKEL 未创建"); return sb.ToString(); }
+                Ok("草图 PIDM_PATH_SKEL 已创建，类型 " + feat.GetTypeName2());
+                var data = _io.Read(doc, feat);
+                Info($"草图实体：线/弧 {data.Segments.Count}，带属性点 {data.Points.Count}");
+                if (data.Segments.Count != m.Segments.Count) Fail($"线段数不符：草图 {data.Segments.Count} vs 模型 {m.Segments.Count}"); else Ok("线段数一致");
+                int expectPts = m.Drums.Count() + m.Attachments.Count;
+                if (data.Points.Count != expectPts) Fail($"属性点数不符：草图 {data.Points.Count} vs 期望 {expectPts}"); else Ok("滚筒/附件点数一致");
+                int withAttr = data.Segments.Count(s => s.Attrs.Count > 0);
+                if (withAttr != data.Segments.Count) Fail($"仅 {withAttr}/{data.Segments.Count} 条线段带 PIDM_SEG 属性（Attribute 写入失败）"); else Ok("所有线段带 PIDM_SEG 属性");
+                if (!string.IsNullOrEmpty(_io.LoadCache(doc))) Ok("文档自定义属性 JSON 缓存已写入"); else Fail("JSON 缓存未写入");
+
+                // 4 从草图读回
+                var warnings = new List<string>();
+                var back = Load(doc, warnings, quiet: true);
+                if (back == null) { Fail("从草图读回失败"); return sb.ToString(); }
+                foreach (var w in warnings) Info("读回提示: " + w);
+                if (back.Nodes.Count != m.Nodes.Count) Fail($"读回节点数 {back.Nodes.Count} ≠ {m.Nodes.Count}"); else Ok("读回节点数一致");
+                if (back.Drums.Count() != m.Drums.Count()) Fail($"读回滚筒数 {back.Drums.Count()} ≠ {m.Drums.Count()}"); else Ok("读回滚筒数一致");
+                if (back.MainDrive == null) Fail("读回后无主传动"); else Ok($"读回主传动 {back.MainDrive.Id} D={back.MainDrive.DrumDmm}");
+                if (Math.Abs(back.TotalLength - m.TotalLength) > 1e-3) Fail($"读回总长 {back.TotalLength:F3} ≠ {m.TotalLength:F3}"); else Ok($"读回总长一致 {back.TotalLength:F2} m");
+                int arcs = back.Segments.Count(s => s.Curve != "none");
+                if (arcs != m.Segments.Count(s => s.Curve != "none")) Fail($"读回弧段数 {arcs}"); else Ok($"读回弧段 {arcs} 条");
+                if (back.CarryNodes.First().Type != NodeTypes.Tail && back.CarryNodes.First().Type != NodeTypes.Takeup) Fail("读回方向错误：承载首点不是尾滚筒"); else Ok("读回方向 尾→头");
+
+                // 5 门禁
+                var r = Checks.Run(back);
+                if (r.Errors.Any()) Fail("门禁错误：" + string.Join(" | ", r.Errors.Select(e => e.Code + " " + e.Message))); else Ok($"门禁 0 错误 / {r.Warnings.Count()} 警告 / {r.Items.Count(i => i.Level == "info")} 提示");
+
+                // 6 导出 + 保存
+                back.PointOrder.AutoPoints = CharacteristicPoints.Build(back, warnings);
+                var json = System.IO.Path.Combine(outDir, $"smoke-{sideType}-pidm-path-v0.json");
+                JsonIO.Save(back, json);
+                Ok("导出 " + json);
+                var part = System.IO.Path.Combine(outDir, $"smoke-{sideType}.SLDPRT");
+                int errs = 0, warns = 0;
+                bool saved = doc.Extension.SaveAs3(part, (int)SolidWorks.Interop.swconst.swSaveAsVersion_e.swSaveAsCurrentVersion, (int)SolidWorks.Interop.swconst.swSaveAsOptions_e.swSaveAsOptions_Silent, null, null, ref errs, ref warns);
+                if (saved) Ok("保存零件 " + part); else Fail($"保存零件失败 err={errs} warn={warns}");
+
+                // 7 重开验证持久化
+                _sw.CloseDoc(doc.GetTitle());
+                int e2 = 0, w2 = 0;
+                var reopened = (ModelDoc2)_sw.OpenDoc6(part, (int)SolidWorks.Interop.swconst.swDocumentTypes_e.swDocPART, (int)SolidWorks.Interop.swconst.swOpenDocOptions_e.swOpenDocOptions_Silent, "", ref e2, ref w2);
+                if (reopened == null) Fail("重开零件失败");
+                else
+                {
+                    var w3 = new List<string>();
+                    var again = Load(reopened, w3, quiet: true);
+                    if (again == null) Fail("重开后读取路径失败");
+                    else if (again.Drums.Count() != m.Drums.Count() || again.MainDrive == null) Fail($"重开后属性丢失：滚筒 {again.Drums.Count()}，主驱 {(again.MainDrive == null ? "无" : "有")}");
+                    else Ok("重开后属性完整（滚筒/主驱/分类保留）");
+                    _pane()?.Update(again);
+                }
+            }
+            catch (Exception ex)
+            {
+                Fail("异常：" + ex.GetType().Name + " " + ex.Message);
+                sb.AppendLine(ex.StackTrace);
+            }
+            sb.AppendLine($"耗时 {sw.ElapsedMilliseconds} ms   结果：{(sb.ToString().Contains("[FAIL]") ? "FAIL" : "PASS")}");
+            return sb.ToString();
+        }
     }
 }

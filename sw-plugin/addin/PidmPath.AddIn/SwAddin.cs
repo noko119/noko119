@@ -222,6 +222,21 @@ namespace PidmPath.AddIn
         public void OnExport() => Safe(_cmd.Export);
         public void OnPane() => Safe(() => { if (_tpView == null) BuildTaskPane(); _tpView?.ShowView(); _cmd.RefreshPane(); });
 
+        // ---------------------------------------------------------------- 无界面自测（外部 COM 调用）
+        /// <summary>
+        /// PowerShell:  $sw = New-Object -ComObject SldWorks.Application
+        ///              $a  = $sw.GetAddInObject("PidmPath.AddIn.SwAddin")
+        ///              $a.RunSmokeTest("C:\temp\pidm-smoke", "C1")
+        /// </summary>
+        public string RunSmokeTest(string outDir, string sideType)
+        {
+            try { return _cmd.RunSmokeTest(outDir, string.IsNullOrWhiteSpace(sideType) ? "C1" : sideType); }
+            catch (Exception ex) { return "[FAIL] " + ex.Message + "\n" + ex.StackTrace; }
+        }
+
+        /// <summary>插件是否已连接（COM 探活）。</summary>
+        public string Ping() => $"{Title} ok; SW {_sw?.RevisionNumber()}; groups {_groupIds.Count}; pane {(_pane != null ? "yes" : "no")}";
+
         // ---------------------------------------------------------------- COM 注册
         [ComRegisterFunction]
         public static void RegisterFunction(Type t)
