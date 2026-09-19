@@ -115,9 +115,8 @@ export function renderConeMoldDiagram(r) {
         const locH = joint?.locatorDim?.height ?? joint?.locator ?? locatorH0;
         const locWall = joint?.locatorDim?.wall ?? 5;
         const nest = Math.max(8, locH * scaleY);
-        const clearPx = Math.max(0.8, (joint?.locatorDim?.radialClearance ?? 0.2) * scaleR);
-        // 止口内边贴下套外圆，盖满外径台阶，避免蓝/紫间白缝
-        const lipIn = Math.min(out - 2, xR(next.outerOd) + clearPx);
+        // 止口内边略压住下套外圆，避免台阶处细白缝
+        const lipIn = Math.min(out - 2, xR(next.outerOd) - 0.6);
         const yLip = yB + nest;
         right = `M ${axis + innA} ${yA} L ${xWall} ${yA} L ${xWall} ${yLip} L ${axis + lipIn} ${yLip} L ${axis + lipIn} ${yB} L ${axis + innB} ${yB} Z`;
         left = `M ${axis - innA} ${yA} L ${axis - out} ${yA} L ${axis - out} ${yLip} L ${axis - lipIn} ${yLip} L ${axis - lipIn} ${yB} L ${axis - innB} ${yB} Z`;
