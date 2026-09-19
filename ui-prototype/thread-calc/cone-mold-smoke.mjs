@@ -38,7 +38,8 @@ assert(svg.includes("外径"), "od mark");
 assert(svg.includes(`止口 ${loc}`) || svg.includes(`止口${loc}`), "locator mark");
 assert(svg.includes("退刀槽"), "undercut mark");
 assert(svg.includes("螺纹"), "thread mark");
-assert(svg.includes("自动"), "auto mark");
+assert(svg.includes("df") && svg.includes("Dg"), "male/female undercut");
+assert(svg.includes("公") || svg.includes("母"), "male/female labels");
 
 console.log("cone-mold smoke OK", {
   pipes: r.sleeves.map((s) => s.pipeLabel),
