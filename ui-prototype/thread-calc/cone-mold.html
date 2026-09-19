@@ -127,10 +127,10 @@
         </label>
         <label class="field">
           <span>外圆序列（可选）</span>
-          <input id="midOds" type="text" placeholder="如 245,219,194" autocomplete="off" />
+          <input id="midOds" type="text" placeholder="如 254,219,194（须在目录内）" autocomplete="off" />
         </label>
       </div>
-      <p class="hint" style="margin-top:10px">外套管外径按选型表自动选：找「内径 ≥ 本节最大锥径」的最小档，取其外径。上/下余量为模具工艺余量，不乘放大系数。</p>
+      <p class="hint" style="margin-top:10px">外套管<strong>外径只能从规格目录选取</strong>（Φ60…Φ426，含热扩档如254）。按「外径 ≥ 锥径 + 2×8」取最小档；上/下余量为模具工艺余量，不乘放大系数。</p>
       <p class="status" id="status" role="status"></p>
       <div class="warn-box" id="warnBox"></div>
     </section>

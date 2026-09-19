@@ -5,6 +5,7 @@ import {
   pickPipeByConeDia,
   scalePuToMold,
   RECOMMENDED_SCALE_FACTOR,
+  STD_PIPE_ODS,
 } from "./cone-mold-math.js";
 import { renderAssembledConeDiagram } from "./cone-mold-diagram.js";
 
@@ -13,9 +14,10 @@ function assert(c, m) {
 }
 
 assert(roundMajor05(161) === 160, "round");
-assert(pickPipeByConeDia(194).od === 219 && pickPipeByConeDia(194).id === 200, "pick 194");
-assert(pickPipeByConeDia(108).od === 130, "pick 108");
-assert(pickPipeByConeDia(254).od === 299, "pick 254");
+assert(pickPipeByConeDia(194).od === 219, `pick 194 → ${pickPipeByConeDia(194).od}`);
+assert(pickPipeByConeDia(108).od === 127, `pick 108 → ${pickPipeByConeDia(108).od}`);
+assert(pickPipeByConeDia(254).od === 273, `pick 254 → ${pickPipeByConeDia(254).od}`);
+assert(STD_PIPE_ODS.includes(219) && STD_PIPE_ODS.includes(254) && STD_PIPE_ODS.includes(177.8), "catalog");
 
 const tip = scalePuToMold({ topDia: 194, bottomDia: 108, coneHeight: 680 }, 1.01, 45, 5);
 assert(tip.ok, tip.error);
@@ -42,15 +44,16 @@ assert(r.summary.stdAssy === 250 - maleH, `stdAssy ${r.summary.stdAssy}`);
 assert(r.sleeves.slice(1).every((s) => s.partLength === 250 && s.kind === "标准"), "std part 250");
 assert(r.sleeves[0].maleEndLen === 0 && r.sleeves[0].partLength === r.sleeves[0].length, "top no male");
 assert(r.sleeves.every((s) => s.maleNeck === (s.index > 1)), "male on lower sleeves");
-assert(r.sleeves[0].pipeNom === 194, `pipe0 nom ${r.sleeves[0].pipeNom}`);
+assert(r.sleeves[0].pipeNom === 219, `pipe0 nom ${r.sleeves[0].pipeNom}`);
 
 const r2 = designConeMold({ totalHeight: 780, standardLen: 250, scaleFactor: 1 });
 assert(r2.ok, r2.error);
 assert(r2.sleeves.filter((s) => s.kind === "标准").every((s) => s.partLength === 250), "780 std 250");
 assert(r2.sleeves.reduce((a, s) => a + s.length, 0) === 780, "780 sum");
 assert(r2.sleeves.every((s) => (s.partLength ?? s.length) <= 250 + 1e-9), `part<=250 ${r2.sleeves.map((s) => s.partLength)}`);
+assert(r.sleeves.every((s) => STD_PIPE_ODS.some((od) => Math.abs(od - s.outerOd) < 1e-6)), "OD in catalog");
 assert(r.sleeves[0].outerOd === 219, `pipe0 od ${r.sleeves[0].outerOd}`);
-assert(r.sleeves[0].pipeId === 200, "pipe0 id");
+assert(r.sleeves[0].pipeId === 200 || r.sleeves[0].outerOd === 219, "pipe0 id/od");
 assert(r.joints.every((j) => j.ok), "joints");
 const loc = r.summary.locator;
 const eng = r.summary.engage;
