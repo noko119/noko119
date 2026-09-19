@@ -3055,23 +3055,44 @@ function exportSwJson() {
     $("status").className = "status error";
     return;
   }
-  const pkg = exportConeMoldSwPackage(last);
+  let pkg;
+  try {
+    pkg = exportConeMoldSwPackage(last);
+  } catch (err) {
+    $("status").textContent = `导出异常：${err?.message || err}`;
+    $("status").className = "status error";
+    return;
+  }
   if (!pkg.ok) {
     $("status").textContent = pkg.error || "导出失败";
     $("status").className = "status error";
     return;
   }
   const text = JSON.stringify(pkg, null, 2);
-  const blob = new Blob([text], { type: "application/json;charset=utf-8" });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = `cone-mold-v0-${Date.now()}.json`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(a.href);
+  const name = `cone-mold-v0-${Date.now()}.json`;
+  // 先更新状态，避免下载被拦时看起来像“没反应”
   $("status").textContent = `已导出 SW 包（${pkg.schema}，${pkg.sleeveCount} 套 / ${pkg.jointCount} 接头）→ 用宏 ConeMoldImportFromJson 读入`;
   $("status").className = "status ok";
+  try {
+    const blob = new Blob([text], { type: "application/json;charset=utf-8" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = name;
+    a.rel = "noopener";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(a.href), 1500);
+  } catch (err) {
+    // 下载受限时回退到复制剪贴板，网页方案本身不受影响
+    try {
+      navigator.clipboard.writeText(text);
+      $("status").textContent = `下载受限，已复制 JSON（${pkg.schema}，${name}）`;
+    } catch {
+      $("status").textContent = `已生成 JSON 但浏览器拦截下载：${err?.message || err}`;
+    }
+    $("status").className = "status ok";
+  }
 }
 
 $("calcBtn").addEventListener("click", run);

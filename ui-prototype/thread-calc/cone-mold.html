@@ -62,7 +62,7 @@
     <header class="hero">
       <p class="brand">CONE MOLD · <a href="./thread-card.html" style="color:inherit">端头表</a> · <a href="./pipe-end.html" style="color:inherit">接管计算</a> · <a href="./index.html" style="color:inherit">通用螺纹</a></p>
       <h1>锥管模具分段</h1>
-      <p class="lede">输入<strong>聚氨酯制品</strong>口径与锥段高，再乘<strong>放大系数</strong>得到模具内锥尺寸；绿色连续内锥 + 外套分段套装。</p>
+      <p class="lede">输入<strong>聚氨酯制品</strong>口径与锥段高，再乘<strong>放大系数</strong>得到模具内锥尺寸；绿色连续内锥 + 外套分段套装。本页为计算与出图主工具；可选「导出 SW JSON」供 SolidWorks 宏建模。</p>
     </header>
 
     <section class="panel">
@@ -96,20 +96,20 @@
         </label>
       </div>
 
-      <div class="field-row" style="margin-top:12px;grid-template-columns:1fr 2fr auto">
+      <div class="field-row" style="margin-top:12px;grid-template-columns:1fr 2fr">
         <label class="field">
           <span>放大系数（模具÷聚氨酯）</span>
           <input id="scaleFactor" type="number" min="1" step="0.001" value="1.010" />
         </label>
-        <div class="field" style="grid-column:span 1">
+        <div class="field">
           <span>推荐系数（点击填入）</span>
           <div id="scalePresets" class="const-bar" style="margin:6px 0 0"></div>
         </div>
-        <div class="actions" style="margin:0;align-self:end">
-          <button type="button" class="btn primary" id="calcBtn">生成方案</button>
-          <button type="button" class="btn ghost" id="copyBtn">复制</button>
-          <button type="button" class="btn ghost" id="exportSwBtn">导出 SW JSON</button>
-        </div>
+      </div>
+      <div class="actions" style="margin-top:12px">
+        <button type="button" class="btn primary" id="calcBtn">生成方案</button>
+        <button type="button" class="btn ghost" id="copyBtn">复制</button>
+        <button type="button" class="btn ghost" id="exportSwBtn">导出 SW JSON</button>
       </div>
       <p class="hint" id="scaleHint" style="margin-top:10px"></p>
 

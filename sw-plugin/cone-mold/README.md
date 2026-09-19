@@ -1,5 +1,9 @@
 # 锥管模具 SolidWorks 桥接（v0）
 
+> **网页工具仍是主入口，不会替换。** 计算、分段、示意图继续用  
+> `ui-prototype/thread-calc/cone-mold.html`（及 `cone-mold-online.html` / `锥管模具分段.html`）。  
+> 本目录只是可选桥接：网页点「导出 SW JSON」→ SW 宏读入建模。
+
 > 配套网页：`ui-prototype/thread-calc/cone-mold.html`（「导出 SW JSON」）  
 > 本目录：**先用 VBA 宏读包旋转成实体**；螺纹/止口细节与 C# Add-in 二期再做。
 
