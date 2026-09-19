@@ -1,6 +1,6 @@
 /**
  * 组装示意图：绿色连续内锥 + 彩色外套分段
- * 默认案例尺寸关系：总高730，锥段680，上45，下5，ø194→ø108
+ * 每节醒目标注自动选出的管子外径
  */
 
 function t(n) {
@@ -30,13 +30,13 @@ export function renderConeMoldDiagram(r) {
   const topA = r.input.topAllowance;
   const botA = r.input.bottomAllowance;
 
-  const W = 860;
-  const padT = 44;
-  const plotH = 500;
-  const axis = 380;
+  const W = 920;
+  const padT = 72;
+  const plotH = 520;
+  const axis = 360;
   const scaleY = plotH / Htot;
   const maxOut = Math.max(...sleeves.map((s) => s.outerOd), cone.topDia);
-  const scaleR = Math.min(1.2, 155 / (maxOut / 2));
+  const scaleR = Math.min(1.15, 140 / (maxOut / 2));
 
   const yAt = (z) => padT + z * scaleY;
   const xR = (d) => (d / 2) * scaleR;
@@ -46,12 +46,20 @@ export function renderConeMoldDiagram(r) {
   const yCone0 = yAt(cone.z0);
   const yCone1 = yAt(cone.z1);
 
-  // —— 绿色内锥（外轮廓=锥面；内孔略小示意壁厚）——
   const coneWall = Math.max(6, r.input.wall * 0.35);
   const cTop = cone.topDia;
   const cBot = cone.bottomDia;
   const iTop = Math.max(cTop - 2 * coneWall, cBot * 0.5);
   const iBot = Math.max(cBot - 2 * coneWall, 20);
+
+  // 顶部外径汇总条（最显眼）
+  const odBanner = `
+    <rect x="16" y="8" width="${W - 32}" height="52" rx="10" fill="#fff4e8" stroke="#c45c26" stroke-width="2"/>
+    <text x="28" y="30" fill="#8a2e0e" font-size="14" font-weight="800">自动选出的管子外径（每节）</text>
+    <text x="28" y="50" fill="#2f4a56" font-size="13" font-weight="700">${sleeves
+      .map((s) => `套${s.index}：ø${t(s.outerOd)}`)
+      .join("　　")}</text>
+  `;
 
   const green = `
     <path d="
@@ -72,7 +80,6 @@ export function renderConeMoldDiagram(r) {
       stroke="#e67e22" stroke-width="2"/>
   `;
 
-  // —— 外套分段（套在锥外）——
   const sleevePaths = sleeves
     .map((s, i) => {
       const color = SLEEVE_COLORS[i % SLEEVE_COLORS.length];
@@ -81,10 +88,8 @@ export function renderConeMoldDiagram(r) {
       const out = xR(s.outerOd);
       const innA = xR(s.coneAtTop);
       const innB = xR(s.coneAtBot);
-      // 右侧套筒截面
       const right = `M ${axis + innA} ${yA} L ${axis + out} ${yA} L ${axis + out} ${yB} L ${axis + innB} ${yB} Z`;
       const left = `M ${axis - innA} ${yA} L ${axis - out} ${yA} L ${axis - out} ${yB} L ${axis - innB} ${yB} Z`;
-      // 节间搭接唇示意
       let lip = "";
       if (s.femaleSleeve && i < sleeves.length - 1) {
         const nest = Math.min(18, (yB - yA) * 0.2);
@@ -96,27 +101,35 @@ export function renderConeMoldDiagram(r) {
             fill="${color}" stroke="#2f4a56" stroke-width="1" opacity="0.95"/>
         `;
       }
+
       const yMid = (yA + yB) / 2;
-      const odLabel = `外径 ø${t(s.outerOd)}`;
-      const nomLabel = s.pipeNom != null ? `选管 ø${t(s.pipeNom)}` : `套${s.index}`;
-      // 外径尺寸线（右侧）
-      const dimX = axis + out + 14;
-      const odDim = `
-        <line x1="${axis + out}" y1="${yMid}" x2="${dimX + 36}" y2="${yMid}" stroke="#8a2e0e" stroke-width="1"/>
-        <line x1="${axis + out}" y1="${yMid - 4}" x2="${axis + out}" y2="${yMid + 4}" stroke="#8a2e0e" stroke-width="1.2"/>
-        <text x="${dimX + 40}" y="${yMid - 4}" fill="#8a2e0e" font-size="11" font-weight="800">${odLabel}</text>
-        <text x="${dimX + 40}" y="${yMid + 10}" fill="#2f4a56" font-size="9" font-weight="600">${nomLabel} · 自动</text>
+      // 壁厚中间放白底大号外径牌
+      const badgeX = axis + (innA + out) / 2;
+      const badgeW = 86;
+      const badgeH = 36;
+      const odBadge = `
+        <rect x="${badgeX - badgeW / 2}" y="${yMid - badgeH / 2}" width="${badgeW}" height="${badgeH}"
+          rx="8" fill="#ffffff" stroke="#8a2e0e" stroke-width="2.5"/>
+        <text x="${badgeX}" y="${yMid - 2}" text-anchor="middle" fill="#8a2e0e" font-size="15" font-weight="900">ø${t(s.outerOd)}</text>
+        <text x="${badgeX}" y="${yMid + 14}" text-anchor="middle" fill="#2f4a56" font-size="10" font-weight="700">外径·自动</text>
       `;
+      // 右侧再写一行全称
+      const sideX = axis + out + 18;
+      const side = `
+        <text x="${sideX}" y="${yMid - 6}" fill="#8a2e0e" font-size="13" font-weight="800">套${s.index} 外径 ø${t(s.outerOd)}</text>
+        <text x="${sideX}" y="${yMid + 12}" fill="#5c6b64" font-size="10" font-weight="600">${s.pipeLabel || ""}</text>
+      `;
+
       return `
         <path d="${right}" fill="${color}" fill-opacity="0.72" stroke="#2f4a56" stroke-width="1.15"/>
         <path d="${left}" fill="${color}" fill-opacity="0.72" stroke="#2f4a56" stroke-width="1.15"/>
         ${lip}
-        ${odDim}
+        ${odBadge}
+        ${side}
       `;
     })
     .join("");
 
-  // 接头标注
   const jointLabels = joints
     .map((j) => {
       const y = yAt(j.z);
@@ -128,7 +141,6 @@ export function renderConeMoldDiagram(r) {
     })
     .join("");
 
-  // 尺寸
   let dims = "";
   dims += dimV(86, y0, yH, `总高 ${t(Htot)}`, "#2f4a56");
   dims += dimV(118, yCone0, yCone1, `锥段 ${t(cone.height)}`, "#1f6f5b");
@@ -138,29 +150,27 @@ export function renderConeMoldDiagram(r) {
     dims += dimV(182, yAt(s.z0), yAt(s.z1), `${t(s.length)}`, "#8a5a2a");
   });
 
-  // 接头细节小图
-  const detail = renderJointDetail(600, yH - 120, joints[0]);
+  const detail = renderJointDetail(680, yH - 130, joints[0]);
 
-  const legendY = yH + 34;
+  const legendY = yH + 36;
   const items = [
     `内锥（绿）ø${t(cone.topDia)} → ø${t(cone.bottomDia)} · 高 ${t(cone.height)}`,
-    ...sleeves.map((s) => `外套${s.index} ${s.pipeLabel || "ø" + s.outerOd} · ${t(s.length)}mm（${s.kind}）`),
-    ...joints.map((j) => `接头${j.index} ${j.designation} @z=${t(j.z)} 锥径ø${t(j.coneDia)}`),
-    `橙线=锥面；外套套在锥上；接头默认 12+1+10+1`,
+    ...sleeves.map((s) => `套${s.index} 管子外径 ø${t(s.outerOd)}（${s.pipeLabel || "自动"}）· ${t(s.length)}mm`),
+    ...joints.map((j) => `接头${j.index} ${j.designation} @z=${t(j.z)}`),
   ];
   const legend = items
     .map((label, i) => {
       const col = i % 2;
       const row = Math.floor(i / 2);
-      return `<text x="${20 + col * 370}" y="${legendY + row * 15}" fill="#5c6b64" font-size="9" font-weight="600">${label}</text>`;
+      return `<text x="${20 + col * 440}" y="${legendY + row * 16}" fill="#5c6b64" font-size="10" font-weight="600">${label}</text>`;
     })
     .join("");
-  const H = legendY + Math.ceil(items.length / 2) * 15 + 18;
+  const H = legendY + Math.ceil(items.length / 2) * 16 + 20;
 
   return `
-  <svg viewBox="0 0 ${W} ${H}" class="diagram" role="img" aria-label="内锥加外套组装示意图">
-    <text x="20" y="20" fill="#2f4a56" font-size="13" font-weight="800">组装示意图 · 内锥 + 外套分段</text>
-    <text x="20" y="36" fill="#5c6b64" font-size="9">案例可改参数；默认 730 / ø194→ø108 / 上45·下5 / 节长210</text>
+  <svg viewBox="0 0 ${W} ${H}" class="diagram" role="img" aria-label="内锥加外套组装示意图（含管子外径）">
+    ${odBanner}
+    <text x="20" y="${padT - 8}" fill="#2f4a56" font-size="12" font-weight="700">组装示意图 · 白底红框数字 = 该节管子外径</text>
     ${sleevePaths}
     ${green}
     ${jointLabels}
@@ -179,9 +189,7 @@ function renderJointDetail(x0, y0, joint) {
   <g transform="translate(${x0},${y0})">
     <rect width="220" height="112" rx="8" fill="#fff" stroke="#2f4a56"/>
     <text x="10" y="16" fill="#2f4a56" font-size="10" font-weight="700">接头细节 · ${title}</text>
-    <!-- 外套红 -->
     <path d="M24,28 L95,28 L95,70 L82,70 L82,52 L40,52 L40,70 L24,70 Z" fill="#c45c5c" stroke="#2f4a56"/>
-    <!-- 内锥绿 -->
     <path d="M40,40 L82,40 L78,100 L44,100 Z" fill="#3d9b5f" stroke="#2f4a56"/>
     <line x1="48" y1="40" x2="46" y2="100" stroke="#e67e22" stroke-width="1.6"/>
     <line x1="74" y1="40" x2="76" y2="100" stroke="#e67e22" stroke-width="1.6"/>
