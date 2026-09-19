@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
   注册 / 反注册 PIDM DTⅡ 路径 SolidWorks 插件（需要管理员 PowerShell）。
 .EXAMPLE

@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
   编译插件（Release）。需要 .NET SDK 8（含 net48 目标包，SDK 会自动拉取 Microsoft.NETFramework.ReferenceAssemblies）。
 .EXAMPLE

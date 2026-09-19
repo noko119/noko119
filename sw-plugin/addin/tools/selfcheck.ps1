@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
   本地自检：环境 / 编译产物 / 注册状态 / SW 版本匹配。结果写到 selfcheck-report.txt，可直接贴回给开发者。
 .EXAMPLE

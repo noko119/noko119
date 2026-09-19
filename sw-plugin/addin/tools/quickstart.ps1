@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
   一键：注册插件 → 自检 → 启动 SolidWorks 跑无界面冒烟。适用于解压即用的 zip 发行包（无需 Git / .NET SDK）。
   以管理员身份运行 PowerShell，然后：

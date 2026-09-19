@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
   真机无界面冒烟：通过 COM 启动 SolidWorks，调用插件 RunSmokeTest，打印并保存报告。
   不需要手点任何按钮。可由人或本地 Cursor agent 直接运行。
