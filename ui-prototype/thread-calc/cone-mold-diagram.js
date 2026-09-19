@@ -96,11 +96,22 @@ export function renderConeMoldDiagram(r) {
             fill="${color}" stroke="#2f4a56" stroke-width="1" opacity="0.95"/>
         `;
       }
+      const yMid = (yA + yB) / 2;
+      const odLabel = `外径 ø${t(s.outerOd)}`;
+      const nomLabel = s.pipeNom != null ? `选管 ø${t(s.pipeNom)}` : `套${s.index}`;
+      // 外径尺寸线（右侧）
+      const dimX = axis + out + 14;
+      const odDim = `
+        <line x1="${axis + out}" y1="${yMid}" x2="${dimX + 36}" y2="${yMid}" stroke="#8a2e0e" stroke-width="1"/>
+        <line x1="${axis + out}" y1="${yMid - 4}" x2="${axis + out}" y2="${yMid + 4}" stroke="#8a2e0e" stroke-width="1.2"/>
+        <text x="${dimX + 40}" y="${yMid - 4}" fill="#8a2e0e" font-size="11" font-weight="800">${odLabel}</text>
+        <text x="${dimX + 40}" y="${yMid + 10}" fill="#2f4a56" font-size="9" font-weight="600">${nomLabel} · 自动</text>
+      `;
       return `
         <path d="${right}" fill="${color}" fill-opacity="0.72" stroke="#2f4a56" stroke-width="1.15"/>
         <path d="${left}" fill="${color}" fill-opacity="0.72" stroke="#2f4a56" stroke-width="1.15"/>
         ${lip}
-        <text x="${axis + out + 8}" y="${(yA + yB) / 2 + 4}" fill="#2f4a56" font-size="10" font-weight="700">套${s.index}</text>
+        ${odDim}
       `;
     })
     .join("");
