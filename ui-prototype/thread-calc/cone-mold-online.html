@@ -1,0 +1,3020 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>锥管模具分段设计</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Outfit:wght@500;700;800&display=swap" rel="stylesheet" />
+  <style>
+:root {
+  --ink: #1a2420;
+  --muted: #5c6b64;
+  --paper: #eef3ef;
+  --panel: rgba(255, 255, 255, 0.78);
+  --line: rgba(26, 36, 32, 0.12);
+  --accent: #c45c26;
+  --accent-2: #1f6f5b;
+  --steel: #2f4a56;
+  --shadow: 0 18px 40px rgba(31, 52, 44, 0.12);
+  --radius: 18px;
+  --font-display: "Outfit", "Noto Sans SC", sans-serif;
+  --font-body: "Noto Sans SC", "Outfit", sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  min-height: 100%;
+  color: var(--ink);
+  font-family: var(--font-body);
+  background: var(--paper);
+}
+
+.atmosphere {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(900px 500px at 8% -5%, rgba(196, 92, 38, 0.16), transparent 55%),
+    radial-gradient(700px 420px at 92% 8%, rgba(31, 111, 91, 0.14), transparent 50%),
+    linear-gradient(165deg, #f5f7f4 0%, #e7eee9 42%, #dfe8e3 100%);
+  overflow: hidden;
+}
+
+.atmosphere::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.35;
+  background-image:
+    linear-gradient(rgba(47, 74, 86, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(47, 74, 86, 0.05) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: radial-gradient(ellipse at 40% 20%, black 20%, transparent 75%);
+  animation: gridDrift 18s linear infinite;
+}
+
+@keyframes gridDrift {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-28px, -28px, 0); }
+}
+
+.shell {
+  width: min(1120px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 36px 0 64px;
+}
+
+.hero {
+  margin-bottom: 28px;
+  animation: rise 0.7s ease both;
+}
+
+.brand {
+  margin: 0 0 8px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  font-size: 13px;
+  color: var(--accent);
+}
+
+.hero h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(2.2rem, 5vw, 3.4rem);
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  color: var(--steel);
+}
+
+.lede {
+  margin: 12px 0 0;
+  max-width: 36rem;
+  color: var(--muted);
+  font-size: 1.02rem;
+  line-height: 1.55;
+}
+
+.panel {
+  background: var(--panel);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px;
+  animation: rise 0.75s ease 0.08s both;
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: 1.4fr repeat(3, 1fr);
+  gap: 12px;
+}
+
+.field-row.simple {
+  grid-template-columns: 1.8fr 1fr 1fr;
+}
+
+.field-row.free {
+  grid-template-columns: 1fr 1fr 1fr 1.4fr;
+}
+
+.hint {
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.field.grow { grid-column: span 1; }
+
+.field span {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.field input,
+.field select {
+  width: 100%;
+  height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0 12px;
+  font: inherit;
+  font-size: 15px;
+  color: var(--ink);
+  background: #fff;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.field input:focus,
+.field select:focus {
+  border-color: rgba(196, 92, 38, 0.55);
+  box-shadow: 0 0 0 3px rgba(196, 92, 38, 0.15);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.chip {
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--steel);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: transform 0.15s, background 0.15s, border-color 0.15s;
+}
+
+.chip:hover {
+  transform: translateY(-1px);
+  border-color: rgba(31, 111, 91, 0.35);
+  background: #f3faf7;
+}
+
+.chip.active {
+  background: var(--accent-2);
+  border-color: var(--accent-2);
+  color: #fff;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.btn {
+  height: 42px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  padding: 0 16px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s, background 0.15s, box-shadow 0.15s;
+}
+
+.btn:hover { transform: translateY(-1px); }
+
+.btn.primary {
+  background: linear-gradient(135deg, #c45c26, #a84718);
+  color: #fff;
+  box-shadow: 0 10px 22px rgba(196, 92, 38, 0.28);
+}
+
+.btn.ghost {
+  background: #fff;
+  border-color: var(--line);
+  color: var(--steel);
+}
+
+.status {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.status.error { color: #b42318; }
+.status.ok { color: var(--accent-2); }
+
+.result-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 18px;
+  box-shadow: var(--shadow);
+  animation: rise 0.65s ease both;
+}
+
+.card:nth-child(1) { animation-delay: 0.05s; }
+.card:nth-child(2) { animation-delay: 0.1s; }
+.card:nth-child(3) { animation-delay: 0.15s; }
+.card:nth-child(4) { animation-delay: 0.2s; }
+.card:nth-child(5) { animation-delay: 0.25s; }
+.card:nth-child(6) { animation-delay: 0.3s; }
+
+.designation-card {
+  grid-column: 1 / -1;
+}
+
+.span-2 { grid-column: 1 / -1; }
+
+.card h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 2rem;
+  letter-spacing: -0.02em;
+  color: var(--steel);
+}
+
+.card h3 {
+  margin: 0 0 12px;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--steel);
+}
+
+.muted { color: var(--muted); margin: 6px 0 0; font-size: 14px; }
+
+.diagram {
+  width: 100%;
+  height: auto;
+  margin-top: 14px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #f8fbf9, #e8f0eb);
+  border: 1px solid var(--line);
+}
+
+.data {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.data caption {
+  caption-side: top;
+  text-align: left;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--steel);
+}
+
+.data th,
+.data td {
+  padding: 9px 4px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: baseline;
+}
+
+.data th {
+  color: var(--muted);
+  font-weight: 500;
+  width: 58%;
+}
+
+.data td {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.data tr:last-child th,
+.data tr:last-child td { border-bottom: 0; }
+
+.split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.formula {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.footnote {
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 860px) {
+  .field-row,
+  .field-row.simple,
+  .field-row.free {
+    grid-template-columns: 1fr 1fr;
+  }
+  .field.grow { grid-column: 1 / -1; }
+  .result-grid { grid-template-columns: 1fr; }
+  .designation-card,
+  .span-2 { grid-column: auto; }
+  .split { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 520px) {
+  .shell { width: min(100% - 20px, 1120px); padding-top: 24px; }
+  .field-row,
+  .field-row.simple,
+  .field-row.free { grid-template-columns: 1fr; }
+  .actions { align-items: stretch; }
+  .btn { width: 100%; }
+}
+
+
+    .const-bar { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 14px; }
+    .const-bar span {
+      font-size: 12px; padding: 6px 10px; border-radius: 999px;
+      background: #fff; border: 1px solid var(--line); color: var(--steel);
+    }
+    .field-row.five { grid-template-columns: repeat(5, 1fr); }
+    .stack { display: flex; flex-direction: column; gap: 14px; margin-top: 16px; }
+    .joint-block { margin-top: 8px; }
+    .joint-block h4 {
+      margin: 0 0 10px; font-family: var(--font-display); color: var(--steel); font-size: 1rem;
+    }
+    .card-pair {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+    }
+    .warn-box {
+      margin-top: 12px; padding: 12px 14px; border-radius: 12px;
+      background: #fff4f0; border: 1px solid #f0b090; color: #8a2e0e;
+      font-weight: 700; display: none;
+    }
+    .warn-box.show { display: block; }
+    .schema {
+      display: flex; flex-wrap: wrap; align-items: stretch; gap: 8px; margin-top: 8px;
+    }
+    .schema .seg {
+      flex: 1 1 120px; min-width: 110px; background: #fff;
+      border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px;
+      box-shadow: var(--shadow);
+    }
+    .schema .seg strong {
+      display: block; font-family: var(--font-display); font-size: 1.25rem; color: var(--steel);
+    }
+    .schema .seg span { color: var(--muted); font-size: 12px; }
+    .schema .arrow {
+      align-self: center; color: var(--accent); font-weight: 800; font-family: var(--font-display);
+    }
+    .diagram-wrap { margin-top: 12px; }
+    .diagram-wrap .diagram {
+      display: block; width: 100%; height: auto; margin-top: 8px;
+      background: linear-gradient(180deg, #f8fbf9, #e8f0eb);
+      border: 1px solid var(--line); border-radius: 14px;
+    }
+    @media (max-width: 860px) {
+      .field-row.five { grid-template-columns: 1fr 1fr; }
+      .card-pair { grid-template-columns: 1fr; }
+    }
+  
+</style>
+</head>
+<body>
+  <div class="atmosphere" aria-hidden="true"></div>
+  <main class="shell">
+    <header class="hero">
+      <p class="brand">CONE MOLD · <a href="./thread-card.html" style="color:inherit">端头表</a> · <a href="./pipe-end.html" style="color:inherit">接管计算</a> · <a href="./index.html" style="color:inherit">通用螺纹</a></p>
+      <h1>锥管模具分段</h1>
+      <p class="lede">输入<strong>聚氨酯制品</strong>口径与锥段高，再乘<strong>放大系数</strong>得到模具内锥尺寸；绿色连续内锥 + 外套分段套装。</p>
+    </header>
+
+    <section class="panel">
+      <div class="const-bar">
+        <span>聚氨酯 → ×系数 → 模具</span>
+        <span>外套分段（标准节总高 250 含公扣）</span>
+        <span>止口=退刀槽+½旋合（自动）</span>
+        <span>案例：PU ø194→ø108 ×680</span>
+      </div>
+
+      <div class="field-row five">
+        <label class="field">
+          <span>聚氨酯上口 ø / mm</span>
+          <input id="bigOd" type="number" min="1" step="any" value="194" />
+        </label>
+        <label class="field">
+          <span>聚氨酯下口 ø / mm</span>
+          <input id="smallOd" type="number" min="1" step="any" value="108" />
+        </label>
+        <label class="field">
+          <span>聚氨酯锥段高 / mm</span>
+          <input id="puConeHeight" type="number" min="1" step="any" value="680" />
+        </label>
+        <label class="field">
+          <span>上口余量（模具）</span>
+          <input id="topAllowance" type="number" min="0" step="any" value="45" />
+        </label>
+        <label class="field">
+          <span>下口余量（模具）</span>
+          <input id="bottomAllowance" type="number" min="0" step="any" value="5" />
+        </label>
+      </div>
+
+      <div class="field-row" style="margin-top:12px;grid-template-columns:1fr 2fr auto">
+        <label class="field">
+          <span>放大系数（模具÷聚氨酯）</span>
+          <input id="scaleFactor" type="number" min="1" step="0.001" value="1.010" />
+        </label>
+        <div class="field" style="grid-column:span 1">
+          <span>推荐系数（点击填入）</span>
+          <div id="scalePresets" class="const-bar" style="margin:6px 0 0"></div>
+        </div>
+        <div class="actions" style="margin:0;align-self:end">
+          <button type="button" class="btn primary" id="calcBtn">生成方案</button>
+          <button type="button" class="btn ghost" id="copyBtn">复制</button>
+        </div>
+      </div>
+      <p class="hint" id="scaleHint" style="margin-top:10px"></p>
+
+      <div class="field-row" style="margin-top:12px;grid-template-columns:1fr 1fr 1fr 1fr">
+        <label class="field">
+          <span>标准节总高（含公扣）</span>
+          <input id="standardLen" type="number" min="50" step="any" value="250" />
+        </label>
+        <label class="field">
+          <span>外套名义壁厚</span>
+          <input id="wall" type="number" min="1" step="any" value="20" />
+        </label>
+        <label class="field">
+          <span>强制外套节数</span>
+          <input id="segmentCount" type="number" min="2" step="1" placeholder="自动" />
+        </label>
+        <label class="field">
+          <span>外圆序列（可选）</span>
+          <input id="midOds" type="text" placeholder="如 254,219,194（须在目录内）" autocomplete="off" />
+        </label>
+      </div>
+      <p class="hint" style="margin-top:10px">外套管<strong>外径只能从规格目录选取</strong>（Φ60…Φ426，含热扩档如254）。按「外径 ≥ 锥径 + 2×8」取最小档；上/下余量为模具工艺余量，不乘放大系数。</p>
+      <p class="status" id="status" role="status"></p>
+      <div class="warn-box" id="warnBox"></div>
+    </section>
+
+    <div id="results" class="stack">
+      <article class="card">
+        <h3>组装后示意图</h3>
+        <p class="muted" id="summaryLine">生成方案后显示总高 / 面距摘要</p>
+        <div class="diagram-wrap" id="assyDiagram">
+  <svg viewBox="0 0 1280 1016" class="diagram" role="img" aria-label="锥管模具组装示意图（公母扣·止口·螺纹·退刀槽）">
+    
+    <rect x="16" y="8" width="1248" height="68" rx="10" fill="#fff4e8" stroke="#c45c26" stroke-width="2"/>
+    <text x="28" y="32" fill="#8a2e0e" font-size="13" font-weight="800">聚氨酯 ø194→ø108×680 ×1.010 → 模具 ø195.940→ø109.080×686.800　　套1：ø219　套2：ø219　套3：ø194　套4：ø159</text>
+    <text x="28" y="58" fill="#2f4a56" font-size="12" font-weight="600">止口10 · 旋合12 · 退刀槽4　·　公扣：止口→外螺纹→外退刀槽(df)　·　母扣：止口接收→内螺纹→内退刀槽(Dg)</text>
+  
+    
+        <path d="M 445.8076 108 L 458.26 108 L 458.26 153.7328990228013 L 444.45544 153.7328990228013 Z"
+          fill="#c45c5c" fill-opacity="0.48" stroke="#2f4a56" stroke-width="0.85"/>
+        <path d="M 234.1924 108 L 221.74 108 L 221.74 153.7328990228013 L 235.54456 153.7328990228013 Z"
+          fill="#c45c5c" fill-opacity="0.48" stroke="#2f4a56" stroke-width="0.85"/>
+      
+        <path d="M 444.45544 153.7328990228013 L 458.26 153.7328990228013 L 458.26 311.82193268186757 L 429.15724 311.82193268186757 Z"
+          fill="#6ab0c9" fill-opacity="0.48" stroke="#2f4a56" stroke-width="0.85"/>
+        <path d="M 235.54456 153.7328990228013 L 221.74 153.7328990228013 L 221.74 311.82193268186757 L 250.84276 311.82193268186757 Z"
+          fill="#6ab0c9" fill-opacity="0.48" stroke="#2f4a56" stroke-width="0.85"/>
+      
+        <path d="M 429.15724 311.82193268186757 L 444.76 311.82193268186757 L 444.76 469.9109663409338 L 413.85958 469.9109663409338 Z"
+          fill="#8a6bb8" fill-opacity="0.48" stroke="#2f4a56" stroke-width="0.85"/>
+        <path d="M 250.84276 311.82193268186757 L 235.24 311.82193268186757 L 235.24 469.9109663409338 L 266.14042 469.9109663409338 Z"
+          fill="#8a6bb8" fill-opacity="0.48" stroke="#2f4a56" stroke-width="0.85"/>
+      
+        <path d="M 413.85958 469.9109663409338 L 425.86 469.9109663409338 L 425.86 628 L 398.9032 628 Z"
+          fill="#c49a6c" fill-opacity="0.48" stroke="#2f4a56" stroke-width="0.85"/>
+        <path d="M 266.14042 469.9109663409338 L 254.14 469.9109663409338 L 254.14 628 L 281.0968 628 Z"
+          fill="#c49a6c" fill-opacity="0.48" stroke="#2f4a56" stroke-width="0.85"/>
+      
+    
+      
+      <rect x="221.74" y="131.00629750271443" width="236.51999999999998"
+        height="31.1956568946797" fill="#eef3ef"/>
+    
+      <path d="
+      M 444.45544 131.00629750271443
+      L 458.26 131.00629750271443
+      L 458.26 150.5328990228013
+      L 453.4 150.5328990228013
+      L 453.4 150.5328990228013
+      L 450.61036 150.5328990228013
+      L 450.61036 142.06384364820846
+      L 455.148 142.06384364820846
+      L 455.148 135.00629750271443
+      L 444.45544 135.00629750271443
+      Z" fill="#c45c5c" fill-opacity="0.9" stroke="#2f4a56" stroke-width="1.15"/>
+      <path d="
+      M 235.54456 131.00629750271443
+      L 221.74 131.00629750271443
+      L 221.74 150.5328990228013
+      L 226.60000000000002 150.5328990228013
+      L 226.60000000000002 150.5328990228013
+      L 229.38963999999999 150.5328990228013
+      L 229.38963999999999 142.06384364820846
+      L 224.85199999999998 142.06384364820846
+      L 224.85199999999998 135.00629750271443
+      L 235.54456 135.00629750271443
+      Z" fill="#c45c5c" fill-opacity="0.9" stroke="#2f4a56" stroke-width="1.15"/>
+      <path d="
+      M 444.45544 135.00629750271443
+      L 454.048 135.00629750271443
+      L 454.048 142.06384364820846
+      L 451.78 142.06384364820846
+      L 451.78 150.5328990228013
+      L 450.16 150.5328990228013
+      L 450.16 153.7328990228013
+      L 458.26 153.7328990228013
+      L 458.26 162.20195439739413
+      L 444.45544 162.20195439739413
+      Z" fill="#6ab0c9" fill-opacity="0.9" stroke="#2f4a56" stroke-width="1.15"/>
+      <path d="
+      M 235.54456 135.00629750271443
+      L 225.952 135.00629750271443
+      L 225.952 142.06384364820846
+      L 228.22000000000003 142.06384364820846
+      L 228.22000000000003 150.5328990228013
+      L 229.83999999999997 150.5328990228013
+      L 229.83999999999997 153.7328990228013
+      L 221.74 153.7328990228013
+      L 221.74 162.20195439739413
+      L 235.54456 162.20195439739413
+      Z" fill="#6ab0c9" fill-opacity="0.9" stroke="#2f4a56" stroke-width="1.15"/>
+      
+      <path d="M 451.78 150.5328990228013 L 450.16 150.5328990228013 L 450.16 153.7328990228013 L 451.78 153.7328990228013 Z"
+        fill="#2f4a56" fill-opacity="0.38" stroke="#2f4a56" stroke-width="0.9"/>
+      <path d="M 228.22000000000003 150.5328990228013 L 229.83999999999997 150.5328990228013 L 229.83999999999997 153.7328990228013 L 228.22000000000003 153.7328990228013 Z"
+        fill="#2f4a56" fill-opacity="0.38" stroke="#2f4a56" stroke-width="0.9"/>
+      
+      <path d="M 451.78 150.5328990228013 L 453.4 150.5328990228013 L 453.4 153.7328990228013 L 451.78 153.7328990228013 Z"
+        fill="#8a2e0e" fill-opacity="0.22" stroke="#8a2e0e" stroke-width="0.85"/>
+      <path d="M 228.22000000000003 150.5328990228013 L 226.60000000000002 150.5328990228013 L 226.60000000000002 153.7328990228013 L 228.22000000000003 153.7328990228013 Z"
+        fill="#8a2e0e" fill-opacity="0.22" stroke="#8a2e0e" stroke-width="0.85"/>
+      <path d="M 451.78 142.06384364820846 L 450.61036 142.91074918566775 L 451.78 143.75765472312702 L 450.61036 144.6045602605863 L 451.78 145.4514657980456 L 450.61036 146.2983713355049 L 451.78 147.14527687296416 L 450.61036 147.99218241042345 L 451.78 148.83908794788275 L 450.61036 149.685993485342 L 451.78 150.5328990228013" fill="none" stroke="#1f6f5b" stroke-width="1.15"/>
+      <path d="M 228.22000000000003 142.06384364820846 L 229.38963999999999 142.91074918566775 L 228.22000000000003 143.75765472312702 L 229.38963999999999 144.6045602605863 L 228.22000000000003 145.4514657980456 L 229.38963999999999 146.2983713355049 L 228.22000000000003 147.14527687296416 L 229.38963999999999 147.99218241042345 L 228.22000000000003 148.83908794788275 L 229.38963999999999 149.685993485342 L 228.22000000000003 150.5328990228013" fill="none" stroke="#1f6f5b" stroke-width="1.15"/>
+      
+        <path d="M 444.45544 151.7328990228013 L 484.26 151.7328990228013 L 484.26 160.86644951140065 L 670.26 160.86644951140065 L 684.26 165"
+          fill="none" stroke="#e67e22" stroke-width="1.05" opacity="0.85"/>
+        <circle cx="444.45544" cy="151.7328990228013" r="2.2" fill="#e67e22"/>
+        <path d="M 454.048 138.53507057546145 L 484.26 138.53507057546145 L 484.26 160.86644951140065 L 670.26 160.86644951140065 L 684.26 187"
+          fill="none" stroke="#1f6f5b" stroke-width="1.05" opacity="0.85"/>
+        <circle cx="454.048" cy="138.53507057546145" r="2.2" fill="#1f6f5b"/>
+        <path d="M 451.78 146.2983713355049 L 484.26 146.2983713355049 L 484.26 160.86644951140065 L 670.26 160.86644951140065 L 684.26 209"
+          fill="none" stroke="#8a2e0e" stroke-width="1.05" opacity="0.85"/>
+        <circle cx="451.78" cy="146.2983713355049" r="2.2" fill="#8a2e0e"/>
+        <path d="M 450.16 152.1328990228013 L 484.26 152.1328990228013 L 484.26 160.86644951140065 L 670.26 160.86644951140065 L 684.26 231"
+          fill="none" stroke="#2f4a56" stroke-width="1.05" opacity="0.85"/>
+        <circle cx="450.16" cy="152.1328990228013" r="2.2" fill="#2f4a56"/>
+        <path d="M 458.26 152.1328990228013 L 484.26 152.1328990228013 L 484.26 160.86644951140065 L 670.26 160.86644951140065 L 684.26 253"
+          fill="none" stroke="#c45c26" stroke-width="1.05" opacity="0.85"/>
+        <circle cx="458.26" cy="152.1328990228013" r="2.2" fill="#c45c26"/>
+      <rect x="686.26" y="116" width="220" height="156"
+        rx="8" fill="#ffffff" stroke="#2f4a56" stroke-width="1.4"/>
+      <text x="696.26" y="144" fill="#2f4a56" font-size="11" font-weight="900">接头1 · M207×2</text>
+      
+        <text x="696.26" y="168" fill="#e67e22" font-size="11" font-weight="800">对接内径 ø193.436</text>
+        <text x="696.26" y="190" fill="#1f6f5b" font-size="11" font-weight="800">止口 10</text>
+        <text x="696.26" y="212" fill="#8a2e0e" font-size="11" font-weight="800">螺纹 M207×2 · 12</text>
+        <text x="696.26" y="234" fill="#2f4a56" font-size="11" font-weight="800">退刀槽 4  df204/Dg210</text>
+        <text x="696.26" y="256" fill="#c45c26" font-size="11" font-weight="800">肩间隙 1</text>
+    
+      
+      <rect x="221.74" y="289.09533116178073" width="236.51999999999998"
+        height="31.195656894679644" fill="#eef3ef"/>
+    
+      <path d="
+      M 429.15724 289.09533116178073
+      L 458.26 289.09533116178073
+      L 458.26 308.6219326818676
+      L 439.36 308.6219326818676
+      L 439.36 308.6219326818676
+      L 436.57036 308.6219326818676
+      L 436.57036 300.15287730727476
+      L 441.297 300.15287730727476
+      L 441.297 293.09533116178073
+      L 429.15724 293.09533116178073
+      Z" fill="#6ab0c9" fill-opacity="0.9" stroke="#2f4a56" stroke-width="1.15"/>
+      <path d="
+      M 250.84276 289.09533116178073
+      L 221.74 289.09533116178073
+      L 221.74 308.6219326818676
+      L 240.64 308.6219326818676
+      L 240.64 308.6219326818676
+      L 243.42964 308.6219326818676
+      L 243.42964 300.15287730727476
+      L 238.70299999999997 300.15287730727476
+      L 238.70299999999997 293.09533116178073
+      L 250.84276 293.09533116178073
+      Z" fill="#6ab0c9" fill-opacity="0.9" stroke="#2f4a56" stroke-width="1.15"/>
+      <path d="
+      M 429.15724 293.09533116178073
+      L 440.197 293.09533116178073
+      L 440.197 300.15287730727476
+      L 437.74 300.15287730727476
+      L 437.74 308.6219326818676
+      L 436.12 308.6219326818676
+      L 436.12 311.82193268186757
+      L 444.76 311.82193268186757
+      L 444.76 320.2909880564604
+      L 429.15724 320.2909880564604
+      Z" fill="#8a6bb8" fill-opacity="0.9" stroke="#2f4a56" stroke-width="1.15"/>
+      <path d="
+      M 250.84276 293.09533116178073
+      L 239.803 293.09533116178073
+      L 239.803 300.15287730727476
+      L 242.26 300.15287730727476
+      L 242.26 308.6219326818676
+      L 243.88 308.6219326818676
+      L 243.88 311.82193268186757
+      L 235.24 311.82193268186757
+      L 235.24 320.2909880564604
+      L 250.84276 320.2909880564604
+      Z" fill="#8a6bb8" fill-opacity="0.9" stroke="#2f4a56" stroke-width="1.15"/>
+      
+      <path d="M 437.74 308.6219326818676 L 436.12 308.6219326818676 L 436.12 311.82193268186757 L 437.74 311.82193268186757 Z"
+        fill="#2f4a56" fill-opacity="0.38" stroke="#2f4a56" stroke-width="0.9"/>
+      <path d="M 242.26 308.6219326818676 L 243.88 308.6219326818676 L 243.88 311.82193268186757 L 242.26 311.82193268186757 Z"
+        fill="#2f4a56" fill-opacity="0.38" stroke="#2f4a56" stroke-width="0.9"/>
+      
+      <path d="M 437.74 308.6219326818676 L 439.36 308.6219326818676 L 439.36 311.82193268186757 L 437.74 311.82193268186757 Z"
+        fill="#8a2e0e" fill-opacity="0.22" stroke="#8a2e0e" stroke-width="0.85"/>
+      <path d="M 242.26 308.6219326818676 L 240.64 308.6219326818676 L 240.64 311.82193268186757 L 242.26 311.82193268186757 Z"
+        fill="#8a2e0e" fill-opacity="0.22" stroke="#8a2e0e" stroke-width="0.85"/>
+      <path d="M 437.74 300.15287730727476 L 436.57036 300.99978284473406 L 437.74 301.84668838219335 L 436.57036 302.6935939196526 L 437.74 303.5404994571119 L 436.57036 304.38740499457117 L 437.74 305.23431053203046 L 436.57036 306.08121606948976 L 437.74 306.928121606949 L 436.57036 307.7750271444083 L 437.74 308.6219326818676" fill="none" stroke="#1f6f5b" stroke-width="1.15"/>
+      <path d="M 242.26 300.15287730727476 L 243.42964 300.99978284473406 L 242.26 301.84668838219335 L 243.42964 302.6935939196526 L 242.26 303.5404994571119 L 243.42964 304.38740499457117 L 242.26 305.23431053203046 L 243.42964 306.08121606948976 L 242.26 306.928121606949 L 243.42964 307.7750271444083 L 242.26 308.6219326818676" fill="none" stroke="#1f6f5b" stroke-width="1.15"/>
+      
+        <path d="M 429.15724 309.82193268186757 L 484.26 309.82193268186757 L 484.26 309.82193268186757 L 670.26 309.82193268186757 L 684.26 337"
+          fill="none" stroke="#e67e22" stroke-width="1.05" opacity="0.85"/>
+        <circle cx="429.15724" cy="309.82193268186757" r="2.2" fill="#e67e22"/>
+        <path d="M 440.197 296.62410423452775 L 484.26 296.62410423452775 L 484.26 296.62410423452775 L 670.26 296.62410423452775 L 684.26 359"
+          fill="none" stroke="#1f6f5b" stroke-width="1.05" opacity="0.85"/>
+        <circle cx="440.197" cy="296.62410423452775" r="2.2" fill="#1f6f5b"/>
+        <path d="M 437.74 304.38740499457117 L 484.26 304.38740499457117 L 484.26 304.38740499457117 L 670.26 304.38740499457117 L 684.26 381"
+          fill="none" stroke="#8a2e0e" stroke-width="1.05" opacity="0.85"/>
+        <circle cx="437.74" cy="304.38740499457117" r="2.2" fill="#8a2e0e"/>
+        <path d="M 436.12 310.22193268186754 L 484.26 310.22193268186754 L 484.26 310.22193268186754 L 670.26 310.22193268186754 L 684.26 403"
+          fill="none" stroke="#2f4a56" stroke-width="1.05" opacity="0.85"/>
+        <circle cx="436.12" cy="310.22193268186754" r="2.2" fill="#2f4a56"/>
+        <path d="M 444.76 310.22193268186754 L 484.26 310.22193268186754 L 484.26 310.22193268186754 L 670.26 310.22193268186754 L 684.26 425"
+          fill="none" stroke="#c45c26" stroke-width="1.05" opacity="0.85"/>
+        <circle cx="444.76" cy="310.22193268186754" r="2.2" fill="#c45c26"/>
+      <rect x="686.26" y="288" width="220" height="156"
+        rx="8" fill="#ffffff" stroke="#2f4a56" stroke-width="1.4"/>
+      <text x="696.26" y="316" fill="#2f4a56" font-size="11" font-weight="900">接头2 · M181×2</text>
+      
+        <text x="696.26" y="340" fill="#e67e22" font-size="11" font-weight="800">对接内径 ø165.106</text>
+        <text x="696.26" y="362" fill="#1f6f5b" font-size="11" font-weight="800">止口 10</text>
+        <text x="696.26" y="384" fill="#8a2e0e" font-size="11" font-weight="800">螺纹 M181×2 · 12</text>
+        <text x="696.26" y="406" fill="#2f4a56" font-size="11" font-weight="800">退刀槽 4  df178/Dg184</text>
+        <text x="696.26" y="428" fill="#c45c26" font-size="11" font-weight="800">肩间隙 1</text>
+    
+      
+      <rect x="235.24" y="447.18436482084695" width="209.51999999999998"
+        height="31.195656894679644" fill="#eef3ef"/>
+    
+      <path d="
+      M 413.85958 447.18436482084695
+      L 444.76 447.18436482084695
+      L 444.76 466.7109663409338
+      L 422.08000000000004 466.7109663409338
+      L 422.08000000000004 466.7109663409338
+      L 419.29036 466.7109663409338
+      L 419.29036 458.241910966341
+      L 423.45000000000005 458.241910966341
+      L 423.45000000000005 451.18436482084695
+      L 413.85958 451.18436482084695
+      Z" fill="#8a6bb8" fill-opacity="0.9" stroke="#2f4a56" stroke-width="1.15"/>
+      <path d="
+      M 266.14042 447.18436482084695
+      L 235.24 447.18436482084695
+      L 235.24 466.7109663409338
+      L 257.91999999999996 466.7109663409338
+      L 257.91999999999996 466.7109663409338
+      L 260.70964 466.7109663409338
+      L 260.70964 458.241910966341
+      L 256.54999999999995 458.241910966341
+      L 256.54999999999995 451.18436482084695
+      L 266.14042 451.18436482084695
+      Z" fill="#8a6bb8" fill-opacity="0.9" stroke="#2f4a56" stroke-width="1.15"/>
+      <path d="
+      M 413.85958 451.18436482084695
+      L 422.35 451.18436482084695
+      L 422.35 458.241910966341
+      L 420.46000000000004 458.241910966341
+      L 420.46000000000004 466.7109663409338
+      L 418.84000000000003 466.7109663409338
+      L 418.84000000000003 469.9109663409338
+      L 425.86 469.9109663409338
+      L 425.86 478.3800217155266
+      L 413.85958 478.3800217155266
+      Z" fill="#c49a6c" fill-opacity="0.9" stroke="#2f4a56" stroke-width="1.15"/>
+      <path d="
+      M 266.14042 451.18436482084695
+      L 257.65 451.18436482084695
+      L 257.65 458.241910966341
+      L 259.53999999999996 458.241910966341
+      L 259.53999999999996 466.7109663409338
+      L 261.15999999999997 466.7109663409338
+      L 261.15999999999997 469.9109663409338
+      L 254.14 469.9109663409338
+      L 254.14 478.3800217155266
+      L 266.14042 478.3800217155266
+      Z" fill="#c49a6c" fill-opacity="0.9" stroke="#2f4a56" stroke-width="1.15"/>
+      
+      <path d="M 420.46000000000004 466.7109663409338 L 418.84000000000003 466.7109663409338 L 418.84000000000003 469.9109663409338 L 420.46000000000004 469.9109663409338 Z"
+        fill="#2f4a56" fill-opacity="0.38" stroke="#2f4a56" stroke-width="0.9"/>
+      <path d="M 259.53999999999996 466.7109663409338 L 261.15999999999997 466.7109663409338 L 261.15999999999997 469.9109663409338 L 259.53999999999996 469.9109663409338 Z"
+        fill="#2f4a56" fill-opacity="0.38" stroke="#2f4a56" stroke-width="0.9"/>
+      
+      <path d="M 420.46000000000004 466.7109663409338 L 422.08000000000004 466.7109663409338 L 422.08000000000004 469.9109663409338 L 420.46000000000004 469.9109663409338 Z"
+        fill="#8a2e0e" fill-opacity="0.22" stroke="#8a2e0e" stroke-width="0.85"/>
+      <path d="M 259.53999999999996 466.7109663409338 L 257.91999999999996 466.7109663409338 L 257.91999999999996 469.9109663409338 L 259.53999999999996 469.9109663409338 Z"
+        fill="#8a2e0e" fill-opacity="0.22" stroke="#8a2e0e" stroke-width="0.85"/>
+      <path d="M 420.46000000000004 458.241910966341 L 419.29036 459.0888165038003 L 420.46000000000004 459.93572204125957 L 419.29036 460.7826275787188 L 420.46000000000004 461.6295331161781 L 419.29036 462.4764386536374 L 420.46000000000004 463.3233441910967 L 419.29036 464.170249728556 L 420.46000000000004 465.0171552660152 L 419.29036 465.8640608034745 L 420.46000000000004 466.7109663409338" fill="none" stroke="#1f6f5b" stroke-width="1.15"/>
+      <path d="M 259.53999999999996 458.241910966341 L 260.70964 459.0888165038003 L 259.53999999999996 459.93572204125957 L 260.70964 460.7826275787188 L 259.53999999999996 461.6295331161781 L 260.70964 462.4764386536374 L 259.53999999999996 463.3233441910967 L 260.70964 464.170249728556 L 259.53999999999996 465.0171552660152 L 260.70964 465.8640608034745 L 259.53999999999996 466.7109663409338" fill="none" stroke="#1f6f5b" stroke-width="1.15"/>
+      
+        <path d="M 413.85958 467.9109663409338 L 484.26 467.9109663409338 L 484.26 467.9109663409338 L 670.26 467.9109663409338 L 684.26 509"
+          fill="none" stroke="#e67e22" stroke-width="1.05" opacity="0.85"/>
+        <circle cx="413.85958" cy="467.9109663409338" r="2.2" fill="#e67e22"/>
+        <path d="M 422.35 454.71313789359397 L 484.26 454.71313789359397 L 484.26 454.71313789359397 L 670.26 454.71313789359397 L 684.26 531"
+          fill="none" stroke="#1f6f5b" stroke-width="1.05" opacity="0.85"/>
+        <circle cx="422.35" cy="454.71313789359397" r="2.2" fill="#1f6f5b"/>
+        <path d="M 420.46000000000004 462.4764386536374 L 484.26 462.4764386536374 L 484.26 462.4764386536374 L 670.26 462.4764386536374 L 684.26 553"
+          fill="none" stroke="#8a2e0e" stroke-width="1.05" opacity="0.85"/>
+        <circle cx="420.46000000000004" cy="462.4764386536374" r="2.2" fill="#8a2e0e"/>
+        <path d="M 418.84000000000003 468.31096634093376 L 484.26 468.31096634093376 L 484.26 468.31096634093376 L 670.26 468.31096634093376 L 684.26 575"
+          fill="none" stroke="#2f4a56" stroke-width="1.05" opacity="0.85"/>
+        <circle cx="418.84000000000003" cy="468.31096634093376" r="2.2" fill="#2f4a56"/>
+        <path d="M 425.86 468.31096634093376 L 484.26 468.31096634093376 L 484.26 468.31096634093376 L 670.26 468.31096634093376 L 684.26 597"
+          fill="none" stroke="#c45c26" stroke-width="1.05" opacity="0.85"/>
+        <circle cx="425.86" cy="468.31096634093376" r="2.2" fill="#c45c26"/>
+      <rect x="686.26" y="460" width="220" height="156"
+        rx="8" fill="#ffffff" stroke="#2f4a56" stroke-width="1.4"/>
+      <text x="696.26" y="488" fill="#2f4a56" font-size="11" font-weight="900">接头3 · M149×2</text>
+      
+        <text x="696.26" y="512" fill="#e67e22" font-size="11" font-weight="800">对接内径 ø136.777</text>
+        <text x="696.26" y="534" fill="#1f6f5b" font-size="11" font-weight="800">止口 10</text>
+        <text x="696.26" y="556" fill="#8a2e0e" font-size="11" font-weight="800">螺纹 M149×2 · 12</text>
+        <text x="696.26" y="578" fill="#2f4a56" font-size="11" font-weight="800">退刀槽 4  df146/Dg152</text>
+        <text x="696.26" y="600" fill="#c45c26" font-size="11" font-weight="800">肩间隙 1</text>
+    
+    
+    <path d="M 234.1924 139.75895765472313 L 281.0968 624.471226927253 L 288.6568 624.471226927253 L 241.7524 139.75895765472313 Z"
+      fill="#3d9b5f" stroke="#2f4a56" stroke-width="1.1"/>
+    <path d="M 445.8076 139.75895765472313 L 398.9032 624.471226927253 L 391.3432 624.471226927253 L 438.24760000000003 139.75895765472313 Z"
+      fill="#3d9b5f" stroke="#2f4a56" stroke-width="1.1"/>
+    <line x1="234.1924" y1="139.75895765472313" x2="281.0968" y2="624.471226927253" stroke="#e67e22" stroke-width="2"/>
+    <line x1="445.8076" y1="139.75895765472313" x2="398.9032" y2="624.471226927253" stroke="#e67e22" stroke-width="2"/>
+  
+    
+        <path d="M 458.26 130.86644951140065 L 468.26 125.36644951140065 L 468.26 136.36644951140065 Z" fill="#c45c26"/>
+        <path d="M 468.26 130.86644951140065 L 484.26 130.86644951140065 L 484.26 130.86644951140065 L 488.26 130.86644951140065"
+          fill="none" stroke="#c45c26" stroke-width="1.4"/>
+        <rect x="494.26" y="108.86644951140065" width="160" height="44"
+          rx="8" fill="#fff" stroke="#c45c26" stroke-width="2"/>
+        <text x="506.26" y="128.86644951140065" fill="#c45c26" font-size="16" font-weight="900">ø219</text>
+        <text x="506.26" y="145.86644951140065" fill="#2f4a56" font-size="11" font-weight="700">套1 管子外径</text>
+      
+        <path d="M 458.26 232.77741585233443 L 468.26 227.27741585233443 L 468.26 238.27741585233443 Z" fill="#c45c26"/>
+        <path d="M 468.26 232.77741585233443 L 484.26 232.77741585233443 L 484.26 232.77741585233443 L 488.26 232.77741585233443"
+          fill="none" stroke="#c45c26" stroke-width="1.4"/>
+        <rect x="494.26" y="210.77741585233443" width="160" height="44"
+          rx="8" fill="#fff" stroke="#c45c26" stroke-width="2"/>
+        <text x="506.26" y="230.77741585233443" fill="#c45c26" font-size="16" font-weight="900">ø219</text>
+        <text x="506.26" y="247.77741585233443" fill="#2f4a56" font-size="11" font-weight="700">套2 管子外径</text>
+      
+        <path d="M 444.76 390.8664495114007 L 454.76 385.3664495114007 L 454.76 396.3664495114007 Z" fill="#c45c26"/>
+        <path d="M 454.76 390.8664495114007 L 484.26 390.8664495114007 L 484.26 390.8664495114007 L 488.26 390.8664495114007"
+          fill="none" stroke="#c45c26" stroke-width="1.4"/>
+        <rect x="494.26" y="368.8664495114007" width="160" height="44"
+          rx="8" fill="#fff" stroke="#c45c26" stroke-width="2"/>
+        <text x="506.26" y="388.8664495114007" fill="#c45c26" font-size="16" font-weight="900">ø194</text>
+        <text x="506.26" y="405.8664495114007" fill="#2f4a56" font-size="11" font-weight="700">套3 管子外径</text>
+      
+        <path d="M 425.86 548.9554831704669 L 435.86 543.4554831704669 L 435.86 554.4554831704669 Z" fill="#c45c26"/>
+        <path d="M 435.86 548.9554831704669 L 484.26 548.9554831704669 L 484.26 548.9554831704669 L 488.26 548.9554831704669"
+          fill="none" stroke="#c45c26" stroke-width="1.4"/>
+        <rect x="494.26" y="526.9554831704669" width="160" height="44"
+          rx="8" fill="#fff" stroke="#c45c26" stroke-width="2"/>
+        <text x="506.26" y="546.9554831704669" fill="#c45c26" font-size="16" font-weight="900">ø159</text>
+        <text x="506.26" y="563.9554831704669" fill="#2f4a56" font-size="11" font-weight="700">套4 管子外径</text>
+      
+    
+    <line x1="48" y1="108" x2="48" y2="628" stroke="#2f4a56" stroke-width="1"/>
+    <line x1="44" y1="108" x2="52" y2="108" stroke="#2f4a56" stroke-width="1"/>
+    <line x1="44" y1="628" x2="52" y2="628" stroke="#2f4a56" stroke-width="1"/>
+    <text x="38" y="372" text-anchor="end" fill="#2f4a56" font-size="11" font-weight="700">总高 736.8</text>
+  
+    <line x1="96" y1="139.75895765472313" x2="96" y2="624.471226927253" stroke="#1f6f5b" stroke-width="1"/>
+    <line x1="92" y1="139.75895765472313" x2="100" y2="139.75895765472313" stroke="#1f6f5b" stroke-width="1"/>
+    <line x1="92" y1="624.471226927253" x2="100" y2="624.471226927253" stroke="#1f6f5b" stroke-width="1"/>
+    <text x="86" y="386.11509229098806" text-anchor="end" fill="#1f6f5b" font-size="11" font-weight="700">锥段 686.8</text>
+  
+    <line x1="144" y1="108" x2="144" y2="139.75895765472313" stroke="#c45c26" stroke-width="1"/>
+    <line x1="140" y1="108" x2="148" y2="108" stroke="#c45c26" stroke-width="1"/>
+    <line x1="140" y1="139.75895765472313" x2="148" y2="139.75895765472313" stroke="#c45c26" stroke-width="1"/>
+    <text x="134" y="127.87947882736157" text-anchor="end" fill="#c45c26" font-size="11" font-weight="700">上 45</text>
+  
+      <line x1="144" y1="624.471226927253" x2="144" y2="628" stroke="#c45c26" stroke-width="1"/>
+      <line x1="140" y1="624.471226927253" x2="148" y2="624.471226927253" stroke="#c45c26" stroke-width="1"/>
+      <line x1="140" y1="628" x2="148" y2="628" stroke="#c45c26" stroke-width="1"/>
+      <text x="134" y="640" text-anchor="end" fill="#c45c26" font-size="10" font-weight="700">下 5</text>
+    
+    <line x1="192" y1="108" x2="192" y2="153.7328990228013" stroke="#8a5a2a" stroke-width="1"/>
+    <line x1="188" y1="108" x2="196" y2="108" stroke="#8a5a2a" stroke-width="1"/>
+    <line x1="188" y1="153.7328990228013" x2="196" y2="153.7328990228013" stroke="#8a5a2a" stroke-width="1"/>
+    <text x="182" y="134.86644951140065" text-anchor="end" fill="#8a5a2a" font-size="11" font-weight="700">64.8</text>
+  
+    <line x1="192" y1="153.7328990228013" x2="192" y2="311.82193268186757" stroke="#8a5a2a" stroke-width="1"/>
+    <line x1="188" y1="153.7328990228013" x2="196" y2="153.7328990228013" stroke="#8a5a2a" stroke-width="1"/>
+    <line x1="188" y1="311.82193268186757" x2="196" y2="311.82193268186757" stroke="#8a5a2a" stroke-width="1"/>
+    <text x="182" y="236.77741585233443" text-anchor="end" fill="#8a5a2a" font-size="11" font-weight="700">250(含公26)</text>
+  
+    <line x1="192" y1="311.82193268186757" x2="192" y2="469.9109663409338" stroke="#8a5a2a" stroke-width="1"/>
+    <line x1="188" y1="311.82193268186757" x2="196" y2="311.82193268186757" stroke="#8a5a2a" stroke-width="1"/>
+    <line x1="188" y1="469.9109663409338" x2="196" y2="469.9109663409338" stroke="#8a5a2a" stroke-width="1"/>
+    <text x="182" y="394.8664495114007" text-anchor="end" fill="#8a5a2a" font-size="11" font-weight="700">250(含公26)</text>
+  
+    <line x1="192" y1="469.9109663409338" x2="192" y2="628" stroke="#8a5a2a" stroke-width="1"/>
+    <line x1="188" y1="469.9109663409338" x2="196" y2="469.9109663409338" stroke="#8a5a2a" stroke-width="1"/>
+    <line x1="188" y1="628" x2="196" y2="628" stroke="#8a5a2a" stroke-width="1"/>
+    <text x="182" y="552.9554831704669" text-anchor="end" fill="#8a5a2a" font-size="11" font-weight="700">250(含公26)</text>
+  
+    
+    <line x1="235.54456" y1="143.7328990228013" x2="444.45544" y2="143.7328990228013" stroke="#e67e22" stroke-width="1.15"/>
+    <line x1="235.54456" y1="138.7328990228013" x2="235.54456" y2="148.7328990228013" stroke="#e67e22" stroke-width="1.15"/>
+    <line x1="444.45544" y1="138.7328990228013" x2="444.45544" y2="148.7328990228013" stroke="#e67e22" stroke-width="1.15"/>
+    <text x="340" y="136.7328990228013" text-anchor="middle" fill="#e67e22" font-size="11" font-weight="800">对接内径 ø193.436</text>
+  
+    <line x1="250.84276" y1="295.82193268186757" x2="429.15724" y2="295.82193268186757" stroke="#e67e22" stroke-width="1.15"/>
+    <line x1="250.84276" y1="290.82193268186757" x2="250.84276" y2="300.82193268186757" stroke="#e67e22" stroke-width="1.15"/>
+    <line x1="429.15724" y1="290.82193268186757" x2="429.15724" y2="300.82193268186757" stroke="#e67e22" stroke-width="1.15"/>
+    <text x="340" y="288.82193268186757" text-anchor="middle" fill="#e67e22" font-size="11" font-weight="800">对接内径 ø165.106</text>
+  
+    <line x1="266.14042" y1="459.9109663409338" x2="413.85958" y2="459.9109663409338" stroke="#e67e22" stroke-width="1.15"/>
+    <line x1="266.14042" y1="454.9109663409338" x2="266.14042" y2="464.9109663409338" stroke="#e67e22" stroke-width="1.15"/>
+    <line x1="413.85958" y1="454.9109663409338" x2="413.85958" y2="464.9109663409338" stroke="#e67e22" stroke-width="1.15"/>
+    <text x="340" y="452.9109663409338" text-anchor="middle" fill="#e67e22" font-size="11" font-weight="800">对接内径 ø136.777</text>
+  
+    <text x="340" y="123.75895765472313" text-anchor="middle" fill="#e67e22" font-size="12" font-weight="800">锥上口 ø195.940</text>
+    <text x="340" y="652" text-anchor="middle" fill="#e67e22" font-size="12" font-weight="800">锥下口 ø109.080</text>
+    <line x1="340" y1="108" x2="340" y2="628" stroke="#9aa8a1" stroke-dasharray="4 3"/>
+    
+  <g transform="translate(16,668)">
+    <rect width="620" height="228" rx="8" fill="#fff" stroke="#2f4a56"/>
+    <text x="12" y="18" fill="#2f4a56" font-size="12" font-weight="800">接头剖面放大 · M207×2 · 公：止口→螺纹→外退刀槽(df)　母：止口→内螺纹→内退刀槽(Dg)</text>
+    <path d="M 72 22 L 136 22 L 136 96.8 L 110 96.8 L 110 84.8 L 96 84.8 L 96 56 L 110 56 L 110 32 L 72 32 Z" fill="#c45c5c" fill-opacity="0.78" stroke="#2f4a56"/>
+    <path d="M 72 32 L 108 32 L 108 56 L 102 56 L 102 84.8 L 92 84.8 L 92 94.39999999999999 L 122 94.39999999999999 L 122 140.8 L 72 140.8 Z" fill="#8a6bb8" fill-opacity="0.88" stroke="#2f4a56"/>
+    <path d="M 102 84.8 L 92 84.8 L 92 94.39999999999999 L 102 94.39999999999999 Z" fill="#2f4a56" fill-opacity="0.4" stroke="#2f4a56"/>
+    <path d="M 102 84.8 L 110 84.8 L 110 94.39999999999999 L 102 94.39999999999999 Z" fill="#8a2e0e" fill-opacity="0.22" stroke="#8a2e0e"/>
+    <path d="M 102 56 L 96 57.30909090909091 L 102 58.61818181818182 L 96 59.92727272727273 L 102 61.236363636363635 L 96 62.54545454545455 L 102 63.85454545454545 L 96 65.16363636363636 L 102 66.47272727272727 L 96 67.78181818181818 L 102 69.0909090909091 L 96 70.39999999999999 L 102 71.7090909090909 L 96 73.01818181818182 L 102 74.32727272727273 L 96 75.63636363636363 L 102 76.94545454545454 L 96 78.25454545454545 L 102 79.56363636363636 L 96 80.87272727272727 L 102 82.18181818181817 L 96 83.49090909090908 L 102 84.8" fill="none" stroke="#1f6f5b" stroke-width="1.15"/>
+    <path d="M 62 22 L 62 140.8 L 72 140.8 L 72 22 Z" fill="#3d9b5f" stroke="#2f4a56"/>
+    <line x1="72" y1="22" x2="72" y2="140.8" stroke="#e67e22" stroke-width="2"/>
+    
+        <line x1="108" y1="44" x2="222" y2="40" stroke="#1f6f5b" stroke-width="1" opacity="0.75"/>
+        <circle cx="108" cy="44" r="2" fill="#1f6f5b"/>
+        <text x="228" y="44" fill="#1f6f5b" font-size="12" font-weight="800">① 止口 10 · 公尖端 ↔ 母接收</text>
+        <line x1="102" y1="70.4" x2="222" y2="66" stroke="#8a2e0e" stroke-width="1" opacity="0.75"/>
+        <circle cx="102" cy="70.4" r="2" fill="#8a2e0e"/>
+        <text x="228" y="70" fill="#8a2e0e" font-size="12" font-weight="800">② 螺纹 M207×2 · 旋合 12</text>
+        <line x1="92" y1="89.6" x2="222" y2="92" stroke="#2f4a56" stroke-width="1" opacity="0.75"/>
+        <circle cx="92" cy="89.6" r="2" fill="#2f4a56"/>
+        <text x="228" y="96" fill="#2f4a56" font-size="12" font-weight="800">③ 公退刀槽 4 · df ø204（内凹）</text>
+        <line x1="110" y1="89.6" x2="222" y2="118" stroke="#8a2e0e" stroke-width="1" opacity="0.75"/>
+        <circle cx="110" cy="89.6" r="2" fill="#8a2e0e"/>
+        <text x="228" y="122" fill="#8a2e0e" font-size="12" font-weight="800">③′ 母退刀槽 4 · Dg ø210（外扩）</text>
+        <line x1="122" y1="95.6" x2="222" y2="144" stroke="#c45c26" stroke-width="1" opacity="0.75"/>
+        <circle cx="122" cy="95.6" r="2" fill="#c45c26"/>
+        <text x="228" y="148" fill="#c45c26" font-size="12" font-weight="800">④ 台肩装配间隙 1</text>
+    <text x="228" y="210" fill="#5c6b64" font-size="10">止口=4+12/2 → 10（退刀槽+½旋合，夹[8,12]） · 退刀槽为牙根小矩形槽</text>
+  </g>
+    <text x="20" y="916" fill="#5c6b64" font-size="11" font-weight="600">内锥 ø195.94→ø109.08 · 686.8mm</text><text x="580" y="916" fill="#5c6b64" font-size="11" font-weight="600">套1 ø219 · 总高64.8（无公扣）· 非标</text><text x="20" y="934" fill="#5c6b64" font-size="11" font-weight="600">套2 ø219 · 总高250（含公扣26）· 标准</text><text x="580" y="934" fill="#5c6b64" font-size="11" font-weight="600">套3 ø194 · 总高250（含公扣26）· 标准</text><text x="20" y="952" fill="#5c6b64" font-size="11" font-weight="600">套4 ø159 · 总高250（含公扣26）· 标准</text><text x="580" y="952" fill="#5c6b64" font-size="11" font-weight="600">接头1 M207×2：对接内径ø193.436；止口10+螺纹12+退刀4</text><text x="20" y="970" fill="#5c6b64" font-size="11" font-weight="600">接头2 M181×2：对接内径ø165.106；止口10+螺纹12+退刀4</text><text x="580" y="970" fill="#5c6b64" font-size="11" font-weight="600">接头3 M149×2：对接内径ø136.777；止口10+螺纹12+退刀4</text>
+  </svg></div>
+      </article>
+
+      <article class="card">
+        <h3>分段一览</h3>
+        <div class="schema" id="schema"></div>
+      </article>
+
+      <article class="card">
+        <h3>各节明细</h3>
+        <table class="data">
+          <thead>
+            <tr><th>外套</th><th>贴锥径</th><th>选用管（名义→内径/外径）</th><th>外径</th><th>节总高</th><th>类型</th><th>折算壁厚</th><th>余量</th></tr>
+          </thead>
+          <tbody id="segTable"></tbody>
+        </table>
+      </article>
+
+      <article class="card">
+        <h3>螺纹接头</h3>
+        <table class="data">
+          <thead>
+            <tr><th>道</th><th>上套→下套</th><th>对接内径</th><th>轴向细节</th><th>螺纹</th><th>牙顶外/内</th><th>外套局部壁厚</th></tr>
+          </thead>
+          <tbody id="jointTable"></tbody>
+        </table>
+      </article>
+
+      <div id="jointCards" class="stack"></div>
+    </div>
+  </main>
+  <script>
+/**
+ * 接管端头螺纹完整计算逻辑
+ * - P=2 固定；60° 三角螺纹；牙型按 GB/T 196
+ * - 螺纹中心线落在小管管壁中心；同时校验大管壁不击穿
+ * - 螺纹大径就近取整数（不强制尾数 0/5）
+ */
+
+/** @typedef {{ D1: number, t1: number, D2: number, t2: number }} PipeEndInput */
+
+const PIPE_END_CONST = {
+  /** @deprecated 仅作展示参考；实际止口用 autoLocatorLen() 按退刀槽+旋合自动算 */
+  locatorLen: 10,
+  pitch: 2, // 螺距 P mm
+  turns: 6, // 旋合圈数
+  engageLen: 12, // 6×P
+  bodyTotalLen: 210, // 接管本体总长 mm
+  tipAngle: 60,
+  // GB/T 196 / 常用牙型系数（相对螺距）
+  H_factor: 0.866, // 原始牙高 H = 0.8660×P
+  h_factor: 0.5413, // 工作牙高 h
+  R_factor: 0.144, // 牙底最大圆角 R
+};
+
+/** GB/T 3 退刀槽（P=2 常用） */
+const UNDERCUT_P2 = {
+  external: { g1: 4.0, g2: 3.0, g3: 6.0, k: 3.0, r: 0.8 },
+  internal: { g1: 4.0, g2: 3.0, g3: 6.0, m: 3.0, r: 0.8 },
+};
+
+/** GB/T 3 退刀槽宽度：normal→g1 / short→g2 / long→g3 */
+function undercutWidthP2(grooveKind = "normal", side = "external") {
+  const tab = UNDERCUT_P2[side] || UNDERCUT_P2.external;
+  const key = grooveKind === "short" ? "g2" : grooveKind === "long" ? "g3" : "g1";
+  return tab[key];
+}
+
+/**
+ * 安装/定位止口轴向高度（自动，不固定 10）
+ * 规则：止口 = 退刀槽宽 + ½旋合长，再夹在 [4×P, 旋合长] 内并圆整到 1mm。
+ * 依据：退刀后仍保留完整导向；导向段约半个有效旋合；不超过旋合长以免头重。
+ * 例 P=2、旋合12、normal g=4 → 4+6=10；short g=3 → 9；long g=6 → 12。
+ */
+function autoLocatorLen(opt = {}) {
+  const P = Number(opt.pitch ?? PIPE_END_CONST.pitch);
+  const turns = Number(opt.turns ?? PIPE_END_CONST.turns);
+  const engage = Number(opt.engageLen ?? turns * P);
+  const g = undercutWidthP2(opt.grooveKind || "normal", "external");
+  const raw = g + engage / 2;
+  const lo = 4 * P;
+  const hi = engage;
+  return Math.round(Math.min(hi, Math.max(lo, raw)));
+}
+
+function round3(n) {
+  return Math.round(n * 1000) / 1000;
+}
+
+function nearInt(n) {
+  return Math.round(n);
+}
+
+/** 解析手动规格：M161×2 / M161X2 / 161 */
+function parseManualMajor(raw, defaultPitch = PIPE_END_CONST.pitch) {
+  const s = String(raw || "")
+    .trim()
+    .replace(/\s+/g, "")
+    .replace(/[×✕✖ｘＸxX＊*－—–−-]/g, "x");
+  if (!s) return { ok: false, error: "请输入手动规格，如 M161×2 或 161" };
+  let m = s.match(/^M(\d+(?:\.\d+)?)(?:x(\d+(?:\.\d+)?))?$/i);
+  if (m) {
+    const major = Math.round(Number(m[1]));
+    const pitch = m[2] != null ? Number(m[2]) : defaultPitch;
+    if (!(major > 0)) return { ok: false, error: "螺纹大径无效" };
+    if (Math.abs(pitch - defaultPitch) > 1e-9) {
+      return { ok: false, error: `本工具螺距固定为 P=${defaultPitch}，请写 M${major}×${defaultPitch}` };
+    }
+    return { ok: true, majorDia: major, pitch: defaultPitch };
+  }
+  if (/^\d+(?:\.\d+)?$/.test(s)) {
+    const major = Math.round(Number(s));
+    if (!(major > 0)) return { ok: false, error: "螺纹大径无效" };
+    return { ok: true, majorDia: major, pitch: defaultPitch };
+  }
+  return { ok: false, error: "无法识别。支持：M161×2、M161X2、161" };
+}
+
+/**
+ * @param {PipeEndInput} input
+ * @param {{ grooveKind?: 'normal'|'short'|'long', majorDia?: number, designation?: string }} [opt]
+ */
+function computePipeEndThread(input, opt = {}) {
+  const { D1, t1, D2, t2 } = input;
+  const errors = [];
+  const warnings = [];
+
+  if (!(D1 > 0) || !(t1 > 0) || !(D2 > 0) || !(t2 > 0)) {
+    return { ok: false, error: "请完整填写 D₁、t₁、D₂、t₂（均须大于 0）" };
+  }
+  if (t1 * 2 >= D1) {
+    return { ok: false, error: "小管壁厚无效：2×t₁ 不得大于等于 D₁" };
+  }
+  if (t2 * 2 >= D2) {
+    return { ok: false, error: "大管壁厚无效：2×t₂ 不得大于等于 D₂" };
+  }
+  if (D1 >= D2) {
+    warnings.push("通常公头小管外径 D₁ 应小于母头大管外径 D₂，请确认录入是否正确");
+  }
+
+  const P = PIPE_END_CONST.pitch;
+  const H = round3(PIPE_END_CONST.H_factor * P);
+  const h = round3(PIPE_END_CONST.h_factor * P);
+  const R = round3(PIPE_END_CONST.R_factor * P);
+
+  // 1. 小管管壁中心直径
+  const smallCenterDia = round3(D1 - t1);
+
+  // 3–4. 理论外螺纹大径 / 内螺纹小径
+  const theoryMajor = round3(smallCenterDia + h);
+  const theoryMinor = round3(smallCenterDia - h);
+
+  // 5. 大管内孔
+  const largeBore = round3(D2 - 2 * t2);
+
+  // 推荐大径（就近取整）
+  const recommendedMajor = nearInt(theoryMajor);
+  const recommendedDesignation = `M${recommendedMajor}×${P}`;
+
+  // 最终采用：手动覆盖 > 推荐
+  let majorDia = recommendedMajor;
+  let isManual = false;
+  if (opt.majorDia != null && Number.isFinite(Number(opt.majorDia))) {
+    majorDia = Math.round(Number(opt.majorDia));
+    isManual = majorDia !== recommendedMajor;
+  } else if (opt.designation) {
+    const parsed = parseManualMajor(opt.designation, P);
+    if (!parsed.ok) return parsed;
+    majorDia = parsed.majorDia;
+    isManual = majorDia !== recommendedMajor;
+  }
+  if (!(majorDia > 0)) {
+    return { ok: false, error: "螺纹大径无效" };
+  }
+
+  const designation = `M${majorDia}×${P}`;
+
+  // 选定规格后：母扣内螺纹小径按工作牙高对称匹配（大径 − 2h）
+  const internalMinor = round3(majorDia - 2 * h);
+  // 牙顶：外螺纹=大径；内螺纹=小径
+  const externalCrest = majorDia;
+  const internalCrest = internalMinor;
+  const externalRoot = internalMinor; // 与工作牙高对称匹配的牙底参考
+  const internalRoot = majorDia; // 内螺纹牙底=大径
+  // GB/T 196 基本小径（对照）
+  const gbD1 = round3(majorDia - 1.082531755 * P);
+  const gbD2 = round3(majorDia - 0.649519053 * P);
+  const gbD3 = round3(majorDia - 1.226869322 * P);
+
+  // 校验：内螺纹小径须大于大管内孔，保证加工在实体内、不打穿
+  const pierceOk = internalMinor > largeBore;
+  // 螺纹不超出大管外径实体
+  const withinLargeOd = majorDia < D2;
+  // 螺纹大致落在大管壁厚实体带内（大径小于外径，啮合区高于内孔）
+  const withinLargeWall = majorDia <= D2 && internalMinor >= largeBore;
+  // 相对小管：大径不超过小管外径，小径不低于小管内孔
+  const smallBore = round3(D1 - 2 * t1);
+  const withinSmall = majorDia <= D1 && internalMinor >= smallBore;
+
+  let checkPass = true;
+  let checkMessage = "满足：内螺纹位于大管实体内，未击穿管壁";
+
+  if (!pierceOk) {
+    checkPass = false;
+    checkMessage = "当前参数无法加工，管壁厚度不足";
+    warnings.push(checkMessage);
+  } else if (!withinLargeOd) {
+    checkPass = false;
+    checkMessage = "当前参数无法加工，管壁厚度不足（螺纹大径超出大管外径）";
+    warnings.push(checkMessage);
+  } else if (!withinSmall) {
+    warnings.push("提示：螺纹相对小管壁中心偏移后，可能接近或超出小管壁实体边界，请复核");
+  }
+
+  if (isManual) {
+    warnings.push(`当前为手动规格 ${designation}（系统推荐 ${recommendedDesignation}）`);
+  }
+
+  const grooveKind = opt.grooveKind || "normal";
+  const widthKey = grooveKind === "short" ? "g2" : grooveKind === "long" ? "g3" : "g1";
+  const extGrooveW = UNDERCUT_P2.external[widthKey];
+  const intGrooveW = UNDERCUT_P2.internal[widthKey];
+  const extGrooveDf = round3(majorDia - UNDERCUT_P2.external.k);
+  const intGrooveDg = round3(majorDia + UNDERCUT_P2.internal.m);
+  const locatorLen = autoLocatorLen({
+    pitch: P,
+    turns: PIPE_END_CONST.turns,
+    engageLen: PIPE_END_CONST.engageLen,
+    grooveKind,
+  });
+
+  const maleEndLen = round3(locatorLen + PIPE_END_CONST.engageLen + extGrooveW);
+  const femaleEndLen = round3(locatorLen + PIPE_END_CONST.engageLen + intGrooveW);
+
+  const fitInBody =
+    maleEndLen <= PIPE_END_CONST.bodyTotalLen &&
+    femaleEndLen <= PIPE_END_CONST.bodyTotalLen;
+  if (!fitInBody) {
+    warnings.push("端头结构长度超过接管总长 210mm，请检查退刀槽长度档");
+  }
+
+  const jointLabel = `${trim(D1)}×${trim(t1)} → ${trim(D2)}×${trim(t2)}`;
+  const jointKind =
+    D2 > D1 ? (D2 / D1 <= 1.25 ? "相邻规格对接" : "跨规格对接") : "对接组合";
+
+  // 邻近可选规格（推荐 ±2）
+  const nearby = [-2, -1, 0, 1, 2].map((d) => {
+    const maj = recommendedMajor + d;
+    return {
+      majorDia: maj,
+      designation: `M${maj}×${P}`,
+      isRecommended: d === 0,
+    };
+  });
+
+  return {
+    ok: true,
+    checkPass,
+    checkMessage,
+    warnings,
+    errors,
+    constants: { ...PIPE_END_CONST, H, h, R },
+    input: { D1, t1, D2, t2 },
+    jointCombo: jointLabel,
+    jointKind,
+    D1,
+    D2,
+    t1,
+    t2,
+    P,
+    H,
+    h,
+    R,
+    smallCenterDia,
+    theoryMajor,
+    theoryMinor,
+    largeBore,
+    smallBore,
+    recommendedMajor,
+    recommendedDesignation,
+    isManual,
+    majorDia,
+    designation,
+    // 牙顶 / 牙底（内外都给出）
+    crest: {
+      external: externalCrest, // 外螺纹牙顶 = 大径
+      internal: internalCrest, // 内螺纹牙顶 = 小径
+    },
+    root: {
+      external: externalRoot,
+      internal: internalRoot,
+    },
+    nearby,
+    femaleInternal: {
+      designation,
+      minor: internalMinor,
+      crest: internalCrest,
+      pitchDia: gbD2,
+      major: majorDia,
+      root: internalRoot,
+      note: "母扣内螺纹配套公扣所选规格；内螺纹牙顶=小径，牙底=大径",
+    },
+    gbBasic: { d: majorDia, d2: gbD2, d1: gbD1, d3: gbD3, D1: gbD1, D2: gbD2, D: majorDia },
+    wallCheck: {
+      pierceOk,
+      withinLargeOd,
+      withinLargeWall,
+      withinSmall,
+      pass: checkPass,
+      message: checkMessage,
+    },
+    maleEnd: {
+      locator: locatorLen,
+      thread: PIPE_END_CONST.engageLen,
+      undercutWidth: extGrooveW,
+      undercutDf: extGrooveDf,
+      undercutR: UNDERCUT_P2.external.r,
+      total: maleEndLen,
+    },
+    femaleEnd: {
+      locator: locatorLen,
+      thread: PIPE_END_CONST.engageLen,
+      undercutWidth: intGrooveW,
+      undercutDg: intGrooveDg,
+      undercutR: UNDERCUT_P2.internal.r,
+      total: femaleEndLen,
+    },
+    bodyTotalLen: PIPE_END_CONST.bodyTotalLen,
+    fitInBody,
+    assemblyNote:
+      `装配时公头定位止口（自动 ${locatorLen}mm）先插入母扣止口导向，再旋入实现 ${PIPE_END_CONST.engageLen}mm 完全啮合；退刀槽供车削退刀。工况：静止装配、无载荷、仅定位锁紧。`,
+  };
+}
+
+function trim(n) {
+  const s = String(Number(Number(n).toFixed(3)));
+  if (!s.includes(".")) return s;
+  return s.replace(/\.?0+$/, "");
+}
+
+/** 扁平输出表（便于复制） */
+function pipeEndToRows(r) {
+  if (!r.ok) return [["错误", r.error]];
+  return [
+    ["对接组合", r.jointCombo],
+    ["对接类型", r.jointKind],
+    ["小管外径 D₁", `${r.D1} mm`],
+    ["大管外径 D₂", `${r.D2} mm`],
+    ["小管壁厚 t₁", `${r.t1} mm`],
+    ["大管壁厚 t₂", `${r.t2} mm`],
+    ["螺距 P", `${r.P} mm`],
+    ["基础牙高 H", `${r.H} mm`],
+    ["工作牙高 h", `${r.h} mm`],
+    ["牙底圆角 R", `${r.R} mm`],
+    ["小管壁中心径", `${r.smallCenterDia} mm`],
+    ["理论外螺纹大径", `${r.theoryMajor} mm`],
+    ["理论内螺纹小径", `${r.theoryMinor} mm`],
+    ["系统推荐规格", r.recommendedDesignation],
+    ["采用规格来源", r.isManual ? "手动给定" : "系统推荐"],
+    ["螺纹大径（最终）", `${r.majorDia} mm`],
+    ["螺纹规格标记", r.designation],
+    ["外螺纹牙顶（大径）", `${r.crest.external} mm`],
+    ["外螺纹牙底（小径）", `${r.root.external} mm`],
+    ["内螺纹牙顶（小径）", `${r.crest.internal} mm`],
+    ["内螺纹牙底（大径）", `${r.root.internal} mm`],
+    ["母扣内螺纹", `${r.femaleInternal.designation}（牙顶 ${r.crest.internal} mm）`],
+    ["校验结果", r.checkPass ? `通过：${r.checkMessage}` : `警告：${r.checkMessage}`],
+    ["公扣端头总长（止口+螺纹+退刀槽）", `${r.maleEnd.total} mm`],
+    ["母扣端头内腔总长（止口+内螺纹+内退刀槽）", `${r.femaleEnd.total} mm`],
+    ["外螺纹退刀槽宽度", `${r.maleEnd.undercutWidth} mm`],
+    ["内螺纹退刀槽宽度", `${r.femaleEnd.undercutWidth} mm`],
+    ["接管本体总长", `${r.bodyTotalLen} mm`],
+  ];
+}
+
+/**
+ * 仅按螺纹型号生成公/母扣端头结构表（不需要管径壁厚）
+ * @param {string} designationRaw 如 M200×2 / M200X2 / 200
+ * @param {{ grooveKind?: 'normal'|'short'|'long' }} [opt]
+ */
+function computeThreadEndCards(designationRaw, opt = {}) {
+  const parsed = parseManualMajor(designationRaw);
+  if (!parsed.ok) return parsed;
+
+  const P = PIPE_END_CONST.pitch;
+  const h = round3(PIPE_END_CONST.h_factor * P);
+  const H = round3(PIPE_END_CONST.H_factor * P);
+  const R = round3(PIPE_END_CONST.R_factor * P);
+  const majorDia = parsed.majorDia;
+  const designation = `M${majorDia}×${P}`;
+
+  const externalCrest = majorDia;
+  const internalCrest = round3(majorDia - 2 * h);
+  const externalRoot = internalCrest;
+  const internalRoot = majorDia;
+
+  const grooveKind = opt.grooveKind || "normal";
+  const widthKey = grooveKind === "short" ? "g2" : grooveKind === "long" ? "g3" : "g1";
+  const extGrooveW = UNDERCUT_P2.external[widthKey];
+  const intGrooveW = UNDERCUT_P2.internal[widthKey];
+  const undercutDf = round3(majorDia - UNDERCUT_P2.external.k);
+  const undercutDg = round3(majorDia + UNDERCUT_P2.internal.m);
+
+  const engage = PIPE_END_CONST.engageLen;
+  const locator = autoLocatorLen({
+    pitch: P,
+    turns: PIPE_END_CONST.turns,
+    engageLen: engage,
+    grooveKind,
+  });
+  const maleTotal = round3(locator + engage + extGrooveW);
+  const femaleTotal = round3(locator + engage + intGrooveW);
+
+  return {
+    ok: true,
+    designation,
+    majorDia,
+    P,
+    H,
+    h,
+    R,
+    bodyTotalLen: PIPE_END_CONST.bodyTotalLen,
+    grooveKind,
+    crest: { external: externalCrest, internal: internalCrest },
+    root: { external: externalRoot, internal: internalRoot },
+    male: {
+      title: `公扣端头结构（计入 ${PIPE_END_CONST.bodyTotalLen}）`,
+      rows: [
+        ["定位止口", `${locator} mm`],
+        ["螺纹有效旋合段", `${engage} mm`],
+        ["外螺纹牙顶（大径）", `${externalCrest} mm`],
+        ["外螺纹牙底（小径）", `${externalRoot} mm`],
+        ["外螺纹退刀槽宽", `${extGrooveW} mm`],
+        ["退刀槽底径 df", `${undercutDf} mm`],
+        ["端头合计", `${maleTotal} mm`],
+      ],
+      locator,
+      engage,
+      undercutWidth: extGrooveW,
+      undercutDf,
+      total: maleTotal,
+    },
+    female: {
+      title: `母扣端头内腔（计入 ${PIPE_END_CONST.bodyTotalLen}）`,
+      rows: [
+        ["定位止口接收段", `${locator} mm`],
+        ["内螺纹旋合段", `${engage} mm`],
+        ["内螺纹牙顶（小径）", `${internalCrest} mm`],
+        ["内螺纹牙底（大径）", `${internalRoot} mm`],
+        ["内螺纹退刀槽宽", `${intGrooveW} mm`],
+        ["退刀槽底径 Dg", `${undercutDg} mm`],
+        ["内腔合计", `${femaleTotal} mm`],
+      ],
+      locator,
+      engage,
+      undercutWidth: intGrooveW,
+      undercutDg,
+      total: femaleTotal,
+    },
+  };
+}
+
+
+
+/**
+ * 锥管模具设计（正确模型）
+ *
+ * - 内件：连续外锥（绿）——上口/下口为锥面口径
+ * - 外套：分段套筒套在锥上（红/青/紫…），节间止口嵌套
+ * - 案例默认：总高 730，锥段 680，上 45，下 5，ø194→ø108，标准节总高 250（含公扣）
+ * - 分段：由下往上铺标准节；节总高=体长+公扣（止口+螺纹+退刀槽）；余段在顶；余段>250 自动再拆
+ * - 外套外径：仅从用户规格目录 Φ60…Φ426 选取（含热扩档）
+ */
+
+/**
+ * 外套管外径规格（按用户提供清单；Φ 即为管外径，只能从本表选取）
+ * mark: star=常用 / diamond=中间档；hotExpand=模具热扩常用
+ */
+const PIPE_OD_CATALOG = [
+  { od: 60, mark: "star" },
+  { od: 63.5, mark: "diamond" },
+  { od: 70, mark: "diamond" },
+  { od: 76, mark: "star" },
+  { od: 83, mark: "diamond" },
+  { od: 89, mark: "star" },
+  { od: 102, mark: "diamond" },
+  { od: 108, mark: "star" },
+  { od: 114, mark: "star" },
+  { od: 121, mark: "diamond" },
+  { od: 127, mark: "diamond" },
+  { od: 133, mark: "star" },
+  { od: 140, mark: "star" },
+  { od: 146, mark: "diamond" },
+  { od: 159, mark: "star" },
+  { od: 168, mark: "star" },
+  { od: 177.8, mark: "diamond" },
+  { od: 180, mark: "star" },
+  { od: 194, mark: "star" },
+  { od: 203, mark: "diamond" },
+  { od: 219, mark: "star" },
+  { od: 232, mark: "diamond", hotExpand: true },
+  { od: 245, mark: "star" },
+  { od: 254, mark: "diamond", hotExpand: true, note: "常用热扩" },
+  { od: 265, mark: "diamond", hotExpand: true },
+  { od: 273, mark: "star" },
+  { od: 286, mark: "diamond", hotExpand: true },
+  { od: 299, mark: "star" },
+  { od: 310, mark: "diamond", hotExpand: true },
+  { od: 325, mark: "star" },
+  { od: 335, mark: "diamond", hotExpand: true },
+  { od: 351, mark: "star" },
+  { od: 360, mark: "diamond", hotExpand: true },
+  { od: 377, mark: "star" },
+  { od: 426, mark: "star" },
+];
+
+/** @deprecated 兼容旧名；现为外径目录 */
+const PIPE_SIZE_TABLE = PIPE_OD_CATALOG.map((r) => ({
+  nom: r.od,
+  id: r.od, // 目录项即外径；内径按锥径校核
+  od: r.od,
+  mark: r.mark,
+  hotExpand: !!r.hotExpand,
+  note: r.note || "",
+}));
+
+const STD_PIPE_ODS = PIPE_OD_CATALOG.map((r) => r.od);
+
+/** 外套最小壁厚（外径 − 锥径）/2 下限，用于从外径目录选型 */
+const PIPE_OD_MIN_WALL = 8;
+
+/**
+ * 按螺距 / 旋合 / 退刀槽自动生成接头轴向栈（止口高度不写死）
+ * 止口 = autoLocatorLen：退刀槽宽 + ½旋合长，夹在 [4P, 旋合长]
+ */
+function buildJointStack(opt = {}) {
+  const P = Number(opt.pitch ?? PIPE_END_CONST.pitch);
+  const turns = Number(opt.turns ?? PIPE_END_CONST.turns);
+  const engage = Number(opt.engageLen ?? turns * P);
+  const gap = Number(opt.gap ?? 1);
+  const grooveKind = opt.grooveKind || "normal";
+  const locator = autoLocatorLen({ pitch: P, turns, engageLen: engage, grooveKind });
+  const undercut = undercutWidthP2(grooveKind, "external");
+  return {
+    stack: [
+      { key: "engage", name: "旋合", h: engage },
+      { key: "gapA", name: "间隙", h: gap },
+      { key: "locator", name: "止口", h: locator },
+      { key: "gapB", name: "间隙", h: gap },
+    ],
+    engage,
+    locator,
+    gap,
+    undercut,
+    grooveKind,
+    pitch: P,
+    formula: `止口=${undercut}+${engage}/2 → ${locator}（退刀槽+½旋合，夹[${4 * P},${engage}]）`,
+  };
+}
+
+/** 默认栈（normal 退刀槽）；实际设计时仍会再算一遍 */
+const JOINT_STACK_DEFAULT = buildJointStack().stack;
+
+/**
+ * 安装止口径向尺寸
+ * - 轴向高度：见 autoLocatorLen / buildJointStack（随螺纹与退刀槽变）
+ * - 径向壁 4～8：随上下节外径差取
+ * - 径向间隙 0.2：装配导向间隙（直径方向 0.4）
+ */
+const LOCATOR_DIM = {
+  wallMin: 4,
+  wallMax: 8,
+  radialClearance: 0.2,
+};
+
+/** 由上下外套外径推止口径向壁厚 */
+function locatorWallFromOds(upperOd, lowerOd) {
+  const step = (Number(upperOd) - Number(lowerOd)) / 2;
+  if (Number.isFinite(step) && step > 0) {
+    return round3(Math.min(LOCATOR_DIM.wallMax, Math.max(LOCATOR_DIM.wallMin, step)));
+  }
+  return LOCATOR_DIM.wallMin;
+}
+
+const CONE_MOLD_DEFAULTS = {
+  // 聚氨酯制品尺寸（放大前）
+  puTopDia: 194,
+  puBottomDia: 108,
+  puConeHeight: 680,
+  // 兼容旧字段名（= 聚氨酯口径）
+  coneTopDia: 194,
+  coneBottomDia: 108,
+  totalHeight: 730, // 系数=1 时的模具总高 = 45+680+5
+  topAllowance: 45,
+  bottomAllowance: 5,
+  standardLen: 250,
+  wall: 20, // 仅作校核参考；外径以选型表为准
+  pitch: 2,
+  /** 模具相对聚氨酯的放大系数：模具尺寸 = 聚氨酯尺寸 × 系数 */
+  scaleFactor: 1.01,
+};
+
+/**
+ * 推荐放大系数（按缩水经验：模具 = 制品 × (1+缩水率)）
+ * 实际以配方/试模为准，可手填微调。
+ */
+const SCALE_FACTOR_PRESETS = [
+  { value: 1.005, label: "1.005", note: "硬泡偏低缩 ≈0.5%" },
+  { value: 1.008, label: "1.008", note: "硬泡常用" },
+  { value: 1.01, label: "1.010", note: "推荐默认 ≈1%", recommend: true },
+  { value: 1.015, label: "1.015", note: "硬泡偏高 / 自结皮偏低" },
+  { value: 1.02, label: "1.020", note: "自结皮常用 ≈2%" },
+  { value: 1.025, label: "1.025", note: "自结皮偏高 ≈2.5%" },
+];
+
+const RECOMMENDED_SCALE_FACTOR = 1.01;
+
+function round3(n) {
+  return Math.round(n * 1000) / 1000;
+}
+
+/** 由聚氨酯尺寸 × 放大系数 → 模具内锥/锥段/总高 */
+function scalePuToMold(pu, factor, topAllowance, bottomAllowance) {
+  const k = Number(factor);
+  const topA = Number(topAllowance);
+  const botA = Number(bottomAllowance);
+  const puTop = Number(pu.topDia);
+  const puBot = Number(pu.bottomDia);
+  const puConeH = Number(pu.coneHeight);
+  if (!(k > 0)) return { ok: false, error: "放大系数须大于 0" };
+  if (!(puTop > puBot)) return { ok: false, error: "聚氨酯上口须大于下口" };
+  if (!(puConeH > 0)) return { ok: false, error: "聚氨酯锥段高度须大于 0" };
+  const moldTopDia = round3(puTop * k);
+  const moldBottomDia = round3(puBot * k);
+  const moldConeHeight = round3(puConeH * k);
+  const moldTotalHeight = round3(topA + moldConeHeight + botA);
+  return {
+    ok: true,
+    scaleFactor: k,
+    shrinkagePct: round3((k - 1) * 100),
+    pu: { topDia: puTop, bottomDia: puBot, coneHeight: puConeH },
+    mold: {
+      topDia: moldTopDia,
+      bottomDia: moldBottomDia,
+      coneHeight: moldConeHeight,
+      totalHeight: moldTotalHeight,
+      topAllowance: topA,
+      bottomAllowance: botA,
+    },
+    formula: `模具 = 聚氨酯 × ${k}（约缩水 ${round3((k - 1) * 100)}%）`,
+  };
+}
+
+/** @deprecated 旧接口：尾数 0/5 圆整；接头螺纹已改为就近整数自动算，不再强制 0/5 */
+function roundMajor05(n) {
+  return Math.round(Number(n) / 5) * 5;
+}
+
+/**
+ * 接头螺纹大径：以接管中心线理论大径就近取整，再夹在 (锥径, 下套外径) 之间
+ * 不强制尾数 0/5
+ */
+function pickJointMajorDia(recommendedMajor, lowerOd, coneDia) {
+  let major = Math.round(Number(recommendedMajor));
+  const hi = Math.floor(Number(lowerOd) - 1);
+  const lo = Math.ceil(Number(coneDia) + 1);
+  if (Number.isFinite(hi) && major >= Number(lowerOd)) major = hi;
+  if (Number.isFinite(lo) && major <= Number(coneDia)) major = lo;
+  if (Number.isFinite(hi) && Number.isFinite(lo) && lo <= hi) {
+    major = Math.min(hi, Math.max(lo, major));
+  }
+  return major;
+}
+
+/**
+ * 按锥径从外径目录选型：选「外径 ≥ 锥径 + 2×最小壁厚」的最小一档
+ * 外径只能取自 PIPE_OD_CATALOG（用户清单）
+ * @param {number} coneDia
+ * @param {{ minWall?: number, catalog?: typeof PIPE_OD_CATALOG }} [opt]
+ */
+function pickPipeByConeDia(coneDia, opt = {}) {
+  const needCone = Number(coneDia);
+  const minWall = Number(opt.minWall ?? PIPE_OD_MIN_WALL);
+  const catalog = opt.catalog || PIPE_OD_CATALOG;
+  const needOd = needCone + 2 * minWall;
+  const hit = catalog.find((row) => row.od + 1e-9 >= needOd);
+  const row = hit || catalog[catalog.length - 1];
+  const wall = round3((row.od - needCone) / 2);
+  const tag = row.hotExpand ? "热扩" : row.mark === "star" ? "常用" : "中间档";
+  return {
+    nom: row.od,
+    id: round3(row.od - 2 * Math.max(wall, 0)), // 名义内孔（按贴锥壁厚反推）
+    od: row.od,
+    coneDia: needCone,
+    wall,
+    minWall,
+    needOd,
+    hotExpand: !!row.hotExpand,
+    mark: row.mark,
+    label: `外径ø${row.od}${row.note ? `（${row.note}）` : `（${tag}）`}`,
+    auto: true,
+    atLimit: !hit,
+  };
+}
+
+/** 在目录中找 ≤ maxOd 的最大外径（自上而下收敛用） */
+function pickPipeOdAtMost(maxOd, catalog = PIPE_OD_CATALOG) {
+  const limit = Number(maxOd);
+  let best = catalog[0];
+  for (const row of catalog) {
+    if (row.od <= limit + 1e-9) best = row;
+    else break;
+  }
+  return best;
+}
+
+/** @deprecated 旧接口：按需求外径就近 */
+function pickPipeOuter(needOuter) {
+  const catalog = PIPE_OD_CATALOG;
+  const need = Number(needOuter);
+  const hit = catalog.find((row) => row.od + 1e-9 >= need) || catalog[catalog.length - 1];
+  return {
+    ...pickPipeByConeDia(Math.max(0, hit.od - 2 * PIPE_OD_MIN_WALL)),
+    needOuter: need,
+    mark: hit.mark,
+    hotExpand: !!hit.hotExpand,
+    kind: "catalog",
+  };
+}
+
+function nearestOdAtLeast(target) {
+  const hit = PIPE_OD_CATALOG.find((row) => row.od + 1e-9 >= Number(target));
+  return (hit || PIPE_OD_CATALOG[PIPE_OD_CATALOG.length - 1]).od;
+}
+
+/** 锥面直径：z 从装配顶向下；锥段在 [topAllowance, totalHeight-bottomAllowance] */
+function coneDiaAt(z, input) {
+  const topA = Number(input.topAllowance);
+  const botA = Number(input.bottomAllowance);
+  const H = Number(input.totalHeight);
+  const d0 = Number(input.coneTopDia);
+  const d1 = Number(input.coneBottomDia);
+  const zCone0 = topA;
+  const zCone1 = H - botA;
+  const L = zCone1 - zCone0;
+  if (L <= 0) return d0;
+  if (z <= zCone0) return d0;
+  if (z >= zCone1) return d1;
+  return round3(d0 + (d1 - d0) * ((z - zCone0) / L));
+}
+
+/**
+ * 公扣端头轴向总长（止口 + 螺纹旋合 + 外退刀槽），计入节总高
+ * 与 pipe-end-math maleEnd.total 一致
+ */
+function maleEndHeight(opt = {}) {
+  const P = Number(opt.pitch ?? PIPE_END_CONST.pitch);
+  const turns = Number(opt.turns ?? PIPE_END_CONST.turns);
+  const engage = Number(opt.engageLen ?? turns * P);
+  const grooveKind = opt.grooveKind || "normal";
+  const locator = autoLocatorLen({ pitch: P, turns, engageLen: engage, grooveKind });
+  const undercut = undercutWidthP2(grooveKind, "external");
+  return {
+    locator,
+    engage,
+    undercut,
+    total: round3(locator + engage + undercut),
+    formula: `公扣=${locator}+${engage}+${undercut}=${locator + engage + undercut}`,
+  };
+}
+
+/**
+ * 由下往上按「节总高=标准长（含公扣）」分段：
+ * - 有公扣的节：零件总高 S = 装配体长 + 公扣长；装配占位 assy = S − 公扣
+ * - 自下连续铺标准节（含公扣），直到剩余 ≤ S（顶节无公扣，总高=装配长）
+ * - 剩余 > S 则继续自动拆
+ */
+function planSegmentLengths(totalHeight, standardLen = 250, maleEndLen = 26, minTop = 1) {
+  const H = Number(totalHeight);
+  const S = Number(standardLen);
+  const maleH = Number(maleEndLen);
+  if (!(H > 0) || !(S > 0)) return { ok: false, error: "总高与标准节长须大于 0" };
+  if (!(maleH >= 0) || maleH >= S) {
+    return { ok: false, error: `公扣长 ${maleH} 须小于标准节总高 ${S}` };
+  }
+  const stdAssy = round3(S - maleH); // 标准节在总装上的轴向占位（公扣插入上节）
+
+  let rem = round3(H);
+  const bottomAssy = [];
+  while (rem > S + 1e-9) {
+    bottomAssy.push(stdAssy);
+    rem = round3(rem - stdAssy);
+    if (bottomAssy.length > 40) {
+      return { ok: false, error: `总高 ${H} 按标准长 ${S}（含公扣${maleH}）分段过多` };
+    }
+  }
+  const topLen = rem; // 顶节无公扣，零件总高 = 装配长
+  const lengths =
+    topLen > 1e-9 ? [topLen, ...bottomAssy] : bottomAssy.slice();
+
+  if (!lengths.length) return { ok: false, error: `总高 ${H} 过小` };
+  if (topLen > 1e-9 && topLen < minTop) {
+    return { ok: false, error: `顶部余段 ${topLen} 过短（标准节总高 ${S}，含公扣 ${maleH}）` };
+  }
+
+  const plan = {
+    segmentCount: lengths.length,
+    largeCount: bottomAssy.length,
+    standardLen: S,
+    maleEndLen: maleH,
+    stdAssy,
+    topLen: topLen > 1e-9 ? topLen : 0,
+    smallLen: topLen > 1e-9 ? topLen : S,
+    fromBottom: true,
+    includesMale: true,
+    lengths,
+    inPrefer: topLen <= 1e-9 || (topLen >= 80 && topLen <= S),
+    score: 0,
+  };
+
+  return { ok: true, plan, alternatives: [plan] };
+}
+
+function minFemaleWall(D1, t1, D2, majorDia) {
+  for (let t2 = 4; t2 <= 80; t2 += 0.5) {
+    const r = computePipeEndThread({ D1, t1, D2, t2 }, majorDia != null ? { majorDia } : {});
+    if (r.ok && r.checkPass) return t2;
+  }
+  return null;
+}
+
+function jointStackHeight(stack = JOINT_STACK_DEFAULT) {
+  return round3(stack.reduce((s, x) => s + Number(x.h), 0));
+}
+
+/**
+ * @param {object} input
+ * - 聚氨酯：puTopDia / puBottomDia / puConeHeight（或兼容 coneTopDia / coneBottomDia）
+ * - scaleFactor：放大系数，模具 = 聚氨酯 × 系数（默认推荐 1.01）
+ * - topAllowance / bottomAllowance：模具工艺余量（不乘系数）
+ * - 若显式传入 totalHeight/moldHeight 且 scaleFactor===1，可直接当模具总高（兼容旧调用）
+ */
+function designConeMold(input = {}) {
+  const topAllowance = Number(input.topAllowance ?? CONE_MOLD_DEFAULTS.topAllowance);
+  const bottomAllowance = Number(input.bottomAllowance ?? CONE_MOLD_DEFAULTS.bottomAllowance);
+  const standardLen = Number(input.standardLen ?? CONE_MOLD_DEFAULTS.standardLen);
+  const wall = Number(input.wall ?? CONE_MOLD_DEFAULTS.wall);
+  const roundThread = input.roundThread === true; // 仅显式 true 才强制 0/5（已不推荐）
+  const grooveKind = input.grooveKind || "normal";
+  const scaleFactor = Number(
+    input.scaleFactor ?? input.enlargeFactor ?? CONE_MOLD_DEFAULTS.scaleFactor
+  );
+
+  const puTopDia = Number(
+    input.puTopDia ?? input.coneTopDia ?? input.cavityTop ?? input.bigOd ?? CONE_MOLD_DEFAULTS.puTopDia
+  );
+  const puBottomDia = Number(
+    input.puBottomDia ??
+      input.coneBottomDia ??
+      input.cavityBottom ??
+      input.smallOd ??
+      CONE_MOLD_DEFAULTS.puBottomDia
+  );
+
+  // 聚氨酯锥段高：优先 puConeHeight；否则由总高−余量反推；再否则默认 680
+  let puConeHeight;
+  if (input.puConeHeight != null && Number(input.puConeHeight) > 0) {
+    puConeHeight = Number(input.puConeHeight);
+  } else if (input.coneHeight != null && Number(input.coneHeight) > 0) {
+    puConeHeight = Number(input.coneHeight);
+  } else if (input.totalHeight != null || input.moldHeight != null) {
+    const rawH = Number(input.totalHeight ?? input.moldHeight);
+    // 旧接口：传入的是「已是模具总高」且系数按 1 用时，锥段 = 总高−余量后再÷系数
+    puConeHeight = round3((rawH - topAllowance - bottomAllowance) / scaleFactor);
+  } else {
+    puConeHeight = CONE_MOLD_DEFAULTS.puConeHeight;
+  }
+
+  const scaled = scalePuToMold(
+    { topDia: puTopDia, bottomDia: puBottomDia, coneHeight: puConeHeight },
+    scaleFactor,
+    topAllowance,
+    bottomAllowance
+  );
+  if (!scaled.ok) return scaled;
+
+  const coneTopDia = scaled.mold.topDia;
+  const coneBottomDia = scaled.mold.bottomDia;
+  const totalHeight = scaled.mold.totalHeight;
+  const coneHeight = scaled.mold.coneHeight;
+
+  const builtStack = buildJointStack({
+    pitch: PIPE_END_CONST.pitch,
+    turns: PIPE_END_CONST.turns,
+    engageLen: PIPE_END_CONST.engageLen,
+    grooveKind,
+    gap: input.jointGap ?? 1,
+  });
+  const jointStack = input.jointStack || builtStack.stack;
+  const jointH = jointStackHeight(jointStack);
+  const locatorAuto = jointStack.find((x) => x.key === "locator")?.h ?? builtStack.locator;
+  const engageAuto = jointStack.find((x) => x.key === "engage")?.h ?? builtStack.engage;
+
+  if (!(coneTopDia > coneBottomDia)) return { ok: false, error: "模具锥上口须大于锥下口" };
+  if (!(totalHeight > topAllowance + bottomAllowance)) {
+    return { ok: false, error: "模具总高须大于上口余量+下口余量" };
+  }
+  if (!(wall > 0)) return { ok: false, error: "外套名义壁厚须大于 0" };
+
+  const maleInfo = maleEndHeight({
+    pitch: PIPE_END_CONST.pitch,
+    turns: PIPE_END_CONST.turns,
+    engageLen: PIPE_END_CONST.engageLen,
+    grooveKind,
+  });
+  const maleH = maleInfo.total;
+
+  const lengthPlan = planSegmentLengths(totalHeight, standardLen, maleH);
+  if (!lengthPlan.ok) return lengthPlan;
+
+  let lengths = lengthPlan.plan.lengths.slice();
+  let segmentCount = lengths.length;
+  const stdAssy = lengthPlan.plan.stdAssy;
+
+  // 强制节数：由下往上铺「含公扣」标准节；顶节无公扣；顶节总高> S 则自动再拆
+  if (input.segmentCount != null && Number(input.segmentCount) >= 1) {
+    const forced = Number(input.segmentCount);
+    if (forced === 1) {
+      lengths = [round3(totalHeight)];
+      if (lengths[0] > standardLen + 1e-9) {
+        const auto = planSegmentLengths(totalHeight, standardLen, maleH);
+        if (!auto.ok) return auto;
+        lengths = auto.plan.lengths.slice();
+      }
+    } else {
+      const bottomStd = forced - 1;
+      const topLen = round3(totalHeight - bottomStd * stdAssy);
+      if (topLen <= 0) {
+        return { ok: false, error: `节数 ${forced} 过大（标准节总高 ${standardLen} 含公扣 ${maleH}）` };
+      }
+      if (topLen > standardLen + 1e-9) {
+        const auto = planSegmentLengths(totalHeight, standardLen, maleH);
+        if (!auto.ok) return auto;
+        lengths = auto.plan.lengths.slice();
+      } else {
+        lengths = [topLen, ...Array.from({ length: bottomStd }, () => stdAssy)];
+      }
+    }
+    segmentCount = lengths.length;
+    lengthPlan.plan = {
+      ...lengthPlan.plan,
+      segmentCount,
+      largeCount: Math.max(0, segmentCount - 1),
+      topLen: lengths[0],
+      smallLen: lengths[0],
+      lengths: lengths.slice(),
+      inPrefer: lengths[0] <= standardLen,
+      score: 0,
+    };
+  }
+
+  const base = {
+    coneTopDia,
+    coneBottomDia,
+    totalHeight,
+    topAllowance,
+    bottomAllowance,
+  };
+
+  let z = 0;
+  const sleeves = lengths.map((length, i) => {
+    const z0 = z;
+    const z1 = round3(z + length);
+    z = z1;
+    const coneAtTop = coneDiaAt(z0, base);
+    const coneAtBot = coneDiaAt(z1, base);
+    const coneAtMid = coneDiaAt((z0 + z1) / 2, base);
+    const coneNeed = Math.max(coneAtTop, coneAtBot);
+    // 按选型表：内径≥锥径 → 取该档外径
+    let pipe = pickPipeByConeDia(coneNeed, { minWall: Math.min(wall, PIPE_OD_MIN_WALL) });
+    if (input.preferredOuterOds && input.preferredOuterOds[i] != null) {
+      const forcedOd = Number(input.preferredOuterOds[i]);
+      const byOd = PIPE_OD_CATALOG.find((r) => Math.abs(r.od - forcedOd) < 1e-6);
+      if (byOd) {
+        const w = round3((byOd.od - coneNeed) / 2);
+        pipe = {
+          nom: byOd.od,
+          id: round3(byOd.od - 2 * Math.max(w, 0)),
+          od: byOd.od,
+          coneDia: coneNeed,
+          wall: w,
+          hotExpand: !!byOd.hotExpand,
+          mark: byOd.mark,
+          label: `外径ø${byOd.od}（手指定${byOd.hotExpand ? "·热扩" : ""}）`,
+          auto: false,
+          atLimit: false,
+        };
+      } else {
+        pipe = {
+          nom: forcedOd,
+          id: forcedOd,
+          od: forcedOd,
+          coneDia: coneNeed,
+          wall: round3((forcedOd - coneNeed) / 2),
+          label: `外径${forcedOd}（不在目录，手指定）`,
+          auto: false,
+          atLimit: false,
+        };
+      }
+    }
+    const outerOd = pipe.od;
+    const wallEff = round3((outerOd - coneNeed) / 2);
+    const isFirst = i === 0;
+    const isLast = i === segmentCount - 1;
+    const hasMale = !isFirst; // 下节起有向上公扣，插入上一节母扣
+    const maleEnd = hasMale ? maleH : 0;
+    const partLength = round3(length + maleEnd); // 零件总高（含公扣）
+    const isStandard = hasMale && Math.abs(partLength - standardLen) < 1e-9;
+    return {
+      index: i + 1,
+      role: "sleeve",
+      length, // 总装轴向占位（公扣插入上节，不另占总高）
+      maleEndLen: maleEnd,
+      partLength,
+      kind: isStandard ? "标准" : "非标",
+      kindNote: hasMale
+        ? `总高${partLength}=体${length}+公扣${maleEnd}`
+        : `总高${partLength}（无公扣）`,
+      z0,
+      z1,
+      coneAtTop,
+      coneAtBot,
+      coneAtMid,
+      coneNeed,
+      pipeNom: pipe.nom,
+      pipeId: pipe.id,
+      pipeLabel: pipe.label,
+      outerOd,
+      wall: wallEff,
+      wallNom: wall,
+      od: outerOd,
+      cavityTop: coneAtTop,
+      cavityBottom: coneAtBot,
+      femaleSleeve: !isLast,
+      maleNeck: hasMale,
+      topFaceOffset: isFirst ? topAllowance : null,
+      belowTopFace: isFirst ? round3(length - topAllowance) : null,
+      bottomFaceOffset: isLast ? bottomAllowance : null,
+      aboveBottomFace: isLast ? round3(length - bottomAllowance) : null,
+    };
+  });
+
+  for (let i = 1; i < sleeves.length; i++) {
+    if (sleeves[i].outerOd > sleeves[i - 1].outerOd) {
+      // 保持外径自上而下不增：取目录中 ≤ 上节外径的最大档
+      const row = pickPipeOdAtMost(sleeves[i - 1].outerOd);
+      sleeves[i].outerOd = row.od;
+      sleeves[i].od = row.od;
+      sleeves[i].pipeNom = row.od;
+      sleeves[i].pipeId = round3(row.od - 2 * Math.max(0, (row.od - sleeves[i].coneNeed) / 2));
+      sleeves[i].pipeLabel = `外径ø${row.od}（随上节收敛${row.hotExpand ? "·热扩" : ""}）`;
+      sleeves[i].wall = round3((row.od - sleeves[i].coneNeed) / 2);
+      sleeves[i].hotExpand = !!row.hotExpand;
+    }
+  }
+
+  const cone = {
+    role: "innerCone",
+    topDia: coneTopDia,
+    bottomDia: coneBottomDia,
+    height: coneHeight,
+    z0: topAllowance,
+    z1: round3(totalHeight - bottomAllowance),
+    totalWithEnds: totalHeight,
+  };
+
+  const joints = [];
+  for (let i = 0; i < sleeves.length - 1; i++) {
+    const upper = sleeves[i];
+    const lower = sleeves[i + 1];
+    const zJoint = lower.z0;
+    const coneD = coneDiaAt(zJoint, base);
+    const D1 = lower.outerOd;
+    const D2 = upper.outerOd;
+    const t1 = round3((D1 - coneD) / 2);
+    if (!(t1 > 1)) {
+      joints.push({
+        ok: false,
+        index: i + 1,
+        error: `接头${i + 1}壁厚不足（锥径 ${coneD} / 外圆 ${D1}）`,
+        z: zJoint,
+        coneDia: coneD,
+      });
+      continue;
+    }
+    const auto = computePipeEndThread({ D1, t1, D2, t2: 50 });
+    if (!auto.ok) {
+      joints.push({ ok: false, index: i + 1, error: auto.error, z: zJoint, coneDia: coneD });
+      continue;
+    }
+    // 自动合理螺纹：理论大径就近取整；可选旧规则 roundThread→尾数0/5
+    let major = roundThread
+      ? roundMajor05(auto.recommendedMajor)
+      : pickJointMajorDia(auto.recommendedMajor, D1, coneD);
+    if (roundThread) {
+      if (major >= D1) major = roundMajor05(D1 - 5);
+      if (major <= coneD) major = roundMajor05(coneD + 5);
+    }
+    const minT2 = minFemaleWall(D1, t1, D2, major);
+    const check = computePipeEndThread({ D1, t1, D2, t2: minT2 || 50 }, { majorDia: major });
+    const cards = computeThreadEndCards(`M${major}×${PIPE_END_CONST.pitch}`);
+
+    // 安装止口：轴向由螺纹/退刀槽自动；径向壁随外径台阶；母止口内径 = 下套外径 + 2×间隙
+    const locatorH = jointStack.find((x) => x.key === "locator")?.h ?? locatorAuto;
+    const locatorWall = locatorWallFromOds(D2, D1);
+    const locatorClear = LOCATOR_DIM.radialClearance;
+    const locatorMaleOd = D1;
+    const locatorFemaleId = round3(D1 + 2 * locatorClear);
+    const locatorFemaleOd = round3(locatorFemaleId + 2 * locatorWall);
+
+    joints.push({
+      ok: true,
+      index: i + 1,
+      z: zJoint,
+      coneDia: coneD,
+      cavityAtJoint: coneD,
+      fromOd: D2,
+      toOd: D1,
+      upperOuter: D2,
+      lowerOuter: D1,
+      maleWall: t1,
+      jointStack,
+      jointStackHeight: jointH,
+      nestStyle: "外套节间嵌套（上套下）· 内锥连续贯穿",
+      autoDesignation: auto.recommendedDesignation,
+      designation: `M${major}×${PIPE_END_CONST.pitch}`,
+      majorDia: major,
+      crest: check.crest,
+      root: check.root,
+      undercutDf: major - 3,
+      undercutDg: major + 3,
+      endStructure: jointH,
+      locator: locatorH,
+      engage: jointStack.find((x) => x.key === "engage")?.h ?? 12,
+      gaps: jointStack.filter((x) => x.key.startsWith("gap")).map((x) => x.h),
+      locatorDim: {
+        height: locatorH,
+        wall: locatorWall,
+        radialClearance: locatorClear,
+        maleOd: locatorMaleOd,
+        femaleId: locatorFemaleId,
+        femaleOd: locatorFemaleOd,
+        undercut: builtStack.undercut,
+        grooveKind,
+        formula: builtStack.formula,
+        note: `安装止口 高${locatorH}（自动）· 壁${locatorWall} · 间隙${locatorClear}`,
+      },
+      minFemaleWall: minT2,
+      checkPass: !!minT2,
+      checkMessage: minT2
+        ? `外套局部壁厚建议 ≥ ${minT2} mm`
+        : "外套壁厚无法满足螺纹实体",
+      maleCard: cards.ok ? cards.male : null,
+      femaleCard: cards.ok ? cards.female : null,
+      theoryMajor: auto.theoryMajor,
+      smallCenterDia: auto.smallCenterDia,
+    });
+  }
+
+  const sumLen = round3(sleeves.reduce((s, x) => s + x.length, 0));
+
+  return {
+    ok: true,
+    model: "inner-cone-outer-sleeves",
+    input: {
+      puTopDia,
+      puBottomDia,
+      puConeHeight,
+      scaleFactor,
+      coneTopDia,
+      coneBottomDia,
+      totalHeight,
+      topAllowance,
+      bottomAllowance,
+      standardLen,
+      wall,
+      roundThread,
+      // 兼容旧字段
+      bigOd: coneTopDia,
+      smallOd: coneBottomDia,
+      moldHeight: totalHeight,
+      cavityTop: coneTopDia,
+      cavityBottom: coneBottomDia,
+    },
+    pu: scaled.pu,
+    scale: {
+      factor: scaleFactor,
+      shrinkagePct: scaled.shrinkagePct,
+      formula: scaled.formula,
+      presets: SCALE_FACTOR_PRESETS,
+      recommended: RECOMMENDED_SCALE_FACTOR,
+    },
+    mold: scaled.mold,
+    cone,
+    sleeves,
+    segments: sleeves, // 兼容旧 UI
+    segmentCount,
+    joints,
+    summary: {
+      moldHeight: sumLen,
+      totalHeight: sumLen,
+      heightOk: Math.abs(sumLen - totalHeight) < 1e-6,
+      coneHeight,
+      faceToFace: coneHeight,
+      expectedFaceToFace: coneHeight,
+      cavityTop: coneTopDia,
+      cavityBottom: coneBottomDia,
+      coneTopDia,
+      coneBottomDia,
+      puTopDia,
+      puBottomDia,
+      puConeHeight,
+      scaleFactor,
+      shrinkagePct: scaled.shrinkagePct,
+      scaleFormula: scaled.formula,
+      taperPerMm: round3((coneTopDia - coneBottomDia) / coneHeight),
+      jointCount: joints.length,
+      jointStack,
+      jointStackHeight: jointH,
+      pitch: PIPE_END_CONST.pitch,
+      locator: locatorAuto,
+      engage: engageAuto,
+      undercut: builtStack.undercut,
+      maleEndLen: maleH,
+      maleEndFormula: maleInfo.formula,
+      stdAssy: lengthPlan.plan.stdAssy,
+      grooveKind,
+      locatorFormula: builtStack.formula,
+      nestNote: `聚氨酯 ø${puTopDia}→ø${puBottomDia}×${puConeHeight} ×${scaleFactor} → 模具 ø${coneTopDia}→ø${coneBottomDia}×${coneHeight}；标准节总高 ${standardLen}=装配${lengthPlan.plan.stdAssy}+公扣${maleH}`,
+    },
+    alternatives: lengthPlan.alternatives,
+  };
+}
+
+function pickSegmentOds() {
+  return { ok: false, error: "已改为内锥+外套模型，请用 designConeMold" };
+}
+
+function cavityDiaAt(z, top, bottom, H) {
+  // 兼容旧签名
+  if (typeof top === "object") return coneDiaAt(z, top);
+  return coneDiaAt(z, {
+    coneTopDia: top,
+    coneBottomDia: bottom,
+    totalHeight: H,
+    topAllowance: 0,
+    bottomAllowance: 0,
+  });
+}
+
+
+/**
+ * 组装示意图：绿色连续内锥 + 彩色外套分段
+ *
+ * 节间公/母扣剖面（与 pipe-end-diagram / CAD 一致）：
+ *   公扣（下套颈向上，尖端在上）：止口 → 外螺纹 → 外退刀槽(df) → 台肩
+ *   母扣（上套孔口在下）：止口接收 → 内螺纹 → 内退刀槽(Dg)
+ * 退刀槽是牙底处的小矩形槽，不是整段外壁台阶。
+ */
+
+function t(n) {
+  const s = String(Number(Number(n).toFixed(3)));
+  return s.includes(".") ? s.replace(/\.?0+$/, "") : s;
+}
+
+/** 固定三位小数（对接内径等精密尺寸） */
+function t3(n) {
+  return Number(n).toFixed(3);
+}
+
+/** 水平内径尺寸：跨锥腔标注 øx.xxx */
+function dimHId(axis, y, dia, scaleR, label, color = "#e67e22") {
+  const half = (Number(dia) / 2) * scaleR;
+  const x1 = axis - half;
+  const x2 = axis + half;
+  return `
+    <line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="${color}" stroke-width="1.15"/>
+    <line x1="${x1}" y1="${y - 5}" x2="${x1}" y2="${y + 5}" stroke="${color}" stroke-width="1.15"/>
+    <line x1="${x2}" y1="${y - 5}" x2="${x2}" y2="${y + 5}" stroke="${color}" stroke-width="1.15"/>
+    <text x="${axis}" y="${y - 7}" text-anchor="middle" fill="${color}" font-size="11" font-weight="800">${label}</text>
+  `;
+}
+
+function dimV(x, y1, y2, label, color = "#2f4a56", prefer = "auto") {
+  const top = Math.min(y1, y2);
+  const bot = Math.max(y1, y2);
+  const mid = (top + bot) / 2;
+  const h = bot - top;
+  // 过短段：数字放到线段外侧，避免与相邻尺寸挤在一起
+  if (h < 28) {
+    let yLab;
+    if (prefer === "above") yLab = top - 3;
+    else if (prefer === "below") yLab = bot + 12;
+    else yLab = mid < 280 ? top - 3 : bot + 12;
+    return `
+      <line x1="${x}" y1="${top}" x2="${x}" y2="${bot}" stroke="${color}" stroke-width="1"/>
+      <line x1="${x - 4}" y1="${top}" x2="${x + 4}" y2="${top}" stroke="${color}" stroke-width="1"/>
+      <line x1="${x - 4}" y1="${bot}" x2="${x + 4}" y2="${bot}" stroke="${color}" stroke-width="1"/>
+      <text x="${x - 10}" y="${yLab}" text-anchor="end" fill="${color}" font-size="10" font-weight="700">${label}</text>
+    `;
+  }
+  return `
+    <line x1="${x}" y1="${top}" x2="${x}" y2="${bot}" stroke="${color}" stroke-width="1"/>
+    <line x1="${x - 4}" y1="${top}" x2="${x + 4}" y2="${top}" stroke="${color}" stroke-width="1"/>
+    <line x1="${x - 4}" y1="${bot}" x2="${x + 4}" y2="${bot}" stroke="${color}" stroke-width="1"/>
+    <text x="${x - 10}" y="${mid + 4}" text-anchor="end" fill="${color}" font-size="11" font-weight="700">${label}</text>
+  `;
+}
+
+/** 外螺纹牙型（大径↔小径） */
+function extThreadZig(xMaj, xMin, y0, y1) {
+  const n = Math.max(5, Math.round(Math.abs(y1 - y0) / 2.6));
+  const dy = (y1 - y0) / n;
+  let d = `M ${xMaj} ${y0}`;
+  for (let i = 0; i < n; i++) {
+    d += ` L ${xMin} ${y0 + (i + 0.5) * dy} L ${xMaj} ${y0 + (i + 1) * dy}`;
+  }
+  return `<path d="${d}" fill="none" stroke="#1f6f5b" stroke-width="1.15"/>`;
+}
+
+const SLEEVE_COLORS = ["#c45c5c", "#6ab0c9", "#8a6bb8", "#c49a6c", "#5cbf8a"];
+
+function renderConeMoldDiagram(r) {
+  if (!r?.ok || !r.sleeves?.length) return "";
+
+  const sleeves = r.sleeves;
+  const cone = r.cone;
+  const joints = (r.joints || []).filter((j) => j.ok);
+  const Htot = r.summary.totalHeight;
+  const topA = r.input.topAllowance;
+  const botA = r.input.bottomAllowance;
+  const locatorH0 = r.summary.locator ?? joints[0]?.locator ?? 10;
+  const engage0 = r.summary.engage ?? 12;
+  const undercut0 = r.summary.undercut ?? 4;
+
+  const W = 1280;
+  const bannerH = 68;
+  const padT = 108; // 顶栏与图形拉开，避免压到锥上口
+  const plotH = 520;
+  const axis = 340; // 给左侧尺寸列留足空位
+  const scaleY = plotH / Htot;
+  const maxOut = Math.max(...sleeves.map((s) => s.outerOd), cone.topDia);
+  const scaleR = Math.min(1.08, 128 / (maxOut / 2));
+
+  const yAt = (z) => padT + z * scaleY;
+  const xR = (d) => (d / 2) * scaleR;
+  const hY = (mm) => Math.max(3.2, mm * scaleY);
+  const mirror = (x) => 2 * axis - x;
+
+  const y0 = yAt(0);
+  const yH = yAt(Htot);
+  const yCone0 = yAt(cone.z0);
+  const yCone1 = yAt(cone.z1);
+
+  const coneWall = Math.max(6, r.input.wall * 0.35);
+  const cTop = cone.topDia;
+  const cBot = cone.bottomDia;
+  const iTop = Math.max(cTop - 2 * coneWall, cBot * 0.5);
+  const iBot = Math.max(cBot - 2 * coneWall, 20);
+
+  // 顶栏：聚氨酯→模具 + 外套/接头摘要
+  const pu = r.pu;
+  const scale = r.scale;
+  const odBanner = `
+    <rect x="16" y="8" width="${W - 32}" height="${bannerH}" rx="10" fill="#fff4e8" stroke="#c45c26" stroke-width="2"/>
+    <text x="28" y="32" fill="#8a2e0e" font-size="13" font-weight="800">${
+      pu
+        ? `聚氨酯 ø${t(pu.topDia)}→ø${t(pu.bottomDia)}×${t(pu.coneHeight)} ×${t3(scale?.factor ?? 1)} → 模具 ø${t3(cone.topDia)}→ø${t3(cone.bottomDia)}×${t3(cone.height)}`
+        : `模具 ø${t3(cone.topDia)}→ø${t3(cone.bottomDia)}`
+    }　　${sleeves.map((s) => `套${s.index}：ø${t(s.outerOd)}`).join("　")}</text>
+    <text x="28" y="58" fill="#2f4a56" font-size="12" font-weight="600">止口${t(locatorH0)} · 旋合${t(engage0)} · 退刀槽${t(undercut0)}　·　公扣：止口→外螺纹→外退刀槽(df)　·　母扣：止口接收→内螺纹→内退刀槽(Dg)</text>
+  `;
+
+  const green = `
+    <path d="M ${axis - xR(cTop)} ${yCone0} L ${axis - xR(cBot)} ${yCone1} L ${axis - xR(iBot)} ${yCone1} L ${axis - xR(iTop)} ${yCone0} Z"
+      fill="#3d9b5f" stroke="#2f4a56" stroke-width="1.1"/>
+    <path d="M ${axis + xR(cTop)} ${yCone0} L ${axis + xR(cBot)} ${yCone1} L ${axis + xR(iBot)} ${yCone1} L ${axis + xR(iTop)} ${yCone0} Z"
+      fill="#3d9b5f" stroke="#2f4a56" stroke-width="1.1"/>
+    <line x1="${axis - xR(cTop)}" y1="${yCone0}" x2="${axis - xR(cBot)}" y2="${yCone1}" stroke="#e67e22" stroke-width="2"/>
+    <line x1="${axis + xR(cTop)}" y1="${yCone0}" x2="${axis + xR(cBot)}" y2="${yCone1}" stroke="#e67e22" stroke-width="2"/>
+  `;
+
+  const maxOutR = xR(maxOut);
+  const ARROW_L = 10;
+  const ARROW_W = 5.5;
+  // 右两列：先外径竖列，再接头卡（折线引线绕开外径字）
+  const labelColX = axis + maxOutR + 36;
+  const labelBoxW = 160;
+  const jointCardX = labelColX + labelBoxW + 32;
+  const jointCardW = 220;
+  const dimColor = "#c45c26";
+  const LINE_H = 22;
+  const CARD_PAD = 14;
+  const CARD_GAP = 16;
+
+  // 外套光筒
+  const sleeveBodies = sleeves
+    .map((s, i) => {
+      const color = SLEEVE_COLORS[i % SLEEVE_COLORS.length];
+      const yA = yAt(s.z0);
+      const yB = yAt(s.z1);
+      const out = xR(s.outerOd);
+      const innA = xR(s.coneAtTop);
+      const innB = xR(s.coneAtBot);
+      return `
+        <path d="M ${axis + innA} ${yA} L ${axis + out} ${yA} L ${axis + out} ${yB} L ${axis + innB} ${yB} Z"
+          fill="${color}" fill-opacity="0.48" stroke="#2f4a56" stroke-width="0.85"/>
+        <path d="M ${axis - innA} ${yA} L ${axis - out} ${yA} L ${axis - out} ${yB} L ${axis - innB} ${yB} Z"
+          fill="${color}" fill-opacity="0.48" stroke="#2f4a56" stroke-width="0.85"/>
+      `;
+    })
+    .join("");
+
+  // 先算接头几何与标注行，再统一排布卡片 Y，避免互压
+  const jointParts = [];
+  joints.forEach((joint, ji) => {
+    const upper = sleeves[ji];
+    const lower = sleeves[ji + 1];
+    if (!upper || !lower) return;
+    const uColor = SLEEVE_COLORS[ji % SLEEVE_COLORS.length];
+    const lColor = SLEEVE_COLORS[(ji + 1) % SLEEVE_COLORS.length];
+
+    const locH = joint.locator ?? locatorH0;
+    const engH = joint.engage ?? engage0;
+    const undH = joint.locatorDim?.undercut ?? undercut0;
+    const gapFace = (joint.gaps && joint.gaps[0]) || 1;
+    const major = joint.majorDia;
+    const minor = joint.crest?.internal ?? major - 2.166;
+    const df = joint.undercutDf ?? major - 3; // 公扣槽底
+    const dg = joint.undercutDg ?? major + 3; // 母扣槽底
+
+    const yLoc = hY(locH);
+    const yEng = hY(engH);
+    const yUnd = hY(undH);
+    const yGap = hY(gapFace);
+
+    // 公台肩 = 下套顶；尖端向上：止口 → 螺纹 → 退刀槽 → 台肩
+    const yShoulder = yAt(lower.z0);
+    const yUnd1 = yShoulder; // 退刀槽落到台肩
+    const yEng1 = yUnd1 - yUnd; // 螺纹下沿 = 退刀槽上沿
+    const yLoc1 = yEng1 - yEng; // 止口下沿 = 螺纹上沿
+    const yTip = yLoc1 - yLoc; // 公扣尖端
+    const yFemaleBot = yShoulder - yGap; // 母扣孔口底面（肩间隙）
+
+    const xCone = axis + xR((upper.coneAtBot + lower.coneAtTop) / 2);
+    const xOutU = axis + xR(upper.outerOd);
+    const xOutL = axis + xR(lower.outerOd);
+    const xMaj = axis + xR(major);
+    const xMin = axis + xR(minor);
+    const xDf = axis + xR(df);
+    const xDg = axis + xR(Math.min(dg, upper.outerOd - 2));
+    // 止口外圆：介于大径与下套外径之间（导向圆柱）
+    const locOd = Math.min(lower.outerOd - 1, Math.max(major + 2, major + (lower.outerOd - major) * 0.35));
+    const xLoc = axis + xR(locOd);
+    const xLocF = xLoc + 1.1; // 母止口内孔略大
+
+    const yMask0 = yTip - 4;
+    const yMask1 = yShoulder + hY(12);
+    const xEdge = Math.max(xOutU, xOutL);
+    const mask = `
+      <rect x="${axis - (xEdge - axis)}" y="${yMask0}" width="${2 * (xEdge - axis)}"
+        height="${yMask1 - yMask0}" fill="#eef3ef"/>
+    `;
+
+    /*
+     * 公扣右半：尖端止口(xLoc) → 螺纹大径(xMaj) → 退刀槽底(xDf，内凹小槽) → 台肩外径(xOutL)
+     * 槽是「牙侧内凹」，不是整壁削到外径。
+     */
+    const maleR = `
+      M ${xCone} ${yTip}
+      L ${xLoc} ${yTip}
+      L ${xLoc} ${yLoc1}
+      L ${xMaj} ${yLoc1}
+      L ${xMaj} ${yEng1}
+      L ${xDf} ${yEng1}
+      L ${xDf} ${yUnd1}
+      L ${xOutL} ${yUnd1}
+      L ${xOutL} ${yMask1}
+      L ${xCone} ${yMask1}
+      Z`;
+    const maleL = `
+      M ${mirror(xCone)} ${yTip}
+      L ${mirror(xLoc)} ${yTip}
+      L ${mirror(xLoc)} ${yLoc1}
+      L ${mirror(xMaj)} ${yLoc1}
+      L ${mirror(xMaj)} ${yEng1}
+      L ${mirror(xDf)} ${yEng1}
+      L ${mirror(xDf)} ${yUnd1}
+      L ${mirror(xOutL)} ${yUnd1}
+      L ${mirror(xOutL)} ${yMask1}
+      L ${mirror(xCone)} ${yMask1}
+      Z`;
+
+    /*
+     * 母扣右半（对标 CAD）：
+     * 尖端深处 = 止口接收（包住公止口）
+     * 中段 = 内螺纹
+     * 近台肩 = 内退刀槽 Dg（外扩小槽，与公 df 内凹相对）
+     * 孔口底面与公台肩留间隙
+     */
+    const femaleR = `
+      M ${xCone} ${yMask0}
+      L ${xOutU} ${yMask0}
+      L ${xOutU} ${yFemaleBot}
+      L ${xDg} ${yFemaleBot}
+      L ${xDg} ${yEng1}
+      L ${xMin} ${yEng1}
+      L ${xMin} ${yLoc1}
+      L ${xLocF} ${yLoc1}
+      L ${xLocF} ${yTip}
+      L ${xCone} ${yTip}
+      Z`;
+    const femaleL = `
+      M ${mirror(xCone)} ${yMask0}
+      L ${mirror(xOutU)} ${yMask0}
+      L ${mirror(xOutU)} ${yFemaleBot}
+      L ${mirror(xDg)} ${yFemaleBot}
+      L ${mirror(xDg)} ${yEng1}
+      L ${mirror(xMin)} ${yEng1}
+      L ${mirror(xMin)} ${yLoc1}
+      L ${mirror(xLocF)} ${yLoc1}
+      L ${mirror(xLocF)} ${yTip}
+      L ${mirror(xCone)} ${yTip}
+      Z`;
+
+    // 退刀槽：公 df 内凹窄槽；母 Dg 外扩窄槽（同轴带 yEng1~yUnd1）
+    const maleGrooveR = `
+      <path d="M ${xMaj} ${yEng1} L ${xDf} ${yEng1} L ${xDf} ${yUnd1} L ${xMaj} ${yUnd1} Z"
+        fill="#2f4a56" fill-opacity="0.38" stroke="#2f4a56" stroke-width="0.9"/>`;
+    const maleGrooveL = `
+      <path d="M ${mirror(xMaj)} ${yEng1} L ${mirror(xDf)} ${yEng1} L ${mirror(xDf)} ${yUnd1} L ${mirror(xMaj)} ${yUnd1} Z"
+        fill="#2f4a56" fill-opacity="0.38" stroke="#2f4a56" stroke-width="0.9"/>`;
+    const femGrooveR = `
+      <path d="M ${xMaj} ${yEng1} L ${xDg} ${yEng1} L ${xDg} ${yUnd1} L ${xMaj} ${yUnd1} Z"
+        fill="#8a2e0e" fill-opacity="0.22" stroke="#8a2e0e" stroke-width="0.85"/>`;
+    const femGrooveL = `
+      <path d="M ${mirror(xMaj)} ${yEng1} L ${mirror(xDg)} ${yEng1} L ${mirror(xDg)} ${yUnd1} L ${mirror(xMaj)} ${yUnd1} Z"
+        fill="#8a2e0e" fill-opacity="0.22" stroke="#8a2e0e" stroke-width="0.85"/>`;
+
+    // 接头标注：收成一张卡片，行距固定，避免叠字
+    const coneDia = joint.coneDia ?? joint.cavityAtJoint;
+    const xConeId = axis + xR(coneDia);
+    const rows = [
+      { x: xConeId, y: yShoulder - 2, color: "#e67e22", text: `对接内径 ø${t3(coneDia)}` },
+      { x: xLoc, y: (yTip + yLoc1) / 2, color: "#1f6f5b", text: `止口 ${t(locH)}` },
+      { x: xMaj, y: (yLoc1 + yEng1) / 2, color: "#8a2e0e", text: `螺纹 ${joint.designation} · ${t(engH)}` },
+      { x: xDf, y: (yEng1 + yUnd1) / 2, color: "#2f4a56", text: `退刀槽 ${t(undH)}  df${t(df)}/Dg${t(dg)}` },
+      { x: xOutL, y: (yUnd1 + yFemaleBot) / 2, color: "#c45c26", text: `肩间隙 ${t(gapFace)}` },
+    ];
+    const cardH = CARD_PAD * 2 + rows.length * LINE_H + 18;
+    // 优先落在接头中段旁（外径标注在套中段，纵向错开）
+    const preferY = (yTip + yShoulder) / 2 - cardH / 2;
+
+    jointParts.push({
+      joint,
+      coneDia,
+      yShoulder,
+      uColor,
+      lColor,
+      mask,
+      femaleR,
+      femaleL,
+      maleR,
+      maleL,
+      maleGrooveR,
+      maleGrooveL,
+      femGrooveR,
+      femGrooveL,
+      xMaj,
+      xMin,
+      yLoc1,
+      yEng1,
+      rows,
+      cardH,
+      preferY,
+    });
+  });
+
+  // 自上而下排布卡片，保证间距 ≥ CARD_GAP
+  let cardCursor = padT + 8;
+  jointParts.forEach((p) => {
+    let cardY = Math.max(p.preferY, cardCursor);
+    // 勿压到图底详情区
+    const maxY = yH - p.cardH - 8;
+    if (cardY > maxY) cardY = Math.max(padT + 8, maxY);
+    p.cardY = cardY;
+    cardCursor = cardY + p.cardH + CARD_GAP;
+  });
+
+  // 外径卡片：若与邻套间距过近则上下微移，避免互压
+  const odBoxH = 44;
+  const odMids = sleeves.map((s) => (yAt(s.z0) + yAt(s.z1)) / 2);
+  const odYs = odMids.slice();
+  for (let i = 1; i < odYs.length; i++) {
+    const minGap = odBoxH + 10;
+    if (odYs[i] - odYs[i - 1] < minGap) {
+      odYs[i] = odYs[i - 1] + minGap;
+    }
+  }
+
+  /** 引线穿越外径列时的避让 Y（不穿过 ø 卡片） */
+  const dodgeOdY = (y) => {
+    const half = odBoxH / 2 + 8;
+    let yy = y;
+    for (let pass = 0; pass < 4; pass++) {
+      let hit = false;
+      for (const oy of odYs) {
+        if (Math.abs(yy - oy) < half) {
+          yy = yy < oy ? oy - half : oy + half;
+          hit = true;
+          break;
+        }
+      }
+      if (!hit) break;
+    }
+    return yy;
+  };
+
+  let jointSvg = "";
+  jointParts.forEach((p) => {
+    const titleY = p.cardY + CARD_PAD + 14;
+    const row0Y = titleY + LINE_H + 2;
+    const clearX = labelColX - 10; // 外径列左侧
+    const elbowX = labelColX + labelBoxW + 16; // 外径列右侧
+    let leaders = "";
+    let rowTexts = "";
+    p.rows.forEach((row, ri) => {
+      const ty = row0Y + ri * LINE_H;
+      const by = dodgeOdY(row.y);
+      leaders += `
+        <path d="M ${row.x} ${row.y} L ${clearX} ${row.y} L ${clearX} ${by} L ${elbowX} ${by} L ${jointCardX - 2} ${ty - 3}"
+          fill="none" stroke="${row.color}" stroke-width="1.05" opacity="0.85"/>
+        <circle cx="${row.x}" cy="${row.y}" r="2.2" fill="${row.color}"/>`;
+      rowTexts += `
+        <text x="${jointCardX + 10}" y="${ty}" fill="${row.color}" font-size="11" font-weight="800">${row.text}</text>`;
+    });
+
+    jointSvg += `
+      ${p.mask}
+      <path d="${p.femaleR}" fill="${p.uColor}" fill-opacity="0.9" stroke="#2f4a56" stroke-width="1.15"/>
+      <path d="${p.femaleL}" fill="${p.uColor}" fill-opacity="0.9" stroke="#2f4a56" stroke-width="1.15"/>
+      <path d="${p.maleR}" fill="${p.lColor}" fill-opacity="0.9" stroke="#2f4a56" stroke-width="1.15"/>
+      <path d="${p.maleL}" fill="${p.lColor}" fill-opacity="0.9" stroke="#2f4a56" stroke-width="1.15"/>
+      ${p.maleGrooveR}${p.maleGrooveL}
+      ${p.femGrooveR}${p.femGrooveL}
+      ${extThreadZig(p.xMaj, p.xMin, p.yLoc1, p.yEng1)}
+      ${extThreadZig(mirror(p.xMaj), mirror(p.xMin), p.yLoc1, p.yEng1)}
+      ${leaders}
+      <rect x="${jointCardX}" y="${p.cardY}" width="${jointCardW}" height="${p.cardH}"
+        rx="8" fill="#ffffff" stroke="#2f4a56" stroke-width="1.4"/>
+      <text x="${jointCardX + 10}" y="${titleY}" fill="#2f4a56" font-size="11" font-weight="900">接头${p.joint.index} · ${p.joint.designation}</text>
+      ${rowTexts}
+    `;
+  });
+
+  const odCallouts = sleeves
+    .map((s, i) => {
+      const yMid = odMids[i];
+      const yBox = odYs[i];
+      const xWall = axis + xR(s.outerOd);
+      return `
+        <path d="M ${xWall} ${yMid} L ${xWall + ARROW_L} ${yMid - ARROW_W} L ${xWall + ARROW_L} ${yMid + ARROW_W} Z" fill="${dimColor}"/>
+        <path d="M ${xWall + ARROW_L} ${yMid} L ${labelColX - 10} ${yMid} L ${labelColX - 10} ${yBox} L ${labelColX - 6} ${yBox}"
+          fill="none" stroke="${dimColor}" stroke-width="1.4"/>
+        <rect x="${labelColX}" y="${yBox - odBoxH / 2}" width="${labelBoxW}" height="${odBoxH}"
+          rx="8" fill="#fff" stroke="${dimColor}" stroke-width="2"/>
+        <text x="${labelColX + 12}" y="${yBox - 2}" fill="${dimColor}" font-size="16" font-weight="900">ø${t(s.outerOd)}</text>
+        <text x="${labelColX + 12}" y="${yBox + 15}" fill="#2f4a56" font-size="11" font-weight="700">套${s.index} 管子外径</text>
+      `;
+    })
+    .join("");
+
+  let dims = "";
+  // 左侧尺寸列：列距 ≥48；文字锚在线左侧，避免压线
+  dims += dimV(48, y0, yH, `总高 ${t(Htot)}`, "#2f4a56");
+  dims += dimV(96, yCone0, yCone1, `锥段 ${t(cone.height)}`, "#1f6f5b");
+  dims += dimV(144, y0, yCone0, `上 ${t(topA)}`, "#c45c26", "above");
+  dims += dimV(144, yCone1, yH, `下 ${t(botA)}`, "#c45c26", "below");
+  sleeves.forEach((s) => {
+    const lab =
+      s.maleEndLen > 0
+        ? `${t(s.partLength)}(含公${t(s.maleEndLen)})`
+        : `${t(s.partLength ?? s.length)}`;
+    dims += dimV(192, yAt(s.z0), yAt(s.z1), lab, "#8a5a2a");
+  });
+
+  // 节间对接处：锥腔内径，固定三位小数
+  let jointIdDims = "";
+  joints.forEach((j, ji) => {
+    const dia = j.coneDia ?? j.cavityAtJoint;
+    if (!(dia > 0)) return;
+    // 略偏上台肩，避免与公扣牙型挤在一起；多接头上下错开文字
+    const yDim = yAt(j.z) - 10 - (ji % 2) * 6;
+    jointIdDims += dimHId(axis, yDim, dia, scaleR, `对接内径 ø${t3(dia)}`);
+  });
+
+  const detail = renderJointDetail(16, yH + 40, joints[0], r.summary);
+  const legendY = yH + 288;
+  const items = [
+    `内锥 ø${t(cone.topDia)}→ø${t(cone.bottomDia)} · ${t(cone.height)}mm`,
+    ...sleeves.map((s) => {
+      const pl = s.partLength ?? s.length;
+      const male = s.maleEndLen > 0 ? `含公扣${t(s.maleEndLen)}` : "无公扣";
+      return `套${s.index} ø${t(s.outerOd)} · 总高${t(pl)}（${male}）· ${s.kind}`;
+    }),
+    ...joints.map((j) => {
+      const id = t3(j.coneDia ?? j.cavityAtJoint ?? 0);
+      return `接头${j.index} ${j.designation}：对接内径ø${id}；止口${t(j.locator)}+螺纹${t(j.engage)}+退刀${t(j.locatorDim?.undercut ?? undercut0)}`;
+    }),
+  ];
+  const legend = items
+    .map((label, i) => {
+      const col = i % 2;
+      const row = Math.floor(i / 2);
+      return `<text x="${20 + col * 560}" y="${legendY + row * 18}" fill="#5c6b64" font-size="11" font-weight="600">${label}</text>`;
+    })
+    .join("");
+  const H = legendY + Math.ceil(items.length / 2) * 18 + 28;
+
+  return `
+  <svg viewBox="0 0 ${W} ${H}" class="diagram" role="img" aria-label="锥管模具组装示意图（公母扣·止口·螺纹·退刀槽）">
+    ${odBanner}
+    ${sleeveBodies}
+    ${jointSvg}
+    ${green}
+    ${odCallouts}
+    ${dims}
+    ${jointIdDims}
+    <text x="${axis}" y="${yCone0 - 16}" text-anchor="middle" fill="#e67e22" font-size="12" font-weight="800">锥上口 ø${t3(cone.topDia)}</text>
+    <text x="${axis}" y="${yH + 24}" text-anchor="middle" fill="#e67e22" font-size="12" font-weight="800">锥下口 ø${t3(cone.bottomDia)}</text>
+    <line x1="${axis}" y1="${y0}" x2="${axis}" y2="${yH}" stroke="#9aa8a1" stroke-dasharray="4 3"/>
+    ${detail}
+    ${legend}
+  </svg>`;
+}
+
+/** 放大：与 pipe-end-diagram 同序的公/母扣对接剖面 */
+function renderJointDetail(x0, y0, joint, summary) {
+  const loc = joint?.locator ?? summary?.locator ?? 10;
+  const eng = joint?.engage ?? summary?.engage ?? 12;
+  const und = joint?.locatorDim?.undercut ?? summary?.undercut ?? 4;
+  const gap = (joint?.gaps && joint.gaps[0]) || 1;
+  const des = joint?.designation || "M×××2";
+  const maj = joint?.majorDia ?? 190;
+  const min = joint?.crest?.internal ?? maj - 2.2;
+  const df = joint?.undercutDf ?? maj - 3;
+  const dg = joint?.undercutDg ?? maj + 3;
+  const formula = joint?.locatorDim?.formula || summary?.locatorFormula || "";
+
+  const s = 2.4;
+  const ax = 58;
+  const yTip = 32;
+  const yLoc1 = yTip + loc * s;
+  const yEng1 = yLoc1 + eng * s;
+  const yUnd1 = yEng1 + und * s;
+  const ySh = yUnd1 + gap * s;
+
+  const xCone = ax + 14;
+  const xDf = ax + 34;
+  const xMin = ax + 38;
+  const xMaj = ax + 44;
+  const xDg = ax + 52;
+  const xLoc = ax + 50;
+  const xLocF = ax + 52;
+  const xOutL = ax + 64;
+  const xOutU = ax + 78;
+
+  // 公：止口→螺纹→df槽→台肩
+  const male = `M ${xCone} ${yTip} L ${xLoc} ${yTip} L ${xLoc} ${yLoc1} L ${xMaj} ${yLoc1} L ${xMaj} ${yEng1} L ${xDf} ${yEng1} L ${xDf} ${yUnd1} L ${xOutL} ${yUnd1} L ${xOutL} ${ySh + 44} L ${xCone} ${ySh + 44} Z`;
+  // 母：深处止口 → 螺纹 → 近肩 Dg 槽 → 孔口底面（对标 CAD）
+  const female = `M ${xCone} 22 L ${xOutU} 22 L ${xOutU} ${ySh} L ${xDg} ${ySh} L ${xDg} ${yEng1} L ${xMin} ${yEng1} L ${xMin} ${yLoc1} L ${xLocF} ${yLoc1} L ${xLocF} ${yTip} L ${xCone} ${yTip} Z`;
+
+  // 右侧说明：固定行距 26，①～④ 不叠字
+  const labelX = 228;
+  const labelRows = [
+    { fx: xLoc, fy: (yTip + yLoc1) / 2, color: "#1f6f5b", text: `① 止口 ${t(loc)} · 公尖端 ↔ 母接收` },
+    { fx: xMaj, fy: (yLoc1 + yEng1) / 2, color: "#8a2e0e", text: `② 螺纹 ${des} · 旋合 ${t(eng)}` },
+    { fx: xDf, fy: (yEng1 + yUnd1) / 2, color: "#2f4a56", text: `③ 公退刀槽 ${t(und)} · df ø${t(df)}（内凹）` },
+    { fx: xDg, fy: (yEng1 + yUnd1) / 2, color: "#8a2e0e", text: `③′ 母退刀槽 ${t(und)} · Dg ø${t(dg)}（外扩）` },
+    { fx: xOutL, fy: (yUnd1 + ySh) / 2, color: "#c45c26", text: `④ 台肩装配间隙 ${t(gap)}` },
+  ];
+  const labels = labelRows
+    .map((row, i) => {
+      const ty = 44 + i * 26;
+      return `
+        <line x1="${row.fx}" y1="${row.fy}" x2="${labelX - 6}" y2="${ty - 4}" stroke="${row.color}" stroke-width="1" opacity="0.75"/>
+        <circle cx="${row.fx}" cy="${row.fy}" r="2" fill="${row.color}"/>
+        <text x="${labelX}" y="${ty}" fill="${row.color}" font-size="12" font-weight="800">${row.text}</text>`;
+    })
+    .join("");
+
+  return `
+  <g transform="translate(${x0},${y0})">
+    <rect width="620" height="228" rx="8" fill="#fff" stroke="#2f4a56"/>
+    <text x="12" y="18" fill="#2f4a56" font-size="12" font-weight="800">接头剖面放大 · ${des} · 公：止口→螺纹→外退刀槽(df)　母：止口→内螺纹→内退刀槽(Dg)</text>
+    <path d="${female}" fill="#c45c5c" fill-opacity="0.78" stroke="#2f4a56"/>
+    <path d="${male}" fill="#8a6bb8" fill-opacity="0.88" stroke="#2f4a56"/>
+    <path d="M ${xMaj} ${yEng1} L ${xDf} ${yEng1} L ${xDf} ${yUnd1} L ${xMaj} ${yUnd1} Z" fill="#2f4a56" fill-opacity="0.4" stroke="#2f4a56"/>
+    <path d="M ${xMaj} ${yEng1} L ${xDg} ${yEng1} L ${xDg} ${yUnd1} L ${xMaj} ${yUnd1} Z" fill="#8a2e0e" fill-opacity="0.22" stroke="#8a2e0e"/>
+    ${extThreadZig(xMaj, xMin, yLoc1, yEng1)}
+    <path d="M ${xCone - 10} 22 L ${xCone - 10} ${ySh + 44} L ${xCone} ${ySh + 44} L ${xCone} 22 Z" fill="#3d9b5f" stroke="#2f4a56"/>
+    <line x1="${xCone}" y1="22" x2="${xCone}" y2="${ySh + 44}" stroke="#e67e22" stroke-width="2"/>
+    ${labels}
+    <text x="${labelX}" y="210" fill="#5c6b64" font-size="10">${formula} · 退刀槽为牙根小矩形槽</text>
+  </g>`;
+}
+
+const renderAssembledConeDiagram = renderConeMoldDiagram;
+
+
+const $ = (id) => document.getElementById(id);
+let last = null;
+
+function num(id, fallback) {
+  const v = Number($(id).value);
+  return Number.isFinite(v) ? v : fallback;
+}
+
+function fillSegTable(sleeves) {
+  $("segTable").innerHTML = sleeves
+    .map((s) => {
+      let note = s.kindNote || "—";
+      if (s.topFaceOffset != null) note = `含上余量 ${s.topFaceOffset}；${note}`;
+      else if (s.bottomFaceOffset != null) note = `含下余量 ${s.bottomFaceOffset}；${note}`;
+      const part = s.partLength != null ? s.partLength : s.length;
+      const male = s.maleEndLen ? `（体${s.length}+公${s.maleEndLen}）` : "（无公扣）";
+      return `<tr>
+        <th scope="row">套${s.index}</th>
+        <td>ø${s.coneAtTop}→ø${s.coneAtBot}（需≥${s.coneNeed}）</td>
+        <td>${s.pipeLabel || `ø${s.pipeNom}`}</td>
+        <td><strong>ø${s.outerOd}</strong></td>
+        <td><strong>${part} mm</strong> ${male}</td>
+        <td>${s.kind}</td>
+        <td>${s.wall} mm</td>
+        <td>${note}</td>
+      </tr>`;
+    })
+    .join("");
+}
+
+function fillJointTable(joints) {
+  $("jointTable").innerHTML = joints
+    .map((j) => {
+      if (!j.ok) return `<tr><th>${j.index || "—"}</th><td colspan="6">${j.error}</td></tr>`;
+      const stack = (j.jointStack || []).map((x) => `${x.name}${x.h}`).join("+");
+      return `<tr>
+        <th scope="row">${j.index}</th>
+        <td>套外ø${j.fromOd} → ø${j.toOd}</td>
+        <td>对接内径 ø${Number(j.coneDia).toFixed(3)}</td>
+        <td>${stack}</td>
+        <td><strong>${j.designation}</strong></td>
+        <td>${j.crest.external} / ${j.crest.internal}</td>
+        <td>≥ ${j.minFemaleWall ?? "—"} mm</td>
+      </tr>`;
+    })
+    .join("");
+}
+
+function renderSchema(sleeves, cone, r) {
+  const pu = r.pu || {};
+  const k = r.scale?.factor ?? 1;
+  $("schema").innerHTML = `
+    <div class="seg"><strong>聚氨酯</strong><span>ø${pu.topDia}→ø${pu.bottomDia}<br/>锥高 ${pu.coneHeight} mm</span></div>
+    <div class="arrow">×${k}</div>
+    <div class="seg"><strong>模具内锥</strong><span>ø${cone.topDia}→ø${cone.bottomDia}<br/>高 ${cone.height} mm</span></div>
+    <div class="arrow">+</div>
+    ${sleeves
+      .map(
+        (s, i) =>
+          `<div class="seg"><strong>外套${s.index}</strong><span>${s.pipeLabel || "ø" + s.outerOd}<br/>总高${s.partLength ?? s.length}mm · ${s.kind}</span></div>${
+            i < sleeves.length - 1 ? `<div class="arrow">↕</div>` : ""
+          }`
+      )
+      .join("")}
+  `;
+}
+
+function renderJointCards(joints) {
+  $("jointCards").innerHTML = joints
+    .filter((j) => j.ok && j.maleCard && j.femaleCard)
+    .map((j) => {
+      const maleRows = j.maleCard.rows.map(([k, v]) => `<tr><th scope="row">${k}</th><td>${v}</td></tr>`).join("");
+      const femaleRows = j.femaleCard.rows.map(([k, v]) => `<tr><th scope="row">${k}</th><td>${v}</td></tr>`).join("");
+      const stack = (j.jointStack || []).map((x) => `${x.name}${x.h}`).join(" + ");
+      const locNote = j.locatorDim
+        ? `安装止口 ${j.locatorDim.height}（壁${j.locatorDim.wall}）· ${j.locatorDim.formula || ""}`
+        : "";
+      return `<article class="card joint-block">
+        <h4>接头 ${j.index} · ${j.designation}</h4>
+        <p class="muted" style="margin:0 0 10px">轴向：${stack}。${locNote} ${j.checkMessage}</p>
+        <div class="card-pair">
+          <div><h3 style="margin-top:0">公端（下套）</h3><table class="data"><tbody>${maleRows}</tbody></table></div>
+          <div><h3 style="margin-top:0">母端（上套）</h3><table class="data"><tbody>${femaleRows}</tbody></table></div>
+        </div>
+      </article>`;
+    })
+    .join("");
+}
+
+function updateScaleHint() {
+  const tip = scalePuToMold(
+    {
+      topDia: num("bigOd", CONE_MOLD_DEFAULTS.puTopDia),
+      bottomDia: num("smallOd", CONE_MOLD_DEFAULTS.puBottomDia),
+      coneHeight: num("puConeHeight", CONE_MOLD_DEFAULTS.puConeHeight),
+    },
+    num("scaleFactor", CONE_MOLD_DEFAULTS.scaleFactor),
+    num("topAllowance", CONE_MOLD_DEFAULTS.topAllowance),
+    num("bottomAllowance", CONE_MOLD_DEFAULTS.bottomAllowance)
+  );
+  if (!tip.ok) {
+    $("scaleHint").textContent = tip.error;
+    return;
+  }
+  const m = tip.mold;
+  $("scaleHint").textContent =
+    `模具内锥 ø${m.topDia.toFixed(3)}→ø${m.bottomDia.toFixed(3)} · 锥段 ${m.coneHeight.toFixed(3)} · 总高 ${m.totalHeight.toFixed(3)}` +
+    `（上余量${m.topAllowance}+锥段+下余量${m.bottomAllowance}；约缩水 ${tip.shrinkagePct}%）`;
+}
+
+function renderScalePresets() {
+  const box = $("scalePresets");
+  if (!box) return;
+  box.innerHTML = SCALE_FACTOR_PRESETS.map((p) => {
+    const rec = p.recommend || p.value === RECOMMENDED_SCALE_FACTOR ? " · 推荐" : "";
+    return `<button type="button" class="btn ghost" data-scale="${p.value}" title="${p.note}${rec}" style="padding:4px 10px;font-size:12px">${p.label}${p.recommend ? "★" : ""}</button>`;
+  }).join("");
+  box.querySelectorAll("[data-scale]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      $("scaleFactor").value = Number(btn.getAttribute("data-scale")).toFixed(3);
+      run();
+    });
+  });
+}
+
+function run() {
+  updateScaleHint();
+  const midRaw = $("midOds").value.trim();
+  let preferredOuterOds;
+  if (midRaw) {
+    const ods = midRaw
+      .split(/[,，\s]+/)
+      .map((x) => Number(x))
+      .filter((x) => Number.isFinite(x) && x > 0);
+    if (ods.length) preferredOuterOds = ods;
+  }
+
+  const segRaw = $("segmentCount").value.trim();
+  const r = designConeMold({
+    puTopDia: num("bigOd", CONE_MOLD_DEFAULTS.puTopDia),
+    puBottomDia: num("smallOd", CONE_MOLD_DEFAULTS.puBottomDia),
+    puConeHeight: num("puConeHeight", CONE_MOLD_DEFAULTS.puConeHeight),
+    scaleFactor: num("scaleFactor", CONE_MOLD_DEFAULTS.scaleFactor),
+    topAllowance: num("topAllowance", CONE_MOLD_DEFAULTS.topAllowance),
+    bottomAllowance: num("bottomAllowance", CONE_MOLD_DEFAULTS.bottomAllowance),
+    standardLen: num("standardLen", CONE_MOLD_DEFAULTS.standardLen),
+    wall: num("wall", CONE_MOLD_DEFAULTS.wall),
+    segmentCount: segRaw === "" ? undefined : Number(segRaw),
+    preferredOuterOds,
+    roundThread: false,
+  });
+
+  if (!r.ok) {
+    last = null;
+    $("status").textContent = r.error;
+    $("status").className = "status error";
+    $("warnBox").classList.remove("show");
+    $("assyDiagram").innerHTML = `<p class="muted">无法绘图：${r.error}</p>`;
+    $("summaryLine").textContent = "";
+    return;
+  }
+
+  last = r;
+  $("status").textContent =
+    `已生成：PU×${r.scale.factor} → 模具总高 ${r.summary.totalHeight}，内锥 ${r.summary.coneHeight}，外套 ${r.segmentCount} 节 / 接头 ${r.summary.jointCount}`;
+  $("status").className = "status ok";
+  $("summaryLine").textContent =
+    `聚氨酯 ø${r.pu.topDia}→ø${r.pu.bottomDia} · 锥高 ${r.pu.coneHeight} → ×${r.scale.factor} → ` +
+    `模具 ø${r.summary.coneTopDia}→ø${r.summary.coneBottomDia} · 总高 ${r.summary.totalHeight}` +
+    `（上${r.input.topAllowance}+锥${r.summary.coneHeight}+下${r.input.bottomAllowance}）· ${r.summary.scaleFormula}`;
+  $("assyDiagram").innerHTML = renderAssembledConeDiagram(r);
+  renderSchema(r.sleeves, r.cone, r);
+  fillSegTable(r.sleeves);
+  fillJointTable(r.joints);
+  renderJointCards(r.joints);
+
+  const warns = r.joints.filter((j) => j.ok && j.minFemaleWall != null).map((j) => `接头${j.index}≥${j.minFemaleWall}mm`);
+  if (warns.length) {
+    $("warnBox").textContent = "外套局部需加厚：" + warns.join("；");
+    $("warnBox").classList.add("show");
+  } else $("warnBox").classList.remove("show");
+}
+
+async function copy() {
+  if (!last) {
+    $("status").textContent = "请先生成";
+    $("status").className = "status error";
+    return;
+  }
+  const nl = String.fromCharCode(10);
+  const tab = String.fromCharCode(9);
+  const lines = [
+    `聚氨酯ø${last.pu.topDia}→${last.pu.bottomDia}×${last.pu.coneHeight} ×${last.scale.factor} → 模具总高${last.summary.totalHeight} 锥ø${last.summary.coneTopDia}→${last.summary.coneBottomDia}`,
+    ...last.sleeves.map((s) => {
+      const pl = s.partLength ?? s.length;
+      const male = s.maleEndLen ? `公${s.maleEndLen}` : "无公";
+      return `套${s.index}${tab}外${s.outerOd}${tab}总高${pl}${tab}${male}${tab}锥${s.coneAtTop}→${s.coneAtBot}`;
+    }),
+    ...last.joints.filter((j) => j.ok).map((j) => `接头${j.index}${tab}${j.designation}${tab}对接内径${Number(j.coneDia).toFixed(3)}`),
+  ];
+  const text = lines.join(nl);
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand("copy");
+    document.body.removeChild(ta);
+  }
+  $("status").textContent = "已复制";
+  $("status").className = "status ok";
+}
+
+$("calcBtn").addEventListener("click", run);
+$("copyBtn").addEventListener("click", copy);
+[
+  "bigOd",
+  "smallOd",
+  "puConeHeight",
+  "scaleFactor",
+  "topAllowance",
+  "bottomAllowance",
+  "standardLen",
+  "wall",
+  "segmentCount",
+  "midOds",
+].forEach((id) => {
+  const el = $(id);
+  if (!el) return;
+  el.addEventListener("change", run);
+  el.addEventListener("input", () => {
+    if (id === "scaleFactor" || id === "bigOd" || id === "smallOd" || id === "puConeHeight" || id === "topAllowance" || id === "bottomAllowance") {
+      updateScaleHint();
+    }
+  });
+  el.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      run();
+    }
+  });
+});
+
+renderScalePresets();
+run();
+
+</script>
+</body>
+</html>
