@@ -13,16 +13,7 @@ const { designConeMold } = await import(pathToFileURL(path.join(dir, "cone-mold-
 const { renderAssembledConeDiagram } = await import(
   pathToFileURL(path.join(dir, "cone-mold-diagram.js")).href
 );
-const defaultSvg = renderAssembledConeDiagram(
-  designConeMold({
-    bigOd: 219,
-    smallOd: 108,
-    moldHeight: 930,
-    topAllowance: 45,
-    bottomAllowance: 5,
-    standardLen: 210,
-  })
-);
+const defaultSvg = renderAssembledConeDiagram(designConeMold({}));
 
 let html = read("cone-mold.html").replace("<!--DEFAULT_ASSY_SVG-->", defaultSvg);
 const css = read("thread-calc.css");
