@@ -8,7 +8,8 @@
 /** @typedef {{ D1: number, t1: number, D2: number, t2: number }} PipeEndInput */
 
 export const PIPE_END_CONST = {
-  locatorLen: 10, // 定位止口 mm
+  /** @deprecated 仅作展示参考；实际止口用 autoLocatorLen() 按退刀槽+旋合自动算 */
+  locatorLen: 10,
   pitch: 2, // 螺距 P mm
   turns: 6, // 旋合圈数
   engageLen: 12, // 6×P
@@ -21,10 +22,34 @@ export const PIPE_END_CONST = {
 };
 
 /** GB/T 3 退刀槽（P=2 常用） */
-const UNDERCUT_P2 = {
+export const UNDERCUT_P2 = {
   external: { g1: 4.0, g2: 3.0, g3: 6.0, k: 3.0, r: 0.8 },
   internal: { g1: 4.0, g2: 3.0, g3: 6.0, m: 3.0, r: 0.8 },
 };
+
+/** GB/T 3 退刀槽宽度：normal→g1 / short→g2 / long→g3 */
+export function undercutWidthP2(grooveKind = "normal", side = "external") {
+  const tab = UNDERCUT_P2[side] || UNDERCUT_P2.external;
+  const key = grooveKind === "short" ? "g2" : grooveKind === "long" ? "g3" : "g1";
+  return tab[key];
+}
+
+/**
+ * 安装/定位止口轴向高度（自动，不固定 10）
+ * 规则：止口 = 退刀槽宽 + ½旋合长，再夹在 [4×P, 旋合长] 内并圆整到 1mm。
+ * 依据：退刀后仍保留完整导向；导向段约半个有效旋合；不超过旋合长以免头重。
+ * 例 P=2、旋合12、normal g=4 → 4+6=10；short g=3 → 9；long g=6 → 12。
+ */
+export function autoLocatorLen(opt = {}) {
+  const P = Number(opt.pitch ?? PIPE_END_CONST.pitch);
+  const turns = Number(opt.turns ?? PIPE_END_CONST.turns);
+  const engage = Number(opt.engageLen ?? turns * P);
+  const g = undercutWidthP2(opt.grooveKind || "normal", "external");
+  const raw = g + engage / 2;
+  const lo = 4 * P;
+  const hi = engage;
+  return Math.round(Math.min(hi, Math.max(lo, raw)));
+}
 
 function round3(n) {
   return Math.round(n * 1000) / 1000;
@@ -165,13 +190,15 @@ export function computePipeEndThread(input, opt = {}) {
   const intGrooveW = UNDERCUT_P2.internal[widthKey];
   const extGrooveDf = round3(majorDia - UNDERCUT_P2.external.k);
   const intGrooveDg = round3(majorDia + UNDERCUT_P2.internal.m);
+  const locatorLen = autoLocatorLen({
+    pitch: P,
+    turns: PIPE_END_CONST.turns,
+    engageLen: PIPE_END_CONST.engageLen,
+    grooveKind,
+  });
 
-  const maleEndLen = round3(
-    PIPE_END_CONST.locatorLen + PIPE_END_CONST.engageLen + extGrooveW
-  );
-  const femaleEndLen = round3(
-    PIPE_END_CONST.locatorLen + PIPE_END_CONST.engageLen + intGrooveW
-  );
+  const maleEndLen = round3(locatorLen + PIPE_END_CONST.engageLen + extGrooveW);
+  const femaleEndLen = round3(locatorLen + PIPE_END_CONST.engageLen + intGrooveW);
 
   const fitInBody =
     maleEndLen <= PIPE_END_CONST.bodyTotalLen &&
@@ -251,7 +278,7 @@ export function computePipeEndThread(input, opt = {}) {
       message: checkMessage,
     },
     maleEnd: {
-      locator: PIPE_END_CONST.locatorLen,
+      locator: locatorLen,
       thread: PIPE_END_CONST.engageLen,
       undercutWidth: extGrooveW,
       undercutDf: extGrooveDf,
@@ -259,7 +286,7 @@ export function computePipeEndThread(input, opt = {}) {
       total: maleEndLen,
     },
     femaleEnd: {
-      locator: PIPE_END_CONST.locatorLen,
+      locator: locatorLen,
       thread: PIPE_END_CONST.engageLen,
       undercutWidth: intGrooveW,
       undercutDg: intGrooveDg,
@@ -269,7 +296,7 @@ export function computePipeEndThread(input, opt = {}) {
     bodyTotalLen: PIPE_END_CONST.bodyTotalLen,
     fitInBody,
     assemblyNote:
-      "装配时公头定位止口先插入母扣止口导向，再旋入实现 12mm 完全啮合；退刀槽供车削退刀。工况：静止装配、无载荷、仅定位锁紧。",
+      `装配时公头定位止口（自动 ${locatorLen}mm）先插入母扣止口导向，再旋入实现 ${PIPE_END_CONST.engageLen}mm 完全啮合；退刀槽供车削退刀。工况：静止装配、无载荷、仅定位锁紧。`,
   };
 }
 
@@ -342,8 +369,13 @@ export function computeThreadEndCards(designationRaw, opt = {}) {
   const undercutDf = round3(majorDia - UNDERCUT_P2.external.k);
   const undercutDg = round3(majorDia + UNDERCUT_P2.internal.m);
 
-  const locator = PIPE_END_CONST.locatorLen;
   const engage = PIPE_END_CONST.engageLen;
+  const locator = autoLocatorLen({
+    pitch: P,
+    turns: PIPE_END_CONST.turns,
+    engageLen: engage,
+    grooveKind,
+  });
   const maleTotal = round3(locator + engage + extGrooveW);
   const femaleTotal = round3(locator + engage + intGrooveW);
 

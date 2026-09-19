@@ -4,10 +4,16 @@
  * - 内件：连续外锥（绿）——上口/下口为锥面口径
  * - 外套：分段套筒套在锥上（红/青/紫…），节间止口嵌套
  * - 案例默认：总高 730，锥段 680，上 45，下 5，ø194→ø108，节长 210
- * - 接头细节默认：12（旋合）+ 1（间隙）+ 10（止口）+ 1（间隙）
+ * - 接头细节：旋合=圈数×P；止口=退刀槽宽+½旋合（自动，不固定10）；间隙默认1+1
  */
 
-import { computePipeEndThread, PIPE_END_CONST, computeThreadEndCards } from "./pipe-end-math.js";
+import {
+  computePipeEndThread,
+  PIPE_END_CONST,
+  computeThreadEndCards,
+  autoLocatorLen,
+  undercutWidthP2,
+} from "./pipe-end-math.js";
 
 /**
  * 管子选型表（用户手写：名义ø / 内径 / 外径）
@@ -53,13 +59,58 @@ export const PIPE_SIZE_TABLE = [
 
 export const STD_PIPE_ODS = [...new Set(PIPE_SIZE_TABLE.map((x) => x.od))].sort((a, b) => a - b);
 
-/** 接头轴向细节（自上而下） */
-export const JOINT_STACK_DEFAULT = [
-  { key: "engage", name: "旋合", h: 12 },
-  { key: "gapA", name: "间隙", h: 1 },
-  { key: "locator", name: "止口", h: 10 },
-  { key: "gapB", name: "间隙", h: 1 },
-];
+/**
+ * 按螺距 / 旋合 / 退刀槽自动生成接头轴向栈（止口高度不写死）
+ * 止口 = autoLocatorLen：退刀槽宽 + ½旋合长，夹在 [4P, 旋合长]
+ */
+export function buildJointStack(opt = {}) {
+  const P = Number(opt.pitch ?? PIPE_END_CONST.pitch);
+  const turns = Number(opt.turns ?? PIPE_END_CONST.turns);
+  const engage = Number(opt.engageLen ?? turns * P);
+  const gap = Number(opt.gap ?? 1);
+  const grooveKind = opt.grooveKind || "normal";
+  const locator = autoLocatorLen({ pitch: P, turns, engageLen: engage, grooveKind });
+  const undercut = undercutWidthP2(grooveKind, "external");
+  return {
+    stack: [
+      { key: "engage", name: "旋合", h: engage },
+      { key: "gapA", name: "间隙", h: gap },
+      { key: "locator", name: "止口", h: locator },
+      { key: "gapB", name: "间隙", h: gap },
+    ],
+    engage,
+    locator,
+    gap,
+    undercut,
+    grooveKind,
+    pitch: P,
+    formula: `止口=${undercut}+${engage}/2 → ${locator}（退刀槽+½旋合，夹[${4 * P},${engage}]）`,
+  };
+}
+
+/** 默认栈（normal 退刀槽）；实际设计时仍会再算一遍 */
+export const JOINT_STACK_DEFAULT = buildJointStack().stack;
+
+/**
+ * 安装止口径向尺寸
+ * - 轴向高度：见 autoLocatorLen / buildJointStack（随螺纹与退刀槽变）
+ * - 径向壁 4～8：随上下节外径差取
+ * - 径向间隙 0.2：装配导向间隙（直径方向 0.4）
+ */
+export const LOCATOR_DIM = {
+  wallMin: 4,
+  wallMax: 8,
+  radialClearance: 0.2,
+};
+
+/** 由上下外套外径推止口径向壁厚 */
+export function locatorWallFromOds(upperOd, lowerOd) {
+  const step = (Number(upperOd) - Number(lowerOd)) / 2;
+  if (Number.isFinite(step) && step > 0) {
+    return round3(Math.min(LOCATOR_DIM.wallMax, Math.max(LOCATOR_DIM.wallMin, step)));
+  }
+  return LOCATOR_DIM.wallMin;
+}
 
 export const CONE_MOLD_DEFAULTS = {
   coneTopDia: 194,
@@ -178,8 +229,18 @@ export function designConeMold(input = {}) {
   const standardLen = Number(input.standardLen ?? CONE_MOLD_DEFAULTS.standardLen);
   const wall = Number(input.wall ?? CONE_MOLD_DEFAULTS.wall);
   const roundThread = input.roundThread !== false;
-  const jointStack = input.jointStack || JOINT_STACK_DEFAULT;
+  const grooveKind = input.grooveKind || "normal";
+  const builtStack = buildJointStack({
+    pitch: PIPE_END_CONST.pitch,
+    turns: PIPE_END_CONST.turns,
+    engageLen: PIPE_END_CONST.engageLen,
+    grooveKind,
+    gap: input.jointGap ?? 1,
+  });
+  const jointStack = input.jointStack || builtStack.stack;
   const jointH = jointStackHeight(jointStack);
+  const locatorAuto = jointStack.find((x) => x.key === "locator")?.h ?? builtStack.locator;
+  const engageAuto = jointStack.find((x) => x.key === "engage")?.h ?? builtStack.engage;
 
   if (!(coneTopDia > coneBottomDia)) return { ok: false, error: "锥上口须大于锥下口" };
   if (!(totalHeight > topAllowance + bottomAllowance)) {
@@ -329,6 +390,14 @@ export function designConeMold(input = {}) {
     const check = computePipeEndThread({ D1, t1, D2, t2: minT2 || 50 }, { majorDia: major });
     const cards = computeThreadEndCards(`M${major}×${PIPE_END_CONST.pitch}`);
 
+    // 安装止口：轴向由螺纹/退刀槽自动；径向壁随外径台阶；母止口内径 = 下套外径 + 2×间隙
+    const locatorH = jointStack.find((x) => x.key === "locator")?.h ?? locatorAuto;
+    const locatorWall = locatorWallFromOds(D2, D1);
+    const locatorClear = LOCATOR_DIM.radialClearance;
+    const locatorMaleOd = D1;
+    const locatorFemaleId = round3(D1 + 2 * locatorClear);
+    const locatorFemaleOd = round3(locatorFemaleId + 2 * locatorWall);
+
     joints.push({
       ok: true,
       index: i + 1,
@@ -351,9 +420,21 @@ export function designConeMold(input = {}) {
       undercutDf: major - 3,
       undercutDg: major + 3,
       endStructure: jointH,
-      locator: jointStack.find((x) => x.key === "locator")?.h ?? 10,
+      locator: locatorH,
       engage: jointStack.find((x) => x.key === "engage")?.h ?? 12,
       gaps: jointStack.filter((x) => x.key.startsWith("gap")).map((x) => x.h),
+      locatorDim: {
+        height: locatorH,
+        wall: locatorWall,
+        radialClearance: locatorClear,
+        maleOd: locatorMaleOd,
+        femaleId: locatorFemaleId,
+        femaleOd: locatorFemaleOd,
+        undercut: builtStack.undercut,
+        grooveKind,
+        formula: builtStack.formula,
+        note: `安装止口 高${locatorH}（自动）· 壁${locatorWall} · 间隙${locatorClear}`,
+      },
       minFemaleWall: minT2,
       checkPass: !!minT2,
       checkMessage: minT2
@@ -408,10 +489,12 @@ export function designConeMold(input = {}) {
       jointStack,
       jointStackHeight: jointH,
       pitch: PIPE_END_CONST.pitch,
-      locator: 10,
-      engage: 12,
-      undercut: 4,
-      nestNote: "内锥连续 + 外套分段套装；接头 12+1+10+1",
+      locator: locatorAuto,
+      engage: engageAuto,
+      undercut: builtStack.undercut,
+      grooveKind,
+      locatorFormula: builtStack.formula,
+      nestNote: `内锥连续 + 外套分段套装；接头 ${jointStack.map((x) => x.h).join("+")}（止口自动）`,
     },
     alternatives: lengthPlan.alternatives,
   };

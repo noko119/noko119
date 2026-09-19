@@ -24,13 +24,24 @@ assert(r.sleeves[0].pipeNom === 194, `pipe0 nom ${r.sleeves[0].pipeNom}`);
 assert(r.sleeves[0].outerOd === 219, `pipe0 od ${r.sleeves[0].outerOd}`);
 assert(r.sleeves[0].pipeId === 200, "pipe0 id");
 assert(r.joints.every((j) => j.ok), "joints");
-assert(r.joints[0].jointStackHeight === 24, "12+1+10+1");
+const loc = r.summary.locator;
+const eng = r.summary.engage;
+const und = r.summary.undercut;
+assert(eng === 12, `engage ${eng}`);
+assert(und === 4, `undercut ${und}`);
+assert(loc === und + eng / 2, `locator auto ${loc} != ${und}+${eng}/2`);
+assert(r.joints[0].jointStackHeight === eng + 1 + loc + 1, `stackH ${r.joints[0].jointStackHeight}`);
+assert(r.joints[0].locatorDim?.formula?.includes("止口="), "locator formula");
 
 const svg = renderAssembledConeDiagram(r);
 assert(svg.includes("外径"), "od mark");
+assert(svg.includes(`止口 ${loc}`) || svg.includes(`止口${loc}`), "locator mark");
 assert(svg.includes("自动"), "auto mark");
 
 console.log("cone-mold smoke OK", {
   pipes: r.sleeves.map((s) => s.pipeLabel),
   threads: r.joints.map((j) => j.designation),
+  locator: loc,
+  stack: r.summary.jointStack.map((x) => x.h).join("+"),
+  formula: r.summary.locatorFormula,
 });

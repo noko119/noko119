@@ -69,9 +69,12 @@ function renderJointCards(joints) {
       const maleRows = j.maleCard.rows.map(([k, v]) => `<tr><th scope="row">${k}</th><td>${v}</td></tr>`).join("");
       const femaleRows = j.femaleCard.rows.map(([k, v]) => `<tr><th scope="row">${k}</th><td>${v}</td></tr>`).join("");
       const stack = (j.jointStack || []).map((x) => `${x.name}${x.h}`).join(" + ");
+      const locNote = j.locatorDim
+        ? `安装止口 ${j.locatorDim.height}（壁${j.locatorDim.wall}）· ${j.locatorDim.formula || ""}`
+        : "";
       return `<article class="card joint-block">
         <h4>接头 ${j.index} · ${j.designation}</h4>
-        <p class="muted" style="margin:0 0 10px">轴向：${stack}。${j.checkMessage}</p>
+        <p class="muted" style="margin:0 0 10px">轴向：${stack}。${locNote} ${j.checkMessage}</p>
         <div class="card-pair">
           <div><h3 style="margin-top:0">公端（下套）</h3><table class="data"><tbody>${maleRows}</tbody></table></div>
           <div><h3 style="margin-top:0">母端（上套）</h3><table class="data"><tbody>${femaleRows}</tbody></table></div>
