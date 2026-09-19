@@ -3,7 +3,8 @@
  *
  * - 内件：连续外锥（绿）——上口/下口为锥面口径
  * - 外套：分段套筒套在锥上（红/青/紫…），节间止口嵌套
- * - 案例默认：总高 730，锥段 680，上 45，下 5，ø194→ø108，节长 210
+ * - 案例默认：总高 730，锥段 680，上 45，下 5，ø194→ø108，标准节长 250
+ * - 分段：由下往上按标准节长铺；余段在顶；余段>标准长则继续自动分段
  * - 接头细节：旋合=圈数×P；止口=退刀槽宽+½旋合（自动，不固定10）；间隙默认1+1
  */
 
@@ -118,7 +119,7 @@ export const CONE_MOLD_DEFAULTS = {
   totalHeight: 730,
   topAllowance: 45,
   bottomAllowance: 5,
-  standardLen: 210,
+  standardLen: 250,
   wall: 20, // 仅作校核参考；外径以选型表为准
   pitch: 2,
 };
@@ -176,31 +177,75 @@ export function coneDiaAt(z, input) {
   return round3(d0 + (d1 - d0) * ((z - zCone0) / L));
 }
 
-export function planSegmentLengths(totalHeight, standardLen = 210, minSmall = 80, maxSmall = 450) {
+/**
+ * 由下往上按标准节长分段：
+ * - 自下连续铺标准长 S，直到剩余 ≤ S
+ * - 剩余放在最上节；若剩余 > S（不应出现）则继续拆
+ * - 总高恰为 S 的整数倍时，全部为标准节
+ */
+export function planSegmentLengths(totalHeight, standardLen = 250, minTop = 1) {
   const H = Number(totalHeight);
   const S = Number(standardLen);
   if (!(H > 0) || !(S > 0)) return { ok: false, error: "总高与标准节长须大于 0" };
-  const candidates = [];
-  for (let k = 1; k <= 12; k++) {
-    const smallLen = round3(H - k * S);
-    if (smallLen <= 0) break;
-    const inPrefer = smallLen >= 150 && smallLen <= 310;
-    const inAllow = smallLen >= minSmall && smallLen <= maxSmall;
-    if (!inAllow) continue;
-    candidates.push({
-      segmentCount: k + 1,
-      largeCount: k,
-      standardLen: S,
-      smallLen,
-      inPrefer,
-      score: inPrefer ? Math.abs(smallLen - 210) : 100 + Math.abs(smallLen - 210) + k,
-    });
+
+  // 从下往上：先铺满标准节，余量 ≤ S 留在顶部
+  let rem = round3(H);
+  let standardCount = 0;
+  while (rem > S + 1e-9) {
+    standardCount += 1;
+    rem = round3(rem - S);
+    if (standardCount > 40) {
+      return { ok: false, error: `总高 ${H} 按标准长 ${S} 分段过多` };
+    }
   }
-  if (!candidates.length) {
-    return { ok: false, error: `总高 ${H} 无法用大节 ${S} + 小节非标凑齐` };
+  const topLen = rem; // 0 < topLen ≤ S，或恰好整除时 topLen=0 表示无单独顶节
+  const lengths =
+    topLen > 1e-9
+      ? [topLen, ...Array.from({ length: standardCount }, () => S)]
+      : Array.from({ length: standardCount }, () => S);
+
+  if (!lengths.length) {
+    return { ok: false, error: `总高 ${H} 过小` };
   }
-  candidates.sort((a, b) => a.score - b.score || a.segmentCount - b.segmentCount);
-  return { ok: true, plan: candidates[0], alternatives: candidates.slice(0, 6) };
+  if (topLen > 1e-9 && topLen < minTop) {
+    return { ok: false, error: `顶部余段 ${topLen} 过短（标准长 ${S}）` };
+  }
+
+  const plan = {
+    segmentCount: lengths.length,
+    largeCount: standardCount,
+    standardLen: S,
+    topLen: topLen > 1e-9 ? topLen : 0,
+    smallLen: topLen > 1e-9 ? topLen : S, // 兼容旧字段：非标/顶节长度
+    fromBottom: true,
+    lengths,
+    inPrefer: topLen <= 1e-9 || (topLen >= 80 && topLen <= S),
+    score: 0,
+  };
+
+  // 备选：少铺一节标准、顶节变长（仅当顶节仍 ≤ 2S 时列出，供对照）
+  const alternatives = [plan];
+  if (standardCount >= 1) {
+    const altTop = round3(topLen + S);
+    if (altTop <= 2 * S + 1e-9) {
+      // 顶节若 > S，再自动拆成「顶余 + 一节标准」——与主方案等价，跳过
+      if (altTop <= S + 1e-9) {
+        alternatives.push({
+          segmentCount: standardCount,
+          largeCount: standardCount - 1,
+          standardLen: S,
+          topLen: altTop,
+          smallLen: altTop,
+          fromBottom: true,
+          lengths: [altTop, ...Array.from({ length: standardCount - 1 }, () => S)],
+          inPrefer: altTop >= 80,
+          score: 1,
+        });
+      }
+    }
+  }
+
+  return { ok: true, plan, alternatives: alternatives.slice(0, 6) };
 }
 
 export function minFemaleWall(D1, t1, D2, majorDia) {
@@ -253,25 +298,46 @@ export function designConeMold(input = {}) {
   const lengthPlan = planSegmentLengths(totalHeight, standardLen);
   if (!lengthPlan.ok) return lengthPlan;
 
-  let segmentCount = lengthPlan.plan.segmentCount;
-  if (input.segmentCount != null && Number(input.segmentCount) >= 2) {
+  let lengths = lengthPlan.plan.lengths.slice();
+  let segmentCount = lengths.length;
+
+  // 强制节数：仍由下往上铺标准节，顶节吃余量；顶节>标准长则自动再拆
+  if (input.segmentCount != null && Number(input.segmentCount) >= 1) {
     const forced = Number(input.segmentCount);
-    const smallLen = round3(totalHeight - (forced - 1) * standardLen);
-    if (smallLen <= 0) return { ok: false, error: `节数 ${forced} 过大` };
-    segmentCount = forced;
+    if (forced === 1) {
+      lengths = [round3(totalHeight)];
+      if (lengths[0] > standardLen + 1e-9) {
+        // 单节超过标准长 → 自动分段
+        const auto = planSegmentLengths(totalHeight, standardLen);
+        if (!auto.ok) return auto;
+        lengths = auto.plan.lengths.slice();
+      }
+    } else {
+      const bottomStd = forced - 1;
+      const topLen = round3(totalHeight - bottomStd * standardLen);
+      if (topLen <= 0) return { ok: false, error: `节数 ${forced} 过大（标准长 ${standardLen}）` };
+      if (topLen > standardLen + 1e-9) {
+        // 余段超过标准长 → 自动分段（忽略过小的强制节数）
+        const auto = planSegmentLengths(totalHeight, standardLen);
+        if (!auto.ok) return auto;
+        lengths = auto.plan.lengths.slice();
+      } else {
+        lengths = [topLen, ...Array.from({ length: bottomStd }, () => standardLen)];
+      }
+    }
+    segmentCount = lengths.length;
     lengthPlan.plan = {
-      segmentCount: forced,
-      largeCount: forced - 1,
+      segmentCount,
+      largeCount: lengths.filter((L, i) => i > 0 || Math.abs(L - standardLen) < 1e-9).length,
       standardLen,
-      smallLen,
-      inPrefer: smallLen >= 150 && smallLen <= 310,
+      topLen: lengths[0],
+      smallLen: lengths[0],
+      fromBottom: true,
+      lengths: lengths.slice(),
+      inPrefer: lengths[0] <= standardLen,
       score: 0,
     };
   }
-
-  const lengths = Array.from({ length: segmentCount }, (_, i) =>
-    i === segmentCount - 1 ? lengthPlan.plan.smallLen : standardLen
-  );
 
   const base = {
     coneTopDia,
@@ -306,11 +372,12 @@ export function designConeMold(input = {}) {
     const wallEff = round3((outerOd - coneNeed) / 2);
     const isFirst = i === 0;
     const isLast = i === segmentCount - 1;
+    const isStandard = Math.abs(length - standardLen) < 1e-9;
     return {
       index: i + 1,
       role: "sleeve",
       length,
-      kind: isLast ? "非标" : "标准",
+      kind: isStandard ? "标准" : "非标",
       z0,
       z1,
       coneAtTop,

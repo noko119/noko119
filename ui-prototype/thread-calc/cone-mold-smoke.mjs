@@ -19,7 +19,15 @@ assert(r.cone.topDia === 194 && r.cone.bottomDia === 108, "cone dia");
 assert(r.input.topAllowance === 45 && r.input.bottomAllowance === 5, "allow");
 assert(Math.abs(coneDiaAt(45, r.input) - 194) < 0.01, "dia at cone start");
 assert(Math.abs(coneDiaAt(725, r.input) - 108) < 0.01, "dia near bottom");
-assert(r.sleeves[0].length === 210, "first sleeve 210");
+assert(r.sleeves[0].length === 230, `first(top rem) ${r.sleeves[0].length}`);
+assert(r.sleeves[1].length === 250 && r.sleeves[2].length === 250, "bottom standards 250");
+assert(r.sleeves[0].kind === "非标" && r.sleeves[2].kind === "标准", "kinds bottom-up");
+assert(r.sleeves.map((s) => s.length).reduce((a, b) => a + b, 0) === 730, "sum lengths");
+// 余段>250 自动再拆：例如总高 780 → 顶 280 会拆成 30+250+250+250
+const r2 = designConeMold({ totalHeight: 780, standardLen: 250 });
+assert(r2.ok, r2.error);
+assert(r2.sleeves.every((s) => s.length <= 250 + 1e-9), `auto split ${r2.sleeves.map((s) => s.length)}`);
+assert(r2.sleeves[0].length === 30 && r2.sleeves.slice(1).every((s) => s.length === 250), "780 plan");
 assert(r.sleeves[0].pipeNom === 194, `pipe0 nom ${r.sleeves[0].pipeNom}`);
 assert(r.sleeves[0].outerOd === 219, `pipe0 od ${r.sleeves[0].outerOd}`);
 assert(r.sleeves[0].pipeId === 200, "pipe0 id");
