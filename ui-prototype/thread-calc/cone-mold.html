@@ -62,63 +62,63 @@
     <header class="hero">
       <p class="brand">CONE MOLD · <a href="./thread-card.html" style="color:inherit">端头表</a> · <a href="./pipe-end.html" style="color:inherit">接管计算</a> · <a href="./index.html" style="color:inherit">通用螺纹</a></p>
       <h1>锥管模具分段</h1>
-      <p class="lede">按<strong>内锥型腔</strong>分段：上口/下口是型腔口径；模具外圈嵌套（上外套 / 下公颈），内壁连续共锥。</p>
+      <p class="lede">按总装结构：<strong>绿色连续内锥</strong> + <strong>外套分段套装</strong>。默认案例 730 / ø194→ø108；参数可改。</p>
     </header>
 
     <section class="panel">
       <div class="const-bar">
-        <span>型腔内锥连续</span>
-        <span>大节标准长 210（含上口余量）</span>
-        <span>小节非标凑总高（含下口余量）</span>
-        <span>接头：止口嵌套 + P=2 螺纹</span>
+        <span>内锥连续贯穿</span>
+        <span>外套分段（大节 210）</span>
+        <span>接头 12+1+10+1</span>
+        <span>案例：730 = 45+680+5</span>
       </div>
 
       <div class="field-row five">
         <label class="field">
-          <span>型腔上口 / mm</span>
-          <input id="bigOd" type="number" min="1" step="any" value="219" />
+          <span>锥上口 ø / mm</span>
+          <input id="bigOd" type="number" min="1" step="any" value="194" />
         </label>
         <label class="field">
-          <span>型腔下口 / mm</span>
+          <span>锥下口 ø / mm</span>
           <input id="smallOd" type="number" min="1" step="any" value="108" />
         </label>
         <label class="field">
-          <span>模具总高 / mm</span>
-          <input id="moldHeight" type="number" min="1" step="any" value="930" />
+          <span>装配总高 / mm</span>
+          <input id="moldHeight" type="number" min="1" step="any" value="730" />
         </label>
         <label class="field">
-          <span>上口余量（计入大节）</span>
+          <span>上口余量</span>
           <input id="topAllowance" type="number" min="0" step="any" value="45" />
         </label>
         <label class="field">
-          <span>下口余量（计入小节）</span>
+          <span>下口余量</span>
           <input id="bottomAllowance" type="number" min="0" step="any" value="5" />
         </label>
       </div>
 
       <div class="field-row" style="margin-top:12px;grid-template-columns:1fr 1fr 1fr 1fr auto">
         <label class="field">
-          <span>标准节长 / mm</span>
+          <span>外套标准节长</span>
           <input id="standardLen" type="number" min="50" step="any" value="210" />
         </label>
         <label class="field">
-          <span>名义壁厚 / mm</span>
-          <input id="wall" type="number" min="1" step="any" value="25" />
+          <span>外套名义壁厚</span>
+          <input id="wall" type="number" min="1" step="any" value="20" />
         </label>
         <label class="field">
-          <span>强制节数（可空）</span>
+          <span>强制外套节数</span>
           <input id="segmentCount" type="number" min="2" step="1" placeholder="自动" />
         </label>
         <label class="field">
           <span>外圆序列（可选）</span>
-          <input id="midOds" type="text" placeholder="如 273,245,219,194" autocomplete="off" />
+          <input id="midOds" type="text" placeholder="如 245,219,194" autocomplete="off" />
         </label>
         <div class="actions" style="margin:0;align-self:end">
           <button type="button" class="btn primary" id="calcBtn">生成方案</button>
           <button type="button" class="btn ghost" id="copyBtn">复制</button>
         </div>
       </div>
-      <p class="hint" style="margin-top:10px">外圆按「型腔+2×壁厚」就近标准管坯；接头为上段外套止口坐在下段公颈上，螺纹圆整到 0/5。</p>
+      <p class="hint" style="margin-top:10px">锥段高 = 总高 − 上余量 − 下余量。外套套在锥上；节间螺纹按 12+1+10+1，规格圆整到 0/5。</p>
       <p class="status" id="status" role="status"></p>
       <div class="warn-box" id="warnBox"></div>
     </section>
@@ -139,7 +139,7 @@
         <h3>各节明细</h3>
         <table class="data">
           <thead>
-            <tr><th>节</th><th>型腔</th><th>外圆</th><th>长度</th><th>类型</th><th>壁厚</th><th>端头</th><th>余量说明</th></tr>
+            <tr><th>外套</th><th>贴锥径</th><th>外圆</th><th>长度</th><th>类型</th><th>壁厚</th><th>端头</th><th>余量</th></tr>
           </thead>
           <tbody id="segTable"></tbody>
         </table>
@@ -149,7 +149,7 @@
         <h3>螺纹接头</h3>
         <table class="data">
           <thead>
-            <tr><th>道</th><th>外套→公颈</th><th>接头处型腔</th><th>自动</th><th>圆整规格</th><th>牙顶外/内</th><th>外套局部壁厚</th></tr>
+            <tr><th>道</th><th>上套→下套</th><th>接头处锥径</th><th>轴向细节</th><th>螺纹</th><th>牙顶外/内</th><th>外套局部壁厚</th></tr>
           </thead>
           <tbody id="jointTable"></tbody>
         </table>

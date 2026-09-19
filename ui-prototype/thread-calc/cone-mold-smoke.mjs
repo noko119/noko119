@@ -1,7 +1,4 @@
-/**
- * 锥管模具（内锥嵌套）— 冒烟
- */
-import { designConeMold, cavityDiaAt, roundMajor05 } from "./cone-mold-math.js";
+import { designConeMold, coneDiaAt, roundMajor05 } from "./cone-mold-math.js";
 import { renderAssembledConeDiagram } from "./cone-mold-diagram.js";
 
 function assert(c, m) {
@@ -9,40 +6,26 @@ function assert(c, m) {
 }
 
 assert(roundMajor05(161) === 160, "round");
-assert(Math.abs(cavityDiaAt(0, 219, 108, 930) - 219) < 1e-9, "cav top");
-assert(Math.abs(cavityDiaAt(930, 219, 108, 930) - 108) < 1e-9, "cav bot");
 
-const r = designConeMold({
-  cavityTop: 219,
-  cavityBottom: 108,
-  moldHeight: 930,
-  topAllowance: 45,
-  bottomAllowance: 5,
-  standardLen: 210,
-  wall: 25,
-});
+const r = designConeMold({}); // 默认案例 730 / 194→108
 assert(r.ok, r.error);
-assert(r.model === "cavity-cone-nested", "model");
-assert(r.summary.moldHeight === 930, "H");
-assert(r.summary.faceToFace === 880, "face");
-assert(r.segments.length === 4, "n");
-assert(r.segments.map((s) => s.length).join(",") === "210,210,210,300", "lens");
-assert(r.segments[0].cavityTop === 219, "seg0 cav");
-assert(r.segments[3].cavityBottom === 108, "seg3 cav");
-// 外圆应大于型腔
-r.segments.forEach((s) => {
-  assert(s.outerOd > s.cavityTop, `outer ${s.outerOd} vs cav ${s.cavityTop}`);
-});
-assert(r.joints.every((j) => j.ok), "joints ok");
-assert(r.joints[0].nestStyle.includes("外套"), "nest style");
+assert(r.model === "inner-cone-outer-sleeves", "model");
+assert(r.summary.totalHeight === 730, `H ${r.summary.totalHeight}`);
+assert(r.summary.coneHeight === 680, `coneH ${r.summary.coneHeight}`);
+assert(r.cone.topDia === 194 && r.cone.bottomDia === 108, "cone dia");
+assert(r.input.topAllowance === 45 && r.input.bottomAllowance === 5, "allow");
+assert(Math.abs(coneDiaAt(45, r.input) - 194) < 0.01, "dia at cone start");
+assert(Math.abs(coneDiaAt(725, r.input) - 108) < 0.01, "dia near bottom");
+assert(r.sleeves[0].length === 210, "first sleeve 210");
+assert(r.joints.every((j) => j.ok), "joints");
+assert(r.joints[0].jointStackHeight === 24, "12+1+10+1");
 
 const svg = renderAssembledConeDiagram(r);
-assert(svg.includes("内锥"), "svg title");
-assert(svg.includes("接头细节"), "joint detail");
-assert(svg.includes("型腔上口"), "cav label");
+assert(svg.includes("内锥"), "svg");
+assert(svg.includes("接头细节"), "detail");
+assert(svg.includes("ø194") || svg.includes("194"), "194");
 
 console.log("cone-mold smoke OK", {
-  outers: r.segments.map((s) => s.outerOd),
+  sleeves: r.sleeves.map((s) => `${s.outerOd}×${s.length}`),
   threads: r.joints.map((j) => j.designation),
-  cavAtJoints: r.joints.map((j) => j.cavityAtJoint),
 });

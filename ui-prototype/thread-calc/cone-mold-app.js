@@ -9,16 +9,16 @@ function num(id, fallback) {
   return Number.isFinite(v) ? v : fallback;
 }
 
-function fillSegTable(segments) {
-  $("segTable").innerHTML = segments
+function fillSegTable(sleeves) {
+  $("segTable").innerHTML = sleeves
     .map((s) => {
-      const ends = [s.femaleSleeve ? "下母套" : "", s.maleNeck ? "上公颈" : ""].filter(Boolean).join("+") || "—";
+      const ends = [s.femaleSleeve ? "下搭接" : "", s.maleNeck ? "上承接" : ""].filter(Boolean).join("+") || "—";
       let note = "—";
-      if (s.topFaceOffset != null) note = `含上口余量 ${s.topFaceOffset}；面下 ${s.belowTopFace}`;
-      else if (s.bottomFaceOffset != null) note = `含下口余量 ${s.bottomFaceOffset}；面上 ${s.aboveBottomFace}`;
+      if (s.topFaceOffset != null) note = `含上余量 ${s.topFaceOffset}`;
+      else if (s.bottomFaceOffset != null) note = `含下余量 ${s.bottomFaceOffset}`;
       return `<tr>
-        <th scope="row">${s.index}</th>
-        <td>ø${s.cavityTop}→ø${s.cavityBottom}</td>
+        <th scope="row">套${s.index}</th>
+        <td>ø${s.coneAtTop}→ø${s.coneAtBot}</td>
         <td>ø${s.outerOd}</td>
         <td>${s.length} mm</td>
         <td>${s.kind}</td>
@@ -33,14 +33,13 @@ function fillSegTable(segments) {
 function fillJointTable(joints) {
   $("jointTable").innerHTML = joints
     .map((j) => {
-      if (!j.ok) {
-        return `<tr><th>${j.index || "—"}</th><td colspan="6">${j.error}</td></tr>`;
-      }
+      if (!j.ok) return `<tr><th>${j.index || "—"}</th><td colspan="6">${j.error}</td></tr>`;
+      const stack = (j.jointStack || []).map((x) => `${x.name}${x.h}`).join("+");
       return `<tr>
         <th scope="row">${j.index}</th>
-        <td>外ø${j.fromOd}套 → ø${j.toOd}颈</td>
-        <td>型腔 ø${j.cavityAtJoint}</td>
-        <td>${j.autoDesignation}</td>
+        <td>套外ø${j.fromOd} → ø${j.toOd}</td>
+        <td>锥 ø${j.coneDia}</td>
+        <td>${stack}</td>
         <td><strong>${j.designation}</strong></td>
         <td>${j.crest.external} / ${j.crest.internal}</td>
         <td>≥ ${j.minFemaleWall ?? "—"} mm</td>
@@ -49,36 +48,34 @@ function fillJointTable(joints) {
     .join("");
 }
 
-function renderSchema(segments) {
-  const parts = [];
-  segments.forEach((s, i) => {
-    parts.push(
-      `<div class="seg"><strong>§${s.index}</strong><span>型腔 ${s.cavityTop}→${s.cavityBottom}<br/>外圆 ø${s.outerOd} · ${s.length} mm · ${s.kind}</span></div>`
-    );
-    if (i < segments.length - 1) parts.push(`<div class="arrow">↕</div>`);
-  });
-  $("schema").innerHTML = parts.join("");
+function renderSchema(sleeves, cone) {
+  $("schema").innerHTML = `
+    <div class="seg"><strong>内锥</strong><span>ø${cone.topDia}→ø${cone.bottomDia}<br/>高 ${cone.height} mm</span></div>
+    <div class="arrow">+</div>
+    ${sleeves
+      .map(
+        (s, i) =>
+          `<div class="seg"><strong>外套${s.index}</strong><span>外ø${s.outerOd} · ${s.length}mm<br/>${s.kind}</span></div>${
+            i < sleeves.length - 1 ? `<div class="arrow">↕</div>` : ""
+          }`
+      )
+      .join("")}
+  `;
 }
 
 function renderJointCards(joints) {
-  const host = $("jointCards");
-  host.innerHTML = joints
+  $("jointCards").innerHTML = joints
     .filter((j) => j.ok && j.maleCard && j.femaleCard)
     .map((j) => {
       const maleRows = j.maleCard.rows.map(([k, v]) => `<tr><th scope="row">${k}</th><td>${v}</td></tr>`).join("");
       const femaleRows = j.femaleCard.rows.map(([k, v]) => `<tr><th scope="row">${k}</th><td>${v}</td></tr>`).join("");
+      const stack = (j.jointStack || []).map((x) => `${x.name}${x.h}`).join(" + ");
       return `<article class="card joint-block">
-        <h4>第 ${j.index} 道 · ${j.designation}（上外套 ← 下公颈，型腔 ø${j.cavityAtJoint}）</h4>
-        <p class="muted" style="margin:0 0 10px">${j.nestStyle}。${j.checkMessage}</p>
+        <h4>接头 ${j.index} · ${j.designation}</h4>
+        <p class="muted" style="margin:0 0 10px">轴向：${stack}。${j.checkMessage}</p>
         <div class="card-pair">
-          <div>
-            <h3 style="margin-top:0">公颈端头（下段）</h3>
-            <table class="data"><tbody>${maleRows}</tbody></table>
-          </div>
-          <div>
-            <h3 style="margin-top:0">外套内腔（上段）</h3>
-            <table class="data"><tbody>${femaleRows}</tbody></table>
-          </div>
+          <div><h3 style="margin-top:0">公端（下套）</h3><table class="data"><tbody>${maleRows}</tbody></table></div>
+          <div><h3 style="margin-top:0">母端（上套）</h3><table class="data"><tbody>${femaleRows}</tbody></table></div>
         </div>
       </article>`;
     })
@@ -87,16 +84,6 @@ function renderJointCards(joints) {
 
 function run() {
   const midRaw = $("midOds").value.trim();
-  const cavityTop = num("bigOd", CONE_MOLD_DEFAULTS.cavityTop);
-  const cavityBottom = num("smallOd", CONE_MOLD_DEFAULTS.cavityBottom);
-  const moldHeight = num("moldHeight", CONE_MOLD_DEFAULTS.moldHeight);
-  const topAllowance = num("topAllowance", CONE_MOLD_DEFAULTS.topAllowance);
-  const bottomAllowance = num("bottomAllowance", CONE_MOLD_DEFAULTS.bottomAllowance);
-  const standardLen = num("standardLen", CONE_MOLD_DEFAULTS.standardLen);
-  const wall = num("wall", CONE_MOLD_DEFAULTS.wall);
-  const segCountRaw = $("segmentCount").value.trim();
-  const segmentCount = segCountRaw === "" ? undefined : Number(segCountRaw);
-
   let preferredOuterOds;
   if (midRaw) {
     const ods = midRaw
@@ -106,15 +93,16 @@ function run() {
     if (ods.length) preferredOuterOds = ods;
   }
 
+  const segRaw = $("segmentCount").value.trim();
   const r = designConeMold({
-    cavityTop,
-    cavityBottom,
-    moldHeight,
-    topAllowance,
-    bottomAllowance,
-    standardLen,
-    wall,
-    segmentCount,
+    coneTopDia: num("bigOd", CONE_MOLD_DEFAULTS.coneTopDia),
+    coneBottomDia: num("smallOd", CONE_MOLD_DEFAULTS.coneBottomDia),
+    totalHeight: num("moldHeight", CONE_MOLD_DEFAULTS.totalHeight),
+    topAllowance: num("topAllowance", CONE_MOLD_DEFAULTS.topAllowance),
+    bottomAllowance: num("bottomAllowance", CONE_MOLD_DEFAULTS.bottomAllowance),
+    standardLen: num("standardLen", CONE_MOLD_DEFAULTS.standardLen),
+    wall: num("wall", CONE_MOLD_DEFAULTS.wall),
+    segmentCount: segRaw === "" ? undefined : Number(segRaw),
     preferredOuterOds,
     roundThread: true,
   });
@@ -130,47 +118,34 @@ function run() {
   }
 
   last = r;
-  $("status").textContent = `已生成 ${r.segmentCount} 节嵌套模具 / ${r.summary.jointCount} 道接头，总高 ${r.summary.moldHeight} mm`;
+  $("status").textContent = `案例已生成：总高 ${r.summary.totalHeight}，内锥 ${r.summary.coneHeight}，外套 ${r.segmentCount} 节 / 接头 ${r.summary.jointCount}`;
   $("status").className = "status ok";
-  $("summaryLine").textContent =
-    `型腔 ø${r.summary.cavityTop}→ø${r.summary.cavityBottom} · 总高 ${r.summary.moldHeight} · 面距 ${r.summary.faceToFace} · ${r.summary.nestNote}`;
+  $("summaryLine").textContent = `内锥 ø${r.summary.coneTopDia}→ø${r.summary.coneBottomDia} · 总高 ${r.summary.totalHeight}（上${r.input.topAllowance}+锥${r.summary.coneHeight}+下${r.input.bottomAllowance}）· ${r.summary.nestNote}`;
   $("assyDiagram").innerHTML = renderAssembledConeDiagram(r);
-  renderSchema(r.segments);
-  fillSegTable(r.segments);
+  renderSchema(r.sleeves, r.cone);
+  fillSegTable(r.sleeves);
   fillJointTable(r.joints);
   renderJointCards(r.joints);
 
-  const warns = r.joints
-    .filter((j) => j.ok && j.minFemaleWall != null)
-    .map((j) => `第${j.index}道外套局部 ≥${j.minFemaleWall}mm`);
+  const warns = r.joints.filter((j) => j.ok && j.minFemaleWall != null).map((j) => `接头${j.index}≥${j.minFemaleWall}mm`);
   if (warns.length) {
-    $("warnBox").textContent = "嵌套外套需局部加厚以保证螺纹实体：" + warns.join("；");
+    $("warnBox").textContent = "外套局部需加厚：" + warns.join("；");
     $("warnBox").classList.add("show");
-  } else {
-    $("warnBox").classList.remove("show");
-  }
+  } else $("warnBox").classList.remove("show");
 }
 
 async function copy() {
   if (!last) {
-    $("status").textContent = "请先生成方案";
+    $("status").textContent = "请先生成";
     $("status").className = "status error";
     return;
   }
   const nl = String.fromCharCode(10);
   const tab = String.fromCharCode(9);
   const lines = [
-    `锥管模具（内锥嵌套）型腔 ${last.summary.cavityTop}→${last.summary.cavityBottom} 总高 ${last.summary.moldHeight}`,
-    "各节",
-    ...last.segments.map(
-      (s) =>
-        `第${s.index}${tab}型腔${s.cavityTop}→${s.cavityBottom}${tab}外圆${s.outerOd}${tab}${s.length}${tab}${s.kind}`
-    ),
-    "",
-    "接头",
-    ...last.joints
-      .filter((j) => j.ok)
-      .map((j) => `第${j.index}${tab}${j.designation}${tab}型腔${j.cavityAtJoint}${tab}外套≥${j.minFemaleWall}`),
+    `内锥+外套 总高${last.summary.totalHeight} 锥ø${last.summary.coneTopDia}→${last.summary.coneBottomDia}`,
+    ...last.sleeves.map((s) => `套${s.index}${tab}外${s.outerOd}${tab}${s.length}${tab}锥${s.coneAtTop}→${s.coneAtBot}`),
+    ...last.joints.filter((j) => j.ok).map((j) => `接头${j.index}${tab}${j.designation}${tab}锥${j.coneDia}`),
   ];
   const text = lines.join(nl);
   try {
@@ -189,7 +164,7 @@ async function copy() {
 
 $("calcBtn").addEventListener("click", run);
 $("copyBtn").addEventListener("click", copy);
-["bigOd", "smallOd", "moldHeight", "topAllowance", "bottomAllowance", "standardLen", "segmentCount", "midOds", "wall"].forEach(
+["bigOd", "smallOd", "moldHeight", "topAllowance", "bottomAllowance", "standardLen", "wall", "segmentCount", "midOds"].forEach(
   (id) => {
     const el = $(id);
     if (!el) return;

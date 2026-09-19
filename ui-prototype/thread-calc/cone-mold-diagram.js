@@ -1,8 +1,6 @@
 /**
- * 锥管模具 — 组装后嵌套剖面示意图
- * - 竖直：上大口 / 下小口
- * - 内壁：连续共锥
- * - 外壁：分段台阶 + 上套下止口嵌套（接头细节）
+ * 组装示意图：绿色连续内锥 + 彩色外套分段
+ * 默认案例尺寸关系：总高730，锥段680，上45，下5，ø194→ø108
  */
 
 function t(n) {
@@ -10,7 +8,7 @@ function t(n) {
   return s.includes(".") ? s.replace(/\.?0+$/, "") : s;
 }
 
-function dimV(x, y1, y2, label, color = "#c45c26") {
+function dimV(x, y1, y2, label, color = "#2f4a56") {
   const mid = (y1 + y2) / 2;
   return `
     <line x1="${x}" y1="${y1}" x2="${x}" y2="${y2}" stroke="${color}" stroke-width="1"/>
@@ -20,199 +18,168 @@ function dimV(x, y1, y2, label, color = "#c45c26") {
   `;
 }
 
-const SEG_COLORS = ["#c45c5c", "#b8a06a", "#6a9ec9", "#5cbf6a", "#c49a6c", "#8a7bb8"];
+const SLEEVE_COLORS = ["#c45c5c", "#6ab0c9", "#8a6bb8", "#c49a6c", "#5cbf8a"];
 
-/**
- * @param {object} r designConeMold 成功返回值
- */
 export function renderConeMoldDiagram(r) {
-  if (!r?.ok || !r.segments?.length) return "";
+  if (!r?.ok || !r.sleeves?.length) return "";
 
-  const segs = r.segments;
+  const sleeves = r.sleeves;
+  const cone = r.cone;
   const joints = (r.joints || []).filter((j) => j.ok);
-  const Hmold = r.summary.moldHeight;
-  const topA = r.input.topAllowance ?? 0;
-  const botA = r.input.bottomAllowance ?? 0;
-  const nestH = r.summary.locator + r.summary.engage; // 止口+旋合示意重叠
-  const sleeveT = r.input.nestSleeve ?? 8;
+  const Htot = r.summary.totalHeight;
+  const topA = r.input.topAllowance;
+  const botA = r.input.bottomAllowance;
 
-  const W = 760;
-  const padT = 40;
-  const plotH = 480;
-  const axis = 400;
-  const scaleY = plotH / Hmold;
-  const maxOuter = Math.max(...segs.map((s) => s.outerOd));
-  const scaleR = Math.min(1.15, 150 / (maxOuter / 2));
+  const W = 780;
+  const padT = 44;
+  const plotH = 500;
+  const axis = 410;
+  const scaleY = plotH / Htot;
+  const maxOut = Math.max(...sleeves.map((s) => s.outerOd), cone.topDia);
+  const scaleR = Math.min(1.2, 155 / (maxOut / 2));
 
   const yAt = (z) => padT + z * scaleY;
-  const xR = (dia) => (dia / 2) * scaleR;
+  const xR = (d) => (d / 2) * scaleR;
 
-  // 连续内锥左右壁
-  const cavTop = r.input.cavityTop;
-  const cavBot = r.input.cavityBottom;
   const y0 = yAt(0);
-  const yH = yAt(Hmold);
-  const innerL = [
-    [axis - xR(cavTop), y0],
-    [axis - xR(cavBot), yH],
-  ];
-  const innerR = [
-    [axis + xR(cavTop), y0],
-    [axis + xR(cavBot), yH],
-  ];
+  const yH = yAt(Htot);
+  const yCone0 = yAt(cone.z0);
+  const yCone1 = yAt(cone.z1);
 
-  // 各节实体：左/右对称多边形（含下端外套唇 / 上端公颈台阶）
-  const bodies = segs
+  // —— 绿色内锥（外轮廓=锥面；内孔略小示意壁厚）——
+  const coneWall = Math.max(6, r.input.wall * 0.35);
+  const cTop = cone.topDia;
+  const cBot = cone.bottomDia;
+  const iTop = Math.max(cTop - 2 * coneWall, cBot * 0.5);
+  const iBot = Math.max(cBot - 2 * coneWall, 20);
+
+  const green = `
+    <path d="
+      M ${axis - xR(cTop)} ${yCone0}
+      L ${axis - xR(cBot)} ${yCone1}
+      L ${axis - xR(iBot)} ${yCone1}
+      L ${axis - xR(iTop)} ${yCone0}
+      Z" fill="#3d9b5f" stroke="#2f4a56" stroke-width="1.1"/>
+    <path d="
+      M ${axis + xR(cTop)} ${yCone0}
+      L ${axis + xR(cBot)} ${yCone1}
+      L ${axis + xR(iBot)} ${yCone1}
+      L ${axis + xR(iTop)} ${yCone0}
+      Z" fill="#3d9b5f" stroke="#2f4a56" stroke-width="1.1"/>
+    <line x1="${axis - xR(cTop)}" y1="${yCone0}" x2="${axis - xR(cBot)}" y2="${yCone1}"
+      stroke="#e67e22" stroke-width="2"/>
+    <line x1="${axis + xR(cTop)}" y1="${yCone0}" x2="${axis + xR(cBot)}" y2="${yCone1}"
+      stroke="#e67e22" stroke-width="2"/>
+  `;
+
+  // —— 外套分段（套在锥外）——
+  const sleevePaths = sleeves
     .map((s, i) => {
-      const color = SEG_COLORS[i % SEG_COLORS.length];
+      const color = SLEEVE_COLORS[i % SLEEVE_COLORS.length];
       const yA = yAt(s.z0);
       const yB = yAt(s.z1);
       const out = xR(s.outerOd);
-      const cavA = xR(s.cavityTop);
-      const cavB = xR(s.cavityBottom);
-
-      // 下端若有外套：唇伸入下一节 nestH
-      const hasSleeve = s.femaleSleeve && i < segs.length - 1;
-      const hasNeck = s.maleNeck && i > 0;
-      const nestPx = Math.min(nestH * scaleY, (yB - yA) * 0.35);
-      const sleeveIn = xR(sleeveT);
-
-      // 右侧轮廓点（顺时针，从左上内壁开始绕外）
-      // 简化为左右各一块 path
-      let rightOuter = [];
-      let leftOuter = [];
-
-      if (hasNeck) {
-        // 公颈：顶部缩进
-        const neckOut = out - sleeveIn;
-        rightOuter.push([axis + neckOut, yA], [axis + neckOut, yA + nestPx], [axis + out, yA + nestPx]);
-        leftOuter.push([axis - neckOut, yA], [axis - neckOut, yA + nestPx], [axis - out, yA + nestPx]);
-      } else {
-        rightOuter.push([axis + out, yA]);
-        leftOuter.push([axis - out, yA]);
+      const innA = xR(s.coneAtTop);
+      const innB = xR(s.coneAtBot);
+      // 右侧套筒截面
+      const right = `M ${axis + innA} ${yA} L ${axis + out} ${yA} L ${axis + out} ${yB} L ${axis + innB} ${yB} Z`;
+      const left = `M ${axis - innA} ${yA} L ${axis - out} ${yA} L ${axis - out} ${yB} L ${axis - innB} ${yB} Z`;
+      // 节间搭接唇示意
+      let lip = "";
+      if (s.femaleSleeve && i < sleeves.length - 1) {
+        const nest = Math.min(18, (yB - yA) * 0.2);
+        const lipIn = out - xR(6);
+        lip = `
+          <path d="M ${axis + lipIn} ${yB} L ${axis + out} ${yB} L ${axis + out} ${yB + nest} L ${axis + lipIn} ${yB + nest} Z"
+            fill="${color}" stroke="#2f4a56" stroke-width="1" opacity="0.95"/>
+          <path d="M ${axis - lipIn} ${yB} L ${axis - out} ${yB} L ${axis - out} ${yB + nest} L ${axis - lipIn} ${yB + nest} Z"
+            fill="${color}" stroke="#2f4a56" stroke-width="1" opacity="0.95"/>
+        `;
       }
-
-      if (hasSleeve) {
-        rightOuter.push([axis + out, yB], [axis + out, yB + nestPx], [axis + out - sleeveIn, yB + nestPx], [axis + out - sleeveIn, yB]);
-        leftOuter.push([axis - out, yB], [axis - out, yB + nestPx], [axis - (out - sleeveIn), yB + nestPx], [axis - (out - sleeveIn), yB]);
-      } else {
-        rightOuter.push([axis + out, yB]);
-        leftOuter.push([axis - out, yB]);
-      }
-
-      // 闭合：外轮廓 → 底部内壁 → 顶部内壁
-      const rightPath = [
-        ...rightOuter.map((p, idx) => (idx ? `L${p[0]},${p[1]}` : `M${p[0]},${p[1]}`)),
-        `L${axis + cavB},${yB}`,
-        `L${axis + cavA},${yA}`,
-        "Z",
-      ].join(" ");
-      const leftPath = [
-        ...leftOuter.map((p, idx) => (idx ? `L${p[0]},${p[1]}` : `M${p[0]},${p[1]}`)),
-        `L${axis - cavB},${yB}`,
-        `L${axis - cavA},${yA}`,
-        "Z",
-      ].join(" ");
-
       return `
-        <path d="${rightPath}" fill="${color}" fill-opacity="0.85" stroke="#2f4a56" stroke-width="1.2"/>
-        <path d="${leftPath}" fill="${color}" fill-opacity="0.85" stroke="#2f4a56" stroke-width="1.2"/>
-        <text x="${axis + out + 8}" y="${(yA + yB) / 2 + 4}" fill="#2f4a56" font-size="10" font-weight="700">§${s.index}</text>
+        <path d="${right}" fill="${color}" fill-opacity="0.72" stroke="#2f4a56" stroke-width="1.15"/>
+        <path d="${left}" fill="${color}" fill-opacity="0.72" stroke="#2f4a56" stroke-width="1.15"/>
+        ${lip}
+        <text x="${axis + out + 8}" y="${(yA + yB) / 2 + 4}" fill="#2f4a56" font-size="10" font-weight="700">套${s.index}</text>
       `;
     })
     .join("");
 
-  // 内锥强调线
-  const coneLines = `
-    <line x1="${innerL[0][0]}" y1="${innerL[0][1]}" x2="${innerL[1][0]}" y2="${innerL[1][1]}"
-      stroke="#e67e22" stroke-width="2.2"/>
-    <line x1="${innerR[0][0]}" y1="${innerR[0][1]}" x2="${innerR[1][0]}" y2="${innerR[1][1]}"
-      stroke="#e67e22" stroke-width="2.2"/>
-  `;
-
-  // 接头螺纹标注
+  // 接头标注
   const jointLabels = joints
     .map((j) => {
       const y = yAt(j.z);
-      return `<text x="${axis - xR(maxOuter) - 10}" y="${y + 3}" text-anchor="end"
-        fill="#1f6f5b" font-size="9" font-weight="700">${j.designation}</text>`;
+      const stack = (j.jointStack || []).map((x) => `${x.name}${x.h}`).join("+");
+      return `
+        <text x="24" y="${y - 2}" fill="#1f6f5b" font-size="9" font-weight="700">${j.designation}</text>
+        <text x="24" y="${y + 11}" fill="#5c6b64" font-size="8">${stack}</text>
+      `;
     })
     .join("");
 
   // 尺寸
-  let dims = dimV(70, y0, yH, `总高 ${t(Hmold)}`, "#2f4a56");
-  segs.forEach((s) => {
-    dims += dimV(100, yAt(s.z0), yAt(s.z1), `${t(s.length)}`, "#c45c26");
+  let dims = "";
+  dims += dimV(86, y0, yH, `总高 ${t(Htot)}`, "#2f4a56");
+  dims += dimV(118, yCone0, yCone1, `锥段 ${t(cone.height)}`, "#1f6f5b");
+  dims += dimV(150, y0, yCone0, `上 ${t(topA)}`, "#c45c26");
+  dims += dimV(150, yCone1, yH, `下 ${t(botA)}`, "#c45c26");
+  sleeves.forEach((s) => {
+    dims += dimV(182, yAt(s.z0), yAt(s.z1), `${t(s.length)}`, "#8a5a2a");
   });
-  if (topA > 0) dims += dimV(130, y0, yAt(topA), `上 ${t(topA)}`, "#1f6f5b");
-  if (botA > 0) dims += dimV(130, yAt(Hmold - botA), yH, `下 ${t(botA)}`, "#1f6f5b");
-  dims += dimV(48, yAt(topA), yAt(Hmold - botA), `面距 ${t(r.summary.faceToFace)}`, "#5c6b64");
 
-  // 型腔口径
-  const cavLabels = `
-    <text x="${axis}" y="${y0 - 10}" text-anchor="middle" fill="#e67e22" font-size="11" font-weight="800">型腔上口 ø${t(cavTop)}</text>
-    <text x="${axis}" y="${yH + 18}" text-anchor="middle" fill="#e67e22" font-size="11" font-weight="800">型腔下口 ø${t(cavBot)}</text>
-  `;
+  // 接头细节小图
+  const detail = renderJointDetail(520, yH - 120, joints[0]);
 
-  // 接头细节小图（右下）
-  const detail = renderJointDetailInset(520, yH - 110, joints[0]);
-
-  const legendY = yH + 36;
-  const legendItems = [
-    ...segs.map(
-      (s, i) =>
-        `§${s.index} 外圆ø${t(s.outerOd)} · 型腔 ${t(s.cavityTop)}→${t(s.cavityBottom)} · ${t(s.length)}mm（${s.kind}）`
-    ),
-    ...joints.map((j) => `接头${j.index} ${j.designation} @z=${t(j.z)} 型腔ø${t(j.cavityAtJoint)}`),
-    `橙线=连续内锥；外套止口嵌套（上母下公）`,
+  const legendY = yH + 34;
+  const items = [
+    `内锥（绿）ø${t(cone.topDia)} → ø${t(cone.bottomDia)} · 高 ${t(cone.height)}`,
+    ...sleeves.map((s) => `外套${s.index} 外ø${t(s.outerOd)} · ${t(s.length)}mm（${s.kind}）· 贴锥 ${t(s.coneAtTop)}→${t(s.coneAtBot)}`),
+    ...joints.map((j) => `接头${j.index} ${j.designation} @z=${t(j.z)} 锥径ø${t(j.coneDia)}`),
+    `橙线=锥面；外套套在锥上；接头默认 12+1+10+1`,
   ];
-  const legend = legendItems
+  const legend = items
     .map((label, i) => {
       const col = i % 2;
       const row = Math.floor(i / 2);
-      return `<text x="${24 + col * 360}" y="${legendY + row * 15}" fill="#5c6b64" font-size="9" font-weight="600">${label}</text>`;
+      return `<text x="${20 + col * 370}" y="${legendY + row * 15}" fill="#5c6b64" font-size="9" font-weight="600">${label}</text>`;
     })
     .join("");
-  const legendRows = Math.ceil(legendItems.length / 2);
-  const H = legendY + legendRows * 15 + 20;
+  const H = legendY + Math.ceil(items.length / 2) * 15 + 18;
 
   return `
-  <svg viewBox="0 0 ${W} ${H}" class="diagram" role="img" aria-label="锥管模具组装后嵌套示意图">
-    <text x="20" y="22" fill="#2f4a56" font-size="13" font-weight="800">组装后示意图 · 内锥型腔 + 止口嵌套</text>
-    <text x="20" y="36" fill="#5c6b64" font-size="9">内壁连续共锥；外壁分段外套（细节见图中接头示意）</text>
-    ${bodies}
-    ${coneLines}
+  <svg viewBox="0 0 ${W} ${H}" class="diagram" role="img" aria-label="内锥加外套组装示意图">
+    <text x="20" y="20" fill="#2f4a56" font-size="13" font-weight="800">组装示意图 · 内锥 + 外套分段</text>
+    <text x="20" y="36" fill="#5c6b64" font-size="9">案例可改参数；默认 730 / ø194→ø108 / 上45·下5 / 节长210</text>
+    ${sleevePaths}
+    ${green}
     ${jointLabels}
     ${dims}
-    ${cavLabels}
+    <text x="${axis}" y="${yCone0 - 8}" text-anchor="middle" fill="#e67e22" font-size="11" font-weight="800">锥上口 ø${t(cone.topDia)}</text>
+    <text x="${axis}" y="${yH + 16}" text-anchor="middle" fill="#e67e22" font-size="11" font-weight="800">锥下口 ø${t(cone.bottomDia)}</text>
     <line x1="${axis}" y1="${y0}" x2="${axis}" y2="${yH}" stroke="#9aa8a1" stroke-dasharray="4 3"/>
     ${detail}
     ${legend}
   </svg>`;
 }
 
-/** 接头局部：上外套 / 下公颈 / 内锥连续 */
-function renderJointDetailInset(x0, y0, joint) {
-  if (!joint) return "";
-  const w = 200;
-  const h = 100;
+function renderJointDetail(x0, y0, joint) {
+  const title = joint ? joint.designation : "12+1+10+1";
   return `
-    <g transform="translate(${x0},${y0})">
-      <rect x="0" y="0" width="${w}" height="${h}" rx="8" fill="#fff" stroke="#2f4a56" stroke-width="1"/>
-      <text x="10" y="16" fill="#2f4a56" font-size="10" font-weight="700">接头细节 · ${joint.designation || ""}</text>
-      <!-- 上段（母套） -->
-      <path d="M30,28 L90,28 L90,55 L78,55 L78,48 L42,48 L42,55 L30,55 Z" fill="#c45c5c" stroke="#2f4a56"/>
-      <!-- 下段（公颈） -->
-      <path d="M42,48 L78,48 L78,55 L88,55 L88,88 L32,88 L32,55 L42,55 Z" fill="#b8a06a" stroke="#2f4a56"/>
-      <!-- 内锥线 -->
-      <line x1="55" y1="28" x2="48" y2="88" stroke="#e67e22" stroke-width="2"/>
-      <line x1="65" y1="28" x2="72" y2="88" stroke="#e67e22" stroke-width="2"/>
-      <text x="100" y="42" fill="#c45c5c" font-size="9" font-weight="700">上段外套</text>
-      <text x="100" y="58" fill="#5c6b64" font-size="8">止口坐肩</text>
-      <text x="100" y="78" fill="#b8a06a" font-size="9" font-weight="700">下段公颈</text>
-      <text x="100" y="92" fill="#e67e22" font-size="8">内壁连续锥</text>
-    </g>
-  `;
+  <g transform="translate(${x0},${y0})">
+    <rect width="220" height="112" rx="8" fill="#fff" stroke="#2f4a56"/>
+    <text x="10" y="16" fill="#2f4a56" font-size="10" font-weight="700">接头细节 · ${title}</text>
+    <!-- 外套红 -->
+    <path d="M24,28 L95,28 L95,70 L82,70 L82,52 L40,52 L40,70 L24,70 Z" fill="#c45c5c" stroke="#2f4a56"/>
+    <!-- 内锥绿 -->
+    <path d="M40,40 L82,40 L78,100 L44,100 Z" fill="#3d9b5f" stroke="#2f4a56"/>
+    <line x1="48" y1="40" x2="46" y2="100" stroke="#e67e22" stroke-width="1.6"/>
+    <line x1="74" y1="40" x2="76" y2="100" stroke="#e67e22" stroke-width="1.6"/>
+    <text x="108" y="40" fill="#c45c5c" font-size="9" font-weight="700">外套</text>
+    <text x="108" y="56" fill="#5c6b64" font-size="8">旋合 12 · 间隙 1</text>
+    <text x="108" y="70" fill="#5c6b64" font-size="8">止口 10 · 间隙 1</text>
+    <text x="108" y="88" fill="#3d9b5f" font-size="9" font-weight="700">内锥贴合</text>
+    <text x="108" y="102" fill="#e67e22" font-size="8">锥面连续</text>
+  </g>`;
 }
 
 export const renderAssembledConeDiagram = renderConeMoldDiagram;
