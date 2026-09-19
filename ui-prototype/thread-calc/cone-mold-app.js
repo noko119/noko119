@@ -1,4 +1,10 @@
-import { designConeMold, CONE_MOLD_DEFAULTS } from "./cone-mold-math.js";
+import {
+  designConeMold,
+  CONE_MOLD_DEFAULTS,
+  SCALE_FACTOR_PRESETS,
+  RECOMMENDED_SCALE_FACTOR,
+  scalePuToMold,
+} from "./cone-mold-math.js";
 import { renderAssembledConeDiagram } from "./cone-mold-diagram.js";
 
 const $ = (id) => document.getElementById(id);
@@ -49,9 +55,13 @@ function fillJointTable(joints) {
     .join("");
 }
 
-function renderSchema(sleeves, cone) {
+function renderSchema(sleeves, cone, r) {
+  const pu = r.pu || {};
+  const k = r.scale?.factor ?? 1;
   $("schema").innerHTML = `
-    <div class="seg"><strong>内锥</strong><span>ø${cone.topDia}→ø${cone.bottomDia}<br/>高 ${cone.height} mm</span></div>
+    <div class="seg"><strong>聚氨酯</strong><span>ø${pu.topDia}→ø${pu.bottomDia}<br/>锥高 ${pu.coneHeight} mm</span></div>
+    <div class="arrow">×${k}</div>
+    <div class="seg"><strong>模具内锥</strong><span>ø${cone.topDia}→ø${cone.bottomDia}<br/>高 ${cone.height} mm</span></div>
     <div class="arrow">+</div>
     ${sleeves
       .map(
@@ -86,7 +96,44 @@ function renderJointCards(joints) {
     .join("");
 }
 
+function updateScaleHint() {
+  const tip = scalePuToMold(
+    {
+      topDia: num("bigOd", CONE_MOLD_DEFAULTS.puTopDia),
+      bottomDia: num("smallOd", CONE_MOLD_DEFAULTS.puBottomDia),
+      coneHeight: num("puConeHeight", CONE_MOLD_DEFAULTS.puConeHeight),
+    },
+    num("scaleFactor", CONE_MOLD_DEFAULTS.scaleFactor),
+    num("topAllowance", CONE_MOLD_DEFAULTS.topAllowance),
+    num("bottomAllowance", CONE_MOLD_DEFAULTS.bottomAllowance)
+  );
+  if (!tip.ok) {
+    $("scaleHint").textContent = tip.error;
+    return;
+  }
+  const m = tip.mold;
+  $("scaleHint").textContent =
+    `模具内锥 ø${m.topDia.toFixed(3)}→ø${m.bottomDia.toFixed(3)} · 锥段 ${m.coneHeight.toFixed(3)} · 总高 ${m.totalHeight.toFixed(3)}` +
+    `（上余量${m.topAllowance}+锥段+下余量${m.bottomAllowance}；约缩水 ${tip.shrinkagePct}%）`;
+}
+
+function renderScalePresets() {
+  const box = $("scalePresets");
+  if (!box) return;
+  box.innerHTML = SCALE_FACTOR_PRESETS.map((p) => {
+    const rec = p.recommend || p.value === RECOMMENDED_SCALE_FACTOR ? " · 推荐" : "";
+    return `<button type="button" class="btn ghost" data-scale="${p.value}" title="${p.note}${rec}" style="padding:4px 10px;font-size:12px">${p.label}${p.recommend ? "★" : ""}</button>`;
+  }).join("");
+  box.querySelectorAll("[data-scale]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      $("scaleFactor").value = Number(btn.getAttribute("data-scale")).toFixed(3);
+      run();
+    });
+  });
+}
+
 function run() {
+  updateScaleHint();
   const midRaw = $("midOds").value.trim();
   let preferredOuterOds;
   if (midRaw) {
@@ -99,9 +146,10 @@ function run() {
 
   const segRaw = $("segmentCount").value.trim();
   const r = designConeMold({
-    coneTopDia: num("bigOd", CONE_MOLD_DEFAULTS.coneTopDia),
-    coneBottomDia: num("smallOd", CONE_MOLD_DEFAULTS.coneBottomDia),
-    totalHeight: num("moldHeight", CONE_MOLD_DEFAULTS.totalHeight),
+    puTopDia: num("bigOd", CONE_MOLD_DEFAULTS.puTopDia),
+    puBottomDia: num("smallOd", CONE_MOLD_DEFAULTS.puBottomDia),
+    puConeHeight: num("puConeHeight", CONE_MOLD_DEFAULTS.puConeHeight),
+    scaleFactor: num("scaleFactor", CONE_MOLD_DEFAULTS.scaleFactor),
     topAllowance: num("topAllowance", CONE_MOLD_DEFAULTS.topAllowance),
     bottomAllowance: num("bottomAllowance", CONE_MOLD_DEFAULTS.bottomAllowance),
     standardLen: num("standardLen", CONE_MOLD_DEFAULTS.standardLen),
@@ -122,11 +170,15 @@ function run() {
   }
 
   last = r;
-  $("status").textContent = `案例已生成：总高 ${r.summary.totalHeight}，内锥 ${r.summary.coneHeight}，外套 ${r.segmentCount} 节 / 接头 ${r.summary.jointCount}`;
+  $("status").textContent =
+    `已生成：PU×${r.scale.factor} → 模具总高 ${r.summary.totalHeight}，内锥 ${r.summary.coneHeight}，外套 ${r.segmentCount} 节 / 接头 ${r.summary.jointCount}`;
   $("status").className = "status ok";
-  $("summaryLine").textContent = `内锥 ø${r.summary.coneTopDia}→ø${r.summary.coneBottomDia} · 总高 ${r.summary.totalHeight}（上${r.input.topAllowance}+锥${r.summary.coneHeight}+下${r.input.bottomAllowance}）· ${r.summary.nestNote}`;
+  $("summaryLine").textContent =
+    `聚氨酯 ø${r.pu.topDia}→ø${r.pu.bottomDia} · 锥高 ${r.pu.coneHeight} → ×${r.scale.factor} → ` +
+    `模具 ø${r.summary.coneTopDia}→ø${r.summary.coneBottomDia} · 总高 ${r.summary.totalHeight}` +
+    `（上${r.input.topAllowance}+锥${r.summary.coneHeight}+下${r.input.bottomAllowance}）· ${r.summary.scaleFormula}`;
   $("assyDiagram").innerHTML = renderAssembledConeDiagram(r);
-  renderSchema(r.sleeves, r.cone);
+  renderSchema(r.sleeves, r.cone, r);
   fillSegTable(r.sleeves);
   fillJointTable(r.joints);
   renderJointCards(r.joints);
@@ -147,7 +199,7 @@ async function copy() {
   const nl = String.fromCharCode(10);
   const tab = String.fromCharCode(9);
   const lines = [
-    `内锥+外套 总高${last.summary.totalHeight} 锥ø${last.summary.coneTopDia}→${last.summary.coneBottomDia}`,
+    `聚氨酯ø${last.pu.topDia}→${last.pu.bottomDia}×${last.pu.coneHeight} ×${last.scale.factor} → 模具总高${last.summary.totalHeight} 锥ø${last.summary.coneTopDia}→${last.summary.coneBottomDia}`,
     ...last.sleeves.map((s) => {
       const pl = s.partLength ?? s.length;
       const male = s.maleEndLen ? `公${s.maleEndLen}` : "无公";
@@ -172,18 +224,33 @@ async function copy() {
 
 $("calcBtn").addEventListener("click", run);
 $("copyBtn").addEventListener("click", copy);
-["bigOd", "smallOd", "moldHeight", "topAllowance", "bottomAllowance", "standardLen", "wall", "segmentCount", "midOds"].forEach(
-  (id) => {
-    const el = $(id);
-    if (!el) return;
-    el.addEventListener("change", run);
-    el.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        run();
-      }
-    });
-  }
-);
+[
+  "bigOd",
+  "smallOd",
+  "puConeHeight",
+  "scaleFactor",
+  "topAllowance",
+  "bottomAllowance",
+  "standardLen",
+  "wall",
+  "segmentCount",
+  "midOds",
+].forEach((id) => {
+  const el = $(id);
+  if (!el) return;
+  el.addEventListener("change", run);
+  el.addEventListener("input", () => {
+    if (id === "scaleFactor" || id === "bigOd" || id === "smallOd" || id === "puConeHeight" || id === "topAllowance" || id === "bottomAllowance") {
+      updateScaleHint();
+    }
+  });
+  el.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      run();
+    }
+  });
+});
 
+renderScalePresets();
 run();

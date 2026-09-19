@@ -107,13 +107,17 @@ export function renderConeMoldDiagram(r) {
   const iTop = Math.max(cTop - 2 * coneWall, cBot * 0.5);
   const iBot = Math.max(cBot - 2 * coneWall, 20);
 
-  // 顶栏：两行固定行距（baseline 相差 ≥22），不再另起副标题叠在图形上
+  // 顶栏：聚氨酯→模具 + 外套/接头摘要
+  const pu = r.pu;
+  const scale = r.scale;
   const odBanner = `
     <rect x="16" y="8" width="${W - 32}" height="${bannerH}" rx="10" fill="#fff4e8" stroke="#c45c26" stroke-width="2"/>
-    <text x="28" y="32" fill="#8a2e0e" font-size="13" font-weight="800">${sleeves
-      .map((s) => `套${s.index}：ø${t(s.outerOd)}`)
-      .join("　　")}　　止口${t(locatorH0)} · 旋合${t(engage0)} · 退刀槽${t(undercut0)}</text>
-    <text x="28" y="58" fill="#2f4a56" font-size="12" font-weight="600">公扣：止口→外螺纹→外退刀槽(df)　·　母扣：止口接收→内螺纹→内退刀槽(Dg)</text>
+    <text x="28" y="32" fill="#8a2e0e" font-size="13" font-weight="800">${
+      pu
+        ? `聚氨酯 ø${t(pu.topDia)}→ø${t(pu.bottomDia)}×${t(pu.coneHeight)} ×${t3(scale?.factor ?? 1)} → 模具 ø${t3(cone.topDia)}→ø${t3(cone.bottomDia)}×${t3(cone.height)}`
+        : `模具 ø${t3(cone.topDia)}→ø${t3(cone.bottomDia)}`
+    }　　${sleeves.map((s) => `套${s.index}：ø${t(s.outerOd)}`).join("　")}</text>
+    <text x="28" y="58" fill="#2f4a56" font-size="12" font-weight="600">止口${t(locatorH0)} · 旋合${t(engage0)} · 退刀槽${t(undercut0)}　·　公扣：止口→外螺纹→外退刀槽(df)　·　母扣：止口接收→内螺纹→内退刀槽(Dg)</text>
   `;
 
   const green = `

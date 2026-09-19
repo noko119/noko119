@@ -114,18 +114,72 @@ export function locatorWallFromOds(upperOd, lowerOd) {
 }
 
 export const CONE_MOLD_DEFAULTS = {
+  // 聚氨酯制品尺寸（放大前）
+  puTopDia: 194,
+  puBottomDia: 108,
+  puConeHeight: 680,
+  // 兼容旧字段名（= 聚氨酯口径）
   coneTopDia: 194,
   coneBottomDia: 108,
-  totalHeight: 730,
+  totalHeight: 730, // 系数=1 时的模具总高 = 45+680+5
   topAllowance: 45,
   bottomAllowance: 5,
   standardLen: 250,
   wall: 20, // 仅作校核参考；外径以选型表为准
   pitch: 2,
+  /** 模具相对聚氨酯的放大系数：模具尺寸 = 聚氨酯尺寸 × 系数 */
+  scaleFactor: 1.01,
 };
+
+/**
+ * 推荐放大系数（按缩水经验：模具 = 制品 × (1+缩水率)）
+ * 实际以配方/试模为准，可手填微调。
+ */
+export const SCALE_FACTOR_PRESETS = [
+  { value: 1.005, label: "1.005", note: "硬泡偏低缩 ≈0.5%" },
+  { value: 1.008, label: "1.008", note: "硬泡常用" },
+  { value: 1.01, label: "1.010", note: "推荐默认 ≈1%", recommend: true },
+  { value: 1.015, label: "1.015", note: "硬泡偏高 / 自结皮偏低" },
+  { value: 1.02, label: "1.020", note: "自结皮常用 ≈2%" },
+  { value: 1.025, label: "1.025", note: "自结皮偏高 ≈2.5%" },
+];
+
+export const RECOMMENDED_SCALE_FACTOR = 1.01;
 
 function round3(n) {
   return Math.round(n * 1000) / 1000;
+}
+
+/** 由聚氨酯尺寸 × 放大系数 → 模具内锥/锥段/总高 */
+export function scalePuToMold(pu, factor, topAllowance, bottomAllowance) {
+  const k = Number(factor);
+  const topA = Number(topAllowance);
+  const botA = Number(bottomAllowance);
+  const puTop = Number(pu.topDia);
+  const puBot = Number(pu.bottomDia);
+  const puConeH = Number(pu.coneHeight);
+  if (!(k > 0)) return { ok: false, error: "放大系数须大于 0" };
+  if (!(puTop > puBot)) return { ok: false, error: "聚氨酯上口须大于下口" };
+  if (!(puConeH > 0)) return { ok: false, error: "聚氨酯锥段高度须大于 0" };
+  const moldTopDia = round3(puTop * k);
+  const moldBottomDia = round3(puBot * k);
+  const moldConeHeight = round3(puConeH * k);
+  const moldTotalHeight = round3(topA + moldConeHeight + botA);
+  return {
+    ok: true,
+    scaleFactor: k,
+    shrinkagePct: round3((k - 1) * 100),
+    pu: { topDia: puTop, bottomDia: puBot, coneHeight: puConeH },
+    mold: {
+      topDia: moldTopDia,
+      bottomDia: moldBottomDia,
+      coneHeight: moldConeHeight,
+      totalHeight: moldTotalHeight,
+      topAllowance: topA,
+      bottomAllowance: botA,
+    },
+    formula: `模具 = 聚氨酯 × ${k}（约缩水 ${round3((k - 1) * 100)}%）`,
+  };
 }
 
 export function roundMajor05(n) {
@@ -263,19 +317,60 @@ function jointStackHeight(stack = JOINT_STACK_DEFAULT) {
 
 /**
  * @param {object} input
+ * - 聚氨酯：puTopDia / puBottomDia / puConeHeight（或兼容 coneTopDia / coneBottomDia）
+ * - scaleFactor：放大系数，模具 = 聚氨酯 × 系数（默认推荐 1.01）
+ * - topAllowance / bottomAllowance：模具工艺余量（不乘系数）
+ * - 若显式传入 totalHeight/moldHeight 且 scaleFactor===1，可直接当模具总高（兼容旧调用）
  */
 export function designConeMold(input = {}) {
-  const coneTopDia = Number(input.coneTopDia ?? input.cavityTop ?? input.bigOd ?? CONE_MOLD_DEFAULTS.coneTopDia);
-  const coneBottomDia = Number(
-    input.coneBottomDia ?? input.cavityBottom ?? input.smallOd ?? CONE_MOLD_DEFAULTS.coneBottomDia
-  );
-  const totalHeight = Number(input.totalHeight ?? input.moldHeight ?? CONE_MOLD_DEFAULTS.totalHeight);
   const topAllowance = Number(input.topAllowance ?? CONE_MOLD_DEFAULTS.topAllowance);
   const bottomAllowance = Number(input.bottomAllowance ?? CONE_MOLD_DEFAULTS.bottomAllowance);
   const standardLen = Number(input.standardLen ?? CONE_MOLD_DEFAULTS.standardLen);
   const wall = Number(input.wall ?? CONE_MOLD_DEFAULTS.wall);
   const roundThread = input.roundThread !== false;
   const grooveKind = input.grooveKind || "normal";
+  const scaleFactor = Number(
+    input.scaleFactor ?? input.enlargeFactor ?? CONE_MOLD_DEFAULTS.scaleFactor
+  );
+
+  const puTopDia = Number(
+    input.puTopDia ?? input.coneTopDia ?? input.cavityTop ?? input.bigOd ?? CONE_MOLD_DEFAULTS.puTopDia
+  );
+  const puBottomDia = Number(
+    input.puBottomDia ??
+      input.coneBottomDia ??
+      input.cavityBottom ??
+      input.smallOd ??
+      CONE_MOLD_DEFAULTS.puBottomDia
+  );
+
+  // 聚氨酯锥段高：优先 puConeHeight；否则由总高−余量反推；再否则默认 680
+  let puConeHeight;
+  if (input.puConeHeight != null && Number(input.puConeHeight) > 0) {
+    puConeHeight = Number(input.puConeHeight);
+  } else if (input.coneHeight != null && Number(input.coneHeight) > 0) {
+    puConeHeight = Number(input.coneHeight);
+  } else if (input.totalHeight != null || input.moldHeight != null) {
+    const rawH = Number(input.totalHeight ?? input.moldHeight);
+    // 旧接口：传入的是「已是模具总高」且系数按 1 用时，锥段 = 总高−余量后再÷系数
+    puConeHeight = round3((rawH - topAllowance - bottomAllowance) / scaleFactor);
+  } else {
+    puConeHeight = CONE_MOLD_DEFAULTS.puConeHeight;
+  }
+
+  const scaled = scalePuToMold(
+    { topDia: puTopDia, bottomDia: puBottomDia, coneHeight: puConeHeight },
+    scaleFactor,
+    topAllowance,
+    bottomAllowance
+  );
+  if (!scaled.ok) return scaled;
+
+  const coneTopDia = scaled.mold.topDia;
+  const coneBottomDia = scaled.mold.bottomDia;
+  const totalHeight = scaled.mold.totalHeight;
+  const coneHeight = scaled.mold.coneHeight;
+
   const builtStack = buildJointStack({
     pitch: PIPE_END_CONST.pitch,
     turns: PIPE_END_CONST.turns,
@@ -288,13 +383,12 @@ export function designConeMold(input = {}) {
   const locatorAuto = jointStack.find((x) => x.key === "locator")?.h ?? builtStack.locator;
   const engageAuto = jointStack.find((x) => x.key === "engage")?.h ?? builtStack.engage;
 
-  if (!(coneTopDia > coneBottomDia)) return { ok: false, error: "锥上口须大于锥下口" };
+  if (!(coneTopDia > coneBottomDia)) return { ok: false, error: "模具锥上口须大于锥下口" };
   if (!(totalHeight > topAllowance + bottomAllowance)) {
-    return { ok: false, error: "总高须大于上口余量+下口余量" };
+    return { ok: false, error: "模具总高须大于上口余量+下口余量" };
   }
   if (!(wall > 0)) return { ok: false, error: "外套名义壁厚须大于 0" };
 
-  const coneHeight = round3(totalHeight - topAllowance - bottomAllowance);
   const maleInfo = maleEndHeight({
     pitch: PIPE_END_CONST.pitch,
     turns: PIPE_END_CONST.turns,
@@ -536,6 +630,10 @@ export function designConeMold(input = {}) {
     ok: true,
     model: "inner-cone-outer-sleeves",
     input: {
+      puTopDia,
+      puBottomDia,
+      puConeHeight,
+      scaleFactor,
       coneTopDia,
       coneBottomDia,
       totalHeight,
@@ -551,6 +649,15 @@ export function designConeMold(input = {}) {
       cavityTop: coneTopDia,
       cavityBottom: coneBottomDia,
     },
+    pu: scaled.pu,
+    scale: {
+      factor: scaleFactor,
+      shrinkagePct: scaled.shrinkagePct,
+      formula: scaled.formula,
+      presets: SCALE_FACTOR_PRESETS,
+      recommended: RECOMMENDED_SCALE_FACTOR,
+    },
+    mold: scaled.mold,
     cone,
     sleeves,
     segments: sleeves, // 兼容旧 UI
@@ -567,6 +674,12 @@ export function designConeMold(input = {}) {
       cavityBottom: coneBottomDia,
       coneTopDia,
       coneBottomDia,
+      puTopDia,
+      puBottomDia,
+      puConeHeight,
+      scaleFactor,
+      shrinkagePct: scaled.shrinkagePct,
+      scaleFormula: scaled.formula,
       taperPerMm: round3((coneTopDia - coneBottomDia) / coneHeight),
       jointCount: joints.length,
       jointStack,
@@ -580,7 +693,7 @@ export function designConeMold(input = {}) {
       stdAssy: lengthPlan.plan.stdAssy,
       grooveKind,
       locatorFormula: builtStack.formula,
-      nestNote: `内锥连续 + 外套分段；标准节总高 ${standardLen}=装配${lengthPlan.plan.stdAssy}+公扣${maleH}；接头 ${jointStack.map((x) => x.h).join("+")}`,
+      nestNote: `聚氨酯 ø${puTopDia}→ø${puBottomDia}×${puConeHeight} ×${scaleFactor} → 模具 ø${coneTopDia}→ø${coneBottomDia}×${coneHeight}；标准节总高 ${standardLen}=装配${lengthPlan.plan.stdAssy}+公扣${maleH}`,
     },
     alternatives: lengthPlan.alternatives,
   };

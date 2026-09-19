@@ -62,41 +62,57 @@
     <header class="hero">
       <p class="brand">CONE MOLD · <a href="./thread-card.html" style="color:inherit">端头表</a> · <a href="./pipe-end.html" style="color:inherit">接管计算</a> · <a href="./index.html" style="color:inherit">通用螺纹</a></p>
       <h1>锥管模具分段</h1>
-      <p class="lede">按总装结构：<strong>绿色连续内锥</strong> + <strong>外套分段套装</strong>。默认案例 730 / ø194→ø108；参数可改。</p>
+      <p class="lede">输入<strong>聚氨酯制品</strong>口径与锥段高，再乘<strong>放大系数</strong>得到模具内锥尺寸；绿色连续内锥 + 外套分段套装。</p>
     </header>
 
     <section class="panel">
       <div class="const-bar">
-        <span>内锥连续贯穿</span>
+        <span>聚氨酯 → ×系数 → 模具</span>
         <span>外套分段（标准节总高 250 含公扣）</span>
         <span>止口=退刀槽+½旋合（自动）</span>
-        <span>案例：730 = 45+680+5</span>
+        <span>案例：PU ø194→ø108 ×680</span>
       </div>
 
       <div class="field-row five">
         <label class="field">
-          <span>锥上口 ø / mm</span>
+          <span>聚氨酯上口 ø / mm</span>
           <input id="bigOd" type="number" min="1" step="any" value="194" />
         </label>
         <label class="field">
-          <span>锥下口 ø / mm</span>
+          <span>聚氨酯下口 ø / mm</span>
           <input id="smallOd" type="number" min="1" step="any" value="108" />
         </label>
         <label class="field">
-          <span>装配总高 / mm</span>
-          <input id="moldHeight" type="number" min="1" step="any" value="730" />
+          <span>聚氨酯锥段高 / mm</span>
+          <input id="puConeHeight" type="number" min="1" step="any" value="680" />
         </label>
         <label class="field">
-          <span>上口余量</span>
+          <span>上口余量（模具）</span>
           <input id="topAllowance" type="number" min="0" step="any" value="45" />
         </label>
         <label class="field">
-          <span>下口余量</span>
+          <span>下口余量（模具）</span>
           <input id="bottomAllowance" type="number" min="0" step="any" value="5" />
         </label>
       </div>
 
-      <div class="field-row" style="margin-top:12px;grid-template-columns:1fr 1fr 1fr 1fr auto">
+      <div class="field-row" style="margin-top:12px;grid-template-columns:1fr 2fr auto">
+        <label class="field">
+          <span>放大系数（模具÷聚氨酯）</span>
+          <input id="scaleFactor" type="number" min="1" step="0.001" value="1.010" />
+        </label>
+        <div class="field" style="grid-column:span 1">
+          <span>推荐系数（点击填入）</span>
+          <div id="scalePresets" class="const-bar" style="margin:6px 0 0"></div>
+        </div>
+        <div class="actions" style="margin:0;align-self:end">
+          <button type="button" class="btn primary" id="calcBtn">生成方案</button>
+          <button type="button" class="btn ghost" id="copyBtn">复制</button>
+        </div>
+      </div>
+      <p class="hint" id="scaleHint" style="margin-top:10px"></p>
+
+      <div class="field-row" style="margin-top:12px;grid-template-columns:1fr 1fr 1fr 1fr">
         <label class="field">
           <span>标准节总高（含公扣）</span>
           <input id="standardLen" type="number" min="50" step="any" value="250" />
@@ -113,12 +129,8 @@
           <span>外圆序列（可选）</span>
           <input id="midOds" type="text" placeholder="如 245,219,194" autocomplete="off" />
         </label>
-        <div class="actions" style="margin:0;align-self:end">
-          <button type="button" class="btn primary" id="calcBtn">生成方案</button>
-          <button type="button" class="btn ghost" id="copyBtn">复制</button>
-        </div>
       </div>
-      <p class="hint" style="margin-top:10px">外套管外径按选型表自动选：找「内径 ≥ 本节最大锥径」的最小档，取其外径。表含 ø60…ø426（名义/内径/外径）。</p>
+      <p class="hint" style="margin-top:10px">外套管外径按选型表自动选：找「内径 ≥ 本节最大锥径」的最小档，取其外径。上/下余量为模具工艺余量，不乘放大系数。</p>
       <p class="status" id="status" role="status"></p>
       <div class="warn-box" id="warnBox"></div>
     </section>
