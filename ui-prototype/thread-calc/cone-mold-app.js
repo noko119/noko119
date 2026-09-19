@@ -12,15 +12,17 @@ function num(id, fallback) {
 function fillSegTable(sleeves) {
   $("segTable").innerHTML = sleeves
     .map((s) => {
-      let note = "—";
-      if (s.topFaceOffset != null) note = `含上余量 ${s.topFaceOffset}`;
-      else if (s.bottomFaceOffset != null) note = `含下余量 ${s.bottomFaceOffset}`;
+      let note = s.kindNote || "—";
+      if (s.topFaceOffset != null) note = `含上余量 ${s.topFaceOffset}；${note}`;
+      else if (s.bottomFaceOffset != null) note = `含下余量 ${s.bottomFaceOffset}；${note}`;
+      const part = s.partLength != null ? s.partLength : s.length;
+      const male = s.maleEndLen ? `（体${s.length}+公${s.maleEndLen}）` : "（无公扣）";
       return `<tr>
         <th scope="row">套${s.index}</th>
         <td>ø${s.coneAtTop}→ø${s.coneAtBot}（需≥${s.coneNeed}）</td>
         <td>${s.pipeLabel || `ø${s.pipeNom}`}</td>
         <td><strong>ø${s.outerOd}</strong></td>
-        <td>${s.length} mm</td>
+        <td><strong>${part} mm</strong> ${male}</td>
         <td>${s.kind}</td>
         <td>${s.wall} mm</td>
         <td>${note}</td>
@@ -54,7 +56,7 @@ function renderSchema(sleeves, cone) {
     ${sleeves
       .map(
         (s, i) =>
-          `<div class="seg"><strong>外套${s.index}</strong><span>${s.pipeLabel || "ø" + s.outerOd}<br/>${s.length}mm · ${s.kind}</span></div>${
+          `<div class="seg"><strong>外套${s.index}</strong><span>${s.pipeLabel || "ø" + s.outerOd}<br/>总高${s.partLength ?? s.length}mm · ${s.kind}</span></div>${
             i < sleeves.length - 1 ? `<div class="arrow">↕</div>` : ""
           }`
       )
@@ -146,7 +148,11 @@ async function copy() {
   const tab = String.fromCharCode(9);
   const lines = [
     `内锥+外套 总高${last.summary.totalHeight} 锥ø${last.summary.coneTopDia}→${last.summary.coneBottomDia}`,
-    ...last.sleeves.map((s) => `套${s.index}${tab}外${s.outerOd}${tab}${s.length}${tab}锥${s.coneAtTop}→${s.coneAtBot}`),
+    ...last.sleeves.map((s) => {
+      const pl = s.partLength ?? s.length;
+      const male = s.maleEndLen ? `公${s.maleEndLen}` : "无公";
+      return `套${s.index}${tab}外${s.outerOd}${tab}总高${pl}${tab}${male}${tab}锥${s.coneAtTop}→${s.coneAtBot}`;
+    }),
     ...last.joints.filter((j) => j.ok).map((j) => `接头${j.index}${tab}${j.designation}${tab}锥${j.coneDia}`),
   ];
   const text = lines.join(nl);

@@ -3,8 +3,8 @@
  *
  * - 内件：连续外锥（绿）——上口/下口为锥面口径
  * - 外套：分段套筒套在锥上（红/青/紫…），节间止口嵌套
- * - 案例默认：总高 730，锥段 680，上 45，下 5，ø194→ø108，标准节长 250
- * - 分段：由下往上按标准节长铺；余段在顶；余段>标准长则继续自动分段
+ * - 案例默认：总高 730，锥段 680，上 45，下 5，ø194→ø108，标准节总高 250（含公扣）
+ * - 分段：由下往上铺标准节；节总高=体长+公扣（止口+螺纹+退刀槽）；余段在顶；余段>250 自动再拆
  * - 接头细节：旋合=圈数×P；止口=退刀槽宽+½旋合（自动，不固定10）；间隙默认1+1
  */
 
@@ -178,74 +178,75 @@ export function coneDiaAt(z, input) {
 }
 
 /**
- * 由下往上按标准节长分段：
- * - 自下连续铺标准长 S，直到剩余 ≤ S
- * - 剩余放在最上节；若剩余 > S（不应出现）则继续拆
- * - 总高恰为 S 的整数倍时，全部为标准节
+ * 公扣端头轴向总长（止口 + 螺纹旋合 + 外退刀槽），计入节总高
+ * 与 pipe-end-math maleEnd.total 一致
  */
-export function planSegmentLengths(totalHeight, standardLen = 250, minTop = 1) {
+export function maleEndHeight(opt = {}) {
+  const P = Number(opt.pitch ?? PIPE_END_CONST.pitch);
+  const turns = Number(opt.turns ?? PIPE_END_CONST.turns);
+  const engage = Number(opt.engageLen ?? turns * P);
+  const grooveKind = opt.grooveKind || "normal";
+  const locator = autoLocatorLen({ pitch: P, turns, engageLen: engage, grooveKind });
+  const undercut = undercutWidthP2(grooveKind, "external");
+  return {
+    locator,
+    engage,
+    undercut,
+    total: round3(locator + engage + undercut),
+    formula: `公扣=${locator}+${engage}+${undercut}=${locator + engage + undercut}`,
+  };
+}
+
+/**
+ * 由下往上按「节总高=标准长（含公扣）」分段：
+ * - 有公扣的节：零件总高 S = 装配体长 + 公扣长；装配占位 assy = S − 公扣
+ * - 自下连续铺标准节（含公扣），直到剩余 ≤ S（顶节无公扣，总高=装配长）
+ * - 剩余 > S 则继续自动拆
+ */
+export function planSegmentLengths(totalHeight, standardLen = 250, maleEndLen = 26, minTop = 1) {
   const H = Number(totalHeight);
   const S = Number(standardLen);
+  const maleH = Number(maleEndLen);
   if (!(H > 0) || !(S > 0)) return { ok: false, error: "总高与标准节长须大于 0" };
+  if (!(maleH >= 0) || maleH >= S) {
+    return { ok: false, error: `公扣长 ${maleH} 须小于标准节总高 ${S}` };
+  }
+  const stdAssy = round3(S - maleH); // 标准节在总装上的轴向占位（公扣插入上节）
 
-  // 从下往上：先铺满标准节，余量 ≤ S 留在顶部
   let rem = round3(H);
-  let standardCount = 0;
+  const bottomAssy = [];
   while (rem > S + 1e-9) {
-    standardCount += 1;
-    rem = round3(rem - S);
-    if (standardCount > 40) {
-      return { ok: false, error: `总高 ${H} 按标准长 ${S} 分段过多` };
+    bottomAssy.push(stdAssy);
+    rem = round3(rem - stdAssy);
+    if (bottomAssy.length > 40) {
+      return { ok: false, error: `总高 ${H} 按标准长 ${S}（含公扣${maleH}）分段过多` };
     }
   }
-  const topLen = rem; // 0 < topLen ≤ S，或恰好整除时 topLen=0 表示无单独顶节
+  const topLen = rem; // 顶节无公扣，零件总高 = 装配长
   const lengths =
-    topLen > 1e-9
-      ? [topLen, ...Array.from({ length: standardCount }, () => S)]
-      : Array.from({ length: standardCount }, () => S);
+    topLen > 1e-9 ? [topLen, ...bottomAssy] : bottomAssy.slice();
 
-  if (!lengths.length) {
-    return { ok: false, error: `总高 ${H} 过小` };
-  }
+  if (!lengths.length) return { ok: false, error: `总高 ${H} 过小` };
   if (topLen > 1e-9 && topLen < minTop) {
-    return { ok: false, error: `顶部余段 ${topLen} 过短（标准长 ${S}）` };
+    return { ok: false, error: `顶部余段 ${topLen} 过短（标准节总高 ${S}，含公扣 ${maleH}）` };
   }
 
   const plan = {
     segmentCount: lengths.length,
-    largeCount: standardCount,
+    largeCount: bottomAssy.length,
     standardLen: S,
+    maleEndLen: maleH,
+    stdAssy,
     topLen: topLen > 1e-9 ? topLen : 0,
-    smallLen: topLen > 1e-9 ? topLen : S, // 兼容旧字段：非标/顶节长度
+    smallLen: topLen > 1e-9 ? topLen : S,
     fromBottom: true,
+    includesMale: true,
     lengths,
     inPrefer: topLen <= 1e-9 || (topLen >= 80 && topLen <= S),
     score: 0,
   };
 
-  // 备选：少铺一节标准、顶节变长（仅当顶节仍 ≤ 2S 时列出，供对照）
-  const alternatives = [plan];
-  if (standardCount >= 1) {
-    const altTop = round3(topLen + S);
-    if (altTop <= 2 * S + 1e-9) {
-      // 顶节若 > S，再自动拆成「顶余 + 一节标准」——与主方案等价，跳过
-      if (altTop <= S + 1e-9) {
-        alternatives.push({
-          segmentCount: standardCount,
-          largeCount: standardCount - 1,
-          standardLen: S,
-          topLen: altTop,
-          smallLen: altTop,
-          fromBottom: true,
-          lengths: [altTop, ...Array.from({ length: standardCount - 1 }, () => S)],
-          inPrefer: altTop >= 80,
-          score: 1,
-        });
-      }
-    }
-  }
-
-  return { ok: true, plan, alternatives: alternatives.slice(0, 6) };
+  return { ok: true, plan, alternatives: [plan] };
 }
 
 export function minFemaleWall(D1, t1, D2, majorDia) {
@@ -294,45 +295,52 @@ export function designConeMold(input = {}) {
   if (!(wall > 0)) return { ok: false, error: "外套名义壁厚须大于 0" };
 
   const coneHeight = round3(totalHeight - topAllowance - bottomAllowance);
+  const maleInfo = maleEndHeight({
+    pitch: PIPE_END_CONST.pitch,
+    turns: PIPE_END_CONST.turns,
+    engageLen: PIPE_END_CONST.engageLen,
+    grooveKind,
+  });
+  const maleH = maleInfo.total;
 
-  const lengthPlan = planSegmentLengths(totalHeight, standardLen);
+  const lengthPlan = planSegmentLengths(totalHeight, standardLen, maleH);
   if (!lengthPlan.ok) return lengthPlan;
 
   let lengths = lengthPlan.plan.lengths.slice();
   let segmentCount = lengths.length;
+  const stdAssy = lengthPlan.plan.stdAssy;
 
-  // 强制节数：仍由下往上铺标准节，顶节吃余量；顶节>标准长则自动再拆
+  // 强制节数：由下往上铺「含公扣」标准节；顶节无公扣；顶节总高> S 则自动再拆
   if (input.segmentCount != null && Number(input.segmentCount) >= 1) {
     const forced = Number(input.segmentCount);
     if (forced === 1) {
       lengths = [round3(totalHeight)];
       if (lengths[0] > standardLen + 1e-9) {
-        // 单节超过标准长 → 自动分段
-        const auto = planSegmentLengths(totalHeight, standardLen);
+        const auto = planSegmentLengths(totalHeight, standardLen, maleH);
         if (!auto.ok) return auto;
         lengths = auto.plan.lengths.slice();
       }
     } else {
       const bottomStd = forced - 1;
-      const topLen = round3(totalHeight - bottomStd * standardLen);
-      if (topLen <= 0) return { ok: false, error: `节数 ${forced} 过大（标准长 ${standardLen}）` };
+      const topLen = round3(totalHeight - bottomStd * stdAssy);
+      if (topLen <= 0) {
+        return { ok: false, error: `节数 ${forced} 过大（标准节总高 ${standardLen} 含公扣 ${maleH}）` };
+      }
       if (topLen > standardLen + 1e-9) {
-        // 余段超过标准长 → 自动分段（忽略过小的强制节数）
-        const auto = planSegmentLengths(totalHeight, standardLen);
+        const auto = planSegmentLengths(totalHeight, standardLen, maleH);
         if (!auto.ok) return auto;
         lengths = auto.plan.lengths.slice();
       } else {
-        lengths = [topLen, ...Array.from({ length: bottomStd }, () => standardLen)];
+        lengths = [topLen, ...Array.from({ length: bottomStd }, () => stdAssy)];
       }
     }
     segmentCount = lengths.length;
     lengthPlan.plan = {
+      ...lengthPlan.plan,
       segmentCount,
-      largeCount: lengths.filter((L, i) => i > 0 || Math.abs(L - standardLen) < 1e-9).length,
-      standardLen,
+      largeCount: Math.max(0, segmentCount - 1),
       topLen: lengths[0],
       smallLen: lengths[0],
-      fromBottom: true,
       lengths: lengths.slice(),
       inPrefer: lengths[0] <= standardLen,
       score: 0,
@@ -372,12 +380,20 @@ export function designConeMold(input = {}) {
     const wallEff = round3((outerOd - coneNeed) / 2);
     const isFirst = i === 0;
     const isLast = i === segmentCount - 1;
-    const isStandard = Math.abs(length - standardLen) < 1e-9;
+    const hasMale = !isFirst; // 下节起有向上公扣，插入上一节母扣
+    const maleEnd = hasMale ? maleH : 0;
+    const partLength = round3(length + maleEnd); // 零件总高（含公扣）
+    const isStandard = hasMale && Math.abs(partLength - standardLen) < 1e-9;
     return {
       index: i + 1,
       role: "sleeve",
-      length,
+      length, // 总装轴向占位（公扣插入上节，不另占总高）
+      maleEndLen: maleEnd,
+      partLength,
       kind: isStandard ? "标准" : "非标",
+      kindNote: hasMale
+        ? `总高${partLength}=体${length}+公扣${maleEnd}`
+        : `总高${partLength}（无公扣）`,
       z0,
       z1,
       coneAtTop,
@@ -394,7 +410,7 @@ export function designConeMold(input = {}) {
       cavityTop: coneAtTop,
       cavityBottom: coneAtBot,
       femaleSleeve: !isLast,
-      maleNeck: !isFirst,
+      maleNeck: hasMale,
       topFaceOffset: isFirst ? topAllowance : null,
       belowTopFace: isFirst ? round3(length - topAllowance) : null,
       bottomFaceOffset: isLast ? bottomAllowance : null,
@@ -559,9 +575,12 @@ export function designConeMold(input = {}) {
       locator: locatorAuto,
       engage: engageAuto,
       undercut: builtStack.undercut,
+      maleEndLen: maleH,
+      maleEndFormula: maleInfo.formula,
+      stdAssy: lengthPlan.plan.stdAssy,
       grooveKind,
       locatorFormula: builtStack.formula,
-      nestNote: `内锥连续 + 外套分段套装；接头 ${jointStack.map((x) => x.h).join("+")}（止口自动）`,
+      nestNote: `内锥连续 + 外套分段；标准节总高 ${standardLen}=装配${lengthPlan.plan.stdAssy}+公扣${maleH}；接头 ${jointStack.map((x) => x.h).join("+")}`,
     },
     alternatives: lengthPlan.alternatives,
   };

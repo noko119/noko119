@@ -399,14 +399,22 @@ export function renderConeMoldDiagram(r) {
   dims += dimV(144, y0, yCone0, `上 ${t(topA)}`, "#c45c26", "above");
   dims += dimV(144, yCone1, yH, `下 ${t(botA)}`, "#c45c26", "below");
   sleeves.forEach((s) => {
-    dims += dimV(192, yAt(s.z0), yAt(s.z1), `${t(s.length)}`, "#8a5a2a");
+    const lab =
+      s.maleEndLen > 0
+        ? `${t(s.partLength)}(含公${t(s.maleEndLen)})`
+        : `${t(s.partLength ?? s.length)}`;
+    dims += dimV(192, yAt(s.z0), yAt(s.z1), lab, "#8a5a2a");
   });
 
   const detail = renderJointDetail(16, yH + 40, joints[0], r.summary);
   const legendY = yH + 288;
   const items = [
     `内锥 ø${t(cone.topDia)}→ø${t(cone.bottomDia)} · ${t(cone.height)}mm`,
-    ...sleeves.map((s) => `套${s.index} ø${t(s.outerOd)} · ${t(s.length)}mm`),
+    ...sleeves.map((s) => {
+      const pl = s.partLength ?? s.length;
+      const male = s.maleEndLen > 0 ? `含公扣${t(s.maleEndLen)}` : "无公扣";
+      return `套${s.index} ø${t(s.outerOd)} · 总高${t(pl)}（${male}）· ${s.kind}`;
+    }),
     ...joints.map(
       (j) =>
         `接头${j.index} ${j.designation}：止口${t(j.locator)}+螺纹${t(j.engage)}+退刀${t(j.locatorDim?.undercut ?? undercut0)}(df${t(j.undercutDf)}/Dg${t(j.undercutDg)})`

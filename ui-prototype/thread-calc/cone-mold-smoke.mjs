@@ -19,16 +19,21 @@ assert(r.cone.topDia === 194 && r.cone.bottomDia === 108, "cone dia");
 assert(r.input.topAllowance === 45 && r.input.bottomAllowance === 5, "allow");
 assert(Math.abs(coneDiaAt(45, r.input) - 194) < 0.01, "dia at cone start");
 assert(Math.abs(coneDiaAt(725, r.input) - 108) < 0.01, "dia near bottom");
-assert(r.sleeves[0].length === 230, `first(top rem) ${r.sleeves[0].length}`);
-assert(r.sleeves[1].length === 250 && r.sleeves[2].length === 250, "bottom standards 250");
-assert(r.sleeves[0].kind === "非标" && r.sleeves[2].kind === "标准", "kinds bottom-up");
-assert(r.sleeves.map((s) => s.length).reduce((a, b) => a + b, 0) === 730, "sum lengths");
-// 余段>250 自动再拆：例如总高 780 → 顶 280 会拆成 30+250+250+250
+assert(r.sleeves.map((s) => s.length).reduce((a, b) => a + b, 0) === 730, "sum assy lengths");
+const maleH = r.summary.maleEndLen;
+assert(maleH === 26, `maleH ${maleH}`); // 10+12+4
+assert(r.summary.stdAssy === 250 - maleH, `stdAssy ${r.summary.stdAssy}`);
+// 标准节零件总高=250（体长+公扣）；顶节无公扣
+assert(r.sleeves.slice(1).every((s) => s.partLength === 250 && s.kind === "标准"), "std part 250");
+assert(r.sleeves[0].maleEndLen === 0 && r.sleeves[0].partLength === r.sleeves[0].length, "top no male");
+assert(r.sleeves.every((s) => s.maleNeck === (s.index > 1)), "male on lower sleeves");
+assert(r.sleeves[0].pipeNom === 194, `pipe0 nom ${r.sleeves[0].pipeNom}`);
+// 余段按「节总高含公扣」再拆：装配占位累加
 const r2 = designConeMold({ totalHeight: 780, standardLen: 250 });
 assert(r2.ok, r2.error);
-assert(r2.sleeves.every((s) => s.length <= 250 + 1e-9), `auto split ${r2.sleeves.map((s) => s.length)}`);
-assert(r2.sleeves[0].length === 30 && r2.sleeves.slice(1).every((s) => s.length === 250), "780 plan");
-assert(r.sleeves[0].pipeNom === 194, `pipe0 nom ${r.sleeves[0].pipeNom}`);
+assert(r2.sleeves.filter((s) => s.kind === "标准").every((s) => s.partLength === 250), "780 std 250");
+assert(r2.sleeves.reduce((a, s) => a + s.length, 0) === 780, "780 sum");
+assert(r2.sleeves.every((s) => (s.partLength ?? s.length) <= 250 + 1e-9), `part<=250 ${r2.sleeves.map((s) => s.partLength)}`);
 assert(r.sleeves[0].outerOd === 219, `pipe0 od ${r.sleeves[0].outerOd}`);
 assert(r.sleeves[0].pipeId === 200, "pipe0 id");
 assert(r.joints.every((j) => j.ok), "joints");

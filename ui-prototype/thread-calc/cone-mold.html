@@ -68,7 +68,7 @@
     <section class="panel">
       <div class="const-bar">
         <span>内锥连续贯穿</span>
-        <span>外套分段（由下往上标准节 250）</span>
+        <span>外套分段（标准节总高 250 含公扣）</span>
         <span>止口=退刀槽+½旋合（自动）</span>
         <span>案例：730 = 45+680+5</span>
       </div>
@@ -98,7 +98,7 @@
 
       <div class="field-row" style="margin-top:12px;grid-template-columns:1fr 1fr 1fr 1fr auto">
         <label class="field">
-          <span>外套标准节长</span>
+          <span>标准节总高（含公扣）</span>
           <input id="standardLen" type="number" min="50" step="any" value="250" />
         </label>
         <label class="field">
@@ -139,7 +139,7 @@
         <h3>各节明细</h3>
         <table class="data">
           <thead>
-            <tr><th>外套</th><th>贴锥径</th><th>选用管（名义→内径/外径）</th><th>外径</th><th>长度</th><th>类型</th><th>折算壁厚</th><th>余量</th></tr>
+            <tr><th>外套</th><th>贴锥径</th><th>选用管（名义→内径/外径）</th><th>外径</th><th>节总高</th><th>类型</th><th>折算壁厚</th><th>余量</th></tr>
           </thead>
           <tbody id="segTable"></tbody>
         </table>
