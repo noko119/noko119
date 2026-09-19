@@ -54,10 +54,12 @@
       <div class="tool-group">
         <span class="label">Easy / 导入导出</span>
         <button class="btn" id="btnEasyWizard" title="对标 Sidewinder Easy：向导面板+机型库">Easy 向导</button>
+        <button class="btn" id="btnImportJson" title="导入 pidm.path.v0 JSON（SolidWorks 插件 / 网页导出）">导入 JSON(SW)</button>
         <button class="btn" id="btnImportDxf" title="导入 DXF 中心线">导入 DXF</button>
         <button class="btn" id="btnExportDxf" title="导出中心线 DXF">导出 DXF</button>
         <button class="btn" id="btnImportExcel" title="导入 Excel 兼容 CSV">导入 Excel</button>
         <button class="btn" id="btnExportExcel" title="导出节点/Flight CSV">导出 Excel</button>
+        <input type="file" id="jsonFileInput" accept=".json,application/json" hidden />
         <input type="file" id="dxfFileInput" accept=".dxf,text/plain" hidden />
         <input type="file" id="excelFileInput" accept=".csv,text/csv,text/plain" hidden />
       </div>
