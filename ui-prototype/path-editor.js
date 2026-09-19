@@ -95,7 +95,7 @@ const els = {
 };
 
 let renderer, scene, camera, controls;
-let pathLine, returnLine, closeLine, pointGroup, gridHelper, axesHelper;
+let pathLine, returnLine, closeLine, pointGroup, labelGroup, gridHelper, axesHelper;
 let raycaster, pointer, dragPlane, dragOffset;
 let groundMesh;
 
@@ -1662,6 +1662,88 @@ function importDxfFile(file) {
   reader.readAsText(file);
 }
 
+/**
+ * 导入 pidm.path.v0 / pidm.bundle.v0 JSON（SolidWorks 插件或网页导出）。
+ * 节点按 seq 顺序全部载入（承载 + 回程），进入 Advanced 模式；不做任何计算。
+ */
+function importPathJsonFile(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const root = JSON.parse(String(reader.result || ""));
+      const path = String(root?.schema || "").startsWith("pidm.bundle") ? root.path : root;
+      if (!String(path?.schema || "").startsWith("pidm.path")) {
+        throw new Error(`schema 不支持：${path?.schema ?? "(空)"}，需要 pidm.path.v0`);
+      }
+      const src = Array.isArray(path.nodes) ? [...path.nodes] : [];
+      if (src.length < 2) throw new Error("节点不足 2 个");
+      src.sort((a, b) => (a.seq ?? 0) - (b.seq ?? 0));
+      const segs = Array.isArray(path.segments) ? path.segments : [];
+      const branchOf = (n) => {
+        if (n.branch) return n.branch;
+        const adj = segs.filter((s) => s.from_node_id === n.id || s.to_node_id === n.id);
+        return adj.length && adj.every((s) => s.branch === "return") ? "return" : "carry";
+      };
+      const nodes = src.map((n) =>
+        mapTemplateNode({
+          x: Number(n.x) || 0,
+          y: Number(n.y) || 0,
+          z: Number(n.z) || 0,
+          type: n.type || "node",
+          label: n.label,
+          branch: branchOf(n),
+          mainDrive: !!n.is_main_drive,
+          drum_D_mm: n.drum_D_mm,
+          takeup_kind: n.takeup_kind,
+        })
+      );
+      nodes.forEach((n, i) => {
+        if (src[i].wrap_angle_deg != null) n.wrap_angle_deg = src[i].wrap_angle_deg;
+      });
+      const hasReturn = nodes.some(isReturnNode);
+      const sel = document.getElementById("profileMode");
+      if (hasReturn) {
+        if (sel) sel.value = "advanced";
+        state.returnMode = "advanced";
+        state.nodes = nodes;
+        state.returnMeta = {
+          closed_loop: true,
+          open_path: false,
+          return_mode: "advanced",
+          carry_return_offset_m: path.line?.carry_return_gap_m ?? null,
+          carry_count: nodes.filter((n) => !isReturnNode(n)).length,
+          return_count: nodes.filter(isReturnNode).length,
+          source: path.source === "sw_addin" ? "sw_import" : "json_import",
+          side_type: path.line?.side_type,
+          note: `JSON 导入（${path.source || "web"}）：几何+标签，计算在网页`,
+        };
+      } else {
+        if (sel) sel.value = "auto";
+        state.returnMode = "auto";
+        applyAutoReturn(nodes, { quiet: true, skipFit: true });
+        state.returnMeta = { ...(state.returnMeta || {}), source: "json_import" };
+      }
+      state.flightOverrides = {};
+      state.finalized = false;
+      state.selectedId = state.nodes[0]?.id ?? null;
+      rebuildSceneObjects();
+      updateFinalizeChip();
+      updateUI();
+      fitView();
+      const errs = (path.closure?.items || []).filter((i) => i.level === "error").length;
+      alert(
+        `JSON 已导入（${path.source || "web"}）\n\n节点：${state.nodes.length}（回程 ${nodes.filter(isReturnNode).length}）\n` +
+          `区段：${segs.length}\n侧型：${path.line?.side_type || "-"}\n` +
+          (errs ? `⚠ 源文件门禁有 ${errs} 个 error，请在网页“闭环检查”复核` : "源文件门禁：无 error")
+      );
+    } catch (err) {
+      alert("JSON 导入失败：\n" + (err?.message || err));
+    }
+  };
+  reader.readAsText(file);
+}
+
 function insertVerticalCurve() {
   const idx = state.nodes.findIndex((n) => n.id === state.selectedId);
   if (idx <= 0 || idx >= state.nodes.length - 1) {
@@ -1857,6 +1939,13 @@ function bindChrome() {
   document.getElementById("dxfFileInput")?.addEventListener("change", (ev) => {
     const f = ev.target.files?.[0];
     importDxfFile(f);
+    ev.target.value = "";
+  });
+  document.getElementById("btnImportJson")?.addEventListener("click", () => {
+    document.getElementById("jsonFileInput")?.click();
+  });
+  document.getElementById("jsonFileInput")?.addEventListener("change", (ev) => {
+    importPathJsonFile(ev.target.files?.[0]);
     ev.target.value = "";
   });
   document.getElementById("btnInsertCurve")?.addEventListener("click", insertVerticalCurve);
