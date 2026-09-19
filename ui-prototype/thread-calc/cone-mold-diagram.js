@@ -319,7 +319,7 @@ export function renderConeMoldDiagram(r) {
   });
 
   const detail = renderJointDetail(16, yH + 28, joints[0], r.summary);
-  const legendY = yH + 248;
+  const legendY = yH + 268;
   const items = [
     `内锥 ø${t(cone.topDia)}→ø${t(cone.bottomDia)} · ${t(cone.height)}mm`,
     ...sleeves.map((s) => `套${s.index} ø${t(s.outerOd)} · ${t(s.length)}mm`),
@@ -390,9 +390,28 @@ function renderJointDetail(x0, y0, joint, summary) {
   // 母：深处止口 → 螺纹 → 近肩 Dg 槽 → 孔口底面（对标 CAD）
   const female = `M ${xCone} 22 L ${xOutU} 22 L ${xOutU} ${ySh} L ${xDg} ${ySh} L ${xDg} ${yEng1} L ${xMin} ${yEng1} L ${xMin} ${yLoc1} L ${xLocF} ${yLoc1} L ${xLocF} ${yTip} L ${xCone} ${yTip} Z`;
 
+  // 右侧说明：固定行距，避免 ③/③′/间隙 叠字
+  const labelX = 228;
+  const labelRows = [
+    { fx: xLoc, fy: (yTip + yLoc1) / 2, color: "#1f6f5b", text: `① 止口 ${t(loc)} · 公尖端 ↔ 母接收` },
+    { fx: xMaj, fy: (yLoc1 + yEng1) / 2, color: "#8a2e0e", text: `② 螺纹 ${des} · 旋合 ${t(eng)}` },
+    { fx: xDf, fy: (yEng1 + yUnd1) / 2, color: "#2f4a56", text: `③ 公退刀槽 ${t(und)} · df ø${t(df)}（内凹）` },
+    { fx: xDg, fy: (yEng1 + yUnd1) / 2, color: "#8a2e0e", text: `③′ 母退刀槽 ${t(und)} · Dg ø${t(dg)}（外扩）` },
+    { fx: xOutL, fy: (yUnd1 + ySh) / 2, color: "#c45c26", text: `④ 台肩装配间隙 ${t(gap)}` },
+  ];
+  const labels = labelRows
+    .map((row, i) => {
+      const ty = 46 + i * 24;
+      return `
+        <line x1="${row.fx}" y1="${row.fy}" x2="${labelX - 6}" y2="${ty - 4}" stroke="${row.color}" stroke-width="1" opacity="0.75"/>
+        <circle cx="${row.fx}" cy="${row.fy}" r="2" fill="${row.color}"/>
+        <text x="${labelX}" y="${ty}" fill="${row.color}" font-size="12" font-weight="800">${row.text}</text>`;
+    })
+    .join("");
+
   return `
   <g transform="translate(${x0},${y0})">
-    <rect width="580" height="210" rx="8" fill="#fff" stroke="#2f4a56"/>
+    <rect width="600" height="220" rx="8" fill="#fff" stroke="#2f4a56"/>
     <text x="12" y="18" fill="#2f4a56" font-size="12" font-weight="800">接头剖面放大 · ${des} · 公：止口→螺纹→外退刀槽(df)　母：止口→内螺纹→内退刀槽(Dg)</text>
     <path d="${female}" fill="#c45c5c" fill-opacity="0.78" stroke="#2f4a56"/>
     <path d="${male}" fill="#8a6bb8" fill-opacity="0.88" stroke="#2f4a56"/>
@@ -401,18 +420,8 @@ function renderJointDetail(x0, y0, joint, summary) {
     ${extThreadZig(xMaj, xMin, yLoc1, yEng1)}
     <path d="M ${xCone - 10} 22 L ${xCone - 10} ${ySh + 44} L ${xCone} ${ySh + 44} L ${xCone} 22 Z" fill="#3d9b5f" stroke="#2f4a56"/>
     <line x1="${xCone}" y1="22" x2="${xCone}" y2="${ySh + 44}" stroke="#e67e22" stroke-width="2"/>
-
-    <line x1="${xOutU + 4}" y1="${(yTip + yLoc1) / 2}" x2="230" y2="${(yTip + yLoc1) / 2}" stroke="#1f6f5b"/>
-    <text x="234" y="${(yTip + yLoc1) / 2 + 4}" fill="#1f6f5b" font-size="12" font-weight="800">① 止口 ${t(loc)} · 公尖端 ↔ 母接收</text>
-    <line x1="${xMaj + 2}" y1="${(yLoc1 + yEng1) / 2}" x2="230" y2="${(yLoc1 + yEng1) / 2}" stroke="#8a2e0e"/>
-    <text x="234" y="${(yLoc1 + yEng1) / 2 + 4}" fill="#8a2e0e" font-size="12" font-weight="800">② 螺纹 ${des} · 旋合 ${t(eng)}</text>
-    <line x1="${xDf}" y1="${(yEng1 + yUnd1) / 2}" x2="230" y2="${(yEng1 + yUnd1) / 2}" stroke="#2f4a56"/>
-    <text x="234" y="${(yEng1 + yUnd1) / 2 + 4}" fill="#2f4a56" font-size="12" font-weight="800">③ 公退刀槽 ${t(und)} · df ø${t(df)}（牙侧内凹）</text>
-    <line x1="${xDg}" y1="${(yEng1 + yUnd1) / 2 + 14}" x2="230" y2="${(yEng1 + yUnd1) / 2 + 14}" stroke="#8a2e0e"/>
-    <text x="234" y="${(yEng1 + yUnd1) / 2 + 18}" fill="#8a2e0e" font-size="12" font-weight="800">③′ 母退刀槽 ${t(und)} · Dg ø${t(dg)}（牙侧外扩）</text>
-    <line x1="${xOutL}" y1="${(yUnd1 + ySh) / 2}" x2="230" y2="${(yUnd1 + ySh) / 2}" stroke="#c45c26"/>
-    <text x="234" y="${(yUnd1 + ySh) / 2 + 4}" fill="#c45c26" font-size="12" font-weight="800">④ 台肩装配间隙 ${t(gap)}</text>
-    <text x="234" y="200" fill="#5c6b64" font-size="10">${formula} · 对标 CAD：退刀槽为牙根小矩形槽，非整壁台阶</text>
+    ${labels}
+    <text x="${labelX}" y="205" fill="#5c6b64" font-size="10">${formula} · 退刀槽为牙根小矩形槽</text>
   </g>`;
 }
 
