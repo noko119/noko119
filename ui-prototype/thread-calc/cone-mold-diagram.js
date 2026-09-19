@@ -33,17 +33,6 @@ function extThreadZig(xMaj, xMin, y0, y1) {
   return `<path d="${d}" fill="none" stroke="#1f6f5b" stroke-width="1.15"/>`;
 }
 
-/** 内螺纹牙型（牙顶=小径 ↔ 牙底=大径） */
-function intThreadZig(xMin, xMaj, y0, y1) {
-  const n = Math.max(5, Math.round(Math.abs(y1 - y0) / 2.6));
-  const dy = (y1 - y0) / n;
-  let d = `M ${xMin} ${y0}`;
-  for (let i = 0; i < n; i++) {
-    d += ` L ${xMaj} ${y0 + (i + 0.5) * dy} L ${xMin} ${y0 + (i + 1) * dy}`;
-  }
-  return `<path d="${d}" fill="none" stroke="#c45c26" stroke-width="1.15"/>`;
-}
-
 const SLEEVE_COLORS = ["#c45c5c", "#6ab0c9", "#8a6bb8", "#c49a6c", "#5cbf8a"];
 
 export function renderConeMoldDiagram(r) {
@@ -59,7 +48,7 @@ export function renderConeMoldDiagram(r) {
   const engage0 = r.summary.engage ?? 12;
   const undercut0 = r.summary.undercut ?? 4;
 
-  const W = 1120;
+  const W = 1180;
   const padT = 72;
   const plotH = 520;
   const axis = 270;
@@ -103,9 +92,14 @@ export function renderConeMoldDiagram(r) {
   const maxOutR = xR(maxOut);
   const ARROW_L = 10;
   const ARROW_W = 5.5;
-  const labelColX = axis + maxOutR + 108;
-  const labelBoxW = 198;
+  // 两列：左=接头卡片，右=外径竖列，互不重叠
+  const jointCardX = axis + maxOutR + 18;
+  const jointCardW = 172;
+  const labelColX = jointCardX + jointCardW + 22;
+  const labelBoxW = 188;
   const dimColor = "#c45c26";
+  const LINE_H = 17; // 卡片内行距，保证不叠字
+  const CARD_PAD = 10;
 
   // 外套光筒
   const sleeveBodies = sleeves
@@ -250,11 +244,36 @@ export function renderConeMoldDiagram(r) {
       <path d="M ${mirror(xMaj)} ${yEng1} L ${mirror(xDg)} ${yEng1} L ${mirror(xDg)} ${yUnd1} L ${mirror(xMaj)} ${yUnd1} Z"
         fill="#8a2e0e" fill-opacity="0.22" stroke="#8a2e0e" stroke-width="0.85"/>`;
 
-    const labelX = labelColX - 6;
-    const shift = ji * 12;
-    const yMidLoc = (yTip + yLoc1) / 2;
-    const yMidEng = (yLoc1 + yEng1) / 2;
-    const yMidUnd = (yEng1 + yUnd1) / 2;
+    // 接头标注：收成一张卡片，行距固定，避免叠字
+    const rows = [
+      { x: xLoc, y: (yTip + yLoc1) / 2, color: "#1f6f5b", text: `止口 ${t(locH)}` },
+      { x: xMaj, y: (yLoc1 + yEng1) / 2, color: "#8a2e0e", text: `螺纹 ${joint.designation} · ${t(engH)}` },
+      { x: xDf, y: (yEng1 + yUnd1) / 2, color: "#2f4a56", text: `退刀槽 ${t(undH)}  df${t(df)}/Dg${t(dg)}` },
+      { x: xOutL, y: (yUnd1 + yFemaleBot) / 2, color: "#c45c26", text: `肩间隙 ${t(gapFace)}` },
+    ];
+    const cardH = CARD_PAD * 2 + rows.length * LINE_H + 14;
+    const yJointMid = (yTip + yShoulder) / 2;
+    let cardY = yJointMid - cardH / 2;
+    // 多接头时若卡片将互压，则下推
+    if (ji === 1) {
+      const prevBottom = padT + (sleeves[1].z0 * scaleY) - 40; // approx
+      // 两接头间距约 150px，卡片约 90，一般不压；略下移第二张
+      cardY += 6;
+    }
+    const titleY = cardY + CARD_PAD + 11;
+    const row0Y = titleY + LINE_H + 2;
+
+    let leaders = "";
+    let rowTexts = "";
+    rows.forEach((row, ri) => {
+      const ty = row0Y + ri * LINE_H;
+      leaders += `
+        <line x1="${row.x}" y1="${row.y}" x2="${jointCardX - 2}" y2="${ty - 3}"
+          stroke="${row.color}" stroke-width="1" opacity="0.8"/>
+        <circle cx="${row.x}" cy="${row.y}" r="2.2" fill="${row.color}"/>`;
+      rowTexts += `
+        <text x="${jointCardX + 10}" y="${ty}" fill="${row.color}" font-size="11" font-weight="800">${row.text}</text>`;
+    });
 
     jointSvg += `
       ${mask}
@@ -266,15 +285,11 @@ export function renderConeMoldDiagram(r) {
       ${femGrooveR}${femGrooveL}
       ${extThreadZig(xMaj, xMin, yLoc1, yEng1)}
       ${extThreadZig(mirror(xMaj), mirror(xMin), yLoc1, yEng1)}
-      <line x1="${xLoc}" y1="${yMidLoc}" x2="${labelX}" y2="${yMidLoc + shift}" stroke="#1f6f5b" stroke-width="1.1"/>
-      <text x="${labelX + 4}" y="${yMidLoc + shift + 4}" fill="#1f6f5b" font-size="11" font-weight="800">止口 ${t(locH)}（公尖/母收）</text>
-      <line x1="${xMaj}" y1="${yMidEng}" x2="${labelX}" y2="${yMidEng + shift}" stroke="#8a2e0e" stroke-width="1.1"/>
-      <text x="${labelX + 4}" y="${yMidEng + shift + 4}" fill="#8a2e0e" font-size="11" font-weight="800">螺纹 ${joint.designation} · ${t(engH)}</text>
-      <line x1="${xDf}" y1="${yMidUnd}" x2="${labelX}" y2="${yMidUnd + shift}" stroke="#2f4a56" stroke-width="1.1"/>
-      <text x="${labelX + 4}" y="${yMidUnd + shift + 4}" fill="#2f4a56" font-size="11" font-weight="800">退刀槽 ${t(undH)} df${t(df)}/Dg${t(dg)}</text>
-      <line x1="${xOutL}" y1="${(yUnd1 + yFemaleBot) / 2}" x2="${xOutL + 28}" y2="${(yUnd1 + yFemaleBot) / 2}"
-        stroke="#c45c26" stroke-dasharray="3 2"/>
-      <text x="${xOutL + 32}" y="${(yUnd1 + yFemaleBot) / 2 + 3}" fill="#c45c26" font-size="9" font-weight="700">肩间隙${t(gapFace)}</text>
+      ${leaders}
+      <rect x="${jointCardX}" y="${cardY}" width="${jointCardW}" height="${cardH}"
+        rx="8" fill="#ffffff" stroke="#2f4a56" stroke-width="1.4"/>
+      <text x="${jointCardX + 10}" y="${titleY}" fill="#2f4a56" font-size="11" font-weight="900">接头${joint.index} · ${joint.designation}</text>
+      ${rowTexts}
     `;
   });
 
