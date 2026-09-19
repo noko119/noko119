@@ -10,10 +10,24 @@ import { buildGc01ComplexPath } from "./calc/gc01-complex-path.js";
 import { buildEasyInclineConveyor, buildEasyFromPreset, EASY_PRESETS } from "./calc/easy-wizard.js";
 import { parseDxfPolylines, dxfPointsToCarryNodes, exportNodesToDxf } from "./calc/dxf-import.js";
 import { insertVerticalCurveAt, suggestMinRadius_m } from "./calc/vertical-curve.js";
-import { annotateWrapAngles, applyDrumRadiusOffsets, computeWrapAtNode } from "./calc/drum-geometry.js";
-import { buildFlightRows, pairCarryReturnFlights, flightRowsToOverrides, summarizeFlights } from "./calc/flight-model.js";
+import { resolveDesignLoads } from "./calc/design-loads.js";
+import { insertHorizontalCurveAt, suggestHorizontalRmin_m } from "./calc/horizontal-curve.js";
+import {
+  annotateWrapAngles,
+  applyDrumRadiusOffsets,
+  computeWrapAtNode,
+  annotateDriveSlipChecks,
+} from "./calc/drum-geometry.js";
+import {
+  buildFlightRows,
+  pairCarryReturnFlights,
+  flightRowsToOverrides,
+  summarizeFlights,
+  enforcePairedReturnOffset,
+} from "./calc/flight-model.js";
 import { finalizeProfile, checkVerticalCurveDtii, checkWrapDtii } from "./calc/finalize-checks.js";
 import { nodesToCsv, csvToNodes, flightsToCsv, csvToFlightOverrides } from "./calc/excel-io.js";
+import { GC01_INPUT } from "./calc/gc01-case.js";
 
 /** @typedef {{ id:string, x:number, y:number, z:number, type:string, mainDrive?:boolean, branch?:string, strand?:string }} PathNode */
 
@@ -81,7 +95,7 @@ const els = {
 };
 
 let renderer, scene, camera, controls;
-let pathLine, returnLine, closeLine, pointGroup, gridHelper, axesHelper;
+let pathLine, returnLine, closeLine, pointGroup, labelGroup, gridHelper, axesHelper;
 let raycaster, pointer, dragPlane, dragOffset;
 let groundMesh;
 
@@ -374,20 +388,27 @@ function initThree() {
   const w = els.viewport.clientWidth;
   const h = els.viewport.clientHeight;
 
-  renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer = new THREE.WebGLRenderer({
+    antialias: true,
+    powerPreference: "high-performance",
+    alpha: false,
+  });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setSize(w, h);
   renderer.setClearColor(0x0b1220, 1);
   els.viewport.appendChild(renderer.domElement);
 
   scene = new THREE.Scene();
-  scene.fog = new THREE.Fog(0x0b1220, 400, 1200);
+  // scene.fog disabled for performance
+  // scene.fog = new THREE.Fog(0x0b1220, 400, 1200);
 
   camera = new THREE.PerspectiveCamera(50, w / h, 0.1, 5000);
   camera.position.set(180, -220, 140);
   camera.up.set(0, 0, 1);
 
   controls = new OrbitControls(camera, renderer.domElement);
+  controls.addEventListener("change", () => { needsRender = true; });
   controls.enableDamping = true;
   controls.target.set(120, 0, 20);
   controls.mouseButtons = {
@@ -418,6 +439,8 @@ function initThree() {
   scene.add(groundMesh);
 
   pointGroup = new THREE.Group();
+  labelGroup = new THREE.Group();
+  scene.add(labelGroup);
   scene.add(pointGroup);
 
   const lineMat = new THREE.LineBasicMaterial({ color: 0x38bdf8 });
@@ -445,14 +468,14 @@ function makePointMesh(node, index) {
   const color = (node.branch === "return" || node.strand === "return")
     ? RETURN_COLOR
     : (TYPE_COLOR[node.type] || TYPE_COLOR.node);
-  const geo = new THREE.SphereGeometry(node.type === "node" ? 1.6 : 2.4, 16, 16);
-  const mat = new THREE.MeshStandardMaterial({
+  const geo = new THREE.SphereGeometry(node.type === "node" ? 1.6 : 2.4, 12, 10);
+  const mat = new THREE.MeshBasicMaterial({
     color,
-    emissive: node.id === state.selectedId ? 0x1d4ed8 : 0x000000,
-    emissiveIntensity: node.id === state.selectedId ? 0.55 : 0,
-    metalness: 0.2,
-    roughness: 0.45,
+    // 选中时提亮（Basic 无 emissive，用颜色近似）
   });
+  if (node.id === state.selectedId) {
+    mat.color.offsetHSL(0, 0, 0.15);
+  }
   const mesh = new THREE.Mesh(geo, mat);
   mesh.position.set(node.x, node.y, node.z);
   mesh.userData.nodeId = node.id;
@@ -469,6 +492,108 @@ function makePointMesh(node, index) {
   }
   return mesh;
 }
+
+
+function isDrumType(t) {
+  return ["tail", "head", "drive", "bend", "takeup"].includes(t);
+}
+
+function makeTextSprite(text, opts = {}) {
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+  const fontSize = opts.fontSize || 28;
+  canvas.width = 256;
+  canvas.height = 64;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.font = `bold ${fontSize}px Segoe UI, Microsoft YaHei, sans-serif`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  // background pill
+  const tw = Math.min(240, ctx.measureText(text).width + 24);
+  const x0 = (canvas.width - tw) / 2;
+  ctx.fillStyle = "rgba(15, 23, 42, 0.78)";
+  ctx.strokeStyle = "rgba(148, 163, 184, 0.55)";
+  ctx.lineWidth = 2;
+  const y0 = 14, h = 36, r = 10;
+  ctx.beginPath();
+  ctx.moveTo(x0 + r, y0);
+  ctx.arcTo(x0 + tw, y0, x0 + tw, y0 + h, r);
+  ctx.arcTo(x0 + tw, y0 + h, x0, y0 + h, r);
+  ctx.arcTo(x0, y0 + h, x0, y0, r);
+  ctx.arcTo(x0, y0, x0 + tw, y0, r);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = opts.color || "#e2e8f0";
+  ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.needsUpdate = true;
+  const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false });
+  const spr = new THREE.Sprite(mat);
+  const scale = opts.scale || 12;
+  spr.scale.set(scale, scale * 0.25, 1);
+  spr.renderOrder = 10;
+  return spr;
+}
+
+/** 在相邻节点中点标注段长；滚筒↔滚筒加粗显示 */
+function updateDistLabels() {
+  if (!labelGroup) return;
+  while (labelGroup.children.length) {
+    const c = labelGroup.children.pop();
+    c.material?.map?.dispose?.();
+    c.material?.dispose?.();
+  }
+  const nodes = state.nodes;
+  for (let i = 1; i < nodes.length; i++) {
+    const a = nodes[i - 1];
+    const b = nodes[i];
+    // 回程段标签略弱，避免太乱：只标承载，或两端都是滚筒
+    const bothReturn = isReturnNode(a) && isReturnNode(b);
+    const drumSpan = isDrumType(a.type) && isDrumType(b.type);
+    if (bothReturn && !drumSpan) continue;
+    const L = dist(a, b);
+    if (!(L > 0.05)) continue;
+    const mid = {
+      x: (a.x + b.x) / 2,
+      y: (a.y + b.y) / 2,
+      z: (a.z + b.z) / 2,
+    };
+    const label = drumSpan
+      ? `${TYPE_LABEL[a.type]||a.type}→${TYPE_LABEL[b.type]||b.type} ${L.toFixed(2)}m`
+      : `${L.toFixed(2)} m`;
+    const spr = makeTextSprite(label, {
+      color: drumSpan ? "#fde68a" : bothReturn ? "#fdba74" : "#bfdbfe",
+      scale: drumSpan ? 18 : 12,
+      fontSize: drumSpan ? 26 : 28,
+    });
+    spr.position.set(mid.x, mid.y, mid.z + (drumSpan ? 3.5 : 2.2));
+    spr.userData.isDistLabel = true;
+    labelGroup.add(spr);
+  }
+}
+
+function drumNeighborGaps(node) {
+  if (!node) return null;
+  const carry = state.nodes.filter((n) => !isReturnNode(n));
+  const idx = carry.findIndex((n) => n.id === node.id);
+  if (idx < 0) return null;
+  // find prev/next drum on carry
+  let prev = null, next = null;
+  for (let i = idx - 1; i >= 0; i--) {
+    if (isDrumType(carry[i].type)) { prev = carry[i]; break; }
+  }
+  for (let i = idx + 1; i < carry.length; i++) {
+    if (isDrumType(carry[i].type)) { next = carry[i]; break; }
+  }
+  return {
+    prevDrum: prev,
+    nextDrum: next,
+    dPrev: prev ? dist(prev, node) : null,
+    dNext: next ? dist(node, next) : null,
+  };
+}
+
 
 function rebuildSceneObjects() {
   while (pointGroup.children.length) {
@@ -487,16 +612,29 @@ function rebuildSceneObjects() {
 
 function setLinePositions(line, pts) {
   if (!line) return;
-  line.geometry.dispose();
   if (!pts || pts.length < 2) {
-    line.geometry = new THREE.BufferGeometry();
+    if (line.geometry) line.geometry.setDrawRange(0, 0);
     return;
   }
-  const positions = [];
-  pts.forEach((n) => positions.push(n.x, n.y, n.z));
-  // 闭合段：若最后一点不是首点，调用方可自行传入首点
-  line.geometry = new THREE.BufferGeometry();
-  line.geometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
+  const n = pts.length;
+  const need = n * 3;
+  let attr = line.geometry.getAttribute("position");
+  if (!attr || attr.array.length < need) {
+    line.geometry.dispose();
+    line.geometry = new THREE.BufferGeometry();
+    attr = new THREE.BufferAttribute(new Float32Array(Math.max(need, 64)), 3);
+    line.geometry.setAttribute("position", attr);
+  }
+  const arr = attr.array;
+  for (let i = 0; i < n; i++) {
+    const p = pts[i];
+    arr[i * 3] = p.x;
+    arr[i * 3 + 1] = p.y;
+    arr[i * 3 + 2] = p.z;
+  }
+  attr.needsUpdate = true;
+  line.geometry.setDrawRange(0, n);
+  line.geometry.computeBoundingSphere();
 }
 
 function updatePathLines() {
@@ -522,15 +660,19 @@ function updatePathLines() {
 }
 
 function syncNodeMeshes() {
-  pointGroup.children.forEach((mesh) => {
-    const n = state.nodes.find((x) => x.id === mesh.userData.nodeId);
-    if (!n) return;
+  // O(n) 索引，避免每帧 nodes.find
+  const byId = new Map(state.nodes.map((n) => [n.id, n]));
+  for (const mesh of pointGroup.children) {
+    const n = byId.get(mesh.userData.nodeId);
+    if (!n) continue;
     mesh.position.set(n.x, n.y, n.z);
     const selected = n.id === state.selectedId;
-    mesh.material.emissive?.setHex?.(selected ? 0x1d4ed8 : 0x000000);
-    mesh.material.emissiveIntensity = selected ? 0.55 : 0;
-  });
-
+    const base = (n.branch === "return" || n.strand === "return")
+      ? RETURN_COLOR
+      : (TYPE_COLOR[n.type] || TYPE_COLOR.node);
+    mesh.material.color.setHex(base);
+    if (selected) mesh.material.color.offsetHSL(0, 0, 0.18);
+  }
   updatePathLines();
 }
 
@@ -733,6 +875,16 @@ function addNodeAt(pt, type = "node") {
   rebuildSceneObjects();
   maybeResyncReturn({ skipFit: true });
   updateUI();
+  if (isDrumType(type)) {
+    const gaps = drumNeighborGaps(node);
+    const bits = [];
+    if (gaps?.dPrev != null) bits.push(`距上一滚筒(${TYPE_LABEL[gaps.prevDrum.type]}) ${gaps.dPrev.toFixed(2)} m`);
+    if (gaps?.dNext != null) bits.push(`距下一滚筒(${TYPE_LABEL[gaps.nextDrum.type]}) ${gaps.dNext.toFixed(2)} m`);
+    // 轻提示：不打断拖放流程，写到 HUD
+    if (els.hudHint && bits.length) {
+      els.hudHint.textContent = `已放置${TYPE_LABEL[type] || type} · ` + bits.join(" · ");
+    }
+  }
 }
 
 function insertAfterSelected() {
@@ -811,6 +963,19 @@ function beginDrag(nodeId, ev) {
   dragOffset.copy(origin).sub(hit);
 }
 
+let dragRaf = 0;
+let returnResyncTimer = 0;
+let needsRender = true;
+
+/** 拖拽中只更新右侧 XYZ，避免每帧重绘 Flight/区段表导致卡顿 */
+function updateDragHud(node) {
+  if (!node) return;
+  if (els.fX) els.fX.value = String(node.x);
+  if (els.fY) els.fY.value = String(node.y);
+  if (els.fZ) els.fZ.value = String(node.z);
+  els.lengthChip.textContent = `展开长：${totalLength().toFixed(2)} m`;
+}
+
 function onDrag(ev) {
   if (!state.dragging || !state.dragId) return;
   const node = state.nodes.find((n) => n.id === state.dragId);
@@ -833,8 +998,15 @@ function onDrag(ev) {
     node.y = +hit.y.toFixed(3);
     node.z = +hit.z.toFixed(3);
   }
+
+  // 只同步三维网格/折线；DOM 用 rAF 节流
   syncNodeMeshes();
-  updateUI(false);
+  if (!dragRaf) {
+    dragRaf = requestAnimationFrame(() => {
+      dragRaf = 0;
+      updateDragHud(node);
+    });
+  }
 }
 
 function endDrag() {
@@ -843,13 +1015,26 @@ function endDrag() {
   state.dragging = false;
   state.dragId = null;
   controls.enabled = true;
+  if (dragRaf) {
+    cancelAnimationFrame(dragRaf);
+    dragRaf = 0;
+  }
   if (dragged && isReturnNode(dragged)) {
     markAdvancedReturnMeta({ source: state.returnMeta?.source || "advanced_edit" });
   }
   if (dragged && !isReturnNode(dragged)) {
-    maybeResyncReturn({ skipFit: true });
+    // 松手后短延迟再整网重算回程，避免拖一下就卡一下
+    if (returnResyncTimer) clearTimeout(returnResyncTimer);
+    returnResyncTimer = setTimeout(() => {
+      returnResyncTimer = 0;
+      maybeResyncReturn({ skipFit: true });
+      updateUI();
+      needsRender = true;
+    }, 80);
+  } else {
+    updateUI();
   }
-  updateUI();
+  needsRender = true;
 }
 
 function bindPointer() {
@@ -901,6 +1086,13 @@ function bindPointer() {
 }
 
 function updateUI(rebuildTable = true) {
+  // 拖拽中禁止走完整 UI（Flight/区段表很重）
+  if (state.dragging) {
+    const n = state.nodes.find((x) => x.id === state.selectedId);
+    updateDragHud(n);
+    return;
+  }
+
   updateReturnModeChip();
   els.pointCount.textContent = `节点：${state.nodes.length}`;
   els.lengthChip.textContent = `展开长：${totalLength().toFixed(2)} m`;
@@ -948,6 +1140,23 @@ function updateUI(rebuildTable = true) {
   }
   if (!html) html = "<div>暂无区段</div>";
   els.segSummary.innerHTML = html;
+
+  // 选中滚筒时显示与相邻滚筒间距
+  const gapEl = document.getElementById("drumGapChip");
+  const gaps = drumNeighborGaps(node);
+  if (gapEl) {
+    if (node && isDrumType(node.type) && gaps) {
+      const parts = [];
+      if (gaps.dPrev != null) parts.push(`←${TYPE_LABEL[gaps.prevDrum.type]} ${gaps.dPrev.toFixed(2)}m`);
+      if (gaps.dNext != null) parts.push(`${TYPE_LABEL[gaps.nextDrum.type]}→ ${gaps.dNext.toFixed(2)}m`);
+      gapEl.textContent = parts.length ? `滚筒间距：${parts.join(" · ")}` : "滚筒间距：无相邻滚筒";
+      gapEl.classList.remove("hidden", "muted");
+    } else {
+      gapEl.textContent = "滚筒间距：—";
+      gapEl.classList.add("muted");
+    }
+  }
+  updateDistLabels();
 
   syncNodeMeshes();
 }
@@ -1022,7 +1231,8 @@ function onResize() {
 
 function animate() {
   requestAnimationFrame(animate);
-  controls.update();
+  if (controls) controls.update();
+  // 拖拽或显式脏标记时必画；其余帧也画（保证旋转惯性），但避免额外重活已在拖拽路径去掉
   renderer.render(scene, camera);
 }
 
@@ -1245,20 +1455,79 @@ function pairFlightsAction() {
   state.finalized = false;
   renderFlightTable();
   updateFinalizeChip();
-  alert(`航段配对完成\n\n配对对数：${meta.paired_pairs}\n${meta.note}`);
+  const lock = confirm(
+    `航段配对完成\n\n配对对数：${meta.paired_pairs}\n${meta.note}\n\n是否强制间距跟随（按承载重算回程）？`
+  );
+  if (lock) enforceSpacingFollowAction({ quiet: true });
+}
+
+function enforceSpacingFollowAction(opts = {}) {
+  const offset = parseFloat(document.getElementById("returnOffset")?.value || "1.2");
+  try {
+    const { nodes, meta } = enforcePairedReturnOffset(state.nodes, offset, { mode: "auto" });
+    const modeEl = document.getElementById("profileMode");
+    if (modeEl) modeEl.value = "auto";
+    state.returnMode = "auto";
+    state.nodes = remapNodeIds(nodes);
+    state.returnMeta = {
+      ...meta,
+      closed_loop: true,
+      open_path: false,
+      return_mode: "auto",
+      spacing_locked: true,
+    };
+    state.selectedId = state.nodes[0]?.id ?? null;
+    state.flightOverrides = {};
+    state.finalized = false;
+    rebuildSceneObjects();
+    updateUI();
+    fitView();
+    updateReturnModeChip();
+    updateFinalizeChip();
+    renderFlightTable();
+    if (!opts.quiet) {
+      alert(`强制间距跟随已应用\n\n${meta.note}\n节点 ${state.nodes.length}`);
+    }
+  } catch (err) {
+    alert("强制间距跟随失败：\n" + (err?.message || err));
+  }
+}
+
+
+function getCurveDesignOpts() {
+  const loads = resolveDesignLoads(GC01_INPUT);
+  return {
+    v_mps: loads.v_mps,
+    T_N: loads.T_N,
+    qB: loads.qB,
+    qG: loads.qG,
+    a_idler_m: loads.a_idler_m,
+    B_mm: loads.B_mm,
+    mu: loads.mu,
+    S_tight_N: loads.S_tight_N,
+    S_slack_N: loads.S_slack_N,
+    _source: loads.source,
+    _note: loads.note,
+  };
 }
 
 function runFinalizeAction() {
   // ensure wraps annotated
   state.nodes = annotateWrapAngles(state.nodes);
+  const curveOpts = getCurveDesignOpts();
   const result = finalizeProfile({
     nodes: state.nodes,
     returnMeta: state.returnMeta,
     flightOverrides: state.flightOverrides,
-    v_mps: 2,
+    ...curveOpts,
   });
-  const wrapChk = checkWrapDtii(state.nodes, { min_drive_wrap_deg: 180 });
-  const curveChk = checkVerticalCurveDtii(result.flights, { v_mps: 2 });
+  const wrapChk = checkWrapDtii(state.nodes, {
+    min_drive_wrap_deg: 180,
+    mu: curveOpts.mu,
+    S_tight_N: curveOpts.S_tight_N,
+    S_slack_N: curveOpts.S_slack_N,
+  });
+  const curveChk = checkVerticalCurveDtii(result.flights, curveOpts);
   state.finalizeResult = result;
   state.finalized = !!result.ok;
   if (result.ok) {
@@ -1272,7 +1541,18 @@ function runFinalizeAction() {
   if (els.finalizeSummary) {
     const lines = result.items.map((i) => `[${i.level}] ${i.code}: ${i.message}`);
     lines.push(`包角校核：${wrapChk.ok ? "通过" : "有告警"}`);
-    lines.push(`竖曲线校核：${curveChk.ok ? "通过" : "有告警/无曲线"}`);
+    lines.push(`竖曲线正式 Rmin：${curveChk.ok ? "通过" : "有告警/无曲线"}`);
+    if (curveChk.items?.[0]?.breakdown) {
+      const b = curveChk.items[0].breakdown;
+      lines.push(
+        `Rmin 分解示例：张力 ${b.R_tension_m} / 速度 ${b.R_velocity_m}` +
+          (b.R_sag_m != null ? ` / 下垂 ${b.R_sag_m}` : "") +
+          " m"
+      );
+    }
+    if (result.slip?.items?.length) {
+      lines.push(`不打滑：${result.slip.ok ? "通过" : "有告警"}`);
+    }
     els.finalizeSummary.innerHTML = `<div><strong>Finalize</strong>：${result.meta.note}</div>` +
       lines.map((l) => `<div>${l}</div>`).join("");
   }
@@ -1382,6 +1662,88 @@ function importDxfFile(file) {
   reader.readAsText(file);
 }
 
+/**
+ * 导入 pidm.path.v0 / pidm.bundle.v0 JSON（SolidWorks 插件或网页导出）。
+ * 节点按 seq 顺序全部载入（承载 + 回程），进入 Advanced 模式；不做任何计算。
+ */
+function importPathJsonFile(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const root = JSON.parse(String(reader.result || ""));
+      const path = String(root?.schema || "").startsWith("pidm.bundle") ? root.path : root;
+      if (!String(path?.schema || "").startsWith("pidm.path")) {
+        throw new Error(`schema 不支持：${path?.schema ?? "(空)"}，需要 pidm.path.v0`);
+      }
+      const src = Array.isArray(path.nodes) ? [...path.nodes] : [];
+      if (src.length < 2) throw new Error("节点不足 2 个");
+      src.sort((a, b) => (a.seq ?? 0) - (b.seq ?? 0));
+      const segs = Array.isArray(path.segments) ? path.segments : [];
+      const branchOf = (n) => {
+        if (n.branch) return n.branch;
+        const adj = segs.filter((s) => s.from_node_id === n.id || s.to_node_id === n.id);
+        return adj.length && adj.every((s) => s.branch === "return") ? "return" : "carry";
+      };
+      const nodes = src.map((n) =>
+        mapTemplateNode({
+          x: Number(n.x) || 0,
+          y: Number(n.y) || 0,
+          z: Number(n.z) || 0,
+          type: n.type || "node",
+          label: n.label,
+          branch: branchOf(n),
+          mainDrive: !!n.is_main_drive,
+          drum_D_mm: n.drum_D_mm,
+          takeup_kind: n.takeup_kind,
+        })
+      );
+      nodes.forEach((n, i) => {
+        if (src[i].wrap_angle_deg != null) n.wrap_angle_deg = src[i].wrap_angle_deg;
+      });
+      const hasReturn = nodes.some(isReturnNode);
+      const sel = document.getElementById("profileMode");
+      if (hasReturn) {
+        if (sel) sel.value = "advanced";
+        state.returnMode = "advanced";
+        state.nodes = nodes;
+        state.returnMeta = {
+          closed_loop: true,
+          open_path: false,
+          return_mode: "advanced",
+          carry_return_offset_m: path.line?.carry_return_gap_m ?? null,
+          carry_count: nodes.filter((n) => !isReturnNode(n)).length,
+          return_count: nodes.filter(isReturnNode).length,
+          source: path.source === "sw_addin" ? "sw_import" : "json_import",
+          side_type: path.line?.side_type,
+          note: `JSON 导入（${path.source || "web"}）：几何+标签，计算在网页`,
+        };
+      } else {
+        if (sel) sel.value = "auto";
+        state.returnMode = "auto";
+        applyAutoReturn(nodes, { quiet: true, skipFit: true });
+        state.returnMeta = { ...(state.returnMeta || {}), source: "json_import" };
+      }
+      state.flightOverrides = {};
+      state.finalized = false;
+      state.selectedId = state.nodes[0]?.id ?? null;
+      rebuildSceneObjects();
+      updateFinalizeChip();
+      updateUI();
+      fitView();
+      const errs = (path.closure?.items || []).filter((i) => i.level === "error").length;
+      alert(
+        `JSON 已导入（${path.source || "web"}）\n\n节点：${state.nodes.length}（回程 ${nodes.filter(isReturnNode).length}）\n` +
+          `区段：${segs.length}\n侧型：${path.line?.side_type || "-"}\n` +
+          (errs ? `⚠ 源文件门禁有 ${errs} 个 error，请在网页“闭环检查”复核` : "源文件门禁：无 error")
+      );
+    } catch (err) {
+      alert("JSON 导入失败：\n" + (err?.message || err));
+    }
+  };
+  reader.readAsText(file);
+}
+
 function insertVerticalCurve() {
   const idx = state.nodes.findIndex((n) => n.id === state.selectedId);
   if (idx <= 0 || idx >= state.nodes.length - 1) {
@@ -1394,8 +1756,24 @@ function insertVerticalCurve() {
   }
   const kindRaw = (prompt("竖曲线类型：convex=凸弧 / concave=凹弧", "convex") || "convex").toLowerCase();
   const kind = kindRaw.startsWith("conca") ? "concave" : "convex";
-  const suggest = suggestMinRadius_m({ kind, v_mps: 2 });
-  const R = parseFloat(prompt(`半径 R (m)\n建议最小约 ${suggest.R_min_m} m（示意）`, String(Math.max(suggest.R_min_m, 50))) || "");
+  const design = getCurveDesignOpts();
+  const suggest = suggestMinRadius_m({
+    kind,
+    v_mps: design.v_mps,
+    T_N: design.T_N,
+    qB: design.qB,
+    qG: design.qG,
+    a_idler_m: design.a_idler_m,
+  });
+  const b = suggest.breakdown;
+  const R = parseFloat(
+    prompt(
+      `半径 R (m)\n正式 Rmin≈${suggest.R_min_m} m\n（张力 ${b.R_tension_m} / 速度 ${b.R_velocity_m}` +
+        (b.R_sag_m != null ? ` / 下垂 ${b.R_sag_m}` : "") +
+        "）",
+      String(Math.max(suggest.R_min_m, 50))
+    ) || ""
+  );
   if (!(R > 0)) return;
   const segs = parseInt(prompt("弧段离散点数", "6") || "6", 10);
   try {
@@ -1403,7 +1781,11 @@ function insertVerticalCurve() {
       R_m: R,
       kind,
       segments: Number.isFinite(segs) ? segs : 6,
-      v_mps: 2,
+      v_mps: design.v_mps,
+      T_N: design.T_N,
+      qB: design.qB,
+      qG: design.qG,
+      a_idler_m: design.a_idler_m,
     });
     state.nodes = nodes.map((n) => ({
       ...n,
@@ -1422,19 +1804,78 @@ function insertVerticalCurve() {
     alert(
       `已插入${kind === "convex" ? "凸" : "凹"}弧\n\n` +
         `R=${meta.R_m} m · θ=${meta.theta_deg}° · T=${meta.T_m} m\n` +
-        `建议 Rmin≈${meta.R_min_suggest_m} m · ${meta.ok_vs_suggest ? "满足示意下限" : "小于示意下限，请复核"}`
+        `正式 Rmin≈${meta.R_min_suggest_m} m · ${meta.ok_vs_suggest ? "满足正式下限" : "小于正式下限，请复核"}\n` +
+        `${meta.note}`
     );
   } catch (err) {
     alert("插入竖曲线失败：\n" + (err?.message || err));
   }
 }
 
+function insertHorizontalCurve() {
+  const idx = state.nodes.findIndex((n) => n.id === state.selectedId);
+  if (idx <= 0 || idx >= state.nodes.length - 1) {
+    alert("请先选中一个中间转角点（非端点），再插入水平弯。");
+    return;
+  }
+  if (isReturnNode(state.nodes[idx]) && !isAdvancedReturn()) {
+    alert("Auto 模式下不能改回程转角。请切 Advanced，或选承载转角。");
+    return;
+  }
+  const designH = getCurveDesignOpts();
+  const suggest = suggestHorizontalRmin_m({ v_mps: designH.v_mps, B_mm: designH.B_mm });
+  const R = parseFloat(
+    prompt(`水平弯半径 R (m)\n建议最小约 ${suggest.R_min_m} m`, String(Math.max(suggest.R_min_m, 50))) || ""
+  );
+  if (!(R > 0)) return;
+  const segs = parseInt(prompt("弧段离散点数", "6") || "6", 10);
+  try {
+    const { nodes, meta } = insertHorizontalCurveAt(state.nodes, idx, {
+      R_m: R,
+      segments: Number.isFinite(segs) ? segs : 6,
+      v_mps: designH.v_mps,
+      B_mm: designH.B_mm,
+    });
+    state.nodes = nodes.map((n) => ({
+      ...n,
+      id: n.id && String(n.id).startsWith("harc_") ? uid() : n.id || uid(),
+      z: n.z ?? 0,
+    }));
+    state.selectedId = state.nodes[Math.min(idx, state.nodes.length - 1)]?.id ?? null;
+    if (!isReturnNode(state.nodes[idx] || {}) && !isAdvancedReturn()) {
+      maybeResyncReturn({ skipFit: true });
+    } else if (isReturnNode(state.nodes.find((n) => n.id === state.selectedId))) {
+      markAdvancedReturnMeta({ source: "horizontal_curve" });
+    }
+    rebuildSceneObjects();
+    updateUI();
+    fitView();
+    alert(
+      `已插入水平弯\n\n` +
+        `R=${meta.R_m} m · θ=${meta.theta_deg}° · T=${meta.T_m} m\n` +
+        `建议 Rmin≈${meta.R_min_suggest_m} m · ${meta.ok_vs_suggest ? "满足示意下限" : "小于示意下限，请复核"}`
+    );
+  } catch (err) {
+    alert("插入水平弯失败：\n" + (err?.message || err));
+  }
+}
+
 function annotateAllWraps() {
   state.nodes = annotateWrapAngles(state.nodes);
+  const slip = annotateDriveSlipChecks(state.nodes, { mu: getCurveDesignOpts().mu, S_tight_N: getCurveDesignOpts().S_tight_N, S_slack_N: getCurveDesignOpts().S_slack_N });
+  state.nodes = slip.nodes;
   rebuildSceneObjects();
   updateUI();
   const drums = state.nodes.filter((n) => n.wrap_angle_deg != null);
-  alert(`已重算包角（邻段几何）\n\n写入 ${drums.length} 个滚筒/改向点。\n选中节点可在表单查看 φ。`);
+  const slipLines = (slip.items || [])
+    .map((it) => `· ${it.node_id}: ${it.message}`)
+    .join("\n");
+  alert(
+    `已重算包角（邻段几何）\n\n写入 ${drums.length} 个滚筒/改向点。\n` +
+      `不打滑校核：${slip.ok ? "通过" : "有告警"}\n` +
+      (slipLines ? `${slipLines}\n` : "") +
+      `选中节点可在表单查看 φ。`
+  );
 }
 
 function applyAllDrumOffsets() {
@@ -1482,6 +1923,7 @@ function bindChrome() {
   document.getElementById("btnEasyApply")?.addEventListener("click", applyEasyFromModal);
   document.getElementById("easyPreset")?.addEventListener("change", onEasyPresetChange);
   document.getElementById("btnPairFlights")?.addEventListener("click", pairFlightsAction);
+  document.getElementById("btnEnforceSpacing")?.addEventListener("click", () => enforceSpacingFollowAction());
   document.getElementById("btnFinalize")?.addEventListener("click", runFinalizeAction);
   document.getElementById("btnExportDxf")?.addEventListener("click", exportDxfAction);
   document.getElementById("btnExportExcel")?.addEventListener("click", exportExcelAction);
@@ -1499,7 +1941,15 @@ function bindChrome() {
     importDxfFile(f);
     ev.target.value = "";
   });
+  document.getElementById("btnImportJson")?.addEventListener("click", () => {
+    document.getElementById("jsonFileInput")?.click();
+  });
+  document.getElementById("jsonFileInput")?.addEventListener("change", (ev) => {
+    importPathJsonFile(ev.target.files?.[0]);
+    ev.target.value = "";
+  });
   document.getElementById("btnInsertCurve")?.addEventListener("click", insertVerticalCurve);
+  document.getElementById("btnInsertHCurve")?.addEventListener("click", insertHorizontalCurve);
   document.getElementById("btnAnnotateWrap")?.addEventListener("click", annotateAllWraps);
   document.getElementById("btnDrumOffset")?.addEventListener("click", applyAllDrumOffsets);
 

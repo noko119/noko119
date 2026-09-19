@@ -2,9 +2,9 @@
  * 轻量回归：路径导出主驱点序 + Web 正确提取 + GC-01 计算
  * 运行：node ui-prototype/smoke-test.mjs
  */
-import { buildPathExport } from "./path-schema.js";
+import { buildPathExport, classifySegmentDraft } from "./path-schema.js";
 import { GC01_INPUT, GC01_EXPECTED, GC01_TOL } from "./calc/gc01-case.js";
-import { runDtiiP2P, compareToExpected } from "./calc/dtii-engine.js";
+import { runDtiiP2P, compareToExpected, selectMotorFromPm } from "./calc/dtii-engine.js";
 import {
   segmentGeometry,
   extractGeometryFromPath,
@@ -19,14 +19,33 @@ import {
 import { buildGc01ComplexPath } from "./calc/gc01-complex-path.js";
 import { buildEasyFromPreset, EASY_PRESETS } from "./calc/easy-wizard.js";
 import { exportNodesToDxf } from "./calc/dxf-import.js";
-import { buildFlightRows, pairCarryReturnFlights } from "./calc/flight-model.js";
+import { buildFlightRows, pairCarryReturnFlights, enforcePairedReturnOffset } from "./calc/flight-model.js";
 import { finalizeProfile, checkWrapDtii } from "./calc/finalize-checks.js";
 import { nodesToCsv, csvToNodes, flightsToCsv } from "./calc/excel-io.js";
 
 import { buildEasyInclineConveyor } from "./calc/easy-wizard.js";
 import { parseDxfPolylines, dxfPointsToCarryNodes } from "./calc/dxf-import.js";
 import { insertVerticalCurveAt, suggestMinRadius_m } from "./calc/vertical-curve.js";
-import { annotateWrapAngles, applyDrumRadiusOffsets, computeWrapAtNode } from "./calc/drum-geometry.js";
+import {
+  annotateWrapAngles,
+  applyDrumRadiusOffsets,
+  computeWrapAtNode,
+  checkDriveNoSlip,
+  annotateDriveSlipChecks,
+} from "./calc/drum-geometry.js";
+import {
+  insertHorizontalCurveAt,
+  suggestHorizontalRmin_m,
+  cornerAngleXY,
+} from "./calc/horizontal-curve.js";
+import {
+  DTII_MAJORS,
+  autoClassifyFlight,
+  classifyFlightRows,
+} from "./calc/dtii-flight-dict.js";
+import { DEFAULT_COEFFS, coeffsToCalcInput } from "./calc/default-coeffs.js";
+import { buildDesignLoadsFromP2P, saveDesignLoads, resolveDesignLoads } from "./calc/design-loads.js";
+import { selectBeltGrade } from "./calc/selection-catalog.js";
 import { readFileSync } from "fs";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
@@ -243,7 +262,7 @@ function near(a, b, tol = 1e-6) {
   assert(nodes.length > carry.length, "dxf path grew with return");
 }
 
-// 13) 竖曲线 + 最小半径建议
+// 13) 竖曲线 + 正式 Rmin 分解
 {
   const base = [
     { id: "a", x: 0, y: 0, z: 0, type: "tail", branch: "carry" },
@@ -252,10 +271,23 @@ function near(a, b, tol = 1e-6) {
   ];
   const sug = suggestMinRadius_m({ kind: "convex", v_mps: 2 });
   assert(sug.R_min_m > 0, "suggest Rmin > 0");
+  assert(sug.breakdown && sug.breakdown.R_tension_m > 0, "Rmin has tension term");
+  assert(sug.breakdown.R_velocity_m > 0, "Rmin has velocity term");
+  const sugFull = suggestMinRadius_m({
+    kind: "concave",
+    v_mps: 2,
+    T_N: 50000,
+    qB: 47.6,
+    qG: 236.1,
+    a_idler_m: 1.2,
+  });
+  assert(sugFull.breakdown.R_sag_m > 0, "Rmin has sag term when a given");
+  assert(sugFull.note.includes("DTⅡ") || sugFull.note.includes("正式"), "formal Rmin note");
   const { nodes, meta } = insertVerticalCurveAt(base, 1, { R_m: 120, kind: "convex", segments: 4 });
   assert(nodes.length > base.length, "curve inserts points");
   assert(meta.R_m === 120, "curve R recorded");
   assert(meta.kind === "convex", "curve kind convex");
+  assert(meta.R_min_breakdown, "insert meta has Rmin breakdown");
 }
 
 // 14) 包角 + D/2 偏移
@@ -275,7 +307,6 @@ function near(a, b, tol = 1e-6) {
   assert(offNodes[1].offset_applied === true, "bend offset flag");
 }
 
-
 // 15) Easy 机型库 + Flight 配对 + Finalize + DXF/CSV 往返
 {
   assert(EASY_PRESETS.length >= 3, "easy presets >= 3");
@@ -288,6 +319,7 @@ function near(a, b, tol = 1e-6) {
   });
   let flights = buildFlightRows(easy.nodes, { closed_loop: true });
   assert(flights.length >= 3, "flight rows built");
+  assert(flights.every((f) => f.major_id), "flights auto-classified major_id");
   const paired = pairCarryReturnFlights(flights);
   assert(paired.meta.paired_pairs >= 1, "paired flights >= 1");
   const fin = finalizeProfile({
@@ -307,6 +339,110 @@ function near(a, b, tol = 1e-6) {
   assert(fcsv.includes("a_idler_m"), "flight csv header");
   const wrap = checkWrapDtii(easy.nodes, { min_drive_wrap_deg: 1 });
   assert(wrap.items.length >= 1, "wrap dtii has drive item");
+}
+
+
+// 16) 驱动不打滑欧拉校核
+{
+  const ok = checkDriveNoSlip({ wrap_deg: 210, mu: 0.35, S_tight_N: 80000, S_slack_N: 25000 });
+  assert(ok.ok === true, "no-slip ok when e^{μφ} sufficient");
+  const ratio = ok.ratio ?? ok.S_ratio ?? (80000/25000);
+  const e = ok.e_mu_phi ?? ok.e_mu_phi ?? ok.emu_phi;
+  assert(e > ratio - 1e-9, "e_mu_phi > ratio");
+  const bad = checkDriveNoSlip({ wrap_deg: 90, mu: 0.2, S_tight_N: 200000, S_slack_N: 20000 });
+  assert(bad.ok === false, "no-slip fails when wrap insufficient");
+  const driveNodes = [
+    { id: "t", x: 0, y: 0, z: 0, type: "tail" },
+    { id: "d", x: 10, y: 0, z: 0, type: "drive", mainDrive: true, wrap_angle_deg: 200 },
+    { id: "h", x: 20, y: 0, z: 0, type: "head" },
+  ];
+  const ann = annotateDriveSlipChecks(driveNodes, { mu: 0.35, S_tight_N: 80000, S_slack_N: 25000 });
+  assert((ann.items || []).length >= 1, "annotate slip one drive");
+  assert(ann.nodes[1].no_slip_ok != null, "drive has no_slip_ok");
+}
+
+// 17) DTⅡ 十二大项分类
+{
+  assert(DTII_MAJORS.length === 12, "12 DTII majors");
+  const cls = autoClassifyFlight({ branch: "carry", delta_deg: 12 });
+  assert(!!cls.major_id, "classify incline has major_id");
+  const clsH = autoClassifyFlight({ branch: "return", delta_deg: 0.5 });
+  assert(!!clsH.major_id, "classify return has major_id");
+  const clsCv = autoClassifyFlight({ branch: "carry", curve_kind: "convex", delta_deg: 5 });
+  assert(String(clsCv.major_id).includes("convex"), "classify convex");
+  const rows = classifyFlightRows([
+    { id: "s1", branch: "carry", delta_deg: 0, from_node_id: "a", to_node_id: "b" },
+  ]);
+  assert(!!rows[0].major_id, "classifyFlightRows major_id");
+}
+
+// 18) 水平弯
+{
+  const base = [
+    { id: "a", x: 0, y: 0, z: 0, type: "tail", branch: "carry" },
+    { id: "b", x: 40, y: 0, z: 2, type: "node", branch: "carry" },
+    { id: "c", x: 40, y: 40, z: 4, type: "head", branch: "carry" },
+  ];
+  const ang = cornerAngleXY(base, 1);
+  assert(ang.ok === true, "horizontal corner ok");
+  const sug = suggestHorizontalRmin_m({ v_mps: 2 });
+  assert(sug.R_min_m >= 30, "horizontal Rmin floor");
+  const { nodes, meta } = insertHorizontalCurveAt(base, 1, { R_m: 25, segments: 4 });
+  assert(nodes.length > base.length, "horizontal curve inserts");
+  assert(meta.kind === "horizontal", "horizontal kind");
+  assert(nodes.some((n) => n.curve === "horizontal" || n.curve_kind === "horizontal"), "nodes marked horizontal");
+  const flights = buildFlightRows(nodes, { closed_loop: false });
+  assert(flights.length >= 1, "flight rows after horizontal");
+}
+
+// 19) 强制间距跟随 + 系数面板映射 + 电机选型
+{
+  const carry = [
+    { id: "t", x: 0, y: 0, z: 0, type: "tail", drum_D_mm: 800 },
+    { id: "n", x: 100, y: 0, z: 20, type: "node" },
+    { id: "d", x: 200, y: 0, z: 40, type: "drive", mainDrive: true, drum_D_mm: 1000 },
+    { id: "h", x: 220, y: 0, z: 40, type: "head", drum_D_mm: 800 },
+  ];
+  const locked = enforcePairedReturnOffset(carry, 1.5);
+  const meta = locked.meta || {};
+  assert(meta.spacing_locked === true || meta.source === "enforce_paired_return_offset" || meta.spacing_locked === true, "spacing locked");
+  assert(locked.nodes.some((n) => n.branch === "return"), "has return after enforce");
+
+  const mapped = coeffsToCalcInput({ f: 0.02, f_duty: "empty", qG: 0 }, { ...GC01_INPUT });
+  assert(mapped.f === 0.02, "coeffsToCalcInput f override");
+  assert(mapped.C === DEFAULT_COEFFS.C || mapped.C === GC01_INPUT.C, "coeffs keep C");
+  assert(mapped.v_mps === GC01_INPUT.v_mps, "coeffs keep v");
+
+  const motor = selectMotorFromPm(399.1);
+  const Pk = motor.P_kW ?? motor.kW ?? motor.P_motor_kW;
+  assert(Pk === 400, "motor select 400 for PM 399.1");
+  const out = runDtiiP2P(GC01_INPUT);
+  assert(out.steps.some((s) => s.id === "Motor" || /选型/.test(s.title || "")), "Motor step present");
+}
+
+
+// 20) P2P 设计荷载桥接 + 水平弯分解 + schema retH + 胶带选型
+{
+  const out = runDtiiP2P(GC01_INPUT);
+  assert(out.summary.design_loads?.source === "p2p_summary", "design loads from P2P");
+  assert(out.summary.design_loads.S_tight_N > out.summary.design_loads.S_slack_N, "tight > slack");
+  assert(out.steps.some((s) => s.id === "Belt"), "Belt step present");
+  assert(!!out.summary.belt_grade, "belt_grade set");
+  const store = { _d: {}, setItem(k,v){this._d[k]=v}, getItem(k){return this._d[k]} };
+  saveDesignLoads(out.summary.design_loads, store);
+  const resolved = resolveDesignLoads(GC01_INPUT, store);
+  assert(resolved.source === "p2p_summary", "resolveDesignLoads from store");
+  const h = suggestHorizontalRmin_m({ v_mps: 2, B_mm: 1400 });
+  assert(h.breakdown?.R_velocity_m > 0, "horizontal R velocity term");
+  assert(h.breakdown?.R_belt_m > 0, "horizontal R belt term");
+  assert(h.breakdown?.R_accel_m > 0, "horizontal R accel term");
+  const draft = classifySegmentDraft(
+    { id: "a", x: 0, y: 0, z: 0, branch: "return" },
+    { id: "b", x: 10, y: 0, z: 0, branch: "return" }
+  );
+  assert(draft.major_id === "retH", "schema draft retH");
+  const belt = selectBeltGrade({ S_max_N: 399000, B_mm: 1400, n1: 10 });
+  assert(belt.ok && belt.grade.startsWith("ST"), "selectBeltGrade ST");
 }
 
 if (failed) {

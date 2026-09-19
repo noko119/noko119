@@ -22,6 +22,7 @@
         <span class="chip" id="modeChip">模式：3D</span>
         <span class="chip ok" id="pointCount">节点：0</span>
         <span class="chip" id="lengthChip">展开长：0 m</span>
+        <span class="chip" id="drumGapChip">滚筒间距：—</span>
         <span class="chip warn" id="closureChip">闭环：未检查</span>
       </div>
     </header>
@@ -53,16 +54,19 @@
       <div class="tool-group">
         <span class="label">Easy / 导入导出</span>
         <button class="btn" id="btnEasyWizard" title="对标 Sidewinder Easy：向导面板+机型库">Easy 向导</button>
+        <button class="btn" id="btnImportJson" title="导入 pidm.path.v0 JSON（SolidWorks 插件 / 网页导出）">导入 JSON(SW)</button>
         <button class="btn" id="btnImportDxf" title="导入 DXF 中心线">导入 DXF</button>
         <button class="btn" id="btnExportDxf" title="导出中心线 DXF">导出 DXF</button>
         <button class="btn" id="btnImportExcel" title="导入 Excel 兼容 CSV">导入 Excel</button>
         <button class="btn" id="btnExportExcel" title="导出节点/Flight CSV">导出 Excel</button>
+        <input type="file" id="jsonFileInput" accept=".json,application/json" hidden />
         <input type="file" id="dxfFileInput" accept=".dxf,text/plain" hidden />
         <input type="file" id="excelFileInput" accept=".csv,text/csv,text/plain" hidden />
       </div>
       <div class="tool-group">
         <span class="label">剖面确认</span>
         <button class="btn" id="btnPairFlights" title="承载↔回程配对">配对航段</button>
+        <button class="btn" id="btnEnforceSpacing" title="按承载重算回程并锁定间距">强制间距跟随</button>
         <button class="btn primary" id="btnFinalize" title="Finalize Profile">Finalize</button>
         <span class="chip" id="finalizeChip">Finalize：未锁定</span>
       </div>
@@ -75,6 +79,7 @@
       <div class="tool-group">
         <span class="label">工业绘图</span>
         <button class="btn" id="btnInsertCurve" title="对标大厂：在选中转角插入凸/凹弧">插入竖曲线</button>
+        <button class="btn" id="btnInsertHCurve" title="在选中转角插入水平弯（XY）">插入水平弯</button>
         <button class="btn" id="btnAnnotateWrap" title="按邻段几何重算滚筒包角">重算包角</button>
         <button class="btn" id="btnDrumOffset" title="滚筒节点按 D/2 角平分线偏移中心线">D/2 偏移</button>
       </div>
@@ -130,6 +135,7 @@
         <h3>操作说明</h3>
         <ul class="help">
           <li><strong>3D</strong>：左键选/拖点，中键或 Alt+左键旋转，滚轮缩放；拖点改 XYZ。</li>
+          <li><strong>滚筒间距</strong>：路径段中点显示距离；选中滚筒时顶栏显示与相邻滚筒间距。</li>
           <li><strong>2D 俯视</strong>：改 X/Y；Z 用右侧表或选中后改高程。</li>
           <li><strong>2D 侧视</strong>：改 X/Z（看坡度/高差）。</li>
           <li><strong>Easy 向导</strong>：少参数生成斜坡机 + Auto Return（对标 Sidewinder）。</li>

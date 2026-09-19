@@ -1,7 +1,13 @@
-# SolidWorks 插件骨架：读路径 JSON（v0）
+# SolidWorks 插件：皮带机路径（v0）
 
-> 配套：`SW_PACKAGE_READ_GUIDE.md`、`WEB_SW_DATA_CONTRACT_DRAFT.md`  
-> 本目录代码：**先可用 VBA 宏验证读包**；正式产品再迁 C# Add-in。
+> **正式 C# Add-in 在 [`addin/`](addin/README.md)**：CommandManager 选项卡「DTⅡ 路径」，5 组 36 个按钮（按 DTⅡ(A) 手册反推，见 `docs/SW_PLUGIN_PATH_BUTTONS.md`），在 SW 里画路径、打标签、导出 `pidm.path.v0` 给网页计算。  
+> 下文的 VBA 宏是早期"只读包画骨架"的验证版，保留备用。
+
+---
+
+# 附：VBA 宏骨架：读路径 JSON（v0）
+
+> 配套：`SW_PACKAGE_READ_GUIDE.md`、`WEB_SW_DATA_CONTRACT_DRAFT.md`
 
 ---
 

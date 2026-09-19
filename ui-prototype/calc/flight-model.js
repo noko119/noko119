@@ -2,14 +2,27 @@
  * Flight 段属性模型（对标 Belt Analyst Flight 表）
  */
 import { buildSegments } from "../path-schema.js";
+import { classifyFlightRows } from "./dtii-flight-dict.js";
+import { buildAutoReturnLoop, extractCarryChain } from "./auto-return.js";
 
 function isReturn(n) {
   return !!(n && (n.branch === "return" || n.strand === "return"));
 }
 
+function curveFromEndpoints(from, to) {
+  const c = from?.curve || to?.curve || null;
+  if (c === "convex" || c === "concave" || c === "horizontal") return c;
+  return null;
+}
+
+function radiusFromEndpoints(from, to) {
+  const R = from?.R_m ?? to?.R_m ?? null;
+  return Number.isFinite(R) && R > 0 ? R : null;
+}
+
 /**
  * @param {Array} nodes
- * @param {{closed_loop?:boolean, default_a0?:number, default_aU?:number, flightOverrides?:Record<string,object>}} [opts]
+ * @param {{closed_loop?:boolean, default_a0?:number, default_aU?:number, flightOverrides?:Record<string,object>, autoClassify?:boolean}} [opts]
  */
 export function buildFlightRows(nodes, opts = {}) {
   const closed = !!(opts.closed_loop || opts.closed_loop);
@@ -19,13 +32,16 @@ export function buildFlightRows(nodes, opts = {}) {
   const segs = buildSegments(nodes, { closed_loop: closed });
   const byId = new Map(nodes.map((n) => [n.id, n]));
 
-  return segs.map((s, i) => {
+  let rows = segs.map((s, i) => {
     const from = byId.get(s.from_node_id);
     const to = byId.get(s.to_node_id);
     const ov = overrides[s.id] || {};
     const branch =
       ov.branch || s.branch || (isReturn(from) || isReturn(to) ? "return" : "carry");
     const Ln = Math.hypot((to?.x ?? 0) - (from?.x ?? 0), (to?.y ?? 0) - (from?.y ?? 0));
+    const curve_kind =
+      ov.curve_kind ?? s.curve_kind ?? curveFromEndpoints(from, to);
+    const R_m = ov.R_m ?? s.R ?? radiusFromEndpoints(from, to);
     return {
       id: s.id,
       seq: i + 1,
@@ -39,15 +55,20 @@ export function buildFlightRows(nodes, opts = {}) {
       H_m: +Number(s.H ?? 0).toFixed(4),
       delta_deg: +Number(s.delta_deg ?? 0).toFixed(4),
       a_idler_m: ov.a_idler_m ?? s.a_idler ?? (branch === "return" ? aU : a0),
-      R_m: ov.R_m ?? s.R ?? null,
+      R_m,
       theta_deg: ov.theta_deg ?? s.theta_deg ?? null,
-      curve_kind: ov.curve_kind ?? s.curve_kind ?? null,
+      curve_kind,
       paired_flight_id: ov.paired_flight_id ?? null,
       loading: ov.loading ?? branch === "carry",
       classify_status: ov.classify_status || s.classify_status || "draft",
       name: ov.name || s.name_tree || s.id,
     };
   });
+
+  if (opts.autoClassify !== false) {
+    rows = classifyFlightRows(rows, { nodes });
+  }
+  return rows;
 }
 
 /** 承载↔回程邻近配对（对标 BA Pair Flights） */
@@ -84,6 +105,30 @@ export function pairCarryReturnFlights(flights, maxScore = 20) {
       paired_pairs: used.size,
       source: "pair_carry_return",
       note: "承载↔回程按长度/序号邻近配对，可手改",
+    },
+  };
+}
+
+/**
+ * 强制间距跟随：按承载重算 Auto Return（硬锁定回程间距）
+ * @param {Array} nodes
+ * @param {number} offset_m
+ * @param {{mode?:'auto'|'advanced'}} [opts]
+ */
+export function enforcePairedReturnOffset(nodes, offset_m, opts = {}) {
+  const carry = extractCarryChain(nodes);
+  const off = Number.isFinite(offset_m) ? offset_m : 1.2;
+  const { nodes: loop, meta } = buildAutoReturnLoop(carry, {
+    offset_m: off,
+    mode: opts.mode === "advanced" ? "advanced" : "auto",
+  });
+  return {
+    nodes: loop,
+    meta: {
+      ...meta,
+      source: "enforce_paired_return_offset",
+      note: `强制间距跟随：回程按承载法向偏移 ${off} m 重建`,
+      spacing_locked: true,
     },
   };
 }

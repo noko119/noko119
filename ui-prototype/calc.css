@@ -60,6 +60,28 @@ html, body {
   border: 1px solid var(--line);
   border-radius: var(--radius);
 }
+.coeff-panel {
+  margin-bottom: 12px;
+  padding: 12px 14px;
+}
+.coeff-panel h3 { margin: 0 0 10px; font-size: 1rem; }
+.coeff-panel .muted { color: var(--muted); font-weight: 400; font-size: .82rem; margin-left: 8px; }
+.coeff-panel .ok-text { color: #86efac; }
+.coeff-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 8px 12px;
+}
+.coeff-grid label {
+  display: flex; flex-direction: column; gap: 4px;
+  font-size: .78rem; color: var(--muted);
+}
+.coeff-grid input, .coeff-grid select {
+  background: #171e29; color: var(--text);
+  border: 1px solid var(--line); border-radius: 8px;
+  padding: 6px 8px; font: inherit;
+}
+.coeff-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
 .btn {
   border: 1px solid var(--line);
   background: #171e29;

@@ -17,18 +17,18 @@ export function classifySegmentDraft(from, to) {
   const absD = Math.abs(g.delta_deg);
   const ret = isReturnNode(from) || isReturnNode(to);
 
-  let major_id = ret ? "returnH" : "carryH";
+  let major_id = ret ? "retH" : "carryH";
   let sub_id = ret ? "returnH.1" : "carryH.1";
   let branch = ret ? "return" : "carry";
 
   if (absD < 2) {
-    major_id = ret ? "returnH" : "carryH";
+    major_id = ret ? "retH" : "carryH";
     sub_id = ret ? "returnH.1" : "carryH.1";
   } else if (g.delta_deg >= 2) {
-    major_id = ret ? "returnI" : "carryI";
+    major_id = ret ? "retI" : "carryI";
     sub_id = ret ? "returnI.1" : "carryI.1";
   } else {
-    major_id = ret ? "returnI" : "carryI";
+    major_id = ret ? "retI" : "carryI";
     sub_id = ret ? "returnI.2" : "carryI.2";
   }
 
