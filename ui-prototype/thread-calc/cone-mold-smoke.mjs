@@ -2,6 +2,7 @@ import {
   designConeMold,
   coneDiaAt,
   roundMajor05,
+  pickJointMajorDia,
   pickPipeByConeDia,
   scalePuToMold,
   RECOMMENDED_SCALE_FACTOR,
@@ -13,7 +14,10 @@ function assert(c, m) {
   if (!c) throw new Error(m);
 }
 
-assert(roundMajor05(161) === 160, "round");
+assert(roundMajor05(161) === 160, "round legacy");
+assert(pickJointMajorDia(161.4, 219, 194) === 161, "auto major int");
+assert(pickJointMajorDia(218, 219, 194) === 218, "clamp below OD");
+assert(pickJointMajorDia(190, 219, 194) === 195, "clamp above cone"); // lo=ceil(195)=195
 assert(pickPipeByConeDia(194).od === 219, `pick 194 → ${pickPipeByConeDia(194).od}`);
 assert(pickPipeByConeDia(108).od === 127, `pick 108 → ${pickPipeByConeDia(108).od}`);
 assert(pickPipeByConeDia(254).od === 273, `pick 254 → ${pickPipeByConeDia(254).od}`);
@@ -55,6 +59,14 @@ assert(r.sleeves.every((s) => STD_PIPE_ODS.some((od) => Math.abs(od - s.outerOd)
 assert(r.sleeves[0].outerOd === 219, `pipe0 od ${r.sleeves[0].outerOd}`);
 assert(r.sleeves[0].pipeId === 200 || r.sleeves[0].outerOd === 219, "pipe0 id/od");
 assert(r.joints.every((j) => j.ok), "joints");
+// 螺纹大径自动取整，不强制尾数 0/5
+assert(
+  r.joints.every((j) => {
+    const m = j.majorDia;
+    return Number.isInteger(m) && m > j.coneDia && m < j.toOd;
+  }),
+  `majors ${r.joints.map((j) => j.majorDia)}`
+);
 const loc = r.summary.locator;
 const eng = r.summary.engage;
 const und = r.summary.undercut;

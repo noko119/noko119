@@ -156,7 +156,7 @@ function run() {
     wall: num("wall", CONE_MOLD_DEFAULTS.wall),
     segmentCount: segRaw === "" ? undefined : Number(segRaw),
     preferredOuterOds,
-    roundThread: true,
+    roundThread: false,
   });
 
   if (!r.ok) {

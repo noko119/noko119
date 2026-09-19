@@ -195,8 +195,25 @@ export function scalePuToMold(pu, factor, topAllowance, bottomAllowance) {
   };
 }
 
+/** @deprecated 旧接口：尾数 0/5 圆整；接头螺纹已改为就近整数自动算，不再强制 0/5 */
 export function roundMajor05(n) {
   return Math.round(Number(n) / 5) * 5;
+}
+
+/**
+ * 接头螺纹大径：以接管中心线理论大径就近取整，再夹在 (锥径, 下套外径) 之间
+ * 不强制尾数 0/5
+ */
+export function pickJointMajorDia(recommendedMajor, lowerOd, coneDia) {
+  let major = Math.round(Number(recommendedMajor));
+  const hi = Math.floor(Number(lowerOd) - 1);
+  const lo = Math.ceil(Number(coneDia) + 1);
+  if (Number.isFinite(hi) && major >= Number(lowerOd)) major = hi;
+  if (Number.isFinite(lo) && major <= Number(coneDia)) major = lo;
+  if (Number.isFinite(hi) && Number.isFinite(lo) && lo <= hi) {
+    major = Math.min(hi, Math.max(lo, major));
+  }
+  return major;
 }
 
 /**
@@ -372,7 +389,7 @@ export function designConeMold(input = {}) {
   const bottomAllowance = Number(input.bottomAllowance ?? CONE_MOLD_DEFAULTS.bottomAllowance);
   const standardLen = Number(input.standardLen ?? CONE_MOLD_DEFAULTS.standardLen);
   const wall = Number(input.wall ?? CONE_MOLD_DEFAULTS.wall);
-  const roundThread = input.roundThread !== false;
+  const roundThread = input.roundThread === true; // 仅显式 true 才强制 0/5（已不推荐）
   const grooveKind = input.grooveKind || "normal";
   const scaleFactor = Number(
     input.scaleFactor ?? input.enlargeFactor ?? CONE_MOLD_DEFAULTS.scaleFactor
@@ -625,9 +642,14 @@ export function designConeMold(input = {}) {
       joints.push({ ok: false, index: i + 1, error: auto.error, z: zJoint, coneDia: coneD });
       continue;
     }
-    let major = roundThread ? roundMajor05(auto.recommendedMajor) : auto.recommendedMajor;
-    if (major >= D1) major = roundMajor05(D1 - 5);
-    if (major <= coneD) major = roundMajor05(coneD + 5);
+    // 自动合理螺纹：理论大径就近取整；可选旧规则 roundThread→尾数0/5
+    let major = roundThread
+      ? roundMajor05(auto.recommendedMajor)
+      : pickJointMajorDia(auto.recommendedMajor, D1, coneD);
+    if (roundThread) {
+      if (major >= D1) major = roundMajor05(D1 - 5);
+      if (major <= coneD) major = roundMajor05(coneD + 5);
+    }
     const minT2 = minFemaleWall(D1, t1, D2, major);
     const check = computePipeEndThread({ D1, t1, D2, t2: minT2 || 50 }, { majorDia: major });
     const cards = computeThreadEndCards(`M${major}×${PIPE_END_CONST.pitch}`);
