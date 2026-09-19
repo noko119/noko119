@@ -9,11 +9,19 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 const dir = path.dirname(fileURLToPath(import.meta.url));
 const read = (name) => fs.readFileSync(path.join(dir, name), "utf8");
 
-const { designConeMold } = await import(pathToFileURL(path.join(dir, "cone-mold-math.js")).href);
+const bust = `?t=${Date.now()}`;
+const { designConeMold } = await import(pathToFileURL(path.join(dir, "cone-mold-math.js")).href + bust);
 const { renderAssembledConeDiagram } = await import(
-  pathToFileURL(path.join(dir, "cone-mold-diagram.js")).href
+  pathToFileURL(path.join(dir, "cone-mold-diagram.js")).href + bust
 );
-const defaultSvg = renderAssembledConeDiagram(designConeMold({}));
+const built = designConeMold({});
+const defaultSvg = renderAssembledConeDiagram(built);
+console.log(
+  "default sleeves OD",
+  built.sleeves.map((s) => s.outerOd).join(","),
+  "labels",
+  (defaultSvg.match(/外径 ø[0-9.]+/g) || []).join(" | ")
+);
 
 let html = read("cone-mold.html").replace("<!--DEFAULT_ASSY_SVG-->", defaultSvg);
 const css = read("thread-calc.css");
