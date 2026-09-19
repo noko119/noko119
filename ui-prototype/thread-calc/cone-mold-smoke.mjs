@@ -36,6 +36,8 @@ assert(r.joints[0].locatorDim?.formula?.includes("止口="), "locator formula");
 const svg = renderAssembledConeDiagram(r);
 assert(svg.includes("外径"), "od mark");
 assert(svg.includes(`止口 ${loc}`) || svg.includes(`止口${loc}`), "locator mark");
+assert(svg.includes("退刀槽"), "undercut mark");
+assert(svg.includes("螺纹"), "thread mark");
 assert(svg.includes("自动"), "auto mark");
 
 console.log("cone-mold smoke OK", {
