@@ -12,18 +12,17 @@ function num(id, fallback) {
 function fillSegTable(sleeves) {
   $("segTable").innerHTML = sleeves
     .map((s) => {
-      const ends = [s.femaleSleeve ? "下搭接" : "", s.maleNeck ? "上承接" : ""].filter(Boolean).join("+") || "—";
       let note = "—";
       if (s.topFaceOffset != null) note = `含上余量 ${s.topFaceOffset}`;
       else if (s.bottomFaceOffset != null) note = `含下余量 ${s.bottomFaceOffset}`;
       return `<tr>
         <th scope="row">套${s.index}</th>
-        <td>ø${s.coneAtTop}→ø${s.coneAtBot}</td>
-        <td>ø${s.outerOd}</td>
+        <td>ø${s.coneAtTop}→ø${s.coneAtBot}（需≥${s.coneNeed}）</td>
+        <td>${s.pipeLabel || `ø${s.pipeNom}`}</td>
+        <td><strong>ø${s.outerOd}</strong></td>
         <td>${s.length} mm</td>
         <td>${s.kind}</td>
         <td>${s.wall} mm</td>
-        <td>${ends}</td>
         <td>${note}</td>
       </tr>`;
     })
@@ -55,7 +54,7 @@ function renderSchema(sleeves, cone) {
     ${sleeves
       .map(
         (s, i) =>
-          `<div class="seg"><strong>外套${s.index}</strong><span>外ø${s.outerOd} · ${s.length}mm<br/>${s.kind}</span></div>${
+          `<div class="seg"><strong>外套${s.index}</strong><span>${s.pipeLabel || "ø" + s.outerOd}<br/>${s.length}mm · ${s.kind}</span></div>${
             i < sleeves.length - 1 ? `<div class="arrow">↕</div>` : ""
           }`
       )

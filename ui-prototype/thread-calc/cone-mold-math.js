@@ -9,9 +9,49 @@
 
 import { computePipeEndThread, PIPE_END_CONST, computeThreadEndCards } from "./pipe-end-math.js";
 
-export const STD_PIPE_ODS = [
-  89, 102, 108, 114, 121, 127, 133, 140, 152, 159, 168, 180, 194, 203, 219, 245, 273, 299, 325, 351, 377,
+/**
+ * 管子选型表（用户手写：名义ø / 内径 / 外径）
+ * 选型规则：按本节最大锥径，选「内径 ≥ 锥径」的最小一档，取其外径做外套管外径
+ */
+export const PIPE_SIZE_TABLE = [
+  { nom: 60, id: 60, od: 80 },
+  { nom: 63.5, id: 63, od: 83 },
+  { nom: 70, id: 70, od: 90 },
+  { nom: 76, id: 80, od: 102 },
+  { nom: 83, id: 85, od: 105 },
+  { nom: 89, id: 90, od: 110 },
+  { nom: 102, id: 105, od: 125 },
+  { nom: 108, id: 110, od: 130 },
+  { nom: 114, id: 115, od: 135 },
+  { nom: 121, id: 120, od: 140 },
+  { nom: 127, id: 130, od: 152 },
+  { nom: 133, id: 135, od: 159 },
+  { nom: 140, id: 140, od: 159 },
+  { nom: 146, id: 150, od: 170 },
+  { nom: 159, id: 160, od: 180 },
+  { nom: 168, id: 170, od: 194 },
+  { nom: 177, id: 180, od: 203 },
+  { nom: 180, id: 180, od: 203 },
+  { nom: 194, id: 200, od: 219 },
+  { nom: 203, id: 210, od: 245 },
+  { nom: 219, id: 220, od: 245 },
+  { nom: 232, id: 240, od: 273 },
+  { nom: 245, id: 250, od: 273 },
+  { nom: 254, id: 260, od: 299 },
+  { nom: 265, id: 270, od: 299 },
+  { nom: 273, id: 280, od: 325 },
+  { nom: 286, id: 290, od: 325 },
+  { nom: 299, id: 300, od: 325 },
+  { nom: 310, id: 310, od: 351 },
+  { nom: 325, id: 330, od: 377 },
+  { nom: 335, id: 340, od: 377 },
+  { nom: 351, id: 350, od: 377 },
+  { nom: 360, id: 360, od: 402 },
+  { nom: 377, id: 380, od: 426 },
+  { nom: 426, id: 450, od: 508 },
 ];
+
+export const STD_PIPE_ODS = [...new Set(PIPE_SIZE_TABLE.map((x) => x.od))].sort((a, b) => a - b);
 
 /** 接头轴向细节（自上而下） */
 export const JOINT_STACK_DEFAULT = [
@@ -28,7 +68,7 @@ export const CONE_MOLD_DEFAULTS = {
   topAllowance: 45,
   bottomAllowance: 5,
   standardLen: 210,
-  wall: 20,
+  wall: 20, // 仅作校核参考；外径以选型表为准
   pitch: 2,
 };
 
@@ -40,10 +80,33 @@ export function roundMajor05(n) {
   return Math.round(Number(n) / 5) * 5;
 }
 
-function nearestOdAtLeast(target, catalog = STD_PIPE_ODS) {
-  const hit = catalog.find((d) => d >= target);
-  if (hit != null) return hit;
-  return catalog[catalog.length - 1];
+/**
+ * 按锥径自动选管：内径 ≥ 锥径 的最小档 → 返回名义/内径/外径
+ * @param {number} coneDia
+ */
+export function pickPipeByConeDia(coneDia, table = PIPE_SIZE_TABLE) {
+  const need = Number(coneDia);
+  const hit = table.find((row) => row.id + 1e-9 >= need);
+  const row = hit || table[table.length - 1];
+  return {
+    nom: row.nom,
+    id: row.id,
+    od: row.od,
+    coneDia: need,
+    label: `ø${row.nom} → 内径${row.id} / 外径${row.od}`,
+    auto: true,
+    atLimit: !hit,
+  };
+}
+
+/** @deprecated 旧接口：按需求外径就近 */
+export function pickPipeOuter(needOuter) {
+  const p = pickPipeByConeDia(Math.max(0, Number(needOuter) - 40));
+  return { ...p, needOuter: Number(needOuter), mark: "", hotExpand: false, kind: "table" };
+}
+
+function nearestOdAtLeast(target) {
+  return pickPipeByConeDia(target).od;
 }
 
 /** 锥面直径：z 从装配顶向下；锥段在 [topAllowance, totalHeight-bottomAllowance] */
@@ -165,12 +228,21 @@ export function designConeMold(input = {}) {
     const coneAtTop = coneDiaAt(z0, base);
     const coneAtBot = coneDiaAt(z1, base);
     const coneAtMid = coneDiaAt((z0 + z1) / 2, base);
-    // 外套内孔贴锥：外圆 ≈ 本节最大锥径 + 2×壁厚
-    const needOuter = Math.max(coneAtTop, coneAtBot) + 2 * wall;
-    let outerOd = nearestOdAtLeast(needOuter);
+    const coneNeed = Math.max(coneAtTop, coneAtBot);
+    // 按选型表：内径≥锥径 → 取该档外径
+    let pipe = pickPipeByConeDia(coneNeed);
     if (input.preferredOuterOds && input.preferredOuterOds[i] != null) {
-      outerOd = Number(input.preferredOuterOds[i]);
+      const forcedOd = Number(input.preferredOuterOds[i]);
+      const byOd = PIPE_SIZE_TABLE.find((r) => r.od === forcedOd);
+      const byNom = PIPE_SIZE_TABLE.find((r) => r.nom === forcedOd);
+      pipe = byOd
+        ? { ...byOd, coneDia: coneNeed, label: `ø${byOd.nom} → 内径${byOd.id} / 外径${byOd.od}`, auto: false }
+        : byNom
+          ? { ...byNom, coneDia: coneNeed, label: `ø${byNom.nom} → 内径${byNom.id} / 外径${byNom.od}`, auto: false }
+          : { nom: forcedOd, id: forcedOd, od: forcedOd, coneDia: coneNeed, label: `外径${forcedOd}（手指定）`, auto: false };
     }
+    const outerOd = pipe.od;
+    const wallEff = round3((outerOd - coneNeed) / 2);
     const isFirst = i === 0;
     const isLast = i === segmentCount - 1;
     return {
@@ -183,9 +255,13 @@ export function designConeMold(input = {}) {
       coneAtTop,
       coneAtBot,
       coneAtMid,
+      coneNeed,
+      pipeNom: pipe.nom,
+      pipeId: pipe.id,
+      pipeLabel: pipe.label,
       outerOd,
-      wall,
-      // 兼容旧表
+      wall: wallEff,
+      wallNom: wall,
       od: outerOd,
       cavityTop: coneAtTop,
       cavityBottom: coneAtBot,
@@ -200,8 +276,15 @@ export function designConeMold(input = {}) {
 
   for (let i = 1; i < sleeves.length; i++) {
     if (sleeves[i].outerOd > sleeves[i - 1].outerOd) {
-      sleeves[i].outerOd = sleeves[i - 1].outerOd;
-      sleeves[i].od = sleeves[i].outerOd;
+      // 保持外径自上而下不增：升到上一档外径对应行
+      const prevOd = sleeves[i - 1].outerOd;
+      const row = PIPE_SIZE_TABLE.filter((r) => r.od <= prevOd).pop() || PIPE_SIZE_TABLE[0];
+      sleeves[i].outerOd = row.od;
+      sleeves[i].od = row.od;
+      sleeves[i].pipeNom = row.nom;
+      sleeves[i].pipeId = row.id;
+      sleeves[i].pipeLabel = `ø${row.nom} → 内径${row.id} / 外径${row.od}（随上节收敛）`;
+      sleeves[i].wall = round3((row.od - sleeves[i].coneNeed) / 2);
     }
   }
 

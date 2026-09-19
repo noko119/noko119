@@ -118,7 +118,7 @@
           <button type="button" class="btn ghost" id="copyBtn">复制</button>
         </div>
       </div>
-      <p class="hint" style="margin-top:10px">锥段高 = 总高 − 上余量 − 下余量。外套套在锥上；节间螺纹按 12+1+10+1，规格圆整到 0/5。</p>
+      <p class="hint" style="margin-top:10px">外套管外径按选型表自动选：找「内径 ≥ 本节最大锥径」的最小档，取其外径。表含 ø60…ø426（名义/内径/外径）。</p>
       <p class="status" id="status" role="status"></p>
       <div class="warn-box" id="warnBox"></div>
     </section>
@@ -139,7 +139,7 @@
         <h3>各节明细</h3>
         <table class="data">
           <thead>
-            <tr><th>外套</th><th>贴锥径</th><th>外圆</th><th>长度</th><th>类型</th><th>壁厚</th><th>端头</th><th>余量</th></tr>
+            <tr><th>外套</th><th>贴锥径</th><th>选用管（名义→内径/外径）</th><th>外径</th><th>长度</th><th>类型</th><th>折算壁厚</th><th>余量</th></tr>
           </thead>
           <tbody id="segTable"></tbody>
         </table>

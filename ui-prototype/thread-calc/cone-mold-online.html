@@ -496,7 +496,7 @@ html, body {
           <button type="button" class="btn ghost" id="copyBtn">复制</button>
         </div>
       </div>
-      <p class="hint" style="margin-top:10px">锥段高 = 总高 − 上余量 − 下余量。外套套在锥上；节间螺纹按 12+1+10+1，规格圆整到 0/5。</p>
+      <p class="hint" style="margin-top:10px">外套管外径按选型表自动选：找「内径 ≥ 本节最大锥径」的最小档，取其外径。表含 ø60…ø426（名义/内径/外径）。</p>
       <p class="status" id="status" role="status"></p>
       <div class="warn-box" id="warnBox"></div>
     </section>
@@ -510,67 +510,67 @@ html, body {
     <text x="20" y="20" fill="#2f4a56" font-size="13" font-weight="800">组装示意图 · 内锥 + 外套分段</text>
     <text x="20" y="36" fill="#5c6b64" font-size="9">案例可改参数；默认 730 / ø194→ø108 / 上45·下5 / 节长210</text>
     
-        <path d="M 534.3406593406594 44 L 565 44 L 565 156.9032258064516 L 522.5243223443223 156.9032258064516 Z" fill="#c45c5c" fill-opacity="0.72" stroke="#2f4a56" stroke-width="1.15"/>
-        <path d="M 285.65934065934067 44 L 255 44 L 255 156.9032258064516 L 297.47567765567766 156.9032258064516 Z" fill="#c45c5c" fill-opacity="0.72" stroke="#2f4a56" stroke-width="1.15"/>
+        <path d="M 541.4 44 L 557 44 L 557 156.9032258064516 L 528.9128 156.9032258064516 Z" fill="#c45c5c" fill-opacity="0.72" stroke="#2f4a56" stroke-width="1.15"/>
+        <path d="M 278.6 44 L 263 44 L 263 156.9032258064516 L 291.0872 156.9032258064516 Z" fill="#c45c5c" fill-opacity="0.72" stroke="#2f4a56" stroke-width="1.15"/>
         
-          <path d="M 561.5934065934066 156.9032258064516 L 565 156.9032258064516 L 565 174.9032258064516 L 561.5934065934066 174.9032258064516 Z"
+          <path d="M 553.4 156.9032258064516 L 557 156.9032258064516 L 557 174.9032258064516 L 553.4 174.9032258064516 Z"
             fill="#c45c5c" stroke="#2f4a56" stroke-width="1" opacity="0.95"/>
-          <path d="M 258.4065934065934 156.9032258064516 L 255 156.9032258064516 L 255 174.9032258064516 L 258.4065934065934 174.9032258064516 Z"
+          <path d="M 266.6 156.9032258064516 L 263 156.9032258064516 L 263 174.9032258064516 L 266.6 174.9032258064516 Z"
             fill="#c45c5c" stroke="#2f4a56" stroke-width="1" opacity="0.95"/>
         
-        <text x="573" y="104.4516129032258" fill="#2f4a56" font-size="10" font-weight="700">套1</text>
+        <text x="565" y="104.4516129032258" fill="#2f4a56" font-size="10" font-weight="700">套1</text>
       
-        <path d="M 522.5243223443223 156.9032258064516 L 549.1025641025641 156.9032258064516 L 549.1025641025641 269.8064516129032 L 507.4847802197802 269.8064516129032 Z" fill="#6ab0c9" fill-opacity="0.72" stroke="#2f4a56" stroke-width="1.15"/>
-        <path d="M 297.47567765567766 156.9032258064516 L 270.8974358974359 156.9032258064516 L 270.8974358974359 269.8064516129032 L 312.5152197802198 269.8064516129032 Z" fill="#6ab0c9" fill-opacity="0.72" stroke="#2f4a56" stroke-width="1.15"/>
+        <path d="M 528.9128 156.9032258064516 L 541.4 156.9032258064516 L 541.4 269.8064516129032 L 513.0194 269.8064516129032 Z" fill="#6ab0c9" fill-opacity="0.72" stroke="#2f4a56" stroke-width="1.15"/>
+        <path d="M 291.0872 156.9032258064516 L 278.6 156.9032258064516 L 278.6 269.8064516129032 L 306.9806 269.8064516129032 Z" fill="#6ab0c9" fill-opacity="0.72" stroke="#2f4a56" stroke-width="1.15"/>
         
-          <path d="M 545.6959706959707 269.8064516129032 L 549.1025641025641 269.8064516129032 L 549.1025641025641 287.8064516129032 L 545.6959706959707 287.8064516129032 Z"
+          <path d="M 537.8 269.8064516129032 L 541.4 269.8064516129032 L 541.4 287.8064516129032 L 537.8 287.8064516129032 Z"
             fill="#6ab0c9" stroke="#2f4a56" stroke-width="1" opacity="0.95"/>
-          <path d="M 274.3040293040293 269.8064516129032 L 270.8974358974359 269.8064516129032 L 270.8974358974359 287.8064516129032 L 274.3040293040293 287.8064516129032 Z"
+          <path d="M 282.2 269.8064516129032 L 278.6 269.8064516129032 L 278.6 287.8064516129032 L 282.2 287.8064516129032 Z"
             fill="#6ab0c9" stroke="#2f4a56" stroke-width="1" opacity="0.95"/>
         
-        <text x="557.1025641025641" y="217.35483870967738" fill="#2f4a56" font-size="10" font-weight="700">套2</text>
+        <text x="549.4" y="217.35483870967738" fill="#2f4a56" font-size="10" font-weight="700">套2</text>
       
-        <path d="M 507.4847802197802 269.8064516129032 L 534.3406593406594 269.8064516129032 L 534.3406593406594 382.7096774193548 L 492.4452380952381 382.7096774193548 Z" fill="#8a6bb8" fill-opacity="0.72" stroke="#2f4a56" stroke-width="1.15"/>
-        <path d="M 312.5152197802198 269.8064516129032 L 285.65934065934067 269.8064516129032 L 285.65934065934067 382.7096774193548 L 327.5547619047619 382.7096774193548 Z" fill="#8a6bb8" fill-opacity="0.72" stroke="#2f4a56" stroke-width="1.15"/>
+        <path d="M 513.0194 269.8064516129032 L 531.8 269.8064516129032 L 531.8 382.7096774193548 L 497.126 382.7096774193548 Z" fill="#8a6bb8" fill-opacity="0.72" stroke="#2f4a56" stroke-width="1.15"/>
+        <path d="M 306.9806 269.8064516129032 L 288.2 269.8064516129032 L 288.2 382.7096774193548 L 322.874 382.7096774193548 Z" fill="#8a6bb8" fill-opacity="0.72" stroke="#2f4a56" stroke-width="1.15"/>
         
-          <path d="M 530.934065934066 382.7096774193548 L 534.3406593406594 382.7096774193548 L 534.3406593406594 400.7096774193548 L 530.934065934066 400.7096774193548 Z"
+          <path d="M 528.2 382.7096774193548 L 531.8 382.7096774193548 L 531.8 400.7096774193548 L 528.2 400.7096774193548 Z"
             fill="#8a6bb8" stroke="#2f4a56" stroke-width="1" opacity="0.95"/>
-          <path d="M 289.0659340659341 382.7096774193548 L 285.65934065934067 382.7096774193548 L 285.65934065934067 400.7096774193548 L 289.0659340659341 400.7096774193548 Z"
+          <path d="M 291.8 382.7096774193548 L 288.2 382.7096774193548 L 288.2 400.7096774193548 L 291.8 400.7096774193548 Z"
             fill="#8a6bb8" stroke="#2f4a56" stroke-width="1" opacity="0.95"/>
         
-        <text x="542.3406593406594" y="330.258064516129" fill="#2f4a56" font-size="10" font-weight="700">套3</text>
+        <text x="539.8" y="330.258064516129" fill="#2f4a56" font-size="10" font-weight="700">套3</text>
       
-        <path d="M 492.4452380952381 382.7096774193548 L 520.1465201465202 382.7096774193548 L 520.1465201465202 544 L 471.31868131868134 544 Z" fill="#c49a6c" fill-opacity="0.72" stroke="#2f4a56" stroke-width="1.15"/>
-        <path d="M 327.5547619047619 382.7096774193548 L 299.8534798534798 382.7096774193548 L 299.8534798534798 544 L 348.68131868131866 544 Z" fill="#c49a6c" fill-opacity="0.72" stroke="#2f4a56" stroke-width="1.15"/>
+        <path d="M 497.126 382.7096774193548 L 512 382.7096774193548 L 512 544 L 474.8 544 Z" fill="#c49a6c" fill-opacity="0.72" stroke="#2f4a56" stroke-width="1.15"/>
+        <path d="M 322.874 382.7096774193548 L 308 382.7096774193548 L 308 544 L 345.2 544 Z" fill="#c49a6c" fill-opacity="0.72" stroke="#2f4a56" stroke-width="1.15"/>
         
-        <text x="528.1465201465202" y="467.35483870967744" fill="#2f4a56" font-size="10" font-weight="700">套4</text>
+        <text x="520" y="467.35483870967744" fill="#2f4a56" font-size="10" font-weight="700">套4</text>
       
     
     <path d="
-      M 285.65934065934067 68.19354838709677
-      L 348.68131868131866 541.3118279569892
-      L 356.6300366300366 541.3118279569892
-      L 293.6080586080586 68.19354838709677
+      M 278.6 68.19354838709677
+      L 345.2 541.3118279569892
+      L 353.6 541.3118279569892
+      L 287 68.19354838709677
       Z" fill="#3d9b5f" stroke="#2f4a56" stroke-width="1.1"/>
     <path d="
-      M 534.3406593406594 68.19354838709677
-      L 471.31868131868134 541.3118279569892
-      L 463.3699633699634 541.3118279569892
-      L 526.3919413919414 68.19354838709677
+      M 541.4 68.19354838709677
+      L 474.8 541.3118279569892
+      L 466.4 541.3118279569892
+      L 533 68.19354838709677
       Z" fill="#3d9b5f" stroke="#2f4a56" stroke-width="1.1"/>
-    <line x1="285.65934065934067" y1="68.19354838709677" x2="348.68131868131866" y2="541.3118279569892"
+    <line x1="278.6" y1="68.19354838709677" x2="345.2" y2="541.3118279569892"
       stroke="#e67e22" stroke-width="2"/>
-    <line x1="534.3406593406594" y1="68.19354838709677" x2="471.31868131868134" y2="541.3118279569892"
+    <line x1="541.4" y1="68.19354838709677" x2="474.8" y2="541.3118279569892"
       stroke="#e67e22" stroke-width="2"/>
   
     
-        <text x="24" y="154.9032258064516" fill="#1f6f5b" font-size="9" font-weight="700">M225×2</text>
+        <text x="24" y="154.9032258064516" fill="#1f6f5b" font-size="9" font-weight="700">M210×2</text>
         <text x="24" y="167.9032258064516" fill="#5c6b64" font-size="8">旋合12+间隙1+止口10+间隙1</text>
       
-        <text x="24" y="267.8064516129032" fill="#1f6f5b" font-size="9" font-weight="700">M195×2</text>
+        <text x="24" y="267.8064516129032" fill="#1f6f5b" font-size="9" font-weight="700">M190×2</text>
         <text x="24" y="280.8064516129032" fill="#5c6b64" font-size="8">旋合12+间隙1+止口10+间隙1</text>
       
-        <text x="24" y="380.7096774193548" fill="#1f6f5b" font-size="9" font-weight="700">M170×2</text>
+        <text x="24" y="380.7096774193548" fill="#1f6f5b" font-size="9" font-weight="700">M160×2</text>
         <text x="24" y="393.7096774193548" fill="#5c6b64" font-size="8">旋合12+间隙1+止口10+间隙1</text>
       
     
@@ -620,7 +620,7 @@ html, body {
     
   <g transform="translate(520,424)">
     <rect width="220" height="112" rx="8" fill="#fff" stroke="#2f4a56"/>
-    <text x="10" y="16" fill="#2f4a56" font-size="10" font-weight="700">接头细节 · M225×2</text>
+    <text x="10" y="16" fill="#2f4a56" font-size="10" font-weight="700">接头细节 · M210×2</text>
     <!-- 外套红 -->
     <path d="M24,28 L95,28 L95,70 L82,70 L82,52 L40,52 L40,70 L24,70 Z" fill="#c45c5c" stroke="#2f4a56"/>
     <!-- 内锥绿 -->
@@ -633,7 +633,7 @@ html, body {
     <text x="108" y="88" fill="#3d9b5f" font-size="9" font-weight="700">内锥贴合</text>
     <text x="108" y="102" fill="#e67e22" font-size="8">锥面连续</text>
   </g>
-    <text x="20" y="578" fill="#5c6b64" font-size="9" font-weight="600">内锥（绿）ø219 → ø108 · 高 880</text><text x="390" y="578" fill="#5c6b64" font-size="9" font-weight="600">外套1 外ø273 · 210mm（标准）· 贴锥 219→198.188</text><text x="20" y="593" fill="#5c6b64" font-size="9" font-weight="600">外套2 外ø245 · 210mm（标准）· 贴锥 198.188→171.699</text><text x="390" y="593" fill="#5c6b64" font-size="9" font-weight="600">外套3 外ø219 · 210mm（标准）· 贴锥 171.699→145.21</text><text x="20" y="608" fill="#5c6b64" font-size="9" font-weight="600">外套4 外ø194 · 300mm（非标）· 贴锥 145.21→108</text><text x="390" y="608" fill="#5c6b64" font-size="9" font-weight="600">接头1 M225×2 @z=210 锥径ø198.188</text><text x="20" y="623" fill="#5c6b64" font-size="9" font-weight="600">接头2 M195×2 @z=420 锥径ø171.699</text><text x="390" y="623" fill="#5c6b64" font-size="9" font-weight="600">接头3 M170×2 @z=630 锥径ø145.21</text><text x="20" y="638" fill="#5c6b64" font-size="9" font-weight="600">橙线=锥面；外套套在锥上；接头默认 12+1+10+1</text>
+    <text x="20" y="578" fill="#5c6b64" font-size="9" font-weight="600">内锥（绿）ø219 → ø108 · 高 880</text><text x="390" y="578" fill="#5c6b64" font-size="9" font-weight="600">外套1 ø219 → 内径220 / 外径245 · 210mm（标准）</text><text x="20" y="593" fill="#5c6b64" font-size="9" font-weight="600">外套2 ø194 → 内径200 / 外径219 · 210mm（标准）</text><text x="390" y="593" fill="#5c6b64" font-size="9" font-weight="600">外套3 ø177 → 内径180 / 外径203 · 210mm（标准）</text><text x="20" y="608" fill="#5c6b64" font-size="9" font-weight="600">外套4 ø146 → 内径150 / 外径170 · 300mm（非标）</text><text x="390" y="608" fill="#5c6b64" font-size="9" font-weight="600">接头1 M210×2 @z=210 锥径ø198.188</text><text x="20" y="623" fill="#5c6b64" font-size="9" font-weight="600">接头2 M190×2 @z=420 锥径ø171.699</text><text x="390" y="623" fill="#5c6b64" font-size="9" font-weight="600">接头3 M160×2 @z=630 锥径ø145.21</text><text x="20" y="638" fill="#5c6b64" font-size="9" font-weight="600">橙线=锥面；外套套在锥上；接头默认 12+1+10+1</text>
   </svg></div>
       </article>
 
@@ -646,7 +646,7 @@ html, body {
         <h3>各节明细</h3>
         <table class="data">
           <thead>
-            <tr><th>外套</th><th>贴锥径</th><th>外圆</th><th>长度</th><th>类型</th><th>壁厚</th><th>端头</th><th>余量</th></tr>
+            <tr><th>外套</th><th>贴锥径</th><th>选用管（名义→内径/外径）</th><th>外径</th><th>长度</th><th>类型</th><th>折算壁厚</th><th>余量</th></tr>
           </thead>
           <tbody id="segTable"></tbody>
         </table>
@@ -1075,9 +1075,49 @@ function computeThreadEndCards(designationRaw, opt = {}) {
  * - 接头细节默认：12（旋合）+ 1（间隙）+ 10（止口）+ 1（间隙）
  */
 
-const STD_PIPE_ODS = [
-  89, 102, 108, 114, 121, 127, 133, 140, 152, 159, 168, 180, 194, 203, 219, 245, 273, 299, 325, 351, 377,
+/**
+ * 管子选型表（用户手写：名义ø / 内径 / 外径）
+ * 选型规则：按本节最大锥径，选「内径 ≥ 锥径」的最小一档，取其外径做外套管外径
+ */
+const PIPE_SIZE_TABLE = [
+  { nom: 60, id: 60, od: 80 },
+  { nom: 63.5, id: 63, od: 83 },
+  { nom: 70, id: 70, od: 90 },
+  { nom: 76, id: 80, od: 102 },
+  { nom: 83, id: 85, od: 105 },
+  { nom: 89, id: 90, od: 110 },
+  { nom: 102, id: 105, od: 125 },
+  { nom: 108, id: 110, od: 130 },
+  { nom: 114, id: 115, od: 135 },
+  { nom: 121, id: 120, od: 140 },
+  { nom: 127, id: 130, od: 152 },
+  { nom: 133, id: 135, od: 159 },
+  { nom: 140, id: 140, od: 159 },
+  { nom: 146, id: 150, od: 170 },
+  { nom: 159, id: 160, od: 180 },
+  { nom: 168, id: 170, od: 194 },
+  { nom: 177, id: 180, od: 203 },
+  { nom: 180, id: 180, od: 203 },
+  { nom: 194, id: 200, od: 219 },
+  { nom: 203, id: 210, od: 245 },
+  { nom: 219, id: 220, od: 245 },
+  { nom: 232, id: 240, od: 273 },
+  { nom: 245, id: 250, od: 273 },
+  { nom: 254, id: 260, od: 299 },
+  { nom: 265, id: 270, od: 299 },
+  { nom: 273, id: 280, od: 325 },
+  { nom: 286, id: 290, od: 325 },
+  { nom: 299, id: 300, od: 325 },
+  { nom: 310, id: 310, od: 351 },
+  { nom: 325, id: 330, od: 377 },
+  { nom: 335, id: 340, od: 377 },
+  { nom: 351, id: 350, od: 377 },
+  { nom: 360, id: 360, od: 402 },
+  { nom: 377, id: 380, od: 426 },
+  { nom: 426, id: 450, od: 508 },
 ];
+
+const STD_PIPE_ODS = [...new Set(PIPE_SIZE_TABLE.map((x) => x.od))].sort((a, b) => a - b);
 
 /** 接头轴向细节（自上而下） */
 const JOINT_STACK_DEFAULT = [
@@ -1094,7 +1134,7 @@ const CONE_MOLD_DEFAULTS = {
   topAllowance: 45,
   bottomAllowance: 5,
   standardLen: 210,
-  wall: 20,
+  wall: 20, // 仅作校核参考；外径以选型表为准
   pitch: 2,
 };
 
@@ -1106,10 +1146,33 @@ function roundMajor05(n) {
   return Math.round(Number(n) / 5) * 5;
 }
 
-function nearestOdAtLeast(target, catalog = STD_PIPE_ODS) {
-  const hit = catalog.find((d) => d >= target);
-  if (hit != null) return hit;
-  return catalog[catalog.length - 1];
+/**
+ * 按锥径自动选管：内径 ≥ 锥径 的最小档 → 返回名义/内径/外径
+ * @param {number} coneDia
+ */
+function pickPipeByConeDia(coneDia, table = PIPE_SIZE_TABLE) {
+  const need = Number(coneDia);
+  const hit = table.find((row) => row.id + 1e-9 >= need);
+  const row = hit || table[table.length - 1];
+  return {
+    nom: row.nom,
+    id: row.id,
+    od: row.od,
+    coneDia: need,
+    label: `ø${row.nom} → 内径${row.id} / 外径${row.od}`,
+    auto: true,
+    atLimit: !hit,
+  };
+}
+
+/** @deprecated 旧接口：按需求外径就近 */
+function pickPipeOuter(needOuter) {
+  const p = pickPipeByConeDia(Math.max(0, Number(needOuter) - 40));
+  return { ...p, needOuter: Number(needOuter), mark: "", hotExpand: false, kind: "table" };
+}
+
+function nearestOdAtLeast(target) {
+  return pickPipeByConeDia(target).od;
 }
 
 /** 锥面直径：z 从装配顶向下；锥段在 [topAllowance, totalHeight-bottomAllowance] */
@@ -1231,12 +1294,21 @@ function designConeMold(input = {}) {
     const coneAtTop = coneDiaAt(z0, base);
     const coneAtBot = coneDiaAt(z1, base);
     const coneAtMid = coneDiaAt((z0 + z1) / 2, base);
-    // 外套内孔贴锥：外圆 ≈ 本节最大锥径 + 2×壁厚
-    const needOuter = Math.max(coneAtTop, coneAtBot) + 2 * wall;
-    let outerOd = nearestOdAtLeast(needOuter);
+    const coneNeed = Math.max(coneAtTop, coneAtBot);
+    // 按选型表：内径≥锥径 → 取该档外径
+    let pipe = pickPipeByConeDia(coneNeed);
     if (input.preferredOuterOds && input.preferredOuterOds[i] != null) {
-      outerOd = Number(input.preferredOuterOds[i]);
+      const forcedOd = Number(input.preferredOuterOds[i]);
+      const byOd = PIPE_SIZE_TABLE.find((r) => r.od === forcedOd);
+      const byNom = PIPE_SIZE_TABLE.find((r) => r.nom === forcedOd);
+      pipe = byOd
+        ? { ...byOd, coneDia: coneNeed, label: `ø${byOd.nom} → 内径${byOd.id} / 外径${byOd.od}`, auto: false }
+        : byNom
+          ? { ...byNom, coneDia: coneNeed, label: `ø${byNom.nom} → 内径${byNom.id} / 外径${byNom.od}`, auto: false }
+          : { nom: forcedOd, id: forcedOd, od: forcedOd, coneDia: coneNeed, label: `外径${forcedOd}（手指定）`, auto: false };
     }
+    const outerOd = pipe.od;
+    const wallEff = round3((outerOd - coneNeed) / 2);
     const isFirst = i === 0;
     const isLast = i === segmentCount - 1;
     return {
@@ -1249,9 +1321,13 @@ function designConeMold(input = {}) {
       coneAtTop,
       coneAtBot,
       coneAtMid,
+      coneNeed,
+      pipeNom: pipe.nom,
+      pipeId: pipe.id,
+      pipeLabel: pipe.label,
       outerOd,
-      wall,
-      // 兼容旧表
+      wall: wallEff,
+      wallNom: wall,
       od: outerOd,
       cavityTop: coneAtTop,
       cavityBottom: coneAtBot,
@@ -1266,8 +1342,15 @@ function designConeMold(input = {}) {
 
   for (let i = 1; i < sleeves.length; i++) {
     if (sleeves[i].outerOd > sleeves[i - 1].outerOd) {
-      sleeves[i].outerOd = sleeves[i - 1].outerOd;
-      sleeves[i].od = sleeves[i].outerOd;
+      // 保持外径自上而下不增：升到上一档外径对应行
+      const prevOd = sleeves[i - 1].outerOd;
+      const row = PIPE_SIZE_TABLE.filter((r) => r.od <= prevOd).pop() || PIPE_SIZE_TABLE[0];
+      sleeves[i].outerOd = row.od;
+      sleeves[i].od = row.od;
+      sleeves[i].pipeNom = row.nom;
+      sleeves[i].pipeId = row.id;
+      sleeves[i].pipeLabel = `ø${row.nom} → 内径${row.id} / 外径${row.od}（随上节收敛）`;
+      sleeves[i].wall = round3((row.od - sleeves[i].coneNeed) / 2);
     }
   }
 
@@ -1552,7 +1635,7 @@ function renderConeMoldDiagram(r) {
   const legendY = yH + 34;
   const items = [
     `内锥（绿）ø${t(cone.topDia)} → ø${t(cone.bottomDia)} · 高 ${t(cone.height)}`,
-    ...sleeves.map((s) => `外套${s.index} 外ø${t(s.outerOd)} · ${t(s.length)}mm（${s.kind}）· 贴锥 ${t(s.coneAtTop)}→${t(s.coneAtBot)}`),
+    ...sleeves.map((s) => `外套${s.index} ${s.pipeLabel || "ø" + s.outerOd} · ${t(s.length)}mm（${s.kind}）`),
     ...joints.map((j) => `接头${j.index} ${j.designation} @z=${t(j.z)} 锥径ø${t(j.coneDia)}`),
     `橙线=锥面；外套套在锥上；接头默认 12+1+10+1`,
   ];
@@ -1615,18 +1698,17 @@ function num(id, fallback) {
 function fillSegTable(sleeves) {
   $("segTable").innerHTML = sleeves
     .map((s) => {
-      const ends = [s.femaleSleeve ? "下搭接" : "", s.maleNeck ? "上承接" : ""].filter(Boolean).join("+") || "—";
       let note = "—";
       if (s.topFaceOffset != null) note = `含上余量 ${s.topFaceOffset}`;
       else if (s.bottomFaceOffset != null) note = `含下余量 ${s.bottomFaceOffset}`;
       return `<tr>
         <th scope="row">套${s.index}</th>
-        <td>ø${s.coneAtTop}→ø${s.coneAtBot}</td>
-        <td>ø${s.outerOd}</td>
+        <td>ø${s.coneAtTop}→ø${s.coneAtBot}（需≥${s.coneNeed}）</td>
+        <td>${s.pipeLabel || `ø${s.pipeNom}`}</td>
+        <td><strong>ø${s.outerOd}</strong></td>
         <td>${s.length} mm</td>
         <td>${s.kind}</td>
         <td>${s.wall} mm</td>
-        <td>${ends}</td>
         <td>${note}</td>
       </tr>`;
     })
@@ -1658,7 +1740,7 @@ function renderSchema(sleeves, cone) {
     ${sleeves
       .map(
         (s, i) =>
-          `<div class="seg"><strong>外套${s.index}</strong><span>外ø${s.outerOd} · ${s.length}mm<br/>${s.kind}</span></div>${
+          `<div class="seg"><strong>外套${s.index}</strong><span>${s.pipeLabel || "ø" + s.outerOd}<br/>${s.length}mm · ${s.kind}</span></div>${
             i < sleeves.length - 1 ? `<div class="arrow">↕</div>` : ""
           }`
       )

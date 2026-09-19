@@ -133,7 +133,7 @@ export function renderConeMoldDiagram(r) {
   const legendY = yH + 34;
   const items = [
     `内锥（绿）ø${t(cone.topDia)} → ø${t(cone.bottomDia)} · 高 ${t(cone.height)}`,
-    ...sleeves.map((s) => `外套${s.index} 外ø${t(s.outerOd)} · ${t(s.length)}mm（${s.kind}）· 贴锥 ${t(s.coneAtTop)}→${t(s.coneAtBot)}`),
+    ...sleeves.map((s) => `外套${s.index} ${s.pipeLabel || "ø" + s.outerOd} · ${t(s.length)}mm（${s.kind}）`),
     ...joints.map((j) => `接头${j.index} ${j.designation} @z=${t(j.z)} 锥径ø${t(j.coneDia)}`),
     `橙线=锥面；外套套在锥上；接头默认 12+1+10+1`,
   ];
