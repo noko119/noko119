@@ -103,27 +103,27 @@ export function renderConeMoldDiagram(r) {
       const innA = xR(s.coneAtTop);
       const innB = xR(s.coneAtBot);
       const xWall = axis + out;
-      const right = `M ${axis + innA} ${yA} L ${xWall} ${yA} L ${xWall} ${yB} L ${axis + innB} ${yB} Z`;
-      const left = `M ${axis - innA} ${yA} L ${axis - out} ${yA} L ${axis - out} ${yB} L ${axis - innB} ${yB} Z`;
 
-      let lip = "";
+      let right;
+      let left;
       let locatorCallout = "";
+
+      // 母端止口：外壁连续下延套住下节，内边贴下节外径（不留白缝）
       if (s.femaleSleeve && i < sleeves.length - 1) {
         const next = sleeves[i + 1];
         const joint = jointByZ.get(next.z0) || joints[i];
         const locH = joint?.locatorDim?.height ?? joint?.locator ?? locatorH0;
         const locWall = joint?.locatorDim?.wall ?? 5;
-        const nest = Math.max(8, locH * scaleY); // 按真实止口高缩放
-        const lipIn = Math.max(out - xR(locWall * 2), xR(next.outerOd) + 1);
-        lip = `
-          <path d="M ${axis + lipIn} ${yB} L ${xWall} ${yB} L ${xWall} ${yB + nest} L ${axis + lipIn} ${yB + nest} Z"
-            fill="${color}" stroke="#2f4a56" stroke-width="1" opacity="0.95"/>
-          <path d="M ${axis - lipIn} ${yB} L ${axis - out} ${yB} L ${axis - out} ${yB + nest} L ${axis - lipIn} ${yB + nest} Z"
-            fill="${color}" stroke="#2f4a56" stroke-width="1" opacity="0.95"/>
-        `;
-        // 箭头指向止口底面（安装止口肩）
-        const faceY = yB + nest;
-        const tipX = axis + (xWall + axis + lipIn) / 2;
+        const nest = Math.max(8, locH * scaleY);
+        const clearPx = Math.max(0.8, (joint?.locatorDim?.radialClearance ?? 0.2) * scaleR);
+        // 止口内边贴下套外圆，盖满外径台阶，避免蓝/紫间白缝
+        const lipIn = Math.min(out - 2, xR(next.outerOd) + clearPx);
+        const yLip = yB + nest;
+        right = `M ${axis + innA} ${yA} L ${xWall} ${yA} L ${xWall} ${yLip} L ${axis + lipIn} ${yLip} L ${axis + lipIn} ${yB} L ${axis + innB} ${yB} Z`;
+        left = `M ${axis - innA} ${yA} L ${axis - out} ${yA} L ${axis - out} ${yLip} L ${axis - lipIn} ${yLip} L ${axis - lipIn} ${yB} L ${axis - innB} ${yB} Z`;
+
+        const faceY = yLip;
+        const tipX = axis + (out + lipIn) / 2;
         const shaft1 = tipX + 52;
         locatorCallout = `
           <line x1="${axis + lipIn}" y1="${faceY}" x2="${xWall}" y2="${faceY}"
@@ -135,6 +135,9 @@ export function renderConeMoldDiagram(r) {
           <text x="${shaft1 + 10}" y="${faceY - 4}" fill="${locColor}" font-size="13" font-weight="900">止口 ${t(locH)}</text>
           <text x="${shaft1 + 10}" y="${faceY + 14}" fill="#2f4a56" font-size="10" font-weight="600">壁${t(locWall)} · 自动</text>
         `;
+      } else {
+        right = `M ${axis + innA} ${yA} L ${xWall} ${yA} L ${xWall} ${yB} L ${axis + innB} ${yB} Z`;
+        left = `M ${axis - innA} ${yA} L ${axis - out} ${yA} L ${axis - out} ${yB} L ${axis - innB} ${yB} Z`;
       }
 
       const yMid = (yA + yB) / 2;
@@ -158,7 +161,6 @@ export function renderConeMoldDiagram(r) {
       return `
         <path d="${right}" fill="${color}" fill-opacity="0.72" stroke="#2f4a56" stroke-width="1.15"/>
         <path d="${left}" fill="${color}" fill-opacity="0.72" stroke="#2f4a56" stroke-width="1.15"/>
-        ${lip}
         ${locatorCallout}
         ${odCallout}
       `;
