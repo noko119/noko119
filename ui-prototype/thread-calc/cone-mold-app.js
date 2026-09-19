@@ -4,6 +4,7 @@ import {
   SCALE_FACTOR_PRESETS,
   RECOMMENDED_SCALE_FACTOR,
   scalePuToMold,
+  exportConeMoldSwPackage,
 } from "./cone-mold-math.js";
 import { renderAssembledConeDiagram } from "./cone-mold-diagram.js";
 
@@ -222,8 +223,35 @@ async function copy() {
   $("status").className = "status ok";
 }
 
+function exportSwJson() {
+  if (!last) {
+    $("status").textContent = "请先生成方案再导出";
+    $("status").className = "status error";
+    return;
+  }
+  const pkg = exportConeMoldSwPackage(last);
+  if (!pkg.ok) {
+    $("status").textContent = pkg.error || "导出失败";
+    $("status").className = "status error";
+    return;
+  }
+  const text = JSON.stringify(pkg, null, 2);
+  const blob = new Blob([text], { type: "application/json;charset=utf-8" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `cone-mold-v0-${Date.now()}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(a.href);
+  $("status").textContent = `已导出 SW 包（${pkg.schema}，${pkg.sleeveCount} 套 / ${pkg.jointCount} 接头）→ 用宏 ConeMoldImportFromJson 读入`;
+  $("status").className = "status ok";
+}
+
 $("calcBtn").addEventListener("click", run);
 $("copyBtn").addEventListener("click", copy);
+const exportBtn = $("exportSwBtn");
+if (exportBtn) exportBtn.addEventListener("click", exportSwJson);
 [
   "bigOd",
   "smallOd",

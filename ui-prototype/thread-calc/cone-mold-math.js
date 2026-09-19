@@ -786,6 +786,72 @@ export function designConeMold(input = {}) {
   };
 }
 
+/**
+ * 导出给 SolidWorks 薄插件的数据包（单位 mm）
+ * schema: cone.mold.v0
+ */
+export function exportConeMoldSwPackage(r) {
+  if (!r?.ok) return { ok: false, error: r?.error || "无有效方案" };
+  const joints = (r.joints || [])
+    .filter((j) => j.ok)
+    .map((j) => ({
+      index: j.index,
+      z: round3(j.z),
+      coneDia: round3(j.coneDia),
+      designation: j.designation,
+      majorDia: j.majorDia,
+      pitch: PIPE_END_CONST.pitch,
+      locator: j.locator,
+      engage: j.engage,
+      undercut: j.locatorDim?.undercut ?? r.summary.undercut,
+      fromOd: j.fromOd,
+      toOd: j.toOd,
+      undercutDf: j.undercutDf,
+      undercutDg: j.undercutDg,
+    }));
+  const sleeves = (r.sleeves || []).map((s) => ({
+    index: s.index,
+    outerOd: s.outerOd,
+    z0: round3(s.z0),
+    z1: round3(s.z1),
+    length: round3(s.length),
+    partLength: round3(s.partLength ?? s.length),
+    maleEndLen: round3(s.maleEndLen ?? 0),
+    coneAtTop: round3(s.coneAtTop),
+    coneAtBot: round3(s.coneAtBot),
+    kind: s.kind,
+    hotExpand: !!s.hotExpand,
+  }));
+  return {
+    ok: true,
+    schema: "cone.mold.v0",
+    unit: "mm",
+    /** SW 建模约定：零件原点在模具顶面中心，+Y 向上（顶→底为 -Y） */
+    coord: "Y_up_top_origin",
+    exportedAt: new Date().toISOString(),
+    pu: r.pu,
+    scale: {
+      factor: r.scale?.factor,
+      shrinkagePct: r.scale?.shrinkagePct,
+      formula: r.scale?.formula,
+    },
+    mold: r.mold,
+    cone: {
+      topDia: r.cone.topDia,
+      bottomDia: r.cone.bottomDia,
+      height: r.cone.height,
+      z0: r.cone.z0,
+      z1: r.cone.z1,
+    },
+    totalHeight: r.summary.totalHeight,
+    sleeveCount: sleeves.length,
+    sleeves,
+    jointCount: joints.length,
+    joints,
+    note: "网页计算结果；SW 宏 ConeMoldImport 读入后旋转成实体（API 单位米=mm/1000）",
+  };
+}
+
 export function pickSegmentOds() {
   return { ok: false, error: "已改为内锥+外套模型，请用 designConeMold" };
 }

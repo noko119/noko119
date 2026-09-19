@@ -1,0 +1,137 @@
+{
+  "ok": true,
+  "schema": "cone.mold.v0",
+  "unit": "mm",
+  "coord": "Y_up_top_origin",
+  "exportedAt": "2026-09-19T22:51:38.079Z",
+  "pu": {
+    "topDia": 194,
+    "bottomDia": 108,
+    "coneHeight": 680
+  },
+  "scale": {
+    "factor": 1.01,
+    "shrinkagePct": 1,
+    "formula": "模具 = 聚氨酯 × 1.01（约缩水 1%）"
+  },
+  "mold": {
+    "topDia": 195.94,
+    "bottomDia": 109.08,
+    "coneHeight": 686.8,
+    "totalHeight": 736.8,
+    "topAllowance": 45,
+    "bottomAllowance": 5
+  },
+  "cone": {
+    "topDia": 195.94,
+    "bottomDia": 109.08,
+    "height": 686.8,
+    "z0": 45,
+    "z1": 731.8
+  },
+  "totalHeight": 736.8,
+  "sleeveCount": 4,
+  "sleeves": [
+    {
+      "index": 1,
+      "outerOd": 219,
+      "z0": 0,
+      "z1": 64.8,
+      "length": 64.8,
+      "partLength": 64.8,
+      "maleEndLen": 0,
+      "coneAtTop": 195.94,
+      "coneAtBot": 193.436,
+      "kind": "非标",
+      "hotExpand": false
+    },
+    {
+      "index": 2,
+      "outerOd": 219,
+      "z0": 64.8,
+      "z1": 288.8,
+      "length": 224,
+      "partLength": 250,
+      "maleEndLen": 26,
+      "coneAtTop": 193.436,
+      "coneAtBot": 165.106,
+      "kind": "标准",
+      "hotExpand": false
+    },
+    {
+      "index": 3,
+      "outerOd": 194,
+      "z0": 288.8,
+      "z1": 512.8,
+      "length": 224,
+      "partLength": 250,
+      "maleEndLen": 26,
+      "coneAtTop": 165.106,
+      "coneAtBot": 136.777,
+      "kind": "标准",
+      "hotExpand": false
+    },
+    {
+      "index": 4,
+      "outerOd": 159,
+      "z0": 512.8,
+      "z1": 736.8,
+      "length": 224,
+      "partLength": 250,
+      "maleEndLen": 26,
+      "coneAtTop": 136.777,
+      "coneAtBot": 109.08,
+      "kind": "标准",
+      "hotExpand": false
+    }
+  ],
+  "jointCount": 3,
+  "joints": [
+    {
+      "index": 1,
+      "z": 64.8,
+      "coneDia": 193.436,
+      "designation": "M207×2",
+      "majorDia": 207,
+      "pitch": 2,
+      "locator": 10,
+      "engage": 12,
+      "undercut": 4,
+      "fromOd": 219,
+      "toOd": 219,
+      "undercutDf": 204,
+      "undercutDg": 210
+    },
+    {
+      "index": 2,
+      "z": 288.8,
+      "coneDia": 165.106,
+      "designation": "M181×2",
+      "majorDia": 181,
+      "pitch": 2,
+      "locator": 10,
+      "engage": 12,
+      "undercut": 4,
+      "fromOd": 219,
+      "toOd": 194,
+      "undercutDf": 178,
+      "undercutDg": 184
+    },
+    {
+      "index": 3,
+      "z": 512.8,
+      "coneDia": 136.777,
+      "designation": "M149×2",
+      "majorDia": 149,
+      "pitch": 2,
+      "locator": 10,
+      "engage": 12,
+      "undercut": 4,
+      "fromOd": 194,
+      "toOd": 159,
+      "undercutDf": 146,
+      "undercutDg": 152
+    }
+  ],
+  "note": "网页计算结果；SW 宏 ConeMoldImport 读入后旋转成实体（API 单位米=mm/1000）"
+}

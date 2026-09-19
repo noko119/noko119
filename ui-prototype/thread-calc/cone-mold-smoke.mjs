@@ -5,6 +5,7 @@ import {
   pickJointMajorDia,
   pickPipeByConeDia,
   scalePuToMold,
+  exportConeMoldSwPackage,
   RECOMMENDED_SCALE_FACTOR,
   STD_PIPE_ODS,
 } from "./cone-mold-math.js";
@@ -15,9 +16,9 @@ function assert(c, m) {
 }
 
 assert(roundMajor05(161) === 160, "round legacy");
-assert(pickJointMajorDia(161.4, 219, 194) === 161, "auto major int");
+assert(pickJointMajorDia(200.4, 219, 194) === 200, "auto major int");
 assert(pickJointMajorDia(218, 219, 194) === 218, "clamp below OD");
-assert(pickJointMajorDia(190, 219, 194) === 195, "clamp above cone"); // lo=ceil(195)=195
+assert(pickJointMajorDia(161.4, 219, 194) === 195, "clamp above cone"); // lo=ceil(194+1)=195
 assert(pickPipeByConeDia(194).od === 219, `pick 194 → ${pickPipeByConeDia(194).od}`);
 assert(pickPipeByConeDia(108).od === 127, `pick 108 → ${pickPipeByConeDia(108).od}`);
 assert(pickPipeByConeDia(254).od === 273, `pick 254 → ${pickPipeByConeDia(254).od}`);
@@ -97,6 +98,17 @@ assert(ids.every((s) => svg.includes(`ø${s}`)), `svg has ids ${ids}`);
 
 const svg3 = renderAssembledConeDiagram(r3);
 assert(svg3.includes("聚氨酯") && svg3.includes("×"), "banner scale");
+
+const sw = exportConeMoldSwPackage(r3);
+assert(sw.ok, sw.error);
+assert(sw.schema === "cone.mold.v0", `schema ${sw.schema}`);
+assert(sw.unit === "mm" && sw.coord === "Y_up_top_origin", "sw unit/coord");
+assert(sw.sleeveCount === r3.sleeves.length, "sw sleeveCount");
+assert(sw.jointCount === r3.joints.filter((j) => j.ok).length, "sw jointCount");
+assert(sw.sleeves.every((s) => Number.isFinite(s.outerOd) && Number.isFinite(s.z0)), "sw sleeves");
+assert(sw.cone.topDia === r3.cone.topDia && sw.totalHeight === r3.summary.totalHeight, "sw cone/H");
+const swBad = exportConeMoldSwPackage({ ok: false, error: "x" });
+assert(swBad.ok === false, "sw bad");
 
 console.log("cone-mold smoke OK", {
   pipes: r.sleeves.map((s) => s.pipeLabel),
