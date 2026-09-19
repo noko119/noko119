@@ -1,0 +1,623 @@
+{
+  "schema": "pidm.path.v0",
+  "source": "sw_addin",
+  "line": {
+    "line_id": "line-1",
+    "name": "示例-C1-头部驱动垂直拉紧",
+    "Q": null,
+    "rho": 1600.0,
+    "B": 1000.0,
+    "v": 2.0,
+    "belt_core": "fabric",
+    "a0_default": 1.2,
+    "aU_default": 3.0,
+    "trough_angle": 35.0,
+    "carry_return_gap_m": 1.0,
+    "side_type": "C1",
+    "tension_utilization": "60-90",
+    "coord_system": "Z_up_right",
+    "length_unit": "m"
+  },
+  "nodes": [
+    {
+      "id": "n1",
+      "seq": 1,
+      "x": 0.0,
+      "y": 0.0,
+      "z": 0.0,
+      "type": "tail",
+      "branch": "carry",
+      "label": "尾部改向滚筒",
+      "drum_D_mm": 630.0,
+      "drive_role": "none",
+      "is_main_drive": false,
+      "point_role": "manual1"
+    },
+    {
+      "id": "n5",
+      "seq": 2,
+      "x": 3.7757596772457207,
+      "y": 0.0,
+      "z": 0.0,
+      "type": "node",
+      "branch": "carry",
+      "is_main_drive": false,
+      "point_role": "none"
+    },
+    {
+      "id": "n6",
+      "seq": 3,
+      "x": 12.182570084070608,
+      "y": 0.0,
+      "z": 0.5918731251043313,
+      "type": "node",
+      "branch": "carry",
+      "is_main_drive": false,
+      "point_role": "none"
+    },
+    {
+      "id": "n7",
+      "seq": 4,
+      "x": 109.8174299159294,
+      "y": 0.0,
+      "z": 14.408126874895668,
+      "type": "node",
+      "branch": "carry",
+      "is_main_drive": false,
+      "point_role": "none"
+    },
+    {
+      "id": "n8",
+      "seq": 5,
+      "x": 118.22424032275428,
+      "y": 0.0,
+      "z": 15.0,
+      "type": "node",
+      "branch": "carry",
+      "is_main_drive": false,
+      "point_role": "none"
+    },
+    {
+      "id": "n4",
+      "seq": 6,
+      "x": 120.0,
+      "y": 0.0,
+      "z": 15.0,
+      "type": "drive",
+      "branch": "carry",
+      "label": "头部传动滚筒",
+      "drum_D_mm": 800.0,
+      "drive_role": "main",
+      "is_main_drive": true,
+      "friction_mu": 0.35,
+      "wrap_angle_deg": 210.0,
+      "point_role": "leave"
+    },
+    {
+      "id": "n9",
+      "seq": 7,
+      "x": 120.0,
+      "y": 0.0,
+      "z": 14.0,
+      "type": "node",
+      "branch": "return",
+      "is_main_drive": false,
+      "point_role": "none"
+    },
+    {
+      "id": "n10",
+      "seq": 8,
+      "x": 118.25939881156772,
+      "y": 0.0,
+      "z": 14.0,
+      "type": "node",
+      "branch": "return",
+      "is_main_drive": false,
+      "point_role": "none"
+    },
+    {
+      "id": "n15",
+      "seq": 9,
+      "x": 117.5,
+      "y": 0.0,
+      "z": 13.9465352819854,
+      "type": "bend",
+      "branch": "return",
+      "label": "拉紧前90°改向",
+      "drum_D_mm": 500.0,
+      "bend_kind": "bend90",
+      "drive_role": "none",
+      "is_main_drive": false,
+      "point_role": "none"
+    },
+    {
+      "id": "n16",
+      "seq": 10,
+      "x": 116.5,
+      "y": 0.0,
+      "z": 9.9465352819854,
+      "type": "takeup",
+      "branch": "return",
+      "label": "垂直重锤拉紧滚筒",
+      "drum_D_mm": 630.0,
+      "drive_role": "none",
+      "is_main_drive": false,
+      "takeup_kind": "gravity",
+      "takeup_travel_m": 1.0,
+      "point_role": "manual2"
+    },
+    {
+      "id": "n17",
+      "seq": 11,
+      "x": 115.5,
+      "y": 0.0,
+      "z": 13.9465352819854,
+      "type": "bend",
+      "branch": "return",
+      "label": "拉紧后90°改向",
+      "drum_D_mm": 500.0,
+      "bend_kind": "bend90",
+      "drive_role": "none",
+      "is_main_drive": false,
+      "point_role": "none"
+    },
+    {
+      "id": "n11",
+      "seq": 12,
+      "x": 109.9227317566405,
+      "y": 0.0,
+      "z": 13.41306524781999,
+      "type": "node",
+      "branch": "return",
+      "is_main_drive": false,
+      "point_role": "none"
+    },
+    {
+      "id": "n12",
+      "seq": 13,
+      "x": 12.287871924781715,
+      "y": 0.0,
+      "z": -0.4031885019713476,
+      "type": "node",
+      "branch": "return",
+      "is_main_drive": false,
+      "point_role": "none"
+    },
+    {
+      "id": "n13",
+      "seq": 14,
+      "x": 3.8109181660591616,
+      "y": 0.0,
+      "z": -1.0,
+      "type": "node",
+      "branch": "return",
+      "is_main_drive": false,
+      "point_role": "none"
+    },
+    {
+      "id": "n14",
+      "seq": 15,
+      "x": 0.0,
+      "y": 0.0,
+      "z": -1.0,
+      "type": "node",
+      "branch": "return",
+      "is_main_drive": false,
+      "point_role": "none"
+    }
+  ],
+  "segments": [
+    {
+      "id": "s1",
+      "from_node_id": "n1",
+      "to_node_id": "n5",
+      "branch": "carry",
+      "major_id": "load",
+      "sub_id": "load.1",
+      "L": 3.7757596772457207,
+      "H": 0.0,
+      "Ln": 3.7757596772457207,
+      "delta_deg": 0.0,
+      "curve": "none",
+      "flags": [
+        "load"
+      ],
+      "chute_length_m": 3.0,
+      "classify_status": "confirmed",
+      "extract_status": "complete"
+    },
+    {
+      "id": "s4",
+      "from_node_id": "n5",
+      "to_node_id": "n6",
+      "branch": "carry",
+      "major_id": "concave",
+      "sub_id": "concave.1",
+      "L": 8.427619771472846,
+      "H": 0.5918731251043313,
+      "Ln": 8.406810406824889,
+      "delta_deg": 4.027207223190875,
+      "curve": "concave",
+      "R": 60.0,
+      "theta_deg": 8.054414446381783,
+      "arc_mid": [
+        7.989569562982142,
+        0.0,
+        0.14815118772963132
+      ],
+      "flags": [],
+      "classify_status": "confirmed",
+      "extract_status": "complete"
+    },
+    {
+      "id": "s2",
+      "from_node_id": "n6",
+      "to_node_id": "n7",
+      "branch": "carry",
+      "major_id": "carryI",
+      "sub_id": "carryI.1",
+      "L": 98.60757943518001,
+      "H": 13.816253749791336,
+      "Ln": 97.63485983185879,
+      "delta_deg": 8.05441444638175,
+      "curve": "none",
+      "flags": [],
+      "classify_status": "confirmed",
+      "extract_status": "complete"
+    },
+    {
+      "id": "s5",
+      "from_node_id": "n7",
+      "to_node_id": "n8",
+      "branch": "carry",
+      "major_id": "convex",
+      "sub_id": "convex.1",
+      "L": 8.427619771472846,
+      "H": 0.5918731251043319,
+      "Ln": 8.406810406824889,
+      "delta_deg": 4.02720722319088,
+      "curve": "convex",
+      "R": 60.0,
+      "theta_deg": 8.054414446381783,
+      "arc_mid": [
+        114.01043043701786,
+        0.0,
+        14.851848812270369
+      ],
+      "flags": [],
+      "classify_status": "confirmed",
+      "extract_status": "complete"
+    },
+    {
+      "id": "s3",
+      "from_node_id": "n8",
+      "to_node_id": "n4",
+      "branch": "carry",
+      "major_id": "unload",
+      "sub_id": "unload.1",
+      "L": 1.7757596772457163,
+      "H": 0.0,
+      "Ln": 1.7757596772457163,
+      "delta_deg": 0.0,
+      "curve": "none",
+      "flags": [
+        "unload_head"
+      ],
+      "classify_status": "confirmed",
+      "extract_status": "complete"
+    },
+    {
+      "id": "s6",
+      "from_node_id": "n4",
+      "to_node_id": "n9",
+      "branch": "return",
+      "major_id": "retI",
+      "sub_id": "retI.2",
+      "L": 1.0,
+      "H": -1.0,
+      "Ln": 0.0,
+      "delta_deg": -90.0,
+      "curve": "none",
+      "flags": [],
+      "classify_status": "confirmed",
+      "extract_status": "complete"
+    },
+    {
+      "id": "s7",
+      "from_node_id": "n9",
+      "to_node_id": "n10",
+      "branch": "return",
+      "major_id": "retH",
+      "sub_id": "retH.1",
+      "L": 1.7406011884322794,
+      "H": 0.0,
+      "Ln": 1.7406011884322794,
+      "delta_deg": 0.0,
+      "curve": "none",
+      "flags": [],
+      "classify_status": "confirmed",
+      "extract_status": "complete"
+    },
+    {
+      "id": "s8",
+      "from_node_id": "n10",
+      "to_node_id": "n15",
+      "branch": "return",
+      "major_id": "retI",
+      "sub_id": "retI.2",
+      "L": 0.7612785502579507,
+      "H": -0.05346471801460062,
+      "Ln": 0.7593988115677206,
+      "delta_deg": -4.0272072231908815,
+      "curve": "none",
+      "flags": [],
+      "classify_status": "confirmed",
+      "extract_status": "complete"
+    },
+    {
+      "id": "s13",
+      "from_node_id": "n15",
+      "to_node_id": "n16",
+      "branch": "return",
+      "major_id": "retI",
+      "sub_id": "retI.2",
+      "L": 4.123105625617661,
+      "H": -4.0,
+      "Ln": 1.0,
+      "delta_deg": -75.96375653207353,
+      "curve": "none",
+      "flags": [],
+      "classify_status": "confirmed",
+      "extract_status": "complete"
+    },
+    {
+      "id": "s14",
+      "from_node_id": "n16",
+      "to_node_id": "n17",
+      "branch": "return",
+      "major_id": "retI",
+      "sub_id": "retI.1",
+      "L": 4.123105625617661,
+      "H": 4.0,
+      "Ln": 1.0,
+      "delta_deg": 75.96375653207353,
+      "curve": "none",
+      "flags": [],
+      "classify_status": "confirmed",
+      "extract_status": "complete"
+    },
+    {
+      "id": "s15",
+      "from_node_id": "n17",
+      "to_node_id": "n11",
+      "branch": "return",
+      "major_id": "retI",
+      "sub_id": "retI.2",
+      "L": 5.6027235641015505,
+      "H": -0.5334700341654095,
+      "Ln": 5.577268243359498,
+      "delta_deg": -5.463763431926744,
+      "curve": "none",
+      "flags": [],
+      "classify_status": "confirmed",
+      "extract_status": "complete"
+    },
+    {
+      "id": "s9",
+      "from_node_id": "n11",
+      "to_node_id": "n12",
+      "branch": "return",
+      "major_id": "retI",
+      "sub_id": "retI.2",
+      "L": 98.60757943518001,
+      "H": -13.816253749791338,
+      "Ln": 97.63485983185879,
+      "delta_deg": -8.054414446381752,
+      "curve": "none",
+      "flags": [],
+      "classify_status": "confirmed",
+      "extract_status": "complete"
+    },
+    {
+      "id": "s10",
+      "from_node_id": "n12",
+      "to_node_id": "n13",
+      "branch": "return",
+      "major_id": "retI",
+      "sub_id": "retI.2",
+      "L": 8.497936749099727,
+      "H": -0.5968114980286524,
+      "Ln": 8.476953758722553,
+      "delta_deg": -4.027207223190877,
+      "curve": "none",
+      "flags": [],
+      "classify_status": "confirmed",
+      "extract_status": "complete"
+    },
+    {
+      "id": "s11",
+      "from_node_id": "n13",
+      "to_node_id": "n14",
+      "branch": "return",
+      "major_id": "retH",
+      "sub_id": "retH.1",
+      "L": 3.8109181660591616,
+      "H": 0.0,
+      "Ln": 3.8109181660591616,
+      "delta_deg": 0.0,
+      "curve": "none",
+      "flags": [],
+      "classify_status": "confirmed",
+      "extract_status": "complete"
+    },
+    {
+      "id": "s12",
+      "from_node_id": "n14",
+      "to_node_id": "n1",
+      "branch": "return",
+      "major_id": "retI",
+      "sub_id": "retI.1",
+      "L": 1.0,
+      "H": 1.0,
+      "Ln": 0.0,
+      "delta_deg": 90.0,
+      "curve": "none",
+      "flags": [],
+      "classify_status": "confirmed",
+      "extract_status": "complete"
+    }
+  ],
+  "attachments": [
+    {
+      "id": "a1",
+      "kind": "cleaner_head",
+      "near_node_id": "n4",
+      "x": 120.0,
+      "y": 0.0,
+      "z": 14.7
+    },
+    {
+      "id": "a2",
+      "kind": "pressure_roller",
+      "segment_id": "s4",
+      "near_node_id": "n5",
+      "x": 3.7757596772457207,
+      "y": 0.0,
+      "z": 0.3,
+      "note": "凹弧起点距导料槽 <5 m，按 2.3.3 设置"
+    },
+    {
+      "id": "a3",
+      "kind": "cleaner_return",
+      "segment_id": "s12",
+      "x": 0.0,
+      "y": 0.0,
+      "z": -0.5
+    }
+  ],
+  "point_order": {
+    "leave_point_node_id": "n4",
+    "manual_p1_node_id": null,
+    "manual_p2_node_id": null,
+    "direction": "running_dir",
+    "auto_points": [
+      {
+        "tension_index": 1,
+        "node_id": "n4",
+        "side": "leave",
+        "note": "S1 主传动奔离点（不打滑最小张力）"
+      },
+      {
+        "tension_index": 2,
+        "node_id": "n15",
+        "side": "approach",
+        "note": "改向滚筒 趋入"
+      },
+      {
+        "tension_index": 3,
+        "node_id": "n15",
+        "side": "leave",
+        "note": "改向滚筒 奔离"
+      },
+      {
+        "tension_index": 4,
+        "node_id": "n16",
+        "side": "approach",
+        "note": "拉紧滚筒（F0 = S趋入 + S奔离，式3-66） 趋入"
+      },
+      {
+        "tension_index": 5,
+        "node_id": "n16",
+        "side": "leave",
+        "note": "拉紧滚筒（F0 = S趋入 + S奔离，式3-66） 奔离"
+      },
+      {
+        "tension_index": 6,
+        "node_id": "n17",
+        "side": "approach",
+        "note": "改向滚筒 趋入"
+      },
+      {
+        "tension_index": 7,
+        "node_id": "n17",
+        "side": "leave",
+        "note": "改向滚筒 奔离"
+      },
+      {
+        "tension_index": 8,
+        "node_id": "n1",
+        "side": "approach",
+        "note": "尾滚筒（承载分支最小张力处，须与下垂度校核比较） 趋入"
+      },
+      {
+        "tension_index": 9,
+        "node_id": "n1",
+        "side": "leave",
+        "note": "尾滚筒（承载分支最小张力处，须与下垂度校核比较） 奔离"
+      },
+      {
+        "tension_index": 10,
+        "node_id": "n5",
+        "side": "start",
+        "note": "凸/凹弧起止点张力（式3-74 凹弧 R 用）"
+      },
+      {
+        "tension_index": 11,
+        "node_id": "n6",
+        "side": "start",
+        "note": "凸/凹弧起止点张力（式3-74 凹弧 R 用）"
+      },
+      {
+        "tension_index": 12,
+        "node_id": "n7",
+        "side": "start",
+        "note": "凸/凹弧起止点张力（式3-74 凹弧 R 用）"
+      },
+      {
+        "tension_index": 13,
+        "node_id": "n8",
+        "side": "start",
+        "note": "凸/凹弧起止点张力（式3-74 凹弧 R 用）"
+      }
+    ]
+  },
+  "closure": {
+    "items": [
+      {
+        "code": "MR_TAIL_LEN",
+        "level": "warn",
+        "message": "受料中心到尾滚筒 1888 mm < 推荐机尾长度 3000 mm（B=1000）。",
+        "ref": "2.3.3",
+        "target": "s1"
+      },
+      {
+        "code": "MR_CONVEX_IDLER",
+        "level": "info",
+        "message": "凸弧 s5 长 8.4 m（>5 m 或钢绳芯）：下分支应加密托辊成弧，不宜用改向滚筒。",
+        "ref": "2.3.5",
+        "target": "s5"
+      },
+      {
+        "code": "MR_CONCAVE_R",
+        "level": "info",
+        "message": "凹弧 s4 最小半径 R≥(1.3~1.5)·F/(qB·g) 取决于起点张力，由网页计算后回填；凹弧段不得设调心托辊。",
+        "ref": "3.11.2 式3-74 / 2.3.5",
+        "target": "s4"
+      },
+      {
+        "code": "MR_TRANS",
+        "level": "info",
+        "message": "未标记机头过渡段；推荐最小过渡段长度 A≈1.30 m（张力利用率 60-90%）。",
+        "ref": "2.3.7 表2-4"
+      },
+      {
+        "code": "MR_TAKEUP",
+        "level": "info",
+        "message": "垂直重锤拉紧应优先置于中部并尽量靠近传动滚筒（2.3.6）。",
+        "ref": "2.3.6",
+        "target": "n16"
+      }
+    ],
+    "ok": true
+  }
+}
