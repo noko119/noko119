@@ -91,10 +91,11 @@ assert(svg.includes("退刀槽"), "undercut mark");
 assert(svg.includes("螺纹"), "thread mark");
 assert(svg.includes("df") && svg.includes("Dg"), "male/female undercut");
 assert(svg.includes("对接内径"), "joint ID mark");
-assert(/对接内径 ø\d+\.\d{3}/.test(svg), "joint ID 3 decimals");
+assert(/ø\d+\.\d{3}/.test(svg), "joint ID 3 decimals");
 const ids = r.joints.map((j) => Number(j.coneDia).toFixed(3));
 assert(ids.every((s) => /^\d+\.\d{3}$/.test(s)), `id precision ${ids}`);
 assert(ids.every((s) => svg.includes(`ø${s}`)), `svg has ids ${ids}`);
+assert(svg.includes("接头尺寸一览"), "joint table");
 
 const svg3 = renderAssembledConeDiagram(r3);
 assert(svg3.includes("聚氨酯") && svg3.includes("×"), "banner scale");

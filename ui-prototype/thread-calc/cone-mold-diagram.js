@@ -17,16 +17,22 @@ function t3(n) {
   return Number(n).toFixed(3);
 }
 
-/** 水平内径尺寸：跨锥腔标注 øx.xxx */
-function dimHId(axis, y, dia, scaleR, label, color = "#e67e22") {
+/**
+ * 水平内径尺寸：尺寸线跨锥腔；数字可放到固定列，避免压在腔心或外径卡上
+ * textX: 可选绝对 X；未给则按 textSide 贴在尺寸线端点外
+ */
+function dimHId(axis, y, dia, scaleR, label, color = "#e67e22", textSide = "left", textX = null) {
   const half = (Number(dia) / 2) * scaleR;
   const x1 = axis - half;
   const x2 = axis + half;
+  const tx = textX != null ? textX : textSide === "right" ? x2 + 8 : x1 - 8;
+  const anchor = textSide === "right" || textX != null ? "start" : "end";
   return `
     <line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="${color}" stroke-width="1.15"/>
     <line x1="${x1}" y1="${y - 5}" x2="${x1}" y2="${y + 5}" stroke="${color}" stroke-width="1.15"/>
     <line x1="${x2}" y1="${y - 5}" x2="${x2}" y2="${y + 5}" stroke="${color}" stroke-width="1.15"/>
-    <text x="${axis}" y="${y - 7}" text-anchor="middle" fill="${color}" font-size="11" font-weight="800">${label}</text>
+    <line x1="${x2}" y1="${y}" x2="${tx - 4}" y2="${y}" stroke="${color}" stroke-width="0.9" opacity="0.55"/>
+    <text x="${tx}" y="${y + 4}" text-anchor="${anchor}" fill="${color}" font-size="11" font-weight="800">${label}</text>
   `;
 }
 
@@ -132,15 +138,12 @@ export function renderConeMoldDiagram(r) {
   const maxOutR = xR(maxOut);
   const ARROW_L = 10;
   const ARROW_W = 5.5;
-  // 右两列：先外径竖列，再接头卡（折线引线绕开外径字）
-  const labelColX = axis + maxOutR + 36;
-  const labelBoxW = 160;
-  const jointCardX = labelColX + labelBoxW + 32;
-  const jointCardW = 220;
+  // 右列：对接内径数字列 → 外套外径卡；接头明细在图下表
+  const idColX = axis + maxOutR + 14;
+  const labelColX = idColX + 92;
+  const labelBoxW = 148;
   const dimColor = "#c45c26";
-  const LINE_H = 22;
-  const CARD_PAD = 14;
-  const CARD_GAP = 16;
+  const odBoxH = 40;
 
   // 外套光筒
   const sleeveBodies = sleeves
@@ -160,7 +163,7 @@ export function renderConeMoldDiagram(r) {
     })
     .join("");
 
-  // 先算接头几何与标注行，再统一排布卡片 Y，避免互压
+  // 接头几何（剖面仍画在组装图上）；文字说明统一放到图下表，避免叠字
   const jointParts = [];
   joints.forEach((joint, ji) => {
     const upper = sleeves[ji];
@@ -286,24 +289,18 @@ export function renderConeMoldDiagram(r) {
       <path d="M ${mirror(xMaj)} ${yEng1} L ${mirror(xDg)} ${yEng1} L ${mirror(xDg)} ${yUnd1} L ${mirror(xMaj)} ${yUnd1} Z"
         fill="#8a2e0e" fill-opacity="0.22" stroke="#8a2e0e" stroke-width="0.85"/>`;
 
-    // 接头标注：收成一张卡片，行距固定，避免叠字
     const coneDia = joint.coneDia ?? joint.cavityAtJoint;
-    const xConeId = axis + xR(coneDia);
-    const rows = [
-      { x: xConeId, y: yShoulder - 2, color: "#e67e22", text: `对接内径 ø${t3(coneDia)}` },
-      { x: xLoc, y: (yTip + yLoc1) / 2, color: "#1f6f5b", text: `止口 ${t(locH)}` },
-      { x: xMaj, y: (yLoc1 + yEng1) / 2, color: "#8a2e0e", text: `螺纹 ${joint.designation} · ${t(engH)}` },
-      { x: xDf, y: (yEng1 + yUnd1) / 2, color: "#2f4a56", text: `退刀槽 ${t(undH)}  df${t(df)}/Dg${t(dg)}` },
-      { x: xOutL, y: (yUnd1 + yFemaleBot) / 2, color: "#c45c26", text: `肩间隙 ${t(gapFace)}` },
-    ];
-    const cardH = CARD_PAD * 2 + rows.length * LINE_H + 18;
-    // 优先落在接头中段旁（外径标注在套中段，纵向错开）
-    const preferY = (yTip + yShoulder) / 2 - cardH / 2;
-
     jointParts.push({
       joint,
       coneDia,
+      locH,
+      engH,
+      undH,
+      gapFace,
+      df,
+      dg,
       yShoulder,
+      yTip,
       uColor,
       lColor,
       mask,
@@ -319,71 +316,22 @@ export function renderConeMoldDiagram(r) {
       xMin,
       yLoc1,
       yEng1,
-      rows,
-      cardH,
-      preferY,
     });
   });
 
-  // 自上而下排布卡片，保证间距 ≥ CARD_GAP
-  let cardCursor = padT + 8;
-  jointParts.forEach((p) => {
-    let cardY = Math.max(p.preferY, cardCursor);
-    // 勿压到图底详情区
-    const maxY = yH - p.cardH - 8;
-    if (cardY > maxY) cardY = Math.max(padT + 8, maxY);
-    p.cardY = cardY;
-    cardCursor = cardY + p.cardH + CARD_GAP;
-  });
-
-  // 外径卡片：若与邻套间距过近则上下微移，避免互压
-  const odBoxH = 44;
+  // 外径卡片：自上而下拉开，避免互压
   const odMids = sleeves.map((s) => (yAt(s.z0) + yAt(s.z1)) / 2);
   const odYs = odMids.slice();
   for (let i = 1; i < odYs.length; i++) {
-    const minGap = odBoxH + 10;
+    const minGap = odBoxH + 12;
     if (odYs[i] - odYs[i - 1] < minGap) {
       odYs[i] = odYs[i - 1] + minGap;
     }
   }
 
-  /** 引线穿越外径列时的避让 Y（不穿过 ø 卡片） */
-  const dodgeOdY = (y) => {
-    const half = odBoxH / 2 + 8;
-    let yy = y;
-    for (let pass = 0; pass < 4; pass++) {
-      let hit = false;
-      for (const oy of odYs) {
-        if (Math.abs(yy - oy) < half) {
-          yy = yy < oy ? oy - half : oy + half;
-          hit = true;
-          break;
-        }
-      }
-      if (!hit) break;
-    }
-    return yy;
-  };
-
   let jointSvg = "";
   jointParts.forEach((p) => {
-    const titleY = p.cardY + CARD_PAD + 14;
-    const row0Y = titleY + LINE_H + 2;
-    const clearX = labelColX - 10; // 外径列左侧
-    const elbowX = labelColX + labelBoxW + 16; // 外径列右侧
-    let leaders = "";
-    let rowTexts = "";
-    p.rows.forEach((row, ri) => {
-      const ty = row0Y + ri * LINE_H;
-      const by = dodgeOdY(row.y);
-      leaders += `
-        <path d="M ${row.x} ${row.y} L ${clearX} ${row.y} L ${clearX} ${by} L ${elbowX} ${by} L ${jointCardX - 2} ${ty - 3}"
-          fill="none" stroke="${row.color}" stroke-width="1.05" opacity="0.85"/>
-        <circle cx="${row.x}" cy="${row.y}" r="2.2" fill="${row.color}"/>`;
-      rowTexts += `
-        <text x="${jointCardX + 10}" y="${ty}" fill="${row.color}" font-size="11" font-weight="800">${row.text}</text>`;
-    });
-
+    // 组装图上只画剖面；序号见下方「接头尺寸一览」表，避免圆圈与尺寸叠字
     jointSvg += `
       ${p.mask}
       <path d="${p.femaleR}" fill="${p.uColor}" fill-opacity="0.9" stroke="#2f4a56" stroke-width="1.15"/>
@@ -394,11 +342,6 @@ export function renderConeMoldDiagram(r) {
       ${p.femGrooveR}${p.femGrooveL}
       ${extThreadZig(p.xMaj, p.xMin, p.yLoc1, p.yEng1)}
       ${extThreadZig(mirror(p.xMaj), mirror(p.xMin), p.yLoc1, p.yEng1)}
-      ${leaders}
-      <rect x="${jointCardX}" y="${p.cardY}" width="${jointCardW}" height="${p.cardH}"
-        rx="8" fill="#ffffff" stroke="#2f4a56" stroke-width="1.4"/>
-      <text x="${jointCardX + 10}" y="${titleY}" fill="#2f4a56" font-size="11" font-weight="900">接头${p.joint.index} · ${p.joint.designation}</text>
-      ${rowTexts}
     `;
   });
 
@@ -419,32 +362,81 @@ export function renderConeMoldDiagram(r) {
     })
     .join("");
 
+  // 左侧尺寸：短段文字外置并错列，避免与邻段数字叠压
   let dims = "";
-  // 左侧尺寸列：列距 ≥48；文字锚在线左侧，避免压线
   dims += dimV(48, y0, yH, `总高 ${t(Htot)}`, "#2f4a56");
   dims += dimV(96, yCone0, yCone1, `锥段 ${t(cone.height)}`, "#1f6f5b");
   dims += dimV(144, y0, yCone0, `上 ${t(topA)}`, "#c45c26", "above");
   dims += dimV(144, yCone1, yH, `下 ${t(botA)}`, "#c45c26", "below");
-  sleeves.forEach((s) => {
+  sleeves.forEach((s, i) => {
     const lab =
       s.maleEndLen > 0
         ? `${t(s.partLength)}(含公${t(s.maleEndLen)})`
         : `${t(s.partLength ?? s.length)}`;
-    dims += dimV(192, yAt(s.z0), yAt(s.z1), lab, "#8a5a2a");
+    const xCol = 192 + (i % 2) * 28;
+    const hPx = Math.abs(yAt(s.z1) - yAt(s.z0));
+    const prefer = hPx < 36 ? (i % 2 === 0 ? "above" : "below") : "auto";
+    dims += dimV(xCol, yAt(s.z0), yAt(s.z1), lab, "#8a5a2a", prefer);
   });
 
-  // 节间对接处：锥腔内径，固定三位小数
+  // 对接内径：尺寸线跨腔，数字在固定右列并纵向错开；与外径卡 Y 避让
   let jointIdDims = "";
+  const idLabelYs = [];
   joints.forEach((j, ji) => {
     const dia = j.coneDia ?? j.cavityAtJoint;
     if (!(dia > 0)) return;
-    // 略偏上台肩，避免与公扣牙型挤在一起；多接头上下错开文字
-    const yDim = yAt(j.z) - 10 - (ji % 2) * 6;
-    jointIdDims += dimHId(axis, yDim, dia, scaleR, `对接内径 ø${t3(dia)}`);
+    let yDim = yAt(j.z) - 8;
+    for (const prev of idLabelYs) {
+      if (Math.abs(yDim - prev) < 18) yDim = prev - 18;
+    }
+    // 避开外径卡片中心带
+    for (const oy of odYs) {
+      if (Math.abs(yDim - oy) < odBoxH / 2 + 6) {
+        yDim = oy - (odBoxH / 2 + 8);
+      }
+    }
+    for (const prev of idLabelYs) {
+      if (Math.abs(yDim - prev) < 18) yDim = prev - 18;
+    }
+    idLabelYs.push(yDim);
+    jointIdDims += dimHId(axis, yDim, dia, scaleR, `${ji + 1} ø${t3(dia)}`, "#e67e22", "right", idColX);
   });
 
   const detail = renderJointDetail(16, yH + 40, joints[0], r.summary);
-  const legendY = yH + 288;
+
+  // 接头数字表（图下）：一行一接头，不再在组装图右侧叠卡片
+  const tableY = yH + 288;
+  const tableRowH = 22;
+  const tableHead = `
+    <text x="20" y="${tableY}" fill="#2f4a56" font-size="12" font-weight="900">接头尺寸一览（组装图圆圈序号对应）</text>
+    <text x="20" y="${tableY + 20}" fill="#5c6b64" font-size="11" font-weight="700">序号</text>
+    <text x="56" y="${tableY + 20}" fill="#5c6b64" font-size="11" font-weight="700">螺纹</text>
+    <text x="150" y="${tableY + 20}" fill="#5c6b64" font-size="11" font-weight="700">对接内径</text>
+    <text x="270" y="${tableY + 20}" fill="#5c6b64" font-size="11" font-weight="700">止口</text>
+    <text x="320" y="${tableY + 20}" fill="#5c6b64" font-size="11" font-weight="700">旋合</text>
+    <text x="370" y="${tableY + 20}" fill="#5c6b64" font-size="11" font-weight="700">退刀</text>
+    <text x="420" y="${tableY + 20}" fill="#5c6b64" font-size="11" font-weight="700">df / Dg</text>
+    <text x="520" y="${tableY + 20}" fill="#5c6b64" font-size="11" font-weight="700">肩隙</text>
+    <text x="570" y="${tableY + 20}" fill="#5c6b64" font-size="11" font-weight="700">上套→下套外径</text>
+  `;
+  const tableRows = jointParts
+    .map((p, i) => {
+      const y = tableY + 42 + i * tableRowH;
+      const j = p.joint;
+      return `
+      <text x="28" y="${y}" fill="#2f4a56" font-size="12" font-weight="900">${j.index}</text>
+      <text x="56" y="${y}" fill="#8a2e0e" font-size="12" font-weight="800">${j.designation}</text>
+      <text x="150" y="${y}" fill="#e67e22" font-size="12" font-weight="800">ø${t3(p.coneDia)}</text>
+      <text x="270" y="${y}" fill="#1f6f5b" font-size="12" font-weight="700">${t(p.locH)}</text>
+      <text x="320" y="${y}" fill="#8a2e0e" font-size="12" font-weight="700">${t(p.engH)}</text>
+      <text x="370" y="${y}" fill="#2f4a56" font-size="12" font-weight="700">${t(p.undH)}</text>
+      <text x="420" y="${y}" fill="#2f4a56" font-size="12" font-weight="700">${t(p.df)} / ${t(p.dg)}</text>
+      <text x="520" y="${y}" fill="#c45c26" font-size="12" font-weight="700">${t(p.gapFace)}</text>
+      <text x="570" y="${y}" fill="#5c6b64" font-size="12" font-weight="700">ø${t(j.fromOd)} → ø${t(j.toOd)}</text>`;
+    })
+    .join("");
+
+  const legendY = tableY + 42 + jointParts.length * tableRowH + 28;
   const items = [
     `内锥 ø${t(cone.topDia)}→ø${t(cone.bottomDia)} · ${t(cone.height)}mm`,
     ...sleeves.map((s) => {
@@ -452,19 +444,12 @@ export function renderConeMoldDiagram(r) {
       const male = s.maleEndLen > 0 ? `含公扣${t(s.maleEndLen)}` : "无公扣";
       return `套${s.index} ø${t(s.outerOd)} · 总高${t(pl)}（${male}）· ${s.kind}`;
     }),
-    ...joints.map((j) => {
-      const id = t3(j.coneDia ?? j.cavityAtJoint ?? 0);
-      return `接头${j.index} ${j.designation}：对接内径ø${id}；止口${t(j.locator)}+螺纹${t(j.engage)}+退刀${t(j.locatorDim?.undercut ?? undercut0)}`;
-    }),
   ];
+  // 单列图例，避免两列文字横向撞车
   const legend = items
-    .map((label, i) => {
-      const col = i % 2;
-      const row = Math.floor(i / 2);
-      return `<text x="${20 + col * 560}" y="${legendY + row * 18}" fill="#5c6b64" font-size="11" font-weight="600">${label}</text>`;
-    })
+    .map((label, i) => `<text x="20" y="${legendY + i * 18}" fill="#5c6b64" font-size="11" font-weight="600">${label}</text>`)
     .join("");
-  const H = legendY + Math.ceil(items.length / 2) * 18 + 28;
+  const H = legendY + items.length * 18 + 28;
 
   return `
   <svg viewBox="0 0 ${W} ${H}" class="diagram" role="img" aria-label="锥管模具组装示意图（公母扣·止口·螺纹·退刀槽）">
@@ -479,6 +464,8 @@ export function renderConeMoldDiagram(r) {
     <text x="${axis}" y="${yH + 24}" text-anchor="middle" fill="#e67e22" font-size="12" font-weight="800">锥下口 ø${t3(cone.bottomDia)}</text>
     <line x1="${axis}" y1="${y0}" x2="${axis}" y2="${yH}" stroke="#9aa8a1" stroke-dasharray="4 3"/>
     ${detail}
+    ${tableHead}
+    ${tableRows}
     ${legend}
   </svg>`;
 }
