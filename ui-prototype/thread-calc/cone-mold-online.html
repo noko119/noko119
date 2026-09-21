@@ -2849,17 +2849,17 @@ function num(id, fallback) {
 function fillSegTable(sleeves) {
   $("segTable").innerHTML = sleeves
     .map((s) => {
-      let note = s.kindNote || "—";
+      let note = "—";
       if (s.topFaceOffset != null) note = `上余量 ${s.topFaceOffset}`;
       else if (s.bottomFaceOffset != null) note = `下余量 ${s.bottomFaceOffset}`;
       const part = s.partLength != null ? s.partLength : s.length;
-      const male = s.maleEndLen ? `体${s.length}+公${s.maleEndLen}` : "无公扣";
+      const male = s.maleEndLen ? `（体${s.length}+公${s.maleEndLen}）` : "（无公扣）";
       return `<tr>
         <th scope="row">套${s.index}</th>
         <td>ø${s.coneAtTop}→ø${s.coneAtBot}</td>
         <td>${s.pipeLabel || `ø${s.pipeNom}`}</td>
         <td><strong>ø${s.outerOd}</strong></td>
-        <td><strong>${part}</strong><br/><span style="font-weight:500;color:var(--muted)">${male}</span></td>
+        <td><strong>${part}</strong>${male}</td>
         <td>${s.kind}</td>
         <td>${s.wall}</td>
         <td>${note}</td>
