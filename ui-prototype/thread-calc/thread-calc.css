@@ -300,16 +300,34 @@ html, body {
 
 .data th,
 .data td {
-  padding: 9px 4px;
+  padding: 9px 8px;
   border-bottom: 1px solid var(--line);
   text-align: left;
-  vertical-align: baseline;
+  vertical-align: top;
 }
 
-.data th {
+/* 两列「标签 | 数值」表：仅 th+td 成对时才给标签列定宽 */
+.data tbody tr > th:first-child:nth-last-child(2) {
   color: var(--muted);
   font-weight: 500;
   width: 58%;
+}
+
+/* 多列表头 / 行首：不抢宽度，避免列叠压 */
+.data thead th {
+  color: var(--steel);
+  font-weight: 700;
+  font-size: 12px;
+  white-space: nowrap;
+  width: auto;
+  vertical-align: bottom;
+}
+
+.data tbody th[scope="row"] {
+  color: var(--steel);
+  font-weight: 800;
+  white-space: nowrap;
+  width: auto;
 }
 
 .data td {
@@ -320,6 +338,16 @@ html, body {
 
 .data tr:last-child th,
 .data tr:last-child td { border-bottom: 0; }
+
+.table-scroll {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-scroll .data {
+  min-width: 720px;
+}
 
 .split {
   display: grid;

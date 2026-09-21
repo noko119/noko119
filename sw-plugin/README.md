@@ -33,6 +33,7 @@
 | `sw-plugin/PSEUDOCODE.md` | 语言无关伪代码（C# 可直接照搬） |
 | `sw-plugin/vba/PidmPathImport.bas` | VBA 宏源码 |
 | `sw-plugin/samples/demo-path-v0.json` | 最小样例路径包 |
+| `sw-plugin/cone-mold/` | **锥管模具**读包（见该目录 README；网页导出 `cone.mold.v0`） |
 
 ---
 
