@@ -89,8 +89,8 @@ export function renderConeMoldDiagram(r) {
   const undercut0 = r.summary.undercut ?? 4;
 
   const W = 1280;
-  const bannerH = 68;
-  const padT = 108; // 顶栏与图形拉开，避免压到锥上口
+  const bannerH = 78;
+  const padT = 118; // 顶栏与图形拉开，避免压到锥上口
   const plotH = 520;
   const axis = 340; // 给左侧尺寸列留足空位
   const scaleY = plotH / Htot;
@@ -113,17 +113,18 @@ export function renderConeMoldDiagram(r) {
   const iTop = Math.max(cTop - 2 * coneWall, cBot * 0.5);
   const iBot = Math.max(cBot - 2 * coneWall, 20);
 
-  // 顶栏：聚氨酯→模具 + 外套/接头摘要
+  // 顶栏：聚氨酯→模具；外套外径另起一行，避免 5 节时横挤
   const pu = r.pu;
   const scale = r.scale;
   const odBanner = `
     <rect x="16" y="8" width="${W - 32}" height="${bannerH}" rx="10" fill="#fff4e8" stroke="#c45c26" stroke-width="2"/>
-    <text x="28" y="32" fill="#8a2e0e" font-size="13" font-weight="800">${
+    <text x="28" y="30" fill="#8a2e0e" font-size="13" font-weight="800">${
       pu
         ? `聚氨酯 ø${t(pu.topDia)}→ø${t(pu.bottomDia)}×${t(pu.coneHeight)} ×${t3(scale?.factor ?? 1)} → 模具 ø${t3(cone.topDia)}→ø${t3(cone.bottomDia)}×${t3(cone.height)}`
         : `模具 ø${t3(cone.topDia)}→ø${t3(cone.bottomDia)}`
-    }　　${sleeves.map((s) => `套${s.index}：ø${t(s.outerOd)}`).join("　")}</text>
-    <text x="28" y="58" fill="#2f4a56" font-size="12" font-weight="600">止口${t(locatorH0)} · 旋合${t(engage0)} · 退刀槽${t(undercut0)}　·　公扣：止口→外螺纹→外退刀槽(df)　·　母扣：止口接收→内螺纹→内退刀槽(Dg)</text>
+    }</text>
+    <text x="28" y="50" fill="#c45c26" font-size="12" font-weight="700">${sleeves.map((s) => `套${s.index} ø${t(s.outerOd)}`).join(" · ")}</text>
+    <text x="28" y="68" fill="#2f4a56" font-size="11" font-weight="600">止口${t(locatorH0)} · 旋合${t(engage0)} · 退刀槽${t(undercut0)}　·　公：止口→外螺纹→df　·　母：止口→内螺纹→Dg</text>
   `;
 
   const green = `
@@ -319,13 +320,28 @@ export function renderConeMoldDiagram(r) {
     });
   });
 
-  // 外径卡片：自上而下拉开，避免互压
+  // 外径卡片：自上而下拉开，且不压进图下详情区
   const odMids = sleeves.map((s) => (yAt(s.z0) + yAt(s.z1)) / 2);
   const odYs = odMids.slice();
+  const odMinGap = odBoxH + 12;
   for (let i = 1; i < odYs.length; i++) {
-    const minGap = odBoxH + 12;
-    if (odYs[i] - odYs[i - 1] < minGap) {
-      odYs[i] = odYs[i - 1] + minGap;
+    if (odYs[i] - odYs[i - 1] < odMinGap) {
+      odYs[i] = odYs[i - 1] + odMinGap;
+    }
+  }
+  const odMax = yH - odBoxH / 2 - 6;
+  if (odYs.length && odYs[odYs.length - 1] > odMax) {
+    // 整体上移，仍保持最小间距
+    const shift = odYs[odYs.length - 1] - odMax;
+    for (let i = 0; i < odYs.length; i++) odYs[i] -= shift;
+    if (odYs[0] < padT + odBoxH / 2) {
+      // 间距不够时压缩到均分
+      const lo = padT + odBoxH / 2;
+      const hi = odMax;
+      const n = odYs.length;
+      for (let i = 0; i < n; i++) {
+        odYs[i] = n === 1 ? (lo + hi) / 2 : lo + ((hi - lo) * i) / (n - 1);
+      }
     }
   }
 
@@ -408,7 +424,7 @@ export function renderConeMoldDiagram(r) {
   const tableY = yH + 288;
   const tableRowH = 22;
   const tableHead = `
-    <text x="20" y="${tableY}" fill="#2f4a56" font-size="12" font-weight="900">接头尺寸一览（组装图圆圈序号对应）</text>
+    <text x="20" y="${tableY}" fill="#2f4a56" font-size="12" font-weight="900">接头尺寸一览（对应图中对接内径序号）</text>
     <text x="20" y="${tableY + 20}" fill="#5c6b64" font-size="11" font-weight="700">序号</text>
     <text x="56" y="${tableY + 20}" fill="#5c6b64" font-size="11" font-weight="700">螺纹</text>
     <text x="150" y="${tableY + 20}" fill="#5c6b64" font-size="11" font-weight="700">对接内径</text>

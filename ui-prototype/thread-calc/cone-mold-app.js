@@ -20,18 +20,18 @@ function fillSegTable(sleeves) {
   $("segTable").innerHTML = sleeves
     .map((s) => {
       let note = s.kindNote || "—";
-      if (s.topFaceOffset != null) note = `含上余量 ${s.topFaceOffset}；${note}`;
-      else if (s.bottomFaceOffset != null) note = `含下余量 ${s.bottomFaceOffset}；${note}`;
+      if (s.topFaceOffset != null) note = `上余量 ${s.topFaceOffset}`;
+      else if (s.bottomFaceOffset != null) note = `下余量 ${s.bottomFaceOffset}`;
       const part = s.partLength != null ? s.partLength : s.length;
-      const male = s.maleEndLen ? `（体${s.length}+公${s.maleEndLen}）` : "（无公扣）";
+      const male = s.maleEndLen ? `体${s.length}+公${s.maleEndLen}` : "无公扣";
       return `<tr>
         <th scope="row">套${s.index}</th>
-        <td>ø${s.coneAtTop}→ø${s.coneAtBot}（需≥${s.coneNeed}）</td>
+        <td>ø${s.coneAtTop}→ø${s.coneAtBot}</td>
         <td>${s.pipeLabel || `ø${s.pipeNom}`}</td>
         <td><strong>ø${s.outerOd}</strong></td>
-        <td><strong>${part} mm</strong> ${male}</td>
+        <td><strong>${part}</strong><br/><span style="font-weight:500;color:var(--muted)">${male}</span></td>
         <td>${s.kind}</td>
-        <td>${s.wall} mm</td>
+        <td>${s.wall}</td>
         <td>${note}</td>
       </tr>`;
     })
@@ -45,12 +45,12 @@ function fillJointTable(joints) {
       const stack = (j.jointStack || []).map((x) => `${x.name}${x.h}`).join("+");
       return `<tr>
         <th scope="row">${j.index}</th>
-        <td>套外ø${j.fromOd} → ø${j.toOd}</td>
-        <td>对接内径 ø${Number(j.coneDia).toFixed(3)}</td>
+        <td>ø${j.fromOd}→ø${j.toOd}</td>
+        <td><strong>ø${Number(j.coneDia).toFixed(3)}</strong></td>
         <td>${stack}</td>
         <td><strong>${j.designation}</strong></td>
         <td>${j.crest.external} / ${j.crest.internal}</td>
-        <td>≥ ${j.minFemaleWall ?? "—"} mm</td>
+        <td>≥ ${j.minFemaleWall ?? "—"}</td>
       </tr>`;
     })
     .join("");

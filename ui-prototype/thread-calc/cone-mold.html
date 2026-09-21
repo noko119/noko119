@@ -150,22 +150,26 @@
 
       <article class="card">
         <h3>各节明细</h3>
-        <table class="data">
-          <thead>
-            <tr><th>外套</th><th>贴锥径</th><th>选用管（名义→内径/外径）</th><th>外径</th><th>节总高</th><th>类型</th><th>折算壁厚</th><th>余量</th></tr>
-          </thead>
-          <tbody id="segTable"></tbody>
-        </table>
+        <div class="table-scroll">
+          <table class="data">
+            <thead>
+              <tr><th>外套</th><th>贴锥径</th><th>选用管</th><th>外径</th><th>节总高</th><th>类型</th><th>壁厚</th><th>备注</th></tr>
+            </thead>
+            <tbody id="segTable"></tbody>
+          </table>
+        </div>
       </article>
 
       <article class="card">
         <h3>螺纹接头</h3>
-        <table class="data">
-          <thead>
-            <tr><th>道</th><th>上套→下套</th><th>对接内径</th><th>轴向细节</th><th>螺纹</th><th>牙顶外/内</th><th>外套局部壁厚</th></tr>
-          </thead>
-          <tbody id="jointTable"></tbody>
-        </table>
+        <div class="table-scroll">
+          <table class="data">
+            <thead>
+              <tr><th>道</th><th>上套→下套</th><th>对接内径</th><th>轴向</th><th>螺纹</th><th>牙顶外/内</th><th>局部壁厚</th></tr>
+            </thead>
+            <tbody id="jointTable"></tbody>
+          </table>
+        </div>
       </article>
 
       <div id="jointCards" class="stack"></div>
