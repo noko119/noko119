@@ -2,6 +2,7 @@
 
 > 状态：v0 已实现（`sw-plugin/addin/`，C# Add-in，CommandManager 选项卡「DTⅡ 路径」）  
 > 原则：**SW 只画路径 + 打标签；张力 / 功率 / 带强 / 选型全部在网页**（规则 `PROJECT_RULES.md`）  
+> 草图形态（规则 §3.2）：**2D 侧型 / 2D 俯视 / 3D 空间** 三选一，与网页共用同一套 XYZ  
 > 数据出口：`pidm.path.v0`（`WEB_SW_DATA_CONTRACT_DRAFT.md`），网页「导入 JSON(SW)」直接读取
 
 ---

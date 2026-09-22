@@ -111,9 +111,10 @@ v0 可先只放 `path`，`extract` 留空对象。
 ### B. 写入总骨架
 
 1. 在约定装配下找或建草图：`PIDM_PATH_SKEL`（名称固定）  
-2. 按 `nodes[].seq` 顺序写 3D 草图折线点：`(x,y,z)` 单位 **米**（SW API 亦为米，**不要 ×1000**）  
-3. 删除/更新旧点，避免双真相：以本次 `nodes[].id` 映射表为准  
-4. 可用仓库宏：`sw-plugin/vba/PidmPathImport.bas`（见 `sw-plugin/README.md`）  
+2. 按 `line.sketch_kind` 建草图（规则 §3.2）：`2d-xz` 前视 2D、`2d-xy` 上视 2D、`3d` 3D 草图；缺省按节点共面推断  
+3. 按 `nodes[].seq` 写折线点，单位 **米**（SW API 亦为米，**不要 ×1000**）。2D 用 (u,v) 映射：侧型 (X,0,Z)、俯视 (X,Y,0)；3D 用 (X,Y,Z) 原样  
+4. 删除/更新旧点，避免双真相：以本次 `nodes[].id` 映射表为准；更改 `sketch_kind` 允许删旧草图重建  
+5. 可用仓库宏：`sw-plugin/vba/PidmPathImport.bas`（见 `sw-plugin/README.md`）  
 
 映射表建议存装配属性或旁路 JSON：
 
@@ -248,3 +249,4 @@ v0 可先只放 `path`，`extract` 留空对象。
 |------|------|
 | 2026-09-11 | 首版：文件交换读包/写骨架/提取回传说明 |
 | 2026-09-11 | 明确：Web 路径几何必须正确提取并可直接计算 |
+| 2026-09-23 | 总骨架按 `line.sketch_kind` 写 2D 侧型 / 2D 俯视 / 3D（对齐规则 §3.2） |

@@ -45,6 +45,7 @@ Project
 | cover_bot_mm | number | | mm | 下胶厚 |
 | coord_system | string | ✓ | — | 固定 `Z_up_right`（Z 向上，右手系） |
 | length_unit | string | ✓ | — | 固定 `m` |
+| sketch_kind | enum | | — | SW 草图形态：`2d-xz`（侧型前视）/ `2d-xy`（俯视上视）/ `3d`。缺省按节点共面推断。网页始终同一套 XYZ（规则 §3.2） |
 
 ---
 
@@ -162,7 +163,8 @@ Project
     "a0_default": 1.2,
     "aU_default": 3.0,
     "coord_system": "Z_up_right",
-    "length_unit": "m"
+    "length_unit": "m",
+    "sketch_kind": "2d-xz"
   },
   "nodes": [
     {
@@ -205,3 +207,4 @@ Project
 | 日期 | 说明 |
 |------|------|
 | 2026-09-11 | v0 字段总表 + 闭环检查码 |
+| 2026-09-23 | `line.sketch_kind`：`2d-xz` / `2d-xy` / `3d`（对齐规则 §3.2） |

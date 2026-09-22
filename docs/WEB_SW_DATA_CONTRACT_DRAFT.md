@@ -67,7 +67,7 @@
 SW 插件职责：
 
 1. 校验 schema + closure（error 则拒绝写入）  
-2. 在约定装配下创建/更新 **总骨架草图**（Z-up 与 Web 一致或按映射表转换）  
+2. 在约定装配下创建/更新 **总骨架草图** `PIDM_PATH_SKEL`（Z-up；按 `line.sketch_kind` 选 2D 前视 / 2D 上视 / 3D，见规则 §3.2）  
 3. 按节点插入/更新 **滚筒草图块**（`sw_block_id` / 类型+ D）  
 4. 区段写入属性：`major_id`,`sub_id`,`name_tree`  
 5. 回写本地映射表：`node.id ↔ SW 草图点/块实例`
@@ -76,8 +76,9 @@ SW 插件职责：
 
 | 项 | 约定 |
 |----|------|
-| Web | `Z_up_right`，单位 m |
+| Web | `Z_up_right`，单位 m；2D 俯视 / 2D 侧视 / 3D 操作同一套 XYZ |
 | SW | 默认与模板装配一致；若模板为 Y-up，插件内做一次固定变换并在 bundle 记录 `axis_map` |
+| `line.sketch_kind` | `2d-xz` → 前视 2D，(u,v)→(X,0,Z)；`2d-xy` → 上视 2D，(u,v)→(X,Y,0)；`3d` → 3D 草图原样。缺省按节点共面推断 |
 
 ```json
 "axis_map": {
@@ -201,3 +202,4 @@ v0 推荐：SW 测试装配直接采用 **Z 向上**，`axis_map=identity`，减
 | 日期 | 说明 |
 |------|------|
 | 2026-09-11 | v0 契约草稿 |
+| 2026-09-23 | SW 骨架按 `line.sketch_kind` 2D/3D 两用（对齐规则 §3.2） |
