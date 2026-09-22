@@ -268,5 +268,22 @@ namespace PidmPath.Core.Tests
             PathEdit.ReverseDirection(m);
             Assert.Equal(NodeTypes.Tail, m.CarryNodes.First().Type);
         }
+
+        [Fact]
+        public void SketchKinds_RoundTrip_AndInfer()
+        {
+            var w = SketchKinds.ToWorld(SketchKinds.PlanarXz, 80, 12, 99);
+            Assert.Equal(80, w.X); Assert.Equal(0, w.Y); Assert.Equal(12, w.Z);
+            SketchKinds.ToSketch(SketchKinds.PlanarXz, w, out var u, out var v, out var ww);
+            Assert.Equal(80, u); Assert.Equal(12, v); Assert.Equal(0, ww);
+
+            var plan = SketchKinds.ToWorld(SketchKinds.PlanarXy, 10, 4);
+            Assert.Equal(10, plan.X); Assert.Equal(4, plan.Y); Assert.Equal(0, plan.Z);
+
+            var m = SideTypes.Build("C4", new SideTypes.Params { Ln = 80, H = 8 });
+            Assert.Equal(SketchKinds.PlanarXz, SketchKinds.Infer(m.Nodes));
+            var json = JsonIO.Serialize(m);
+            Assert.Contains("sketch_kind", json);
+        }
     }
 }

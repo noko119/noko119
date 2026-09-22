@@ -168,6 +168,60 @@ namespace PidmPath.Core
         [JsonProperty("tension_utilization")] public string TensionUtilization = "60-90"; // >90 | 60-90 | <60 （表2-4）
         [JsonProperty("coord_system")] public string CoordSystem = "Z_up_right";
         [JsonProperty("length_unit")] public string LengthUnit = "m";
+        /// <summary>SW 草图形态：3d | 2d-xz（侧型平面）| 2d-xy（俯视平面）。网页始终是同一套 XYZ。</summary>
+        [JsonProperty("sketch_kind")] public string SketchKind = SketchKinds.Space3d;
+    }
+
+    /// <summary>SW 路径草图形态。2D 草图坐标 (u,v) ↔ PIDM 世界坐标 (X,Y,Z)，Z 向上。</summary>
+    public static class SketchKinds
+    {
+        public const string Space3d = "3d";
+        public const string PlanarXz = "2d-xz";
+        public const string PlanarXy = "2d-xy";
+        public static bool IsPlanar(string k) => k == PlanarXz || k == PlanarXy;
+        public static string Label(string k)
+        {
+            switch (k)
+            {
+                case PlanarXz: return "2D 侧型（前视 XZ）";
+                case PlanarXy: return "2D 俯视（上视 XY）";
+                default: return "3D 空间路径";
+            }
+        }
+
+        /// <summary>草图平面坐标 → PIDM 世界点。3D 时 (u,v,w) 原样。</summary>
+        public static Vec3 ToWorld(string kind, double u, double v, double w = 0)
+        {
+            switch (kind)
+            {
+                case PlanarXz: return new Vec3(u, 0, v);
+                case PlanarXy: return new Vec3(u, v, 0);
+                default: return new Vec3(u, v, w);
+            }
+        }
+
+        /// <summary>PIDM 世界点 → 草图 CreateLine/CreatePoint 用的 (u,v,w)。2D 时 w=0。</summary>
+        public static void ToSketch(string kind, Vec3 p, out double u, out double v, out double w)
+        {
+            switch (kind)
+            {
+                case PlanarXz: u = p.X; v = p.Z; w = 0; break;
+                case PlanarXy: u = p.X; v = p.Y; w = 0; break;
+                default: u = p.X; v = p.Y; w = p.Z; break;
+            }
+        }
+
+        /// <summary>按节点是否落在平面上推断草图形态。</summary>
+        public static string Infer(IEnumerable<PathNode> nodes)
+        {
+            var list = nodes?.ToList() ?? new List<PathNode>();
+            if (list.Count == 0) return Space3d;
+            bool flatY = list.All(n => Math.Abs(n.Y) < 1e-6);
+            bool flatZ = list.All(n => Math.Abs(n.Z) < 1e-6);
+            if (flatY && !flatZ) return PlanarXz;
+            if (flatZ) return PlanarXy;
+            return Space3d;
+        }
     }
 
     [JsonObject(MemberSerialization.OptIn)]

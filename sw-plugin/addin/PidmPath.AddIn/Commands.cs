@@ -46,12 +46,12 @@ namespace PidmPath.AddIn
         {
             var feat = _io.FindPathSketch(doc);
             if (feat == null) { if (!quiet) Msg.Warn($"未找到草图 {PidmKeys.SketchName}。请先“新建路径”或“侧型模板”。"); return null; }
-            var data = _io.Read(doc, feat);
-            warnings.AddRange(data.Warnings);
-            if (data.Segments.Count == 0) { if (!quiet) Msg.Warn("草图里没有线段，请先绘制承载中心线。"); return null; }
-
             var cached = LoadCached(doc);
             var line = cached?.Line ?? new LineParams();
+            if (string.IsNullOrEmpty(line.SketchKind)) line.SketchKind = SketchKinds.Space3d;
+            var data = _io.Read(doc, feat, line.SketchKind);
+            warnings.AddRange(data.Warnings);
+            if (data.Segments.Count == 0) { if (!quiet) Msg.Warn("草图里没有线段，请先绘制承载中心线。"); return null; }
             var tailHint = cached?.CarryNodes.FirstOrDefault()?.P;
             var chain = Chainer.Chain(data.Segments, tailHint);
             warnings.AddRange(chain.Warnings);
@@ -99,7 +99,7 @@ namespace PidmPath.AddIn
         void Save(ModelDoc2 doc, PathModel m, bool redraw)
         {
             m.RecomputeGeometry();
-            if (!_io.EnterPathSketch(doc, true)) { Msg.Error("无法进入路径草图。"); return; }
+            if (!_io.EnterPathSketch(doc, true, m.Line.SketchKind)) { Msg.Error("无法进入路径草图。"); return; }
             try
             {
                 if (redraw) _io.Redraw(doc, m); else _io.WriteBackAttrs(doc, m);
@@ -157,16 +157,27 @@ namespace PidmPath.AddIn
             var doc = Doc(); if (doc == null) return;
             var line = LoadLine(doc);
             if (!EditLine(line, "新建路径 — 线体基本信息")) return;
-            if (!_io.EnterPathSketch(doc, true)) { Msg.Error("无法创建 3D 草图。"); return; }
+            if (!_io.EnterPathSketch(doc, true, line.SketchKind)) { Msg.Error("无法创建路径草图。"); return; }
             var m = new PathModel { Line = line };
             _io.SaveCache(doc, JsonIO.Serialize(m));
-            Msg.Info($"已进入 3D 草图 {PidmKeys.SketchName}。\n\n请用直线/圆弧/样条绘制【承载中心线】（尾 → 头，单位按文档设置，Z 向上），\n画完退出草图后点“识别路径”。");
+            string how = line.SketchKind == SketchKinds.PlanarXz
+                ? "已进入【2D 侧型】草图（前视 XZ）：画长度与高程，Y=0。\n有水平转弯请改选 3D 或 2D 俯视。"
+                : line.SketchKind == SketchKinds.PlanarXy
+                    ? "已进入【2D 俯视】草图（上视 XY）：画平面走向，高程 Z 请改 3D 或侧视。"
+                    : "已进入【3D 空间】草图：可画平面侧型（Y=0）或空间折线。";
+            Msg.Info($"{how}\n草图名 {PidmKeys.SketchName}。用直线/圆弧画承载中心线（尾→头），退出草图后点“识别路径”。");
         }
 
         bool EditLine(LineParams line, string title)
         {
             var dlg = new PropertyDialog(title, new[]
             {
+                FieldSpec.Combo("sketch", "路径草图", new[]
+                {
+                    (SketchKinds.PlanarXz, "2D 侧型（前视平面，画坡度/提升）"),
+                    (SketchKinds.PlanarXy, "2D 俯视（上视平面，画水平走向）"),
+                    (SketchKinds.Space3d, "3D 空间路径（可平面也可转弯/折线）"),
+                }, title.Contains("新建") ? SketchKinds.PlanarXz : (line.SketchKind ?? SketchKinds.PlanarXz), "同一套 XYZ：2D 只是画在一个基准面上；导出给网页仍是三维坐标"),
                 FieldSpec.Text("name", "线体名称", line.Name),
                 FieldSpec.Number("B", "带宽 B (mm)", line.B, "表2-3 / 决定机尾长度、过渡段、凸弧 Rmin"),
                 FieldSpec.Number("v", "带速 v (m/s)", line.V, "2.2 / 2.3.2：>2.5 m/s 倾角减 2°~4°"),
@@ -178,6 +189,7 @@ namespace PidmPath.AddIn
                 FieldSpec.Number("Q", "输送量 Q (t/h) 可选", line.Q),
             });
             if (dlg.ShowDialog() != DialogResult.OK) return false;
+            line.SketchKind = dlg.Str("sketch") ?? line.SketchKind;
             line.Name = dlg.Str("name"); line.B = dlg.Num("B") ?? line.B; line.V = dlg.Num("v") ?? line.V; line.Rho = dlg.Num("rho") ?? line.Rho;
             line.BeltCore = dlg.Str("core"); line.TroughAngle = dlg.Num("trough") ?? line.TroughAngle; line.CarryReturnGap = dlg.Num("gap") ?? line.CarryReturnGap;
             line.TensionUtilization = dlg.Str("util"); line.Q = dlg.Num("Q");
@@ -214,10 +226,16 @@ namespace PidmPath.AddIn
                 FieldSpec.Number("D", "传动滚筒 D (mm)", 800, "改向滚筒按表2-5 自动匹配"),
                 FieldSpec.Number("B", "带宽 B (mm)", line.B),
                 FieldSpec.Number("rho", "堆积密度 ρ (kg/m³)", line.Rho),
+                FieldSpec.Combo("sketch", "画在", new[]
+                {
+                    (SketchKinds.PlanarXz, "2D 侧型（前视，推荐）"),
+                    (SketchKinds.Space3d, "3D 空间草图"),
+                }, line.SketchKind == SketchKinds.Space3d ? SketchKinds.Space3d : SketchKinds.PlanarXz),
             }, "生成可编辑骨架：承载线 + 回程 + 滚筒 + 拉紧 + 清扫器点，全部可再改。现有 PIDM_PATH_SKEL 内容将被替换。");
             if (dlg.ShowDialog() != DialogResult.OK) return;
             var code = dlg.Str("cls") + dlg.Str("prof");
             line.B = dlg.Num("B") ?? line.B; line.Rho = dlg.Num("rho") ?? line.Rho;
+            line.SketchKind = dlg.Str("sketch") ?? SketchKinds.PlanarXz;
             var p = new SideTypes.Params
             {
                 Ln = dlg.Num("Ln") ?? 100, H = dlg.Num("H") ?? 10, TailFlat = dlg.Num("tail") ?? 6, HeadFlat = dlg.Num("head") ?? 6,
@@ -241,6 +259,8 @@ namespace PidmPath.AddIn
                 PathModel m;
                 try { m = JsonIO.Load(ofd.FileName); }
                 catch (Exception ex) { Msg.Error("读取失败：" + ex.Message); return; }
+                if (string.IsNullOrEmpty(m.Line.SketchKind) || m.Line.SketchKind == SketchKinds.Space3d)
+                    m.Line.SketchKind = SketchKinds.Infer(m.Nodes);
                 if (_io.FindPathSketch(doc) != null && !Msg.Confirm("将用导入路径重画 PIDM_PATH_SKEL，继续？")) return;
                 Save(doc, m, true);
                 Msg.Info($"已导入：{m.Line.Name}，节点 {m.Nodes.Count}，段 {m.Segments.Count}。");

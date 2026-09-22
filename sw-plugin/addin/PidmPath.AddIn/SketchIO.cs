@@ -49,16 +49,35 @@ namespace PidmPath.AddIn
             return null;
         }
 
-        /// <summary>进入 PIDM_PATH_SKEL 3D 草图编辑（不存在则新建）。返回 true 表示当前处于草图编辑态。</summary>
-        public bool EnterPathSketch(ModelDoc2 doc, bool createIfMissing)
+        /// <summary>
+        /// 进入 PIDM_PATH_SKEL 编辑。不存在则按 kind 新建：3d → 3D 草图；2d-xz → 前视平面；2d-xy → 上视平面。
+        /// 已有草图形态与 kind 不符时删掉重建（例如从 3D 改 2D 侧型）。
+        /// </summary>
+        public bool EnterPathSketch(ModelDoc2 doc, bool createIfMissing, string kind = null)
         {
+            kind = string.IsNullOrEmpty(kind) ? SketchKinds.Space3d : kind;
             var feat = FindPathSketch(doc);
+            if (feat != null && !KindMatches(feat, kind))
+            {
+                doc.ClearSelection2(true);
+                feat.Select2(false, 0);
+                doc.Extension.DeleteSelection2((int)swDeleteSelectionOptions_e.swDelete_Absorbed);
+                feat = null;
+            }
             var skm = doc.SketchManager;
             if (feat == null)
             {
                 if (!createIfMissing) return false;
                 doc.ClearSelection2(true);
-                skm.Insert3DSketch(true);
+                if (SketchKinds.IsPlanar(kind))
+                {
+                    if (!SelectRefPlane(doc, kind == SketchKinds.PlanarXy)) return false;
+                    skm.InsertSketch(true);
+                }
+                else
+                {
+                    skm.Insert3DSketch(true);
+                }
                 var active = skm.ActiveSketch;
                 if (active == null) return false;
                 var af = SketchFeature(active);
@@ -75,6 +94,41 @@ namespace PidmPath.AddIn
             feat.Select2(false, 0);
             doc.EditSketchOrSingleSketchFeature();
             return skm.ActiveSketch != null;
+        }
+
+        static bool KindMatches(Feature feat, string kind)
+        {
+            var sk = feat.GetSpecificFeature2() as Sketch;
+            if (sk == null) return false;
+            bool want3d = !SketchKinds.IsPlanar(kind);
+            return sk.Is3D() == want3d;
+        }
+
+        /// <summary>选基准面。false=前视（2D 侧型），true=上视（2D 俯视）。中英默认名都试。</summary>
+        static bool SelectRefPlane(ModelDoc2 doc, bool top)
+        {
+            string[] names = top
+                ? new[] { "Top Plane", "上视基准面", "Top", "上视" }
+                : new[] { "Front Plane", "前视基准面", "Front", "前视" };
+            foreach (var n in names)
+            {
+                if (doc.Extension.SelectByID2(n, "PLANE", 0, 0, 0, false, 0, null, 0)) return true;
+            }
+            // 按特征顺序：零件默认 前视、上视、右视
+            var planes = new List<Feature>();
+            var f = (Feature)doc.FirstFeature();
+            while (f != null)
+            {
+                if (f.GetTypeName2() == "RefPlane") planes.Add(f);
+                f = (Feature)f.GetNextFeature();
+            }
+            int idx = top ? 1 : 0;
+            if (planes.Count > idx)
+            {
+                doc.ClearSelection2(true);
+                return planes[idx].Select2(false, 0);
+            }
+            return false;
         }
 
         /// <summary>Sketch 与 Feature 是同一 COM 对象的两个接口，可直接转换。</summary>
@@ -97,10 +151,13 @@ namespace PidmPath.AddIn
             public List<string> Warnings = new List<string>();
         }
 
-        public SketchData Read(ModelDoc2 doc, Feature sketchFeat)
+        string _uvKind = SketchKinds.Space3d;
+
+        public SketchData Read(ModelDoc2 doc, Feature sketchFeat, string kindHint = null)
         {
             var data = new SketchData();
             var sk = (Sketch)sketchFeat.GetSpecificFeature2();
+            _uvKind = sk.Is3D() ? SketchKinds.Space3d : (SketchKinds.IsPlanar(kindHint) ? kindHint : SketchKinds.PlanarXz);
             var segs = sk.GetSketchSegments() as object[];
             if (segs != null)
                 foreach (SketchSegment ss in segs)
@@ -164,7 +221,9 @@ namespace PidmPath.AddIn
             return data;
         }
 
-        static Vec3 V(SketchPoint p) => new Vec3(p.X, p.Y, p.Z);
+        Vec3 V(SketchPoint p) => SketchKinds.ToWorld(_uvKind, p.X, p.Y, p.Z);
+
+        void Uv(Vec3 world, out double u, out double v, out double w) => SketchKinds.ToSketch(_uvKind, world, out u, out v, out w);
 
         Dictionary<string, string> ReadAttrs(object entityObj, AttributeDef def)
         {
@@ -260,6 +319,7 @@ namespace PidmPath.AddIn
             var skm = doc.SketchManager;
             var sk = skm.ActiveSketch;
             if (sk == null) throw new InvalidOperationException("未处于 PIDM_PATH_SKEL 草图编辑状态。");
+            _uvKind = sk.Is3D() ? SketchKinds.Space3d : (SketchKinds.IsPlanar(m.Line.SketchKind) ? m.Line.SketchKind : SketchKinds.PlanarXz);
 
             // 删除现有实体
             doc.ClearSelection2(true);
@@ -280,10 +340,15 @@ namespace PidmPath.AddIn
                     var a = m.Node(s.FromId); var b = m.Node(s.ToId);
                     if (a == null || b == null) continue;
                     SketchSegment ss;
+                    Uv(a.P, out var au, out var av, out var aw);
+                    Uv(b.P, out var bu, out var bv, out var bw);
                     if (s.Curve != "none" && s.ArcMid != null)
-                        ss = skm.Create3PointArc(a.X, a.Y, a.Z, b.X, b.Y, b.Z, s.ArcMid[0], s.ArcMid[1], s.ArcMid[2]);
+                    {
+                        Uv(new Vec3(s.ArcMid[0], s.ArcMid[1], s.ArcMid[2]), out var mu, out var mv, out var mw);
+                        ss = skm.Create3PointArc(au, av, aw, bu, bv, bw, mu, mv, mw);
+                    }
                     else
-                        ss = skm.CreateLine(a.X, a.Y, a.Z, b.X, b.Y, b.Z);
+                        ss = skm.CreateLine(au, av, aw, bu, bv, bw);
                     if (ss == null) continue;
                     s.SwEntity = ss;
                     try { ss.Color = s.Branch == Branches.Return ? Rgb(251, 146, 60) : Rgb(59, 130, 246); } catch { }
@@ -291,14 +356,16 @@ namespace PidmPath.AddIn
                 }
                 foreach (var n in m.Nodes.Where(n => n.IsDrum))
                 {
-                    var sp = skm.CreatePoint(n.X, n.Y, n.Z);
+                    Uv(n.P, out var nu, out var nv, out var nw);
+                    var sp = skm.CreatePoint(nu, nv, nw);
                     if (sp == null) continue;
                     n.SwEntity = sp;
                     WriteAttrs(doc, sp, _nodeDef, ModelBuilder.NodeAttrs(n), "PIDM_NODE_" + n.Id);
                 }
                 foreach (var a in m.Attachments)
                 {
-                    var sp = skm.CreatePoint(a.X, a.Y, a.Z);
+                    Uv(a.P, out var au2, out var av2, out var aw2);
+                    var sp = skm.CreatePoint(au2, av2, aw2);
                     if (sp == null) continue;
                     a.SwEntity = sp;
                     WriteAttrs(doc, sp, _attDef, ModelBuilder.AttachmentAttrs(a), "PIDM_ATT_" + a.Id);
@@ -315,6 +382,10 @@ namespace PidmPath.AddIn
         public void WriteBackAttrs(ModelDoc2 doc, PathModel m)
         {
             var skm = doc.SketchManager;
+            var sk = skm.ActiveSketch;
+            _uvKind = (sk != null && !sk.Is3D())
+                ? (SketchKinds.IsPlanar(m.Line.SketchKind) ? m.Line.SketchKind : SketchKinds.PlanarXz)
+                : SketchKinds.Space3d;
             foreach (var s in m.Segments)
                 if (s.SwEntity != null) WriteAttrs(doc, s.SwEntity, _segDef, ModelBuilder.SegmentAttrs(s), "PIDM_SEG_" + s.Id);
             skm.AddToDB = true; skm.DisplayWhenAdded = false;
@@ -325,14 +396,18 @@ namespace PidmPath.AddIn
                     if (!n.IsDrum && n.PointRole == PointRoles.None) { continue; }
                     if (n.SwEntity == null)
                     {
-                        var sp = skm.CreatePoint(n.X, n.Y, n.Z);
-                        n.SwEntity = sp;
+                        Uv(n.P, out var nu, out var nv, out var nw);
+                        n.SwEntity = skm.CreatePoint(nu, nv, nw);
                     }
                     if (n.SwEntity != null) WriteAttrs(doc, n.SwEntity, _nodeDef, ModelBuilder.NodeAttrs(n), "PIDM_NODE_" + n.Id);
                 }
                 foreach (var a in m.Attachments)
                 {
-                    if (a.SwEntity == null) a.SwEntity = skm.CreatePoint(a.X, a.Y, a.Z);
+                    if (a.SwEntity == null)
+                    {
+                        Uv(a.P, out var au, out var av, out var aw);
+                        a.SwEntity = skm.CreatePoint(au, av, aw);
+                    }
                     if (a.SwEntity != null) WriteAttrs(doc, a.SwEntity, _attDef, ModelBuilder.AttachmentAttrs(a), "PIDM_ATT_" + a.Id);
                 }
             }
@@ -346,6 +421,22 @@ namespace PidmPath.AddIn
         public void ReadSelection(ModelDoc2 doc, out List<(Vec3 a, Vec3 b)> segEnds, out List<Vec3> points)
         {
             segEnds = new List<(Vec3, Vec3)>(); points = new List<Vec3>();
+            var feat = FindPathSketch(doc);
+            if (feat != null)
+            {
+                var sk = feat.GetSpecificFeature2() as Sketch;
+                if (sk != null && !sk.Is3D())
+                {
+                    var cache = LoadCache(doc);
+                    string hint = SketchKinds.PlanarXz;
+                    if (!string.IsNullOrEmpty(cache))
+                    {
+                        try { var lm = JsonIO.Deserialize(cache); if (SketchKinds.IsPlanar(lm.Line?.SketchKind)) hint = lm.Line.SketchKind; } catch { }
+                    }
+                    _uvKind = hint;
+                }
+                else _uvKind = SketchKinds.Space3d;
+            }
             var sel = (SelectionMgr)doc.SelectionManager;
             int n = sel.GetSelectedObjectCount2(-1);
             for (int i = 1; i <= n; i++)

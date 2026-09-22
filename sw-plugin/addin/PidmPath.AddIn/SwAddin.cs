@@ -42,7 +42,7 @@ namespace PidmPath.AddIn
         {
             new Grp { Id = 1, Icon = "start", Title = "开始", Tip = "线体与模板", Buttons = new[]
             {
-                new Btn("新建路径", "新建 PIDM_PATH_SKEL 3D 草图并填写线体参数（B、v、ρ、带芯、槽角、承载-回程间距）", nameof(OnNewPath)),
+                new Btn("新建路径", "新建路径草图：2D 侧型 / 2D 俯视 / 3D 空间，三选一，同一套 XYZ", nameof(OnNewPath)),
                 new Btn("侧型模板", "按手册表13-1 常用侧型（A~L × 剖面1~5）一键生成可编辑骨架", nameof(OnSideType)),
                 new Btn("线体信息", "修改带宽/带速/密度/带芯/槽角/张力利用率（决定托辊间距、过渡段、凸弧 Rmin）", nameof(OnLineInfo)),
                 new Btn("从网页导入", "读取网页导出的 pidm.path.v0 JSON 并重画骨架", nameof(OnImport)),
