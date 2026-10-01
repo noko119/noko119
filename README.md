@@ -17,6 +17,7 @@
 | [`docs/SW_PACKAGE_READ_GUIDE.md`](./docs/SW_PACKAGE_READ_GUIDE.md) | **SW 读包/回写操作说明** |
 | [`sw-plugin/`](./sw-plugin/) | **SW VBA 读 JSON 骨架**（伪代码 + 宏 + 样例） |
 | [`docs/DEFAULT_COEFFICIENTS_V0.md`](./docs/DEFAULT_COEFFICIENTS_V0.md) | 默认系数 + GC-01 锚定 |
+| [`docs/QUIET_IDLER_DESIGN_V0.md`](./docs/QUIET_IDLER_DESIGN_V0.md) | **静音托辊设计方案**（QI-159-1400，适配 GC-01） |
 | [`docs/WEB_TOOL_MATERIALS_CHECKLIST.md`](./docs/WEB_TOOL_MATERIALS_CHECKLIST.md) | 材料准备表 |
 | [`docs/golden-cases/GC-01_blast_furnace_feeder.md`](./docs/golden-cases/GC-01_blast_furnace_feeder.md) | 黄金算例 |
 
