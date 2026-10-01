@@ -1,0 +1,275 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1300" height="840" viewBox="0 0 1300 840" font-family="'Noto Sans CJK SC','WenQuanYi Micro Hei','Microsoft YaHei','PingFang SC',sans-serif" font-size="14">
+  <defs>
+    <pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="7" height="7" fill="#c9d1da"/>
+      <line x1="0" y1="0" x2="0" y2="7" stroke="#55606c" stroke-width="1.2"/>
+    </pattern>
+    <pattern id="hatchDark" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)">
+      <rect width="7" height="7" fill="#9fb3c8"/>
+      <line x1="0" y1="0" x2="0" y2="7" stroke="#3d5166" stroke-width="1.2"/>
+    </pattern>
+    <pattern id="rubber" width="6" height="6" patternUnits="userSpaceOnUse">
+      <rect width="6" height="6" fill="#3a3a3a"/>
+      <circle cx="3" cy="3" r="1" fill="#6a6a6a"/>
+    </pattern>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#222"/>
+    </marker>
+    <marker id="dot" viewBox="0 0 6 6" refX="3" refY="3" markerWidth="5" markerHeight="5">
+      <circle cx="3" cy="3" r="2.5" fill="#c0392b"/>
+    </marker>
+  </defs>
+
+  <rect width="1300" height="840" fill="#ffffff"/>
+
+  <!-- Title -->
+  <text x="40" y="36" font-size="20" font-weight="bold" fill="#111">皮带机静音托辊 QI-159-1400 示意图</text>
+  <text x="40" y="58" font-size="13" fill="#555">图1 承载辊纵剖示意（530 mm，示意非按比例，尺寸 mm）　图2 B1400 三辊槽形辊组与回程平形辊布置</text>
+
+  <!-- ================= Panel 1: longitudinal section ================= -->
+  <g id="panel1">
+    <!-- centerline -->
+    <line x1="170" y1="250" x2="1035" y2="250" stroke="#8a2d2d" stroke-width="1" stroke-dasharray="18 4 3 4"/>
+
+    <!-- shaft -->
+    <rect x="200" y="226" width="800" height="48" fill="url(#hatch)" stroke="#222" stroke-width="1.2"/>
+    <!-- shaft flats (32 mm) -->
+    <rect x="200" y="231" width="62" height="38" fill="#e4e9ee" stroke="#222" stroke-width="1.2"/>
+    <rect x="938" y="231" width="62" height="38" fill="#e4e9ee" stroke="#222" stroke-width="1.2"/>
+    <text x="231" y="298" text-anchor="middle" font-size="12" fill="#333">扁位 32</text>
+    <text x="969" y="298" text-anchor="middle" font-size="12" fill="#333">扁位 32</text>
+
+    <!-- circlips -->
+    <rect x="279" y="218" width="6" height="8" fill="#444"/>
+    <rect x="279" y="274" width="6" height="8" fill="#444"/>
+    <rect x="915" y="218" width="6" height="8" fill="#444"/>
+    <rect x="915" y="274" width="6" height="8" fill="#444"/>
+
+    <!-- rubber lagging (top & bottom) -->
+    <rect x="300" y="150" width="600" height="10" fill="url(#rubber)" stroke="#111" stroke-width="1"/>
+    <rect x="300" y="340" width="600" height="10" fill="url(#rubber)" stroke="#111" stroke-width="1"/>
+    <!-- steel shell -->
+    <rect x="300" y="160" width="600" height="12" fill="url(#hatch)" stroke="#222" stroke-width="1"/>
+    <rect x="300" y="328" width="600" height="12" fill="url(#hatch)" stroke="#222" stroke-width="1"/>
+    <!-- inner damping coat -->
+    <rect x="380" y="172" width="440" height="6" fill="#e0a42b" stroke="#8a6414" stroke-width="0.8"/>
+    <rect x="380" y="322" width="440" height="6" fill="#e0a42b" stroke="#8a6414" stroke-width="0.8"/>
+
+    <!-- bearing housings (PA6-GF30), left and right, top and bottom halves -->
+    <g fill="url(#hatchDark)" stroke="#223" stroke-width="1">
+      <!-- left top -->
+      <path d="M300,172 L380,172 L380,190 L336,190 L336,214 L314,214 L314,190 L300,190 Z"/>
+      <!-- left bottom -->
+      <path d="M300,328 L380,328 L380,310 L336,310 L336,286 L314,286 L314,310 L300,310 Z"/>
+      <!-- right top -->
+      <path d="M900,172 L820,172 L820,190 L864,190 L864,214 L886,214 L886,190 L900,190 Z"/>
+      <!-- right bottom -->
+      <path d="M900,328 L820,328 L820,310 L864,310 L864,286 L886,286 L886,310 L900,310 Z"/>
+    </g>
+
+    <!-- labyrinth seal rings (shaft-side ring interleaving with housing fingers) -->
+    <g fill="#5e5e5e" stroke="#222" stroke-width="0.8">
+      <rect x="306" y="196" width="6" height="30"/>
+      <rect x="318" y="200" width="6" height="26"/>
+      <rect x="330" y="196" width="4" height="30"/>
+      <rect x="306" y="274" width="6" height="30"/>
+      <rect x="318" y="274" width="6" height="26"/>
+      <rect x="330" y="274" width="4" height="30"/>
+      <rect x="888" y="196" width="6" height="30"/>
+      <rect x="876" y="200" width="6" height="26"/>
+      <rect x="866" y="196" width="4" height="30"/>
+      <rect x="888" y="274" width="6" height="30"/>
+      <rect x="876" y="274" width="6" height="26"/>
+      <rect x="866" y="274" width="4" height="30"/>
+    </g>
+
+    <!-- bearings 6310 (outer ring / inner ring / balls) -->
+    <g stroke="#222" stroke-width="1">
+      <!-- left top -->
+      <rect x="340" y="190" width="32" height="7" fill="#7d7d7d"/>
+      <rect x="340" y="219" width="32" height="7" fill="#7d7d7d"/>
+      <circle cx="356" cy="208" r="9" fill="#fff"/>
+      <!-- left bottom -->
+      <rect x="340" y="303" width="32" height="7" fill="#7d7d7d"/>
+      <rect x="340" y="274" width="32" height="7" fill="#7d7d7d"/>
+      <circle cx="356" cy="292" r="9" fill="#fff"/>
+      <!-- right top -->
+      <rect x="828" y="190" width="32" height="7" fill="#7d7d7d"/>
+      <rect x="828" y="219" width="32" height="7" fill="#7d7d7d"/>
+      <circle cx="844" cy="208" r="9" fill="#fff"/>
+      <!-- right bottom -->
+      <rect x="828" y="303" width="32" height="7" fill="#7d7d7d"/>
+      <rect x="828" y="274" width="32" height="7" fill="#7d7d7d"/>
+      <circle cx="844" cy="292" r="9" fill="#fff"/>
+    </g>
+
+    <!-- dust caps + lip seals (outside shell ends) -->
+    <g fill="#2f6f8f" stroke="#15364a" stroke-width="1">
+      <path d="M288,164 L300,164 L300,222 L292,222 L292,172 L288,172 Z"/>
+      <path d="M288,336 L300,336 L300,278 L292,278 L292,328 L288,328 Z"/>
+      <path d="M912,164 L900,164 L900,222 L908,222 L908,172 L912,172 Z"/>
+      <path d="M912,336 L900,336 L900,278 L908,278 L908,328 L912,328 Z"/>
+    </g>
+    <!-- lip seals -->
+    <g fill="#c0392b">
+      <path d="M292,222 L300,222 L296,228 Z"/>
+      <path d="M292,278 L300,278 L296,272 Z"/>
+      <path d="M908,222 L900,222 L904,228 Z"/>
+      <path d="M908,278 L900,278 L904,272 Z"/>
+    </g>
+
+    <!-- shaft outline on top for clarity -->
+    <line x1="300" y1="226" x2="900" y2="226" stroke="#222" stroke-width="1"/>
+    <line x1="300" y1="274" x2="900" y2="274" stroke="#222" stroke-width="1"/>
+
+    <!-- dimension: roll length 530 -->
+    <g stroke="#222" stroke-width="1">
+      <line x1="300" y1="352" x2="300" y2="396"/>
+      <line x1="900" y1="352" x2="900" y2="396"/>
+      <line x1="300" y1="388" x2="900" y2="388" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+    </g>
+    <text x="600" y="382" text-anchor="middle" font-size="13" fill="#222">530（辊长）</text>
+
+    <!-- dimension: outer diameter -->
+    <g stroke="#222" stroke-width="1">
+      <line x1="902" y1="150" x2="1022" y2="150"/>
+      <line x1="902" y1="350" x2="1022" y2="350"/>
+      <line x1="1012" y1="150" x2="1012" y2="350" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+      <line x1="1002" y1="226" x2="1040" y2="226"/>
+      <line x1="1002" y1="274" x2="1040" y2="274"/>
+      <line x1="1034" y1="226" x2="1034" y2="274" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+    </g>
+    <text x="1018" y="140" text-anchor="middle" font-size="13" fill="#222">Φ167 包胶外径</text>
+    <text x="1018" y="366" text-anchor="middle" font-size="12" fill="#555">（钢管 Φ159×4.5）</text>
+    <text x="1046" y="254" font-size="12" fill="#222">Φ40</text>
+
+    <!-- part callouts -->
+    <g stroke="#c0392b" stroke-width="1" fill="none">
+      <line x1="600" y1="100" x2="600" y2="152" marker-end="url(#dot)"/>
+      <line x1="690" y1="100" x2="690" y2="164" marker-end="url(#dot)"/>
+      <line x1="770" y1="100" x2="770" y2="174" marker-end="url(#dot)"/>
+      <line x1="860" y1="100" x2="860" y2="182" marker-end="url(#dot)"/>
+      <line x1="440" y1="100" x2="358" y2="206" marker-end="url(#dot)"/>
+      <line x1="320" y1="430" x2="320" y2="300" marker-end="url(#dot)"/>
+      <line x1="240" y1="430" x2="293" y2="312" marker-end="url(#dot)"/>
+      <line x1="960" y1="430" x2="960" y2="262" marker-end="url(#dot)"/>
+      <line x1="240" y1="100" x2="281" y2="220" marker-end="url(#dot)"/>
+    </g>
+    <g font-size="13" font-weight="bold" text-anchor="middle">
+      <circle cx="600" cy="88" r="12" fill="#fff" stroke="#c0392b" stroke-width="1.5"/><text x="600" y="93" fill="#c0392b">1</text>
+      <circle cx="690" cy="88" r="12" fill="#fff" stroke="#c0392b" stroke-width="1.5"/><text x="690" y="93" fill="#c0392b">2</text>
+      <circle cx="770" cy="88" r="12" fill="#fff" stroke="#c0392b" stroke-width="1.5"/><text x="770" y="93" fill="#c0392b">3</text>
+      <circle cx="860" cy="88" r="12" fill="#fff" stroke="#c0392b" stroke-width="1.5"/><text x="860" y="93" fill="#c0392b">4</text>
+      <circle cx="440" cy="88" r="12" fill="#fff" stroke="#c0392b" stroke-width="1.5"/><text x="440" y="93" fill="#c0392b">5</text>
+      <circle cx="320" cy="442" r="12" fill="#fff" stroke="#c0392b" stroke-width="1.5"/><text x="320" y="447" fill="#c0392b">6</text>
+      <circle cx="240" cy="442" r="12" fill="#fff" stroke="#c0392b" stroke-width="1.5"/><text x="240" y="447" fill="#c0392b">7</text>
+      <circle cx="960" cy="442" r="12" fill="#fff" stroke="#c0392b" stroke-width="1.5"/><text x="960" y="447" fill="#c0392b">8</text>
+      <circle cx="240" cy="88" r="12" fill="#fff" stroke="#c0392b" stroke-width="1.5"/><text x="240" y="93" fill="#c0392b">9</text>
+    </g>
+
+    <!-- parts list -->
+    <g font-size="13" fill="#222">
+      <rect x="1070" y="76" width="212" height="372" fill="#f7f8fa" stroke="#c9d1da" rx="4"/>
+      <text x="1081" y="98" font-weight="bold">零件表</text>
+      <text x="1081" y="124"><tspan fill="#c0392b" font-weight="bold">1</tspan> 包胶阻尼层 4 mm</text>
+      <text x="1095" y="141" font-size="11.5" fill="#555">NR/SBR，邵A 65，浅菱形纹</text>
+      <text x="1081" y="166"><tspan fill="#c0392b" font-weight="bold">2</tspan> 钢辊皮 Φ159×4.5</text>
+      <text x="1095" y="183" font-size="11.5" fill="#555">精密冷拔管，先装后车</text>
+      <text x="1081" y="208"><tspan fill="#c0392b" font-weight="bold">3</tspan> 内壁阻尼涂层 1.5 mm</text>
+      <text x="1095" y="225" font-size="11.5" fill="#555">切断壳体共振</text>
+      <text x="1081" y="250"><tspan fill="#c0392b" font-weight="bold">4</tspan> 轴承座 PA6-GF30</text>
+      <text x="1095" y="267" font-size="11.5" fill="#555">或冲压钢座 + 橡胶阻尼环</text>
+      <text x="1081" y="292"><tspan fill="#c0392b" font-weight="bold">5</tspan> 轴承 6310-2RZ C3</text>
+      <text x="1095" y="309" font-size="11.5" fill="#555">低噪声级，填脂 30～40 %</text>
+      <text x="1081" y="334"><tspan fill="#c0392b" font-weight="bold">6</tspan> 三道迷宫密封</text>
+      <text x="1081" y="362"><tspan fill="#c0392b" font-weight="bold">7</tspan> 外防尘盖 + 轻接触唇封</text>
+      <text x="1081" y="390"><tspan fill="#c0392b" font-weight="bold">8</tspan> 轴 45# Φ40</text>
+      <text x="1095" y="407" font-size="11.5" fill="#555">两端扁位 32，与 DTⅡ(A) 互换</text>
+      <text x="1081" y="432"><tspan fill="#c0392b" font-weight="bold">9</tspan> 弹性挡圈 GB/T 894</text>
+    </g>
+
+    <text x="300" y="470" font-size="13" fill="#333">图1 静音托辊纵剖示意　｜　TIR ≤ 0.5 mm　动平衡 G16　旋转阻力 ≤ 2.0 N　单辊噪声 ≤ 60 dB(A)@1 m</text>
+  </g>
+
+  <!-- ================= Panel 2: trough set & return roll ================= -->
+  <g id="panel2">
+    <line x1="40" y1="492" x2="1260" y2="492" stroke="#d0d5db" stroke-width="1"/>
+
+    <!-- material pile -->
+    <path d="M250,590 Q450,500 650,590 L561,650 L339,650 Z" fill="#d9b48a" stroke="#9c7a4f" stroke-width="1" opacity="0.9"/>
+    <text x="450" y="560" text-anchor="middle" font-size="12" fill="#6b4f2a">物料 ρ=1800 kg/m³</text>
+
+    <!-- belt -->
+    <polyline points="166,523 339,645 561,645 734,523" fill="none" stroke="#222" stroke-width="8" stroke-linejoin="round"/>
+
+    <!-- side rolls (rotated), center roll -->
+    <g stroke="#111" stroke-width="1.2">
+      <g transform="rotate(35 329 685)">
+        <rect x="106" y="650" width="223" height="70" rx="6" fill="url(#rubber)"/>
+        <rect x="106" y="682" width="223" height="6" fill="#8a8a8a"/>
+      </g>
+      <g transform="rotate(-35 571 685)">
+        <rect x="571" y="650" width="223" height="70" rx="6" fill="url(#rubber)"/>
+        <rect x="571" y="682" width="223" height="6" fill="#8a8a8a"/>
+      </g>
+      <rect x="339" y="650" width="222" height="70" rx="6" fill="url(#rubber)"/>
+      <rect x="339" y="682" width="222" height="6" fill="#8a8a8a"/>
+    </g>
+
+    <!-- frame / brackets -->
+    <g stroke="#444" stroke-width="3" fill="none">
+      <line x1="160" y1="760" x2="740" y2="760"/>
+      <line x1="190" y1="760" x2="190" y2="560"/>
+      <line x1="710" y1="760" x2="710" y2="560"/>
+      <line x1="334" y1="760" x2="334" y2="700"/>
+      <line x1="566" y1="760" x2="566" y2="700"/>
+    </g>
+    <text x="450" y="784" text-anchor="middle" font-size="12" fill="#333">托辊支架（DTⅡ(A) Φ159 支架，扁孔 32 互换）</text>
+
+    <!-- belt width dimension -->
+    <g stroke="#222" stroke-width="1">
+      <line x1="166" y1="522" x2="166" y2="506"/>
+      <line x1="734" y1="522" x2="734" y2="506"/>
+      <line x1="166" y1="512" x2="734" y2="512" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+    </g>
+    <text x="450" y="507" text-anchor="middle" font-size="13" fill="#222">B = 1400</text>
+
+    <!-- trough angle -->
+    <path d="M650,685 A79,79 0 0 0 635.7,639.7" fill="none" stroke="#c0392b" stroke-width="1.2"/>
+    <line x1="571" y1="685" x2="660" y2="685" stroke="#c0392b" stroke-width="1" stroke-dasharray="4 3"/>
+    <text x="668" y="668" font-size="13" fill="#c0392b">λ = 35°</text>
+
+    <!-- center roll label -->
+    <text x="450" y="740" text-anchor="middle" font-size="12" fill="#333">3 × 承载辊 QI-159-1400-C530（方案 A：钢管 + 包胶 4 mm）</text>
+    <text x="450" y="812" text-anchor="middle" font-size="13" fill="#333">图2a 承载槽形辊组（前倾角 0°，a0 = 1.2 m）</text>
+
+    <!-- return roll -->
+    <g stroke="#111" stroke-width="1.2">
+      <rect x="800" y="652" width="440" height="56" rx="6" fill="url(#rubber)"/>
+      <rect x="800" y="678" width="440" height="5" fill="#8a8a8a"/>
+      <!-- spiral anti-stick rings -->
+      <g stroke="#bbb" stroke-width="2">
+        <line x1="840" y1="652" x2="852" y2="708"/>
+        <line x1="900" y1="652" x2="912" y2="708"/>
+        <line x1="960" y1="652" x2="972" y2="708"/>
+        <line x1="1070" y1="652" x2="1058" y2="708"/>
+        <line x1="1130" y1="652" x2="1118" y2="708"/>
+        <line x1="1190" y1="652" x2="1178" y2="708"/>
+      </g>
+    </g>
+    <!-- return belt -->
+    <line x1="780" y1="648" x2="1260" y2="648" stroke="#222" stroke-width="7"/>
+    <!-- return roll shaft ends -->
+    <rect x="786" y="674" width="14" height="12" fill="#e4e9ee" stroke="#222"/>
+    <rect x="1240" y="674" width="14" height="12" fill="#e4e9ee" stroke="#222"/>
+    <!-- return roll length dimension -->
+    <g stroke="#222" stroke-width="1">
+      <line x1="800" y1="712" x2="800" y2="736"/>
+      <line x1="1240" y1="712" x2="1240" y2="736"/>
+      <line x1="800" y1="730" x2="1240" y2="730" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+    </g>
+    <text x="1020" y="725" text-anchor="middle" font-size="13" fill="#222">1600</text>
+    <text x="1020" y="760" text-anchor="middle" font-size="12" fill="#333">回程平形辊 QI-159-1400-R1600（PU 3 mm，螺旋防粘环可选；或 B′ 高分子+钢内衬）</text>
+    <text x="1020" y="812" text-anchor="middle" font-size="13" fill="#333">图2b 回程平形辊（aU = 3.0 m）</text>
+  </g>
+</svg>
