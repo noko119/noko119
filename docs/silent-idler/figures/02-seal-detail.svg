@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 640" width="980" height="640">
+  <defs>
+    <style type="text/css"><![CDATA[
+      .title { font: 700 22px "Noto Sans CJK SC", "Noto Sans CJK", sans-serif; fill: #1a2332; }
+      .label { font: 600 13px "Noto Sans CJK SC", "Noto Sans CJK", sans-serif; fill: #243447; }
+      .small { font: 400 12px "Noto Sans CJK SC", "Noto Sans CJK", sans-serif; fill: #4a5a6a; }
+      .note { font: 400 11px "Noto Sans CJK SC", "Noto Sans CJK", sans-serif; fill: #6b7c8d; }
+      .axis { stroke: #9aa8b5; stroke-width: 0.8; stroke-dasharray: 5 4; }
+      .shaft { fill: #5c6770; stroke: #2c343c; }
+      .metal { fill: #b8c2cc; stroke: #3d4a57; stroke-width: 1.2; }
+      .sealA { fill: #2f7aa3; stroke: #1a4d6b; }
+      .sealB { fill: #3d8fb8; stroke: #1a4d6b; }
+      .lip { fill: #1e5f7a; stroke: #0f3344; }
+      .damp { fill: #5a8f6a; stroke: #2f5a3c; }
+      .grease { fill: #f2e2a8; opacity: 0.55; }
+      .bg { fill: #f3f6f8; }
+      .box { fill: #fff; stroke: #c5d0da; }
+      .arrow { stroke: #c45c26; stroke-width: 1.4; fill: none; marker-end: url(#arr); }
+    ]]></style>
+    <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#c45c26"/>
+    </marker>
+  </defs>
+  <rect width="980" height="640" class="bg"/>
+  <text x="36" y="40" class="title">图2  端盖密封系统放大（静音关键）</text>
+  <text x="36" y="62" class="small">非接触迷宫为主 + 外唇接触为辅：降摩擦噪声、阻粉尘、延寿</text>
+  <line x1="60" y1="340" x2="620" y2="340" class="axis"/>
+  <text x="60" y="330" class="note">回转轴线</text>
+  <rect x="80" y="310" width="520" height="60" class="shaft" rx="2"/>
+  <path d="M360 220 H540 V460 H360 Z" class="metal"/>
+  <text x="390" y="205" class="label">轴承座</text>
+  <circle cx="450" cy="340" r="55" fill="#e8c56a" stroke="#8a6a20" stroke-width="2"/>
+  <circle cx="450" cy="340" r="28" class="shaft"/>
+  <circle cx="450" cy="340" r="42" fill="none" stroke="#8a6a20" stroke-width="4"/>
+  <text x="430" y="345" class="note" fill="#5a4810">轴承</text>
+  <rect x="360" y="205" width="180" height="14" class="damp"/>
+  <rect x="360" y="461" width="180" height="14" class="damp"/>
+  <text x="545" y="216" class="label">阻尼环</text>
+  <rect x="360" y="175" width="220" height="28" fill="#a8b4c0" stroke="#3d4a57"/>
+  <rect x="360" y="477" width="220" height="28" fill="#a8b4c0" stroke="#3d4a57"/>
+  <text x="500" y="168" class="label">辊筒</text>
+  <rect x="220" y="235" width="130" height="210" fill="#6e7f90" stroke="#2f3b48" rx="3"/>
+  <rect x="300" y="250" width="42" height="8" class="sealA"/>
+  <rect x="300" y="278" width="42" height="8" class="sealA"/>
+  <rect x="300" y="306" width="42" height="8" class="sealA"/>
+  <rect x="300" y="366" width="42" height="8" class="sealA"/>
+  <rect x="300" y="394" width="42" height="8" class="sealA"/>
+  <rect x="300" y="422" width="42" height="8" class="sealA"/>
+  <rect x="235" y="264" width="42" height="8" class="sealB"/>
+  <rect x="235" y="292" width="42" height="8" class="sealB"/>
+  <rect x="235" y="380" width="42" height="8" class="sealB"/>
+  <rect x="235" y="408" width="42" height="8" class="sealB"/>
+  <rect x="278" y="250" width="20" height="180" class="grease"/>
+  <path d="M210 255 L225 270 L225 410 L210 425 Q195 340 210 255 Z" class="lip"/>
+  <text x="120" y="250" class="label">外唇密封</text>
+  <path d="M200 255 L210 270" class="arrow"/>
+  <path d="M155 220 L220 220 L220 460 L155 460 Q130 340 155 220 Z" class="damp"/>
+  <text x="70" y="345" class="label">阻尼</text>
+  <text x="70" y="362" class="label">端盖</text>
+  <path d="M277 300 L277 255" class="arrow"/>
+  <text x="160" y="200" class="small">迷宫间隙 0.3-0.6 mm（非接触）</text>
+  <path d="M250 200 L277 250" class="arrow"/>
+  <g transform="translate(620, 100)">
+    <rect width="330" height="420" class="box" rx="8"/>
+    <text x="20" y="32" class="label">密封层级（由外到内）</text>
+    <text x="20" y="70" class="label">L0  高分子阻尼端盖</text>
+    <text x="36" y="90" class="small">隔振、挡雨、二次降噪</text>
+    <text x="20" y="125" class="label">L1  接触式外唇密封</text>
+    <text x="36" y="145" class="small">阻粗颗粒；低摩擦唇形，避免啸叫</text>
+    <text x="20" y="180" class="label">L2-L6  多级迷宫（5-7 级）</text>
+    <text x="36" y="200" class="small">动静齿交错，非接触 → 几乎无摩擦噪声</text>
+    <text x="36" y="218" class="small">脂填充间隙，阻尼粉尘侵入</text>
+    <text x="20" y="253" class="label">L7  轴承内挡圈 / 防尘盖</text>
+    <text x="36" y="273" class="small">保护轴承脂腔，维持低噪声润滑</text>
+    <text x="20" y="308" class="label">静音要点</text>
+    <text x="36" y="328" class="small">• 迷宫为主：消除密封摩擦啸叫</text>
+    <text x="36" y="346" class="small">• 阻尼端盖：切断座-架振传路径</text>
+    <text x="36" y="364" class="small">• 低噪声脂：NLGI 2，降滚道声</text>
+    <text x="36" y="382" class="small">• 同轴度：避免偏磨产生周期噪声</text>
+    <text x="20" y="418" class="note">对标成熟结构：Rulmeca / PPI / Metso 等多迷宫端盖体系</text>
+  </g>
+</svg>

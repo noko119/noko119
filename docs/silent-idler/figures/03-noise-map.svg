@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" width="1000" height="560">
+  <defs>
+    <style type="text/css"><![CDATA[
+      .title { font: 700 22px "Noto Sans CJK SC", "Noto Sans CJK", sans-serif; fill: #1a2332; }
+      .label { font: 600 13px "Noto Sans CJK SC", "Noto Sans CJK", sans-serif; fill: #243447; }
+      .small { font: 400 12px "Noto Sans CJK SC", "Noto Sans CJK", sans-serif; fill: #4a5a6a; }
+      .bg { fill: #f3f6f8; }
+      .card { fill: #fff; stroke: #c5d0da; }
+      .src { fill: #f7e4d8; stroke: #c45c26; }
+      .fix { fill: #e3f0e7; stroke: #3d7a52; }
+      .arrow { stroke: #5a6a7a; stroke-width: 1.6; fill: none; marker-end: url(#a); }
+    ]]></style>
+    <marker id="a" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#5a6a7a"/>
+    </marker>
+  </defs>
+  <rect width="1000" height="560" class="bg"/>
+  <text x="36" y="40" class="title">图3  噪声源 → 静音对策映射</text>
+  <text x="36" y="62" class="small">按“声-振”路径逐项切断，达到现场可感知的静音效果</text>
+  <text x="60" y="100" class="label">主要噪声源</text>
+  <rect x="40" y="115" width="220" height="56" class="src" rx="6"/>
+  <text x="55" y="140" class="label">轴承滚道噪声</text>
+  <text x="55" y="158" class="small">等级差、脂干、游隙不当</text>
+  <rect x="40" y="185" width="220" height="56" class="src" rx="6"/>
+  <text x="55" y="210" class="label">密封摩擦啸叫</text>
+  <text x="55" y="228" class="small">接触密封过紧、偏磨</text>
+  <rect x="40" y="255" width="220" height="56" class="src" rx="6"/>
+  <text x="55" y="280" class="label">辊筒不平衡 / 圆度差</text>
+  <text x="55" y="298" class="small">周期拍振、胶带拍击</text>
+  <rect x="40" y="325" width="220" height="56" class="src" rx="6"/>
+  <text x="55" y="350" class="label">座-架结构传振</text>
+  <text x="55" y="368" class="small">刚性耦合放大噪声</text>
+  <rect x="40" y="395" width="220" height="56" class="src" rx="6"/>
+  <text x="55" y="420" class="label">胶带-辊面冲击</text>
+  <text x="55" y="438" class="small">物料冲击、空载拍带</text>
+  <text x="620" y="100" class="label">成熟静音对策</text>
+  <rect x="560" y="115" width="400" height="56" class="fix" rx="6"/>
+  <text x="575" y="140" class="label">低噪声轴承 Z2/Z3 + C3 + 专用低噪声脂</text>
+  <text x="575" y="158" class="small">出厂动平衡抽样；脂量 30-40%</text>
+  <rect x="560" y="185" width="400" height="56" class="fix" rx="6"/>
+  <text x="575" y="210" class="label">多级迷宫（非接触）为主，外唇轻接触为辅</text>
+  <text x="575" y="228" class="small">避免全接触密封长期摩擦发热啸叫</text>
+  <rect x="560" y="255" width="400" height="56" class="fix" rx="6"/>
+  <text x="575" y="280" class="label">精密钢管：圆度/直线度控；动平衡 G6.3</text>
+  <text x="575" y="298" class="small">焊后校圆；径向跳动量目标 ≤0.5 mm</text>
+  <rect x="560" y="325" width="400" height="56" class="fix" rx="6"/>
+  <text x="575" y="350" class="label">阻尼环 + 高分子端盖解耦传振路径</text>
+  <text x="575" y="368" class="small">座-筒、端盖-架之间加弹性隔离</text>
+  <rect x="560" y="395" width="400" height="56" class="fix" rx="6"/>
+  <text x="575" y="420" class="label">可选：HDPE/橡胶包胶辊面降冲击声</text>
+  <text x="575" y="438" class="small">超静音工况用聚合物筒或包胶钢筒</text>
+  <path d="M270 143 H540" class="arrow"/>
+  <path d="M270 213 H540" class="arrow"/>
+  <path d="M270 283 H540" class="arrow"/>
+  <path d="M270 353 H540" class="arrow"/>
+  <path d="M270 423 H540" class="arrow"/>
+  <rect x="40" y="480" width="920" height="55" class="card" rx="6"/>
+  <text x="60" y="505" class="label">现场目标（成熟产品常见指标）</text>
+  <text x="60" y="525" class="small">空载 1 m 处声压级较普通托辊降低 8-15 dB(A)；旋转阻力降低；防尘等级等效 IP55+；寿命与 DTII 普通托辊同级或更优</text>
+</svg>

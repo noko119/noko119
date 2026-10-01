@@ -19,6 +19,7 @@
 | [`docs/DEFAULT_COEFFICIENTS_V0.md`](./docs/DEFAULT_COEFFICIENTS_V0.md) | 默认系数 + GC-01 锚定 |
 | [`docs/WEB_TOOL_MATERIALS_CHECKLIST.md`](./docs/WEB_TOOL_MATERIALS_CHECKLIST.md) | 材料准备表 |
 | [`docs/golden-cases/GC-01_blast_furnace_feeder.md`](./docs/golden-cases/GC-01_blast_furnace_feeder.md) | 黄金算例 |
+| [`docs/silent-idler/DESIGN.md`](./docs/silent-idler/DESIGN.md) | **静音托辊成熟结构设计与示意图** |
 
 ## UI 原型
 
