@@ -1,83 +1,177 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 640" width="980" height="640">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1180 720" width="1180" height="720">
   <defs>
     <style type="text/css"><![CDATA[
-      .title { font: 700 22px "Noto Sans CJK SC", "Noto Sans CJK", sans-serif; fill: #1a2332; }
-      .label { font: 600 13px "Noto Sans CJK SC", "Noto Sans CJK", sans-serif; fill: #243447; }
-      .small { font: 400 12px "Noto Sans CJK SC", "Noto Sans CJK", sans-serif; fill: #4a5a6a; }
-      .note { font: 400 11px "Noto Sans CJK SC", "Noto Sans CJK", sans-serif; fill: #6b7c8d; }
+      .title { font: 700 22px "Noto Sans CJK SC", sans-serif; fill: #1a2332; }
+      .label { font: 600 13px "Noto Sans CJK SC", sans-serif; fill: #243447; }
+      .small { font: 400 12px "Noto Sans CJK SC", sans-serif; fill: #4a5a6a; }
+      .note { font: 400 11px "Noto Sans CJK SC", sans-serif; fill: #6b7c8d; }
+      .warn { font: 600 12px "Noto Sans CJK SC", sans-serif; fill: #a33; }
+      .ok { font: 600 12px "Noto Sans CJK SC", sans-serif; fill: #2d6a3e; }
+      .rot { font: 600 11px "Noto Sans CJK SC", sans-serif; fill: #1a5f8a; }
+      .fix { font: 600 11px "Noto Sans CJK SC", sans-serif; fill: #5a4810; }
+      .bg { fill: #f3f6f8; }
       .axis { stroke: #9aa8b5; stroke-width: 0.8; stroke-dasharray: 5 4; }
       .shaft { fill: #5c6770; stroke: #2c343c; }
-      .metal { fill: #b8c2cc; stroke: #3d4a57; stroke-width: 1.2; }
-      .sealA { fill: #2f7aa3; stroke: #1a4d6b; }
-      .sealB { fill: #3d8fb8; stroke: #1a4d6b; }
+      .bracket { fill: #d9dde3; stroke: #3d4a57; stroke-width: 1.3; }
+      .tube { fill: #a8b4c0; stroke: #3d4a57; stroke-width: 1.2; }
+      .housing { fill: #c5ced6; stroke: #3d4a57; stroke-width: 1.2; }
+      .bearing { fill: #e8c56a; stroke: #8a6a20; }
+      .rotor { fill: #2f7aa3; stroke: #1a4d6b; }
+      .stator { fill: #8a6a20; stroke: #5a4810; }
+      .cap { fill: #5a8f6a; stroke: #2f5a3c; }
       .lip { fill: #1e5f7a; stroke: #0f3344; }
-      .damp { fill: #5a8f6a; stroke: #2f5a3c; }
-      .grease { fill: #f2e2a8; opacity: 0.55; }
-      .bg { fill: #f3f6f8; }
+      .damp { fill: #6fad7f; stroke: #2f5a3c; }
+      .grease { fill: #f2e2a8; opacity: 0.5; }
+      .gapline { stroke: #c45c26; stroke-width: 1.2; stroke-dasharray: 4 3; fill: none; }
       .box { fill: #fff; stroke: #c5d0da; }
-      .arrow { stroke: #c45c26; stroke-width: 1.4; fill: none; marker-end: url(#arr); }
+      .goodbox { fill: #e8f5ec; stroke: #3d7a52; }
+      .infobox { fill: #eef6fb; stroke: #3d7ea6; }
+      .arrow { stroke: #c45c26; stroke-width: 1.3; fill: none; marker-end: url(#arr); }
     ]]></style>
     <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
       <path d="M0,0 L6,3 L0,6 Z" fill="#c45c26"/>
     </marker>
   </defs>
-  <rect width="980" height="640" class="bg"/>
-  <text x="36" y="40" class="title">图2  端盖密封系统放大（静音关键）</text>
-  <text x="36" y="62" class="small">非接触迷宫为主 + 外唇接触为辅：降摩擦噪声、阻粉尘、延寿</text>
-  <line x1="60" y1="340" x2="620" y2="340" class="axis"/>
-  <text x="60" y="330" class="note">回转轴线</text>
-  <rect x="80" y="310" width="520" height="60" class="shaft" rx="2"/>
-  <path d="M360 220 H540 V460 H360 Z" class="metal"/>
-  <text x="390" y="205" class="label">轴承座</text>
-  <circle cx="450" cy="340" r="55" fill="#e8c56a" stroke="#8a6a20" stroke-width="2"/>
-  <circle cx="450" cy="340" r="28" class="shaft"/>
-  <circle cx="450" cy="340" r="42" fill="none" stroke="#8a6a20" stroke-width="4"/>
-  <text x="430" y="345" class="note" fill="#5a4810">轴承</text>
-  <rect x="360" y="205" width="180" height="14" class="damp"/>
-  <rect x="360" y="461" width="180" height="14" class="damp"/>
-  <text x="545" y="216" class="label">阻尼环</text>
-  <rect x="360" y="175" width="220" height="28" fill="#a8b4c0" stroke="#3d4a57"/>
-  <rect x="360" y="477" width="220" height="28" fill="#a8b4c0" stroke="#3d4a57"/>
-  <text x="500" y="168" class="label">辊筒</text>
-  <rect x="220" y="235" width="130" height="210" fill="#6e7f90" stroke="#2f3b48" rx="3"/>
-  <rect x="300" y="250" width="42" height="8" class="sealA"/>
-  <rect x="300" y="278" width="42" height="8" class="sealA"/>
-  <rect x="300" y="306" width="42" height="8" class="sealA"/>
-  <rect x="300" y="366" width="42" height="8" class="sealA"/>
-  <rect x="300" y="394" width="42" height="8" class="sealA"/>
-  <rect x="300" y="422" width="42" height="8" class="sealA"/>
-  <rect x="235" y="264" width="42" height="8" class="sealB"/>
-  <rect x="235" y="292" width="42" height="8" class="sealB"/>
-  <rect x="235" y="380" width="42" height="8" class="sealB"/>
-  <rect x="235" y="408" width="42" height="8" class="sealB"/>
-  <rect x="278" y="250" width="20" height="180" class="grease"/>
-  <path d="M210 255 L225 270 L225 410 L210 425 Q195 340 210 255 Z" class="lip"/>
-  <text x="120" y="250" class="label">外唇密封</text>
-  <path d="M200 255 L210 270" class="arrow"/>
-  <path d="M155 220 L220 220 L220 460 L155 460 Q130 340 155 220 Z" class="damp"/>
-  <text x="70" y="345" class="label">阻尼</text>
-  <text x="70" y="362" class="label">端盖</text>
-  <path d="M277 300 L277 255" class="arrow"/>
-  <text x="160" y="200" class="small">迷宫间隙 0.3-0.6 mm（非接触）</text>
-  <path d="M250 200 L277 250" class="arrow"/>
-  <g transform="translate(620, 100)">
-    <rect width="330" height="420" class="box" rx="8"/>
-    <text x="20" y="32" class="label">密封层级（由外到内）</text>
-    <text x="20" y="70" class="label">L0  高分子阻尼端盖</text>
-    <text x="36" y="90" class="small">隔振、挡雨、二次降噪</text>
-    <text x="20" y="125" class="label">L1  接触式外唇密封</text>
-    <text x="36" y="145" class="small">阻粗颗粒；低摩擦唇形，避免啸叫</text>
-    <text x="20" y="180" class="label">L2-L6  多级迷宫（5-7 级）</text>
-    <text x="36" y="200" class="small">动静齿交错，非接触 → 几乎无摩擦噪声</text>
-    <text x="36" y="218" class="small">脂填充间隙，阻尼粉尘侵入</text>
-    <text x="20" y="253" class="label">L7  轴承内挡圈 / 防尘盖</text>
-    <text x="36" y="273" class="small">保护轴承脂腔，维持低噪声润滑</text>
-    <text x="20" y="308" class="label">静音要点</text>
-    <text x="36" y="328" class="small">• 迷宫为主：消除密封摩擦啸叫</text>
-    <text x="36" y="346" class="small">• 阻尼端盖：切断座-架振传路径</text>
-    <text x="36" y="364" class="small">• 低噪声脂：NLGI 2，降滚道声</text>
-    <text x="36" y="382" class="small">• 同轴度：避免偏磨产生周期噪声</text>
-    <text x="20" y="418" class="note">对标成熟结构：Rulmeca / PPI / Metso 等多迷宫端盖体系</text>
+
+  <rect width="1180" height="720" class="bg"/>
+  <text x="32" y="36" class="title">图2  密封系统细节（修正：分清固定件 / 转动件）</text>
+  <text x="32" y="58" class="small">轴与迷宫定子固定；辊筒、轴承座、迷宫转子、阻尼端盖转动；端盖与支架留间隙，不承力</text>
+
+  <!-- axis -->
+  <line x1="40" y1="330" x2="720" y2="330" class="axis"/>
+
+  <!-- BRACKET far left -->
+  <rect x="40" y="160" width="48" height="340" class="bracket"/>
+  <rect x="52" y="160" width="18" height="140" fill="#f3f6f8"/>
+  <rect x="52" y="300" width="30" height="18" fill="#c45c26" stroke="#8a3a12"/>
+  <text x="30" y="148" class="label">支架</text>
+  <text x="95" y="312" class="small">槽口垫</text>
+
+  <!-- FIXED SHAFT -->
+  <rect x="55" y="308" width="640" height="44" class="shaft" rx="1"/>
+  <rect x="55" y="300" width="40" height="60" class="shaft"/>
+  <text x="100" y="290" class="fix">固定轴（不转）</text>
+
+  <!-- clearance delta between bracket and end cap -->
+  <line x1="90" y1="200" x2="90" y2="460" class="gapline"/>
+  <line x1="128" y1="200" x2="128" y2="460" class="gapline"/>
+  <text x="92" y="190" class="warn">δ 间隙</text>
+  <text x="88" y="480" class="warn">端盖≠支架</text>
+
+  <!-- ROTATING damping end cap: annular, shaft passes through with radial clearance -->
+  <path d="M130 230 L200 230 L200 300 L145 300 L145 360 L200 360 L200 430 L130 430 Q115 330 130 230 Z" class="cap"/>
+  <!-- radial clearance around shaft at end cap bore -->
+  <rect x="145" y="300" width="55" height="8" fill="#f3f6f8"/>
+  <rect x="145" y="352" width="55" height="8" fill="#f3f6f8"/>
+  <text x="132" y="218" class="rot">阻尼端盖（转）</text>
+  <text x="150" y="450" class="small">孔径 &gt; 轴径</text>
+  <text x="150" y="466" class="small">径向不接触</text>
+
+  <!-- light contact lip: fixed on shaft, light wipe on rotating cap bore OR rotating lip - show fixed lip on shaft washer -->
+  <path d="M200 295 L215 305 L215 355 L200 365 Z" class="lip"/>
+  <rect x="198" y="318" width="8" height="24" class="stator"/>
+  <text x="175" y="500" class="small">外唇：轻接触</text>
+  <text x="175" y="516" class="small">（定子侧常见）</text>
+
+  <!-- LABYRINTH STACK -->
+  <!-- stator rings fixed to shaft (brown/gold) -->
+  <rect x="220" y="250" width="14" height="160" class="stator"/>
+  <rect x="250" y="250" width="14" height="160" class="stator"/>
+  <rect x="280" y="250" width="14" height="160" class="stator"/>
+  <!-- stator radial fins -->
+  <rect x="220" y="250" width="28" height="10" class="stator"/>
+  <rect x="220" y="290" width="28" height="10" class="stator"/>
+  <rect x="220" y="360" width="28" height="10" class="stator"/>
+  <rect x="220" y="400" width="28" height="10" class="stator"/>
+  <rect x="250" y="270" width="28" height="10" class="stator"/>
+  <rect x="250" y="380" width="28" height="10" class="stator"/>
+  <rect x="280" y="250" width="28" height="10" class="stator"/>
+  <rect x="280" y="290" width="28" height="10" class="stator"/>
+  <rect x="280" y="360" width="28" height="10" class="stator"/>
+  <rect x="280" y="400" width="28" height="10" class="stator"/>
+
+  <!-- rotor rings fixed to housing (blue) - interleaved -->
+  <rect x="235" y="245" width="12" height="50" class="rotor"/>
+  <rect x="235" y="365" width="12" height="50" class="rotor"/>
+  <rect x="265" y="245" width="12" height="50" class="rotor"/>
+  <rect x="265" y="365" width="12" height="50" class="rotor"/>
+  <rect x="235" y="245" width="40" height="9" class="rotor"/>
+  <rect x="235" y="280" width="40" height="9" class="rotor"/>
+  <rect x="235" y="365" width="40" height="9" class="rotor"/>
+  <rect x="235" y="406" width="40" height="9" class="rotor"/>
+  <rect x="265" y="260" width="40" height="9" class="rotor"/>
+  <rect x="265" y="385" width="40" height="9" class="rotor"/>
+
+  <!-- grease in labyrinth gaps -->
+  <rect x="234" y="255" width="50" height="140" class="grease"/>
+
+  <text x="220" y="228" class="fix">迷宫定子（随轴固定）</text>
+  <text x="220" y="490" class="rot">迷宫转子（随座转动）</text>
+  <text x="220" y="508" class="small">齿间 0.3–0.6 mm，填脂，非接触</text>
+
+  <!-- rotating seal carrier / housing extension -->
+  <rect x="310" y="240" width="30" height="180" class="housing"/>
+  <text x="300" y="220" class="rot">密封座</text>
+  <text x="300" y="236" class="rot">（转）</text>
+
+  <!-- bearing housing -->
+  <rect x="340" y="225" width="120" height="210" class="housing"/>
+  <circle cx="400" cy="330" r="52" class="bearing"/>
+  <circle cx="400" cy="330" r="22" class="shaft"/>
+  <circle cx="400" cy="330" r="38" fill="none" stroke="#8a6a20" stroke-width="4"/>
+  <circle cx="400" cy="292" r="5" fill="#f5e6b8" stroke="#8a6a20"/>
+  <circle cx="400" cy="368" r="5" fill="#f5e6b8" stroke="#8a6a20"/>
+  <text x="370" y="335" class="fix">轴承</text>
+  <text x="355" y="455" class="rot">轴承座（转）</text>
+  <text x="355" y="472" class="fix">内圈随轴固定</text>
+
+  <!-- damping ring between housing and tube -->
+  <rect x="340" y="210" width="120" height="14" class="damp"/>
+  <rect x="340" y="436" width="120" height="14" class="damp"/>
+  <text x="470" y="222" class="label">阻尼环（座—筒）</text>
+
+  <!-- tube -->
+  <rect x="340" y="180" width="200" height="28" class="tube"/>
+  <rect x="340" y="452" width="200" height="28" class="tube"/>
+  <text x="420" y="170" class="rot">辊筒（转）</text>
+
+  <!-- inner bearing shield hint -->
+  <rect x="448" y="280" width="8" height="100" fill="#8a96a3" stroke="#3d4a57"/>
+  <text x="460" y="300" class="small">内挡圈</text>
+
+  <!-- rotation arrow on tube -->
+  <path d="M520 250 A40 40 0 0 1 520 310" class="arrow"/>
+  <text x="530" y="285" class="rot">转动</text>
+
+  <!-- RIGHT INFO PANELS -->
+  <g transform="translate(760, 80)">
+    <rect width="390" height="280" class="infobox" rx="8"/>
+    <text x="16" y="28" class="label">密封层级（由外 → 内）修正版</text>
+    <text x="16" y="58" class="small">L0 支架（固定）——仅轴端入槽，非密封件</text>
+    <text x="16" y="80" class="ok">　　↓ 轴向间隙 δ，严禁碰擦</text>
+    <text x="16" y="108" class="rot">L1 阻尼端盖（转）——挡雨尘/降端面噪声</text>
+    <text x="34" y="126" class="small">中心孔让轴穿过，径向留空，不抱轴承力</text>
+    <text x="16" y="154" class="fix">L2 外唇轻接触（多在定子侧）</text>
+    <text x="34" y="172" class="small">阻粗颗粒；压力要轻，防啸叫</text>
+    <text x="16" y="200" class="label">L3–L6 多级迷宫（定/转子交错）</text>
+    <text x="34" y="218" class="fix">定子齿：装在轴上，不转</text>
+    <text x="34" y="236" class="rot">转子齿：装在座/端盖上，随辊转</text>
+    <text x="34" y="254" class="small">非接触 + 填脂 → 低摩擦低噪声</text>
+  </g>
+
+  <g transform="translate(760, 380)">
+    <rect width="390" height="280" class="goodbox" rx="8"/>
+    <text x="16" y="28" class="ok">相对旧图必须改掉的点</text>
+    <text x="16" y="58" class="small">1. 端盖画成“接到支架” → 改为留 δ</text>
+    <text x="16" y="80" class="small">2. 迷宫齿未分动静 → 定子/转子分色</text>
+    <text x="16" y="102" class="small">3. 轴被端盖封死的错觉 → 轴穿出端盖</text>
+    <text x="16" y="124" class="small">4. “端盖隔离支架” → 删除；支架垫可选</text>
+    <text x="16" y="156" class="label">图例</text>
+    <rect x="16" y="170" width="18" height="12" class="stator"/><text x="42" y="180" class="small">固定件（轴/定子/内圈）</text>
+    <rect x="16" y="192" width="18" height="12" class="rotor"/><text x="42" y="202" class="small">转动件（转子齿）</text>
+    <rect x="16" y="214" width="18" height="12" class="cap"/><text x="42" y="224" class="small">转动端盖 / 阻尼环</text>
+    <rect x="16" y="236" width="18" height="12" class="bracket"/><text x="42" y="246" class="small">支架（系统件）</text>
+    <text x="16" y="274" class="note">对标：轴固定 + 多迷宫动静交错 + 外罩随转</text>
   </g>
 </svg>
