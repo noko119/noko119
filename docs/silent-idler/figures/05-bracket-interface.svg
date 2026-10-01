@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 620" width="1100" height="620">
+  <defs>
+    <style type="text/css"><![CDATA[
+      .title { font: 700 22px "Noto Sans CJK SC", sans-serif; fill: #1a2332; }
+      .label { font: 600 13px "Noto Sans CJK SC", sans-serif; fill: #243447; }
+      .small { font: 400 12px "Noto Sans CJK SC", sans-serif; fill: #4a5a6a; }
+      .warn { font: 600 13px "Noto Sans CJK SC", sans-serif; fill: #a33; }
+      .ok { font: 600 13px "Noto Sans CJK SC", sans-serif; fill: #2d6a3e; }
+      .bg { fill: #f3f6f8; }
+      .bracket { fill: #d9dde3; stroke: #3d4a57; stroke-width: 1.4; }
+      .shaft { fill: #5c6770; stroke: #2c343c; }
+      .tube { fill: #a8b4c0; stroke: #3d4a57; stroke-width: 1.2; }
+      .housing { fill: #c5ced6; stroke: #3d4a57; }
+      .bearing { fill: #e8c56a; stroke: #8a6a20; }
+      .seal { fill: #3d7ea6; stroke: #1f4f6e; }
+      .cap { fill: #5a8f6a; stroke: #2f5a3c; }
+      .pad { fill: #c45c26; stroke: #8a3a12; }
+      .gap { fill: none; stroke: #c45c26; stroke-width: 1.2; stroke-dasharray: 4 3; }
+      .center { stroke: #9aa8b5; stroke-width: 0.8; stroke-dasharray: 6 4; }
+      .box { fill: #fff; stroke: #c5d0da; }
+      .badbox { fill: #fdecea; stroke: #c45c26; }
+      .goodbox { fill: #e8f5ec; stroke: #3d7a52; }
+      .arrow { stroke: #c45c26; stroke-width: 1.4; fill: none; marker-end: url(#arr); }
+    ]]></style>
+    <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#c45c26"/>
+    </marker>
+  </defs>
+  <rect width="1100" height="620" class="bg"/>
+  <text x="36" y="38" class="title">图5  轴端—支架正确衔接（修正图）</text>
+  <text x="36" y="60" class="small">承力与定位只发生在轴端与支架槽口；阻尼端盖随辊转动，与支架必须留间隙，不接触、不承力</text>
+
+  <!-- centerline -->
+  <line x1="40" y1="280" x2="780" y2="280" class="center"/>
+
+  <!-- LEFT BRACKET (支架) -->
+  <g id="bracket">
+    <!-- upright plate -->
+    <path d="M60 120 L130 120 L130 440 L60 440 Z" class="bracket"/>
+    <!-- slot opening from top -->
+    <path d="M85 120 L105 120 L105 250 L130 250 L130 310 L85 310 Z" fill="#f3f6f8" stroke="none"/>
+    <!-- slot walls -->
+    <line x1="85" y1="120" x2="85" y2="310" stroke="#3d4a57" stroke-width="1.4"/>
+    <line x1="105" y1="120" x2="105" y2="250" stroke="#3d4a57" stroke-width="1.4"/>
+    <line x1="85" y1="310" x2="130" y2="310" stroke="#3d4a57" stroke-width="1.4"/>
+    <!-- optional rubber pad in slot -->
+    <rect x="86" y="292" width="42" height="16" class="pad" rx="2"/>
+    <text x="40" y="105" class="label">托辊支架（槽钢/立板）</text>
+    <text x="135" y="305" class="small">槽口橡胶垫</text>
+    <text x="135" y="322" class="small">（可选，支架侧）</text>
+  </g>
+
+  <!-- SHAFT with flat end sitting in slot -->
+  <rect x="70" y="258" width="520" height="44" class="shaft" rx="2"/>
+  <!-- flat on shaft end -->
+  <rect x="72" y="250" width="50" height="60" class="shaft"/>
+  <text x="78" y="245" class="small">轴端扁位/六方</text>
+  <text x="78" y="340" class="label">固定轴（不转）</text>
+
+  <!-- rotating assembly: tube + housing + seal + end cap -->
+  <!-- tube -->
+  <rect x="320" y="190" width="380" height="30" class="tube"/>
+  <rect x="320" y="340" width="380" height="30" class="tube"/>
+  <text x="470" y="175" class="label">辊筒（转动）</text>
+
+  <!-- housing -->
+  <rect x="300" y="220" width="90" height="120" class="housing"/>
+  <circle cx="345" cy="280" r="36" class="bearing"/>
+  <circle cx="345" cy="280" r="16" class="shaft"/>
+  <circle cx="345" cy="280" r="26" fill="none" stroke="#8a6a20" stroke-width="3"/>
+  <text x="310" y="360" class="small">轴承座+轴承</text>
+
+  <!-- labyrinth / seal cartridge - rotating with tube -->
+  <rect x="230" y="230" width="65" height="100" class="seal" rx="2"/>
+  <rect x="238" y="242" width="48" height="6" fill="#1f4f6e"/>
+  <rect x="238" y="258" width="48" height="6" fill="#1f4f6e"/>
+  <rect x="238" y="296" width="48" height="6" fill="#1f4f6e"/>
+  <rect x="238" y="312" width="48" height="6" fill="#1f4f6e"/>
+  <text x="220" y="360" class="small">迷宫密封</text>
+
+  <!-- damping end cap - rotating, CLEARANCE from bracket -->
+  <path d="M175 215 L230 215 L230 345 L175 345 Q160 280 175 215 Z" class="cap"/>
+  <text x="155" y="205" class="label">阻尼端盖</text>
+  <text x="155" y="380" class="small">随辊转动</text>
+
+  <!-- CLEARANCE annotation between end cap and bracket -->
+  <line x1="132" y1="200" x2="132" y2="360" class="gap"/>
+  <line x1="173" y1="200" x2="173" y2="360" class="gap"/>
+  <path d="M132 180 L173 180" class="arrow"/>
+  <path d="M173 180 L132 180" stroke="#c45c26" stroke-width="1.4"/>
+  <text x="125" y="168" class="warn">间隙 δ（端盖≠支架）</text>
+  <text x="125" y="155" class="small">通常约 3–12 mm，严禁碰擦</text>
+
+  <!-- force path arrow -->
+  <path d="M95 400 L95 430 L300 430" class="arrow"/>
+  <text x="110" y="450" class="ok">载荷路径：胶带 → 辊筒 → 轴承 → 轴 → 支架槽口</text>
+  <text x="110" y="470" class="ok">端盖不在载荷路径上</text>
+
+  <!-- right callout boxes -->
+  <g transform="translate(760, 90)">
+    <rect width="310" height="200" class="badbox" rx="8"/>
+    <text x="16" y="30" class="warn">原示意图易误解之处</text>
+    <text x="16" y="58" class="small">1. 左侧大块“阻尼盖”看起来</text>
+    <text x="30" y="76" class="small">像接到支架上——不对</text>
+    <text x="16" y="104" class="small">2. “端盖—架弹性隔离”</text>
+    <text x="30" y="122" class="small">说法不严谨：端盖本就不贴架</text>
+    <text x="16" y="150" class="small">3. 若端盖顶住支架立板，</text>
+    <text x="30" y="168" class="small">会扫膛、发热、啸叫、卡死</text>
+  </g>
+
+  <g transform="translate(760, 310)">
+    <rect width="310" height="230" class="goodbox" rx="8"/>
+    <text x="16" y="30" class="ok">正确衔接（成熟做法）</text>
+    <text x="16" y="58" class="small">• 只有轴端落入支架槽口</text>
+    <text x="16" y="78" class="small">• 轴固定不转；筒/座/端盖旋转</text>
+    <text x="16" y="98" class="small">• 端盖外端面与支架内侧留 δ</text>
+    <text x="16" y="118" class="small">• 支架降噪靠槽口垫，不靠端盖</text>
+    <text x="16" y="148" class="small">端盖真实作用：</text>
+    <text x="16" y="168" class="small">挡雨尘、封闭端面、降低端盖</text>
+    <text x="16" y="186" class="small">辐射噪声；可兼迷宫外罩</text>
+    <text x="16" y="214" class="small">阻尼环仍在座—筒之间（辊内）</text>
+  </g>
+</svg>
