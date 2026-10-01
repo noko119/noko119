@@ -22,9 +22,9 @@
 
 ## 2. 总体结构
 
-![图1 总体半剖效果图](./figures/silent-idler-overall-schematic.jpg)
+![图1 总体半剖矢量示意（端盖/密封已修正）](./figures/01-overall-section.png)
 
-![图1 总体半剖矢量示意](./figures/01-overall-section.png)
+![图1b 总体半剖效果图（早期示意，细节以图1/图2修正版为准）](./figures/silent-idler-overall-schematic.jpg)
 
 ### 2.1 零件组成（一端对称）
 
@@ -240,8 +240,8 @@
 
 | 图号 | 文件 | 内容 |
 |------|------|------|
-| 图1 | [`figures/01-overall-section.svg`](./figures/01-overall-section.svg) · [PNG](./figures/01-overall-section.png) | 总体半剖结构（矢量示意） |
-| 图1b | [`figures/silent-idler-overall-schematic.jpg`](./figures/silent-idler-overall-schematic.jpg) | 总体半剖效果图 |
+| 图1 | [`figures/01-overall-section.svg`](./figures/01-overall-section.svg) · [PNG](./figures/01-overall-section.png) | 总体半剖（端盖/密封动静已修正） |
+| 图1b | [`figures/silent-idler-overall-schematic.jpg`](./figures/silent-idler-overall-schematic.jpg) | 总体效果图（早期；细节以修正版为准） |
 | 图2 | [`figures/02-seal-detail.svg`](./figures/02-seal-detail.svg) · [PNG](./figures/02-seal-detail.png) | **密封系统细节（修正：分清动静件）** |
 | 图2b | [`figures/silent-idler-seal-detail.jpg`](./figures/silent-idler-seal-detail.jpg) | 密封细节效果图（修正） |
 | 图3 | [`figures/03-noise-map.svg`](./figures/03-noise-map.svg) · [PNG](./figures/03-noise-map.png) | 噪声源—对策映射 |
