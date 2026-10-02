@@ -253,8 +253,8 @@
 | 图4 | [`figures/04-assembly.svg`](./figures/04-assembly.svg) · [PNG](./figures/04-assembly.png) | 装配顺序 |
 | 图5 | [`figures/05-bracket-interface.svg`](./figures/05-bracket-interface.svg) · [PNG](./figures/05-bracket-interface.png) | **轴端—支架衔接（修正）** |
 | 图5b | [`figures/idler-bracket-interface-correction.jpg`](./figures/idler-bracket-interface-correction.jpg) | 衔接效果示意 |
-| 图6 | [`figures/06-integrated-end.svg`](./figures/06-integrated-end.svg) · [PNG](./figures/06-integrated-end.png) | **完善版集成端部（甲乙融合）** |
-| 图6b | [`figures/silent-idler-integrated-end.jpg`](./figures/silent-idler-integrated-end.jpg) | 完善版效果示意 |
+| 图6 | [`figures/07-end-drawing-gb.svg`](./figures/07-end-drawing-gb.svg) · [PNG](./figures/07-end-drawing-gb.png) | **完善版工程图（局部剖视+端面视图）** |
+| 图6b | [`figures/silent-idler-integrated-end.jpg`](./figures/silent-idler-integrated-end.jpg) | 概念效果图（非制图） |
 | 甲原图 | [`figures/ref-nylon-seat-scheme.png`](./figures/ref-nylon-seat-scheme.png) | 尼龙降噪座参考 |
 | 乙原图 | [`figures/ref-seal-bracket-corrected.png`](./figures/ref-seal-bracket-corrected.png) | 密封/支架修正参考 |
 

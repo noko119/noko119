@@ -11,7 +11,8 @@
 |------|------|
 | 甲：尼龙降噪座方案 | [`figures/ref-nylon-seat-scheme.png`](./figures/ref-nylon-seat-scheme.png) |
 | 乙：密封/支架修正方案 | [`figures/ref-seal-bracket-corrected.png`](./figures/ref-seal-bracket-corrected.png) |
-| **完善版集成图** | [`figures/06-integrated-end.png`](./figures/06-integrated-end.png) · [`figures/silent-idler-integrated-end.jpg`](./figures/silent-idler-integrated-end.jpg) |
+| **完善版工程图（剖视+端面）** | [`figures/07-end-drawing-gb.png`](./figures/07-end-drawing-gb.png) · [`figures/06-integrated-end.png`](./figures/06-integrated-end.png) |
+| 概念效果图（非制图） | [`figures/silent-idler-integrated-end.jpg`](./figures/silent-idler-integrated-end.jpg) |
 
 出处分级见 [`REFERENCES.md`](./REFERENCES.md)。
 
@@ -25,9 +26,9 @@
 
 钢座保证承力与焊接强度；尼龙座切断「轴承→管体」钢-钢硬传振；密封与支架关系按乙方案运动学，避免扫膛。
 
-![完善版端部集成](./figures/06-integrated-end.png)
+![完善版工程图：局部剖视 + 端面视图](./figures/07-end-drawing-gb.png)
 
-![完善版效果示意](./figures/silent-idler-integrated-end.jpg)
+> 图样按装配图惯例：金属/非金属剖面符号区分、轴线点画线、轴沿轴线剖切不画剖面线、序号球标 + 明细表 + 技术要求。概念着色图仅作辅助，不作为制图依据。
 
 ---
 
