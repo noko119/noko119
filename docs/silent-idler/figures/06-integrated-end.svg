@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 780" width="1280" height="780">
+  <defs>
+    <style type="text/css"><![CDATA[
+      .title { font: 700 22px "Noto Sans CJK SC", sans-serif; fill: #1a2332; }
+      .label { font: 600 13px "Noto Sans CJK SC", sans-serif; fill: #243447; }
+      .small { font: 400 11px "Noto Sans CJK SC", sans-serif; fill: #4a5a6a; }
+      .warn { font: 600 12px "Noto Sans CJK SC", sans-serif; fill: #a33; }
+      .ok { font: 600 12px "Noto Sans CJK SC", sans-serif; fill: #2d6a3e; }
+      .fix { font: 600 11px "Noto Sans CJK SC", sans-serif; fill: #8a5a10; }
+      .rot { font: 600 11px "Noto Sans CJK SC", sans-serif; fill: #1a5f8a; }
+      .bg { fill: #f4f6f8; }
+      .axis { stroke: #9aa8b5; stroke-width: 0.8; stroke-dasharray: 5 4; }
+      .shaft { fill: #5c6770; stroke: #2c343c; }
+      .bracket { fill: #d5dae0; stroke: #3d4a57; }
+      .tube { fill: #b8c2cc; stroke: #3d4a57; stroke-width: 1.3; }
+      .housing { fill: #cfd6dd; stroke: #3d4a57; stroke-width: 1.2; }
+      .nylon { fill: #5b9e72; stroke: #2f5a3c; stroke-width: 1.2; }
+      .bearing { fill: #e8c56a; stroke: #8a6a20; }
+      .stator { fill: #8a6a20; stroke: #5a4810; }
+      .rotor { fill: #2f7aa3; stroke: #1a4d6b; }
+      .cap { fill: #3d8a5a; stroke: #245536; }
+      .lip { fill: #1e5f7a; stroke: #0f3344; }
+      .grease { fill: #f2e2a8; opacity: 0.55; }
+      .gap { stroke: #c45c26; stroke-width: 1.2; stroke-dasharray: 4 3; fill: none; }
+      .box { fill: #fff; stroke: #c5d0da; }
+      .good { fill: #e8f5ec; stroke: #3d7a52; }
+      .info { fill: #eef6fb; stroke: #3d7ea6; }
+      .path { stroke: #e67e22; stroke-width: 2.2; fill: none; marker-end: url(#arrO); }
+      .arrow { stroke: #c45c26; stroke-width: 1.3; fill: none; marker-end: url(#arr); }
+    ]]></style>
+    <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#c45c26"/></marker>
+    <marker id="arrO" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#e67e22"/></marker>
+  </defs>
+
+  <rect width="1280" height="780" class="bg"/>
+  <text x="28" y="34" class="title">完善版：静音托辊端部集成结构（尼龙降噪座 + 正确密封/支架衔接）</text>
+  <text x="28" y="56" class="small">融合：方案甲「冲压座+PA66降噪座软隔振」 + 方案乙「轴固定、端盖留δ、迷宫定/转子分清」；并纠正甲图迷宫动静标注错误</text>
+
+  <line x1="40" y1="330" x2="760" y2="330" class="axis"/>
+
+  <!-- Bracket -->
+  <rect x="40" y="170" width="46" height="320" class="bracket"/>
+  <rect x="52" y="170" width="16" height="130" fill="#f4f6f8"/>
+  <rect x="52" y="300" width="28" height="16" fill="#c45c26" stroke="#8a3a12"/>
+  <text x="28" y="158" class="label">支架 L0</text>
+  <text x="92" y="312" class="small">槽口垫(可选)</text>
+
+  <!-- Shaft -->
+  <rect x="55" y="308" width="680" height="44" class="shaft"/>
+  <rect x="55" y="300" width="38" height="60" class="shaft"/>
+  <text x="100" y="290" class="fix">① 固定轴（不转）</text>
+
+  <!-- delta -->
+  <line x1="88" y1="200" x2="88" y2="460" class="gap"/>
+  <line x1="122" y1="200" x2="122" y2="460" class="gap"/>
+  <text x="90" y="190" class="warn">δ</text>
+  <text x="78" y="480" class="warn">端盖≠支架</text>
+
+  <!-- Damping end cap rotating -->
+  <path d="M124 235 L195 235 L195 300 L150 300 L150 360 L195 360 L195 425 L124 425 Q110 330 124 235 Z" class="cap"/>
+  <rect x="150" y="300" width="45" height="8" fill="#f4f6f8"/>
+  <rect x="150" y="352" width="45" height="8" fill="#f4f6f8"/>
+  <text x="118" y="222" class="rot">⑧ 阻尼端盖(转)</text>
+  <text x="128" y="498" class="small">孔径&gt;轴，径向不接触</text>
+
+  <!-- light lip on stator -->
+  <path d="M195 298 L208 308 L208 352 L195 362 Z" class="lip"/>
+  <text x="175" y="520" class="small">⑦ 外唇轻接触</text>
+
+  <!-- Labyrinth: stator on shaft (brown), rotor with housing (blue) -->
+  <rect x="215" y="255" width="12" height="150" class="stator"/>
+  <rect x="245" y="255" width="12" height="150" class="stator"/>
+  <rect x="275" y="255" width="12" height="150" class="stator"/>
+  <rect x="215" y="255" width="26" height="9" class="stator"/>
+  <rect x="215" y="295" width="26" height="9" class="stator"/>
+  <rect x="215" y="355" width="26" height="9" class="stator"/>
+  <rect x="215" y="395" width="26" height="9" class="stator"/>
+  <rect x="245" y="275" width="26" height="9" class="stator"/>
+  <rect x="245" y="375" width="26" height="9" class="stator"/>
+  <rect x="275" y="255" width="26" height="9" class="stator"/>
+  <rect x="275" y="295" width="26" height="9" class="stator"/>
+  <rect x="275" y="355" width="26" height="9" class="stator"/>
+  <rect x="275" y="395" width="26" height="9" class="stator"/>
+
+  <rect x="230" y="248" width="12" height="48" class="rotor"/>
+  <rect x="230" y="364" width="12" height="48" class="rotor"/>
+  <rect x="260" y="248" width="12" height="48" class="rotor"/>
+  <rect x="260" y="364" width="12" height="48" class="rotor"/>
+  <rect x="230" y="248" width="38" height="8" class="rotor"/>
+  <rect x="230" y="280" width="38" height="8" class="rotor"/>
+  <rect x="230" y="364" width="38" height="8" class="rotor"/>
+  <rect x="230" y="404" width="38" height="8" class="rotor"/>
+  <rect x="234" y="258" width="48" height="120" class="grease"/>
+  <text x="215" y="238" class="fix">⑥ 迷宫定子(随轴固定)</text>
+  <text x="215" y="540" class="rot">⑥ 迷宫转子(随座转)</text>
+  <text x="215" y="556" class="small">纠正甲图：轴固定则轴上件不转</text>
+
+  <!-- seal carrier / circlip zone -->
+  <rect x="305" y="285" width="8" height="90" fill="#7a8794" stroke="#2c343c"/>
+  <text x="295" y="270" class="small">挡圈</text>
+
+  <!-- Stamped housing welded to tube -->
+  <path d="M320 220 L460 220 L460 440 L320 440 Z" class="housing"/>
+  <!-- weld marks -->
+  <path d="M318 218 L335 205" stroke="#3d4a57" stroke-width="2"/>
+  <path d="M318 442 L335 455" stroke="#3d4a57" stroke-width="2"/>
+  <text x="330" y="205" class="label">③ 冲压轴承座</text>
+  <text x="330" y="470" class="small">CO2 角焊 → 管体</text>
+
+  <!-- Nylon seat PA66 with flange and anti-rotation -->
+  <path d="M335 240 L445 240 L445 255 L455 255 L455 405 L445 405 L445 420 L335 420
+           L335 400 L348 400 L348 260 L335 260 Z" class="nylon"/>
+  <!-- anti-rotation key -->
+  <rect x="328" y="310" width="10" height="40" class="nylon"/>
+  <rect x="318" y="318" width="12" height="24" class="housing"/>
+  <!-- damping ribs in bore -->
+  <rect x="348" y="275" width="4" height="110" fill="#3d7a52"/>
+  <rect x="360" y="275" width="3" height="110" fill="#3d7a52" opacity="0.7"/>
+  <text x="470" y="250" class="ok">④ 尼龙降噪座 PA66</text>
+  <text x="470" y="268" class="small">翻边轴向定位 + 防转凸筋</text>
+  <text x="470" y="284" class="small">内孔减震筋抱轴承外圈</text>
+
+  <!-- Bearing in nylon -->
+  <circle cx="400" cy="330" r="48" class="bearing"/>
+  <circle cx="400" cy="330" r="20" class="shaft"/>
+  <circle cx="400" cy="330" r="35" fill="none" stroke="#8a6a20" stroke-width="4"/>
+  <circle cx="400" cy="295" r="5" fill="#f5e6b8" stroke="#8a6a20"/>
+  <circle cx="400" cy="365" r="5" fill="#f5e6b8" stroke="#8a6a20"/>
+  <text x="378" y="335" class="fix">⑤ 轴承</text>
+  <text x="378" y="350" class="small">Z2/Z3·C3</text>
+
+  <!-- Tube -->
+  <rect x="318" y="185" width="280" height="32" class="tube"/>
+  <rect x="318" y="443" width="280" height="32" class="tube"/>
+  <text x="420" y="175" class="rot">② 精密管体（转）</text>
+
+  <!-- vibration path -->
+  <path d="M400 282 C420 250, 480 230, 520 210" class="path"/>
+  <text x="525" y="205" class="label">振传：轴承→尼龙座(阻尼)→冲压座→管体</text>
+  <text x="525" y="222" class="ok">切断钢-钢硬传，抑管体鼓振</text>
+
+  <!-- Fit labels -->
+  <text x="450" y="320" class="warn">A 座孔/尼龙：过盈+防转</text>
+  <text x="450" y="338" class="warn">B 尼龙/轴承：减震筋过盈</text>
+  <text x="450" y="356" class="warn">C 轴/轴承内圈：设计配合</text>
+
+  <!-- Right panels -->
+  <g transform="translate(820, 70)">
+    <rect width="430" height="300" class="good" rx="8"/>
+    <text x="16" y="28" class="ok">集成方案取舍（更可靠）</text>
+    <text x="16" y="58" class="small">从甲方案取：</text>
+    <text x="28" y="78" class="small">• PA66 降噪座（轴承外圈软隔振）</text>
+    <text x="28" y="96" class="small">• 冲压钢座焊管体（承力骨架不变）</text>
+    <text x="28" y="114" class="small">• 防转凸筋 + 翻边轴向定位</text>
+    <text x="28" y="132" class="small">• 配合 A/B/C 与振传路径设计</text>
+    <text x="16" y="162" class="small">从乙方案取：</text>
+    <text x="28" y="180" class="small">• 轴固定、仅轴端入支架槽口</text>
+    <text x="28" y="198" class="small">• 端盖随辊转，与支架留 δ</text>
+    <text x="28" y="216" class="small">• 迷宫定子随轴 / 转子随座</text>
+    <text x="28" y="234" class="small">• 外唇轻接触 + 迷宫为主</text>
+    <text x="16" y="264" class="warn">纠正甲图错误：</text>
+    <text x="28" y="284" class="small">轴固定 ⇒ 轴上迷宫为定子(不转)，</text>
+    <text x="28" y="300" class="small">随管/座者为转子(转)。不可写反。</text>
+  </g>
+
+  <g transform="translate(820, 390)">
+    <rect width="430" height="340" class="info" rx="8"/>
+    <text x="16" y="28" class="label">可靠性要点（落地必检）</text>
+    <text x="16" y="58" class="small">1. 尼龙座材料：PA66+GF（抗蠕变）；</text>
+    <text x="34" y="76" class="small">工作温域建议 -20～+80℃，高温另选</text>
+    <text x="16" y="104" class="small">2. 防转失效=座内打滑啸叫；凸筋+过盈双保险</text>
+    <text x="16" y="132" class="small">3. 轴承外圈只进尼龙孔，禁止钢座硬抱外圈</text>
+    <text x="16" y="160" class="small">4. 端盖/密封轴向用挡圈定位；轴伸够入槽</text>
+    <text x="16" y="188" class="small">5. 充脂按 GB/T 10595：轴承 40～60%，迷宫满脂</text>
+    <text x="16" y="216" class="small">6. 上架检查：δ 间隙、无碰擦、轴扁位入槽到位</text>
+    <text x="16" y="244" class="small">7. 台架：旋转阻力 + 噪声对比 + 防尘/淋水</text>
+    <text x="16" y="272" class="small">8. 受料冲击段：可再加包胶，不改本端部模块</text>
+    <text x="16" y="308" class="ok">载荷路径仍为：管→冲压座→尼龙座→轴承→轴→支架</text>
+    <text x="16" y="326" class="small">尼龙座传载，故壁厚/玻纤/过盈须按载荷校核</text>
+  </g>
+</svg>
