@@ -1,13 +1,17 @@
 # 皮带机静音托辊 — 成熟结构设计方案
 
 > 对标国际主流托辊厂商已验证的静音/低噪声托辊结构，给出可工程化落地的推荐构型与示意。  
-> **依据与出处（标准条文 / 手册 / 厂商资料 / 经验取值分级）见 [`REFERENCES.md`](./REFERENCES.md)。**
+> **依据与出处见 [`REFERENCES.md`](./REFERENCES.md)。**  
+> **甲乙融合完善版（尼龙降噪座 + 正确密封/支架衔接）见 [`INTEGRATED_DESIGN.md`](./INTEGRATED_DESIGN.md) ← 当前推荐详设稿。**
 
 ---
 
 ## 1. 结论：推荐构型
 
-**推荐采用「精密钢筒 + 冲压轴承座 + 低噪声深沟球轴承 + 多级迷宫密封 + 高分子阻尼端盖」复合静音结构。**
+**当前推荐（完善版）：精密管体 + 冲压轴承座 + PA66 尼龙降噪座 + 低噪声轴承 + 多级迷宫（定子随轴/转子随座）+ 阻尼端盖（与支架留 δ）。**  
+详见 [`INTEGRATED_DESIGN.md`](./INTEGRATED_DESIGN.md)。
+
+下文 §1～§3 保留为基础构型说明；完善版在基础构型上把「座—筒阻尼环」升级为 **轴承外圈尼龙降噪座**，并固化支架/密封运动学。
 
 这是目前矿山、港口、电厂、水泥等场景中**载荷能力、寿命、成本、可维护性**最均衡、应用最广的成熟方案。超静音或强腐蚀工况可升级为 **HDPE/UHMWPE 聚合物筒** 或 **钢筒包胶** 变体，密封与轴承体系保持不变。
 
@@ -249,6 +253,10 @@
 | 图4 | [`figures/04-assembly.svg`](./figures/04-assembly.svg) · [PNG](./figures/04-assembly.png) | 装配顺序 |
 | 图5 | [`figures/05-bracket-interface.svg`](./figures/05-bracket-interface.svg) · [PNG](./figures/05-bracket-interface.png) | **轴端—支架衔接（修正）** |
 | 图5b | [`figures/idler-bracket-interface-correction.jpg`](./figures/idler-bracket-interface-correction.jpg) | 衔接效果示意 |
+| 图6 | [`figures/06-integrated-end.svg`](./figures/06-integrated-end.svg) · [PNG](./figures/06-integrated-end.png) | **完善版集成端部（甲乙融合）** |
+| 图6b | [`figures/silent-idler-integrated-end.jpg`](./figures/silent-idler-integrated-end.jpg) | 完善版效果示意 |
+| 甲原图 | [`figures/ref-nylon-seat-scheme.png`](./figures/ref-nylon-seat-scheme.png) | 尼龙降噪座参考 |
+| 乙原图 | [`figures/ref-seal-bracket-corrected.png`](./figures/ref-seal-bracket-corrected.png) | 密封/支架修正参考 |
 
 ---
 

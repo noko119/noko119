@@ -19,7 +19,8 @@
 | [`docs/DEFAULT_COEFFICIENTS_V0.md`](./docs/DEFAULT_COEFFICIENTS_V0.md) | 默认系数 + GC-01 锚定 |
 | [`docs/WEB_TOOL_MATERIALS_CHECKLIST.md`](./docs/WEB_TOOL_MATERIALS_CHECKLIST.md) | 材料准备表 |
 | [`docs/golden-cases/GC-01_blast_furnace_feeder.md`](./docs/golden-cases/GC-01_blast_furnace_feeder.md) | 黄金算例 |
-| [`docs/silent-idler/DESIGN.md`](./docs/silent-idler/DESIGN.md) | **静音托辊成熟结构设计与示意图** |
+| [`docs/silent-idler/INTEGRATED_DESIGN.md`](./docs/silent-idler/INTEGRATED_DESIGN.md) | **静音托辊完善版（尼龙降噪座+密封/支架融合）** |
+| [`docs/silent-idler/DESIGN.md`](./docs/silent-idler/DESIGN.md) | 静音托辊基础结构设计与示意图 |
 | [`docs/silent-idler/REFERENCES.md`](./docs/silent-idler/REFERENCES.md) | 静音托辊方案依据与出处（标准/手册/厂商） |
 
 ## UI 原型
