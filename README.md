@@ -38,6 +38,7 @@
 | [`docs/silent-idler/OVERALL_END_ASSEMBLY.md`](./docs/silent-idler/OVERALL_END_ASSEMBLY.md) | **端组整体效果示意** |
 | [`docs/silent-idler/PHI159_AXIAL_LENGTHS.md`](./docs/silent-idler/PHI159_AXIAL_LENGTHS.md) | **Φ159 各段轴向长度** |
 | [`docs/silent-idler/RIB_ANGLE_DEGREES.md`](./docs/silent-idler/RIB_ANGLE_DEGREES.md) | **减震筋周向角度** |
+| [`docs/silent-idler/RIB_VS_SMOOTH.md`](./docs/silent-idler/RIB_VS_SMOOTH.md) | **减震筋vs光孔利弊** |
 | [`docs/silent-idler/RED_SEAL_SOUND.md`](./docs/silent-idler/RED_SEAL_SOUND.md) | **红色密封能否隔音（示意图+说明）** |
 | [`docs/silent-idler/RED_SEAL_IMPROVE.md`](./docs/silent-idler/RED_SEAL_IMPROVE.md) | **红色密封改进（示意图+说明）** |
 | [`docs/silent-idler/DARK_BLUE_THERMAL.md`](./docs/silent-idler/DARK_BLUE_THERMAL.md) | **深蓝软件与热变形（示意图+说明）** |
