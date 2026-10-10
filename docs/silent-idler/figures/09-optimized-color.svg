@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720">
+  <defs>
+    <style type="text/css"><![CDATA[
+      .T { font: 700 20px "WenQuanYi Micro Hei","Noto Sans CJK SC",sans-serif; fill: #1a2332; }
+      .b { font: 600 13px "WenQuanYi Micro Hei","Noto Sans CJK SC",sans-serif; fill: #1a2332; }
+      .t { font: 400 12px "WenQuanYi Micro Hei","Noto Sans CJK SC",sans-serif; fill: #334; }
+      .s { font: 400 11px "WenQuanYi Micro Hei","Noto Sans CJK SC",sans-serif; fill: #556; }
+      .w { font: 600 12px "WenQuanYi Micro Hei","Noto Sans CJK SC",sans-serif; fill: #b33; }
+      .ok { font: 600 12px "WenQuanYi Micro Hei","Noto Sans CJK SC",sans-serif; fill: #1a6b35; }
+      .axis { stroke: #889; stroke-width: 1; stroke-dasharray: 8 3 2 3; fill: none; }
+      .lead { stroke: #c45c26; stroke-width: 1.1; fill: none; }
+    ]]></style>
+    <marker id="dot" markerWidth="6" markerHeight="6" refX="3" refY="3">
+      <circle cx="3" cy="3" r="2.2" fill="#c45c26"/>
+    </marker>
+  </defs>
+  <rect width="1280" height="720" fill="#eef2f5"/>
+  <text x="32" y="38" class="T">静音托辊端部优化结构 — 彩色示意图</text>
+  <text x="32" y="60" class="s">相对现 CAD：加尼龙降噪座 · 迷宫5级定/转分清 · 外唇轻接触 · 端盖与支架留δ · 轴承挡圈定位</text>
+
+  <!-- axis -->
+  <line x1="40" y1="300" x2="900" y2="300" class="axis"/>
+
+  <!-- ===== Bracket (gray) ===== -->
+  <path d="M50 160 L95 160 L95 265 L78 265 L78 335 L95 335 L95 440 L50 440 Z"
+        fill="#b8c0c8" stroke="#3d4a57" stroke-width="1.5"/>
+  <rect x="78" y="290" width="24" height="20" fill="#e07a3d" stroke="#8a3a12" stroke-width="1"/>
+  <text x="40" y="148" class="b">支架</text>
+  <text x="105" y="305" class="s">槽口垫</text>
+
+  <!-- ===== Shaft (dark) — through everything ===== -->
+  <rect x="55" y="282" width="820" height="36" fill="#6a737b" stroke="#2c343c" stroke-width="1.2"/>
+  <rect x="55" y="274" width="30" height="52" fill="#5c656d" stroke="#2c343c" stroke-width="1.2"/>
+  <text x="100" y="268" class="b" fill="#5a4810">① 固定轴（不转）</text>
+
+  <!-- δ gap markers -->
+  <line x1="97" y1="170" x2="97" y2="430" stroke="#c45c26" stroke-width="1.3" stroke-dasharray="5 3"/>
+  <line x1="118" y1="170" x2="118" y2="430" stroke="#c45c26" stroke-width="1.3" stroke-dasharray="5 3"/>
+  <text x="100" y="162" class="w">δ</text>
+  <text x="88" y="455" class="w">端盖≠支架</text>
+
+  <!-- ===== ⑧ Purple damping end cap (rotating) ===== -->
+  <path d="M120 210 L185 210 L185 270 L145 270 L145 282 L132 282
+           L132 318 L145 318 L145 330 L185 330 L185 390 L120 390
+           Q108 300 120 210 Z"
+        fill="#7b4ea3" stroke="#4a2d6b" stroke-width="1.4"/>
+  <!-- radial clearance around shaft shown as light gap -->
+  <rect x="132" y="282" width="53" height="4" fill="#eef2f5"/>
+  <rect x="132" y="314" width="53" height="4" fill="#eef2f5"/>
+  <text x="125" y="198" class="b" fill="#4a2d6b">⑧ 阻尼端盖（转）</text>
+
+  <!-- ===== ⑦ Outer lip (dark teal) ===== -->
+  <path d="M185 248 L200 262 L200 338 L185 352 Z" fill="#1e6b7a" stroke="#0f3d48" stroke-width="1.2"/>
+  <text x="155" y="420" class="s">⑦ 外唇轻接触</text>
+
+  <!-- ===== ⑥ Labyrinth: brown stator on shaft, cyan rotor with housing ===== -->
+  <!-- stator fins (fixed on shaft) -->
+
+  <rect x="210" y="230" width="12" height="52" fill="#c4a35a" stroke="#8a6a20" stroke-width="1"/>
+  <rect x="210" y="318" width="12" height="52" fill="#c4a35a" stroke="#8a6a20" stroke-width="1"/>
+  <rect x="210" y="230" width="22" height="8" fill="#d4b36a" stroke="#8a6a20"/>
+  <rect x="210" y="362" width="22" height="8" fill="#d4b36a" stroke="#8a6a20"/>
+
+  <rect x="240" y="230" width="12" height="52" fill="#c4a35a" stroke="#8a6a20" stroke-width="1"/>
+  <rect x="240" y="318" width="12" height="52" fill="#c4a35a" stroke="#8a6a20" stroke-width="1"/>
+  <rect x="240" y="230" width="22" height="8" fill="#d4b36a" stroke="#8a6a20"/>
+  <rect x="240" y="362" width="22" height="8" fill="#d4b36a" stroke="#8a6a20"/>
+
+  <rect x="270" y="230" width="12" height="52" fill="#c4a35a" stroke="#8a6a20" stroke-width="1"/>
+  <rect x="270" y="318" width="12" height="52" fill="#c4a35a" stroke="#8a6a20" stroke-width="1"/>
+  <rect x="270" y="230" width="22" height="8" fill="#d4b36a" stroke="#8a6a20"/>
+  <rect x="270" y="362" width="22" height="8" fill="#d4b36a" stroke="#8a6a20"/>
+
+  <rect x="300" y="230" width="12" height="52" fill="#c4a35a" stroke="#8a6a20" stroke-width="1"/>
+  <rect x="300" y="318" width="12" height="52" fill="#c4a35a" stroke="#8a6a20" stroke-width="1"/>
+  <rect x="300" y="230" width="22" height="8" fill="#d4b36a" stroke="#8a6a20"/>
+  <rect x="300" y="362" width="22" height="8" fill="#d4b36a" stroke="#8a6a20"/>
+
+  <rect x="330" y="230" width="12" height="52" fill="#c4a35a" stroke="#8a6a20" stroke-width="1"/>
+  <rect x="330" y="318" width="12" height="52" fill="#c4a35a" stroke="#8a6a20" stroke-width="1"/>
+  <rect x="330" y="230" width="22" height="8" fill="#d4b36a" stroke="#8a6a20"/>
+  <rect x="330" y="362" width="22" height="8" fill="#d4b36a" stroke="#8a6a20"/>
+
+  <rect x="225" y="222" width="12" height="42" fill="#2aa4c4" stroke="#156a80" stroke-width="1"/>
+  <rect x="225" y="336" width="12" height="42" fill="#2aa4c4" stroke="#156a80" stroke-width="1"/>
+  <rect x="225" y="222" width="28" height="7" fill="#3db8d4" stroke="#156a80"/>
+  <rect x="225" y="371" width="28" height="7" fill="#3db8d4" stroke="#156a80"/>
+
+  <rect x="255" y="222" width="12" height="42" fill="#2aa4c4" stroke="#156a80" stroke-width="1"/>
+  <rect x="255" y="336" width="12" height="42" fill="#2aa4c4" stroke="#156a80" stroke-width="1"/>
+  <rect x="255" y="222" width="28" height="7" fill="#3db8d4" stroke="#156a80"/>
+  <rect x="255" y="371" width="28" height="7" fill="#3db8d4" stroke="#156a80"/>
+
+  <rect x="285" y="222" width="12" height="42" fill="#2aa4c4" stroke="#156a80" stroke-width="1"/>
+  <rect x="285" y="336" width="12" height="42" fill="#2aa4c4" stroke="#156a80" stroke-width="1"/>
+  <rect x="285" y="222" width="28" height="7" fill="#3db8d4" stroke="#156a80"/>
+  <rect x="285" y="371" width="28" height="7" fill="#3db8d4" stroke="#156a80"/>
+
+  <rect x="315" y="222" width="12" height="42" fill="#2aa4c4" stroke="#156a80" stroke-width="1"/>
+  <rect x="315" y="336" width="12" height="42" fill="#2aa4c4" stroke="#156a80" stroke-width="1"/>
+  <rect x="315" y="222" width="28" height="7" fill="#3db8d4" stroke="#156a80"/>
+  <rect x="315" y="371" width="28" height="7" fill="#3db8d4" stroke="#156a80"/>
+
+  <rect x="220" y="238" width="120" height="124" fill="#f5e6a8" opacity="0.35"/>
+  <text x="210" y="212" class="b" fill="#8a6a20">⑥ 迷宫定子（随轴·不转）</text>
+  <text x="210" y="400" class="b" fill="#156a80">⑥ 迷宫转子（随座·转）</text>
+  <text x="210" y="418" class="s">5 级交错 · 满脂 · 非接触</text>
+
+  <!-- seal carrier / housing extension -->
+  <path d="M348 215 L390 215 L390 282 L365 282 L365 318 L390 318
+           L390 385 L348 385 L348 340 L362 340 L362 260 L348 260 Z"
+        fill="#9aa8b4" stroke="#3d4a57" stroke-width="1.3"/>
+
+  <!-- circlip -->
+  <rect x="392" y="278" width="6" height="8" fill="#d0d5da" stroke="#333"/>
+  <rect x="392" y="314" width="6" height="8" fill="#d0d5da" stroke="#333"/>
+  <text x="385" y="200" class="s">⑨ 挡圈</text>
+
+  <!-- ===== ③ Stamped steel housing ===== -->
+  <path d="M400 195 L560 195 L560 282 L425 282 L425 318 L560 318
+           L560 405 L400 405 Z"
+        fill="#c5ced6" stroke="#3d4a57" stroke-width="1.5"/>
+  <!-- weld marks -->
+  <path d="M400 195 L388 182" stroke="#3d4a57" stroke-width="2"/>
+  <path d="M400 405 L388 418" stroke="#3d4a57" stroke-width="2"/>
+  <text x="400" y="180" class="b">③ 冲压轴承座（转）</text>
+  <text x="355" y="178" class="s">角焊</text>
+
+  <!-- ===== ④ GREEN nylon seat — KEY ===== -->
+  <path d="M412 225 L548 225 L548 248 L532 248 L532 282 L448 282
+           L448 318 L532 318 L532 352 L548 352 L548 375 L412 375
+           L412 352 L432 352 L432 248 L412 248 Z"
+        fill="#3d9b5c" stroke="#1f5c34" stroke-width="1.5"/>
+  <!-- anti-rotation key -->
+  <rect x="398" y="286" width="14" height="28" fill="#2f8a4e" stroke="#1f5c34"/>
+  <!-- damping ribs -->
+  <rect x="448" y="255" width="4" height="27" fill="#2a7a45"/>
+  <rect x="456" y="255" width="3" height="27" fill="#2a7a45" opacity="0.7"/>
+  <rect x="448" y="318" width="4" height="80" fill="#2a7a45"/>
+  <rect x="456" y="318" width="3" height="80" fill="#2a7a45" opacity="0.7"/>
+  <text x="565" y="240" class="ok">④ 尼龙降噪座 PA66+GF</text>
+  <text x="565" y="258" class="s">翻边+防转 · 减震筋抱轴承外圈</text>
+  <text x="565" y="274" class="s">轴承外圈不碰钢座</text>
+
+  <!-- ===== ⑤ Bearing gold ===== -->
+  <circle cx="490" cy="300" r="48" fill="#e8c56a" stroke="#8a6a20" stroke-width="1.5"/>
+  <circle cx="490" cy="300" r="20" fill="#6a737b" stroke="#2c343c"/>
+  <circle cx="490" cy="300" r="35" fill="none" stroke="#8a6a20" stroke-width="5"/>
+  <circle cx="490" cy="265" r="6" fill="#f5e6b8" stroke="#8a6a20"/>
+  <circle cx="490" cy="335" r="6" fill="#f5e6b8" stroke="#8a6a20"/>
+  <circle cx="455" cy="300" r="6" fill="#f5e6b8" stroke="#8a6a20"/>
+  <circle cx="525" cy="300" r="6" fill="#f5e6b8" stroke="#8a6a20"/>
+  <text x="468" y="305" class="b" fill="#5a4810">⑤</text>
+  <text x="565" y="310" class="b" fill="#8a6a20">⑤ 轴承 Z2/Z3·C3</text>
+
+  <!-- inner circlip -->
+  <rect x="550" y="278" width="6" height="8" fill="#d0d5da" stroke="#333"/>
+  <rect x="550" y="314" width="6" height="8" fill="#d0d5da" stroke="#333"/>
+
+  <!-- ===== ② Tube brown ===== -->
+  <rect x="398" y="160" width="320" height="32" fill="#a67c52" stroke="#5a3d28" stroke-width="1.4"/>
+  <rect x="398" y="408" width="320" height="32" fill="#a67c52" stroke="#5a3d28" stroke-width="1.4"/>
+  <!-- ribs hint -->
+  <rect x="420" y="160" width="8" height="32" fill="#8b643f" opacity="0.5"/>
+  <rect x="450" y="160" width="8" height="32" fill="#8b643f" opacity="0.5"/>
+  <rect x="480" y="160" width="8" height="32" fill="#8b643f" opacity="0.5"/>
+  <text x="520" y="150" class="b" fill="#5a3d28">② 管体（转）</text>
+
+  <!-- vibration path -->
+  <path d="M490 255 C520 220, 600 200, 680 185" class="lead" marker-end="url(#dot)"/>
+  <text x="620" y="178" class="ok">振传：轴承→尼龙座(阻尼)→钢座→管体</text>
+
+  <!-- RIGHT panels -->
+  <g transform="translate(900, 80)">
+    <rect width="350" height="280" rx="8" fill="#fff" stroke="#c5d0da"/>
+    <text x="16" y="28" class="b">颜色图例</text>
+    <rect x="16" y="44" width="22" height="14" fill="#6a737b" stroke="#333"/><text x="46" y="56" class="t">轴（固定）</text>
+    <rect x="16" y="68" width="22" height="14" fill="#a67c52" stroke="#5a3d28"/><text x="46" y="80" class="t">管体（转）</text>
+    <rect x="16" y="92" width="22" height="14" fill="#c5ced6" stroke="#3d4a57"/><text x="46" y="104" class="t">冲压轴承座（转）</text>
+    <rect x="16" y="116" width="22" height="14" fill="#3d9b5c" stroke="#1f5c34"/><text x="46" y="128" class="t">尼龙降噪座（转）★</text>
+    <rect x="16" y="140" width="22" height="14" fill="#e8c56a" stroke="#8a6a20"/><text x="46" y="152" class="t">轴承</text>
+    <rect x="16" y="164" width="22" height="14" fill="#c4a35a" stroke="#8a6a20"/><text x="46" y="176" class="t">迷宫定子（随轴）</text>
+    <rect x="16" y="188" width="22" height="14" fill="#2aa4c4" stroke="#156a80"/><text x="46" y="200" class="t">迷宫转子（随座）</text>
+    <rect x="16" y="212" width="22" height="14" fill="#7b4ea3" stroke="#4a2d6b"/><text x="46" y="224" class="t">阻尼端盖（转）</text>
+    <rect x="16" y="236" width="22" height="14" fill="#1e6b7a" stroke="#0f3d48"/><text x="46" y="248" class="t">外唇密封</text>
+    <rect x="16" y="260" width="22" height="14" fill="#b8c0c8" stroke="#3d4a57"/><text x="46" y="272" class="t">支架（系统件）</text>
+  </g>
+
+  <g transform="translate(900, 380)">
+    <rect width="350" height="280" rx="8" fill="#e8f5ec" stroke="#3d7a52"/>
+    <text x="16" y="28" class="ok">相对你 CAD 的修正</text>
+    <text x="16" y="58" class="t">1. 绿色尼龙座：轴承不再硬装端座</text>
+    <text x="16" y="82" class="t">2. 棕=定子 / 青=转子（轴不转）</text>
+    <text x="16" y="106" class="t">3. 紫端盖与支架留红色 δ 间隙</text>
+    <text x="16" y="130" class="t">4. 加深蓝外唇轻接触</text>
+    <text x="16" y="154" class="t">5. 迷宫 5 级 + 脂障</text>
+    <text x="16" y="178" class="t">6. 挡圈轴向定位</text>
+    <text x="16" y="210" class="w">易错：轴上件不是“转动迷宫”</text>
+    <text x="16" y="234" class="t">载荷：管→钢座→尼龙座→轴承→轴→支架</text>
+    <text x="16" y="258" class="t">端盖只防护+降端面噪声，不承力</text>
+  </g>
+</svg>
