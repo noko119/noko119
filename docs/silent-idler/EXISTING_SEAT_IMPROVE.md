@@ -1,6 +1,7 @@
 # 现有阻尼座能否改进？
 
 > 依据你提供的 CAD 剖视（青绿端座 + 绿轴承 + 橙/紫迷宫 + **亮蓝件**）。  
+> **绿色轴承本身的改进：** [`BEARING_IMPROVE.md`](./BEARING_IMPROVE.md)  
 > 原图：[`figures/ref-existing-damping-seat.jpg`](./figures/ref-existing-damping-seat.jpg)
 
 ![现有阻尼座 → 改进](./figures/19-existing-damping-seat-improve.jpg)
