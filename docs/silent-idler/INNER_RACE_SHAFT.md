@@ -5,6 +5,8 @@
 
 ![内圈—轴隔离](./figures/28-inner-race-shaft-isolation.jpg)
 
+> 轴承画全、层次清楚的总图见：[`COMPLETE_BEARING.md`](./COMPLETE_BEARING.md) · [`figures/29-complete-bearing-schematic.jpg`](./figures/29-complete-bearing-schematic.jpg)
+
 ---
 
 ## 结论

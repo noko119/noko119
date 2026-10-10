@@ -7,6 +7,10 @@
 > **绿色隔音套改进：** [`GREEN_MUFFLER_IMPROVE.md`](./GREEN_MUFFLER_IMPROVE.md)  
 > **内圈与轴能否隔离：** [`INNER_RACE_SHAFT.md`](./INNER_RACE_SHAFT.md)
 
+![完整轴承半剖（认件用）](./figures/29-complete-bearing-schematic.jpg)
+
+> 轴承画全版：[`COMPLETE_BEARING.md`](./COMPLETE_BEARING.md)
+
 ![静音轴承座原理纠正](./figures/24-silent-seat-principle-corrected.jpg)
 
 原 CAD：[`figures/ref-existing-damping-seat.jpg`](./figures/ref-existing-damping-seat.jpg)
