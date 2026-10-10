@@ -1,7 +1,8 @@
 # 绿色轴承还能改进吗？
 
 > 依据你 CAD 里的绿色深沟球轴承。  
-> 只保留示意图与说明。
+> 只保留示意图与说明。  
+> **红色密封能否隔音：** [`RED_SEAL_SOUND.md`](./RED_SEAL_SOUND.md)
 
 ![绿轴承改进示意](./figures/20-green-bearing-improve.jpg)
 

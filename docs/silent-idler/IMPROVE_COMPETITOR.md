@@ -3,7 +3,8 @@
 > 对象：双层管 + 青绿端座硬装轴承 + 黄/紫软迷宫。  
 > 只保留示意图与说明。  
 > **你现有亮蓝阻尼座的改法：** [`EXISTING_SEAT_IMPROVE.md`](./EXISTING_SEAT_IMPROVE.md)  
-> **绿色轴承改进：** [`BEARING_IMPROVE.md`](./BEARING_IMPROVE.md)
+> **绿色轴承改进：** [`BEARING_IMPROVE.md`](./BEARING_IMPROVE.md)  
+> **红色密封能否隔音：** [`RED_SEAL_SOUND.md`](./RED_SEAL_SOUND.md)
 
 ![实心轴与尼龙座](./figures/18-shaft-vs-nylon-damping.jpg)
 
