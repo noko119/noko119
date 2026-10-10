@@ -1,7 +1,7 @@
 # 静音托辊推荐方案（最终版）
 
 > 综合你提供的结构图与澄清：**软质唇轻贴、不刮轴**；尼龙座主降噪；迷宫管防尘而非隔音。  
-> **竞品改型要落地（尺寸/BOM/SW步骤）：** [`CONCRETE_SPEC.md`](./CONCRETE_SPEC.md)  
+> 竞品改进示意：[`IMPROVE_COMPETITOR.md`](./IMPROVE_COMPETITOR.md)  
 > 彩色总图：[`figures/14-final-scheme-render.jpg`](./figures/14-final-scheme-render.jpg)
 
 ![最终方案示意](./figures/14-final-scheme-render.jpg)
