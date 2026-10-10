@@ -1,6 +1,7 @@
 # 绿色轴承还能改进吗？
 
-> 依据你 CAD 里的绿色深沟球轴承。  
+> 依据你 CAD 里的绿色隔振/消音安装（见总原理）。  
+> 总原理：[`SILENT_SEAT_PRINCIPLE.md`](./SILENT_SEAT_PRINCIPLE.md)。  
 > 只保留示意图与说明。  
 > **红色密封能否隔音：** [`RED_SEAL_SOUND.md`](./RED_SEAL_SOUND.md)
 

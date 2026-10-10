@@ -20,7 +20,8 @@
 | [`docs/WEB_TOOL_MATERIALS_CHECKLIST.md`](./docs/WEB_TOOL_MATERIALS_CHECKLIST.md) | 材料准备表 |
 | [`docs/golden-cases/GC-01_blast_furnace_feeder.md`](./docs/golden-cases/GC-01_blast_furnace_feeder.md) | 黄金算例 |
 | [`docs/silent-idler/FINAL_SCHEME.md`](./docs/silent-idler/FINAL_SCHEME.md) | **静音托辊推荐方案（最终版）** |
-| [`docs/silent-idler/IMPROVE_COMPETITOR.md`](./docs/silent-idler/IMPROVE_COMPETITOR.md) | **竞品静音托辊更静音改进（示意图+说明）** |
+| [`docs/silent-idler/SILENT_SEAT_PRINCIPLE.md`](./docs/silent-idler/SILENT_SEAT_PRINCIPLE.md) | **静音轴承座原理纠正（示意图+说明）** |
+| [`docs/silent-idler/IMPROVE_COMPETITOR.md`](./docs/silent-idler/IMPROVE_COMPETITOR.md) | 竞品静音托辊更静音改进（示意图+说明） |
 | [`docs/silent-idler/EXISTING_SEAT_IMPROVE.md`](./docs/silent-idler/EXISTING_SEAT_IMPROVE.md) | **现有阻尼座能否改进（示意图+说明）** |
 | [`docs/silent-idler/BEARING_IMPROVE.md`](./docs/silent-idler/BEARING_IMPROVE.md) | **绿色轴承隔振/降噪改进（示意图+说明）** |
 | [`docs/silent-idler/RED_SEAL_SOUND.md`](./docs/silent-idler/RED_SEAL_SOUND.md) | **红色密封能否隔音（示意图+说明）** |

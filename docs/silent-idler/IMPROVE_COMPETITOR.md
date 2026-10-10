@@ -1,11 +1,9 @@
 # 竞品静音托辊 → 更静音改进
 
-> 对象：双层管 + 青绿端座硬装轴承 + 黄/紫软迷宫。  
+> 对象：你 CAD 中的静音轴承座（绿消音隔振 / 红迷宫+脂 / 深蓝热补偿）。  
 > 只保留示意图与说明。  
-> **你现有亮蓝阻尼座的改法：** [`EXISTING_SEAT_IMPROVE.md`](./EXISTING_SEAT_IMPROVE.md)  
-> **绿色轴承改进：** [`BEARING_IMPROVE.md`](./BEARING_IMPROVE.md)  
-> **红色密封能否隔音：** [`RED_SEAL_SOUND.md`](./RED_SEAL_SOUND.md)  
-> **深蓝软件（热变形）：** [`DARK_BLUE_THERMAL.md`](./DARK_BLUE_THERMAL.md)
+> **原理纠正（先看这个）：** [`SILENT_SEAT_PRINCIPLE.md`](./SILENT_SEAT_PRINCIPLE.md)  
+> 红密封+脂：[`RED_SEAL_SOUND.md`](./RED_SEAL_SOUND.md) · 深蓝热补偿：[`DARK_BLUE_THERMAL.md`](./DARK_BLUE_THERMAL.md) · 绿隔振：[`BEARING_IMPROVE.md`](./BEARING_IMPROVE.md)
 
 ![实心轴与尼龙座](./figures/18-shaft-vs-nylon-damping.jpg)
 

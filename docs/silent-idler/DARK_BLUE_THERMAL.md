@@ -1,6 +1,7 @@
 # 深蓝色软件是干什么的？
 
 > 按你的说明纠正：深蓝件是**软材质**，用来**消除/吸收热变形**，不是隔音主件。  
+> 总原理：[`SILENT_SEAT_PRINCIPLE.md`](./SILENT_SEAT_PRINCIPLE.md)。  
 > 只保留示意图与说明。
 
 ![深蓝软件与热变形](./figures/23-dark-blue-thermal.jpg)
