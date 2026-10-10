@@ -1,7 +1,11 @@
 # 竞品静音托辊 → 更静音改进方案
 
+> **要改模/下料/装配：直接看落地规格书 → [`CONCRETE_SPEC.md`](./CONCRETE_SPEC.md)**（Φ108×6205 尺寸、BOM、配合、SW 逐步改法、工艺卡、验收数）。  
+> 尺寸总图：[`figures/16-concrete-landable.png`](./figures/16-concrete-landable.png)  
 > 对象：你提供的别人家 CAD（双层管 + 青绿端座硬装轴承 + 黄/紫软迷宫）。  
-> 对比图：[`figures/15-competitor-vs-improved-render.jpg`](./figures/15-competitor-vs-improved-render.jpg)
+> 概念对比图：[`figures/15-competitor-vs-improved-render.jpg`](./figures/15-competitor-vs-improved-render.jpg)
+
+![落地尺寸总图](./figures/16-concrete-landable.png)
 
 ![竞品 vs 改进](./figures/15-competitor-vs-improved-render.jpg)
 
