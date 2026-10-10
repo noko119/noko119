@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="720" viewBox="0 0 1400 720">
+  <defs>
+    <style type="text/css"><![CDATA[
+      .title { font: 700 26px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .sub { font: 400 14px "WenQuanYi Micro Hei", sans-serif; fill:#444; }
+      .h { font: 700 16px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .t { font: 400 14px "WenQuanYi Micro Hei", sans-serif; fill:#222; }
+      .ok { font: 700 14px "WenQuanYi Micro Hei", sans-serif; fill:#0a7; }
+      .bad { font: 700 13px "WenQuanYi Micro Hei", sans-serif; fill:#b00020; }
+      .s { font: 400 12px "WenQuanYi Micro Hei", sans-serif; fill:#555; }
+      .box { fill:#fffdf8; stroke:#bfb6a3; }
+    ]]></style>
+  </defs>
+  <rect width="1400" height="720" fill="#f2eee4"/>
+  <text x="40" y="40" class="title">浅绿色是什么？外圈怎么定位？</text>
+  <text x="40" y="68" class="sub">轴承外圈 · 浅绿减震筋 · 深绿聚合物座 —— 谁碰谁</text>
+
+  <!-- big answer -->
+  <rect x="40" y="90" width="1320" height="70" fill="#d5f5e3" stroke="#27ae60" stroke-width="2"/>
+  <text x="60" y="135" class="h">浅绿色 = 减震筋（深绿座内孔上凸出来的筋）。外圈顶在筋上；不贴满深绿座壁。</text>
+
+  <!-- section -->
+  <g transform="translate(40,190)">
+    <rect x="0" y="0" width="900" height="420" class="box"/>
+    <text x="20" y="32" class="h">放大剖视（路径2聚合物座）</text>
+
+    <!-- dark green housing wall -->
+    <rect x="80" y="70" width="50" height="300" fill="#1e8449" stroke="#145a32" stroke-width="2"/>
+    <text x="55" y="60" class="t">深绿</text>
+    <text x="45" y="230" class="t">聚合物座</text>
+    <text x="55" y="255" class="s">本体</text>
+
+    <!-- light green ribs TOUCHING outer race -->
+    <rect x="130" y="100" width="18" height="40" fill="#82e0aa" stroke="#1e8449" stroke-width="2"/>
+    <rect x="130" y="160" width="18" height="40" fill="#82e0aa" stroke="#1e8449" stroke-width="2"/>
+    <rect x="130" y="220" width="18" height="40" fill="#82e0aa" stroke="#1e8449" stroke-width="2"/>
+    <rect x="130" y="280" width="18" height="40" fill="#82e0aa" stroke="#1e8449" stroke-width="2"/>
+    <text x="80" y="400" class="ok">浅绿=减震筋</text>
+
+    <!-- gap label between dark green wall and outer race where no rib -->
+    <line x1="148" y1="145" x2="200" y2="145" stroke="#b00020" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <text x="155" y="138" class="bad">空隙</text>
+    <text x="155" y="158" class="s">不贴座壁</text>
+
+    <!-- outer race - flush against ribs -->
+    <rect x="148" y="95" width="55" height="240" fill="#85929e" stroke="#2c3e50" stroke-width="2"/>
+    <!-- contact marks on ribs -->
+    <rect x="146" y="100" width="4" height="40" fill="#e74c3c"/>
+    <rect x="146" y="160" width="4" height="40" fill="#e74c3c"/>
+    <rect x="146" y="220" width="4" height="40" fill="#e74c3c"/>
+    <rect x="146" y="280" width="4" height="40" fill="#e74c3c"/>
+    <text x="220" y="200" class="ok">红色贴边=外圈顶在筋上</text>
+    <text x="220" y="230" class="ok">（有定位，不是悬空）</text>
+
+    <circle cx="195" cy="215" r="22" fill="#f7dc6f" stroke="#9a7d0a" stroke-width="2"/>
+    <text x="220" y="280" class="t">滚动体</text>
+    <rect x="210" y="175" width="40" height="80" fill="#aeb6bf" stroke="#2c3e50"/>
+    <text x="255" y="220" class="t">内圈</text>
+    <rect x="260" y="195" width="200" height="40" fill="#6b2c1a"/>
+    <text x="280" y="220" class="t" fill="#fff">轴</text>
+
+    <!-- flange axial locate -->
+    <rect x="130" y="70" width="80" height="20" fill="#1e8449" stroke="#145a32"/>
+    <text x="220" y="85" class="ok">台阶挡住外圈端面（轴向定位）</text>
+  </g>
+
+  <!-- right legend -->
+  <g transform="translate(970,190)">
+    <rect x="0" y="0" width="390" height="420" class="box"/>
+    <text x="20" y="36" class="h">谁碰谁</text>
+    <rect x="20" y="60" width="28" height="18" fill="#82e0aa" stroke="#1e8449"/>
+    <text x="58" y="74" class="t">浅绿 = 减震筋</text>
+    <rect x="20" y="100" width="28" height="18" fill="#1e8449"/>
+    <text x="58" y="114" class="t">深绿 = 聚合物座本体</text>
+    <rect x="20" y="140" width="28" height="18" fill="#85929e" stroke="#2c3e50"/>
+    <text x="58" y="154" class="t">灰 = 轴承外圈</text>
+
+    <text x="20" y="200" class="ok">外圈 ↔ 浅绿筋：要接触</text>
+    <text x="20" y="228" class="ok">（径向定位+隔振）</text>
+    <text x="20" y="265" class="ok">外圈 ↔ 深绿壁：不贴满</text>
+    <text x="20" y="293" class="s">中间留空隙，靠筋传力</text>
+    <text x="20" y="330" class="ok">外圈端面 ↔ 台阶：要顶住</text>
+    <text x="20" y="358" class="ok">（轴向定位）</text>
+    <text x="20" y="395" class="bad">不是外圈完全不挨着</text>
+  </g>
+</svg>
