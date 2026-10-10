@@ -2,7 +2,8 @@
 
 > 此前把「红迷宫+脂」简单说成「完全不能隔音」，理解偏了。  
 > 对照你的 CAD 颜色 + 公开专利表述，重新说明。  
-> 只保留示意图与说明。
+> 只保留示意图与说明。  
+> **红色密封改进：** [`RED_SEAL_IMPROVE.md`](./RED_SEAL_IMPROVE.md)
 
 ![静音轴承座原理纠正](./figures/24-silent-seat-principle-corrected.jpg)
 

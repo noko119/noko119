@@ -1,6 +1,7 @@
 # 红色密封 + 润滑脂：能否降噪？
 
 > **已按检索纠正。** 总原理见 [`SILENT_SEAT_PRINCIPLE.md`](./SILENT_SEAT_PRINCIPLE.md)。  
+> **红色密封改法：** [`RED_SEAL_IMPROVE.md`](./RED_SEAL_IMPROVE.md)。  
 > 只保留示意图与说明。
 
 ![红密封与脂](./figures/22-red-seal-with-grease.jpg)

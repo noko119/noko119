@@ -25,6 +25,7 @@
 | [`docs/silent-idler/EXISTING_SEAT_IMPROVE.md`](./docs/silent-idler/EXISTING_SEAT_IMPROVE.md) | **现有阻尼座能否改进（示意图+说明）** |
 | [`docs/silent-idler/BEARING_IMPROVE.md`](./docs/silent-idler/BEARING_IMPROVE.md) | **绿色轴承隔振/降噪改进（示意图+说明）** |
 | [`docs/silent-idler/RED_SEAL_SOUND.md`](./docs/silent-idler/RED_SEAL_SOUND.md) | **红色密封能否隔音（示意图+说明）** |
+| [`docs/silent-idler/RED_SEAL_IMPROVE.md`](./docs/silent-idler/RED_SEAL_IMPROVE.md) | **红色密封改进（示意图+说明）** |
 | [`docs/silent-idler/DARK_BLUE_THERMAL.md`](./docs/silent-idler/DARK_BLUE_THERMAL.md) | **深蓝软件与热变形（示意图+说明）** |
 | [`docs/silent-idler/INTEGRATED_DESIGN.md`](./docs/silent-idler/INTEGRATED_DESIGN.md) | 静音托辊完善版过程稿 |
 | [`docs/silent-idler/CAD_OPTIMIZATION.md`](./docs/silent-idler/CAD_OPTIMIZATION.md) | 现 CAD 端部结构优化改法 |
