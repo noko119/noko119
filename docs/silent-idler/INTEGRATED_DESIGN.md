@@ -14,7 +14,8 @@
 | **完善版工程图（剖视+端面）** | [`figures/07-end-drawing-gb.png`](./figures/07-end-drawing-gb.png) · [`figures/06-integrated-end.png`](./figures/06-integrated-end.png) |
 | 概念效果图（非制图） | [`figures/silent-idler-integrated-end.jpg`](./figures/silent-idler-integrated-end.jpg) |
 | 现 CAD 截图 | [`figures/ref-cad-current.jpg`](./figures/ref-cad-current.jpg) |
-| **CAD 优化改法** | [`CAD_OPTIMIZATION.md`](./CAD_OPTIMIZATION.md) · [`figures/08-cad-optimized.png`](./figures/08-cad-optimized.png) |
+| **CAD 优化改法** | [`CAD_OPTIMIZATION.md`](./CAD_OPTIMIZATION.md) |
+| **彩色优化示意图** | [`figures/09-optimized-color-render.jpg`](./figures/09-optimized-color-render.jpg) · [`figures/09-optimized-color.png`](./figures/09-optimized-color.png) |
 
 出处分级见 [`REFERENCES.md`](./REFERENCES.md)。
 
@@ -28,9 +29,11 @@
 
 钢座保证承力与焊接强度；尼龙座切断「轴承→管体」钢-钢硬传振；密封与支架关系按乙方案运动学，避免扫膛。
 
+![彩色优化示意图](./figures/09-optimized-color-render.jpg)
+
 ![完善版工程图：局部剖视 + 端面视图](./figures/07-end-drawing-gb.png)
 
-> 图样按装配图惯例：金属/非金属剖面符号区分、轴线点画线、轴沿轴线剖切不画剖面线、序号球标 + 明细表 + 技术要求。概念着色图仅作辅助，不作为制图依据。
+> 说明优先看**彩色示意图**（零件分色、动静件一眼可辨）；黑白图作制图/明细表达。
 
 ---
 
