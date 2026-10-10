@@ -4,7 +4,8 @@
 > 只保留示意图与说明。  
 > **你现有亮蓝阻尼座的改法：** [`EXISTING_SEAT_IMPROVE.md`](./EXISTING_SEAT_IMPROVE.md)  
 > **绿色轴承改进：** [`BEARING_IMPROVE.md`](./BEARING_IMPROVE.md)  
-> **红色密封能否隔音：** [`RED_SEAL_SOUND.md`](./RED_SEAL_SOUND.md)
+> **红色密封能否隔音：** [`RED_SEAL_SOUND.md`](./RED_SEAL_SOUND.md)  
+> **深蓝软件（热变形）：** [`DARK_BLUE_THERMAL.md`](./DARK_BLUE_THERMAL.md)
 
 ![实心轴与尼龙座](./figures/18-shaft-vs-nylon-damping.jpg)
 
