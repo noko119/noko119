@@ -4,7 +4,11 @@
 > 你的要求：**密封之间要有脂（隔音+防尘）**；改进后仍要件件填脂；**满足轴向装配工艺**。  
 > 只保留示意图与说明。
 
+![各视图结构](./figures/47-red-seal-multiview.jpg)
+
 ![满脂且可装配](./figures/42-red-seal-grease-assemblable.jpg)
+
+结构详图：[`RED_SEAL_STRUCTURE.md`](./RED_SEAL_STRUCTURE.md)
 
 ![对照旧图](./figures/41-four-red-rings-improve.jpg)
 
