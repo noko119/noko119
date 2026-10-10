@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="980" viewBox="0 0 1400 980">
+  <defs>
+    <style type="text/css"><![CDATA[
+      .title { font: 700 26px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .sub { font: 400 14px "WenQuanYi Micro Hei", sans-serif; fill:#444; }
+      .h { font: 700 16px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .t { font: 400 14px "WenQuanYi Micro Hei", sans-serif; fill:#222; }
+      .b { font: 700 14px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .ok { font: 700 14px "WenQuanYi Micro Hei", sans-serif; fill:#0a7; }
+      .w { font: 700 13px "WenQuanYi Micro Hei", sans-serif; fill:#a60; }
+      .s { font: 400 12px "WenQuanYi Micro Hei", sans-serif; fill:#555; }
+      .box { fill:#fffdf8; stroke:#bfb6a3; }
+    ]]></style>
+  </defs>
+  <rect width="1400" height="980" fill="#f2eee4"/>
+  <text x="40" y="40" class="title">减震筋 · 轴承端面 · 深绿座体 —— 细部结构</text>
+  <text x="40" y="68" class="sub">“简论今”=减震筋。下面把谁顶谁、哪里留空画清楚。</text>
+
+  <!-- ========== MAIN DETAILED SECTION ========== -->
+  <g transform="translate(40,90)">
+    <rect x="0" y="0" width="900" height="520" class="box"/>
+    <text x="20" y="32" class="h">径向+局部放大（上半剖）</text>
+
+    <!-- dark green seat body - thick -->
+    <path d="M80,80 L280,80 L280,110 L160,110 L160,400 L280,400 L280,430 L80,430 L80,400 L130,400 L130,110 L80,110 Z"
+          fill="#145a32" stroke="#0b3d1f" stroke-width="2"/>
+    <text x="90" y="100" class="b" fill="#fff">深绿座体</text>
+
+    <!-- flange / shoulder for axial locate - part of dark green -->
+    <rect x="130" y="110" width="100" height="28" fill="#1e8449" stroke="#0b3d1f" stroke-width="2"/>
+    <text x="240" y="130" class="ok">A 内台阶（轴向挡）</text>
+    <line x1="220" y1="138" x2="220" y2="160" stroke="#e74c3c" stroke-width="3"/>
+    <text x="225" y="155" class="w">顶住外圈端面</text>
+
+    <!-- light green ribs - TOUCHING outer race OD -->
+    <!-- rib 1 -->
+    <rect x="160" y="160" width="22" height="36" fill="#82e0aa" stroke="#1e8449" stroke-width="2"/>
+    <rect x="160" y="220" width="22" height="36" fill="#82e0aa" stroke="#1e8449" stroke-width="2"/>
+    <rect x="160" y="280" width="22" height="36" fill="#82e0aa" stroke="#1e8449" stroke-width="2"/>
+    <rect x="160" y="340" width="22" height="36" fill="#82e0aa" stroke="#1e8449" stroke-width="2"/>
+    <text x="60" y="250" class="ok">浅绿</text>
+    <text x="50" y="270" class="ok">减震筋</text>
+
+    <!-- cavity between ribs (no contact) -->
+    <rect x="162" y="198" width="18" height="20" fill="#c8e6c9" fill-opacity="0.5" stroke="#27ae60" stroke-dasharray="3 2"/>
+    <text x="50" y="210" class="s">筋间空腔</text>
+
+    <!-- OUTER RACE - pressed against ribs and against flange -->
+    <rect x="182" y="138" width="70" height="260" fill="#7f8c8d" stroke="#2c3e50" stroke-width="2.5"/>
+    <!-- red contact strip at rib OD interface -->
+    <rect x="180" y="160" width="5" height="36" fill="#e74c3c"/>
+    <rect x="180" y="220" width="5" height="36" fill="#e74c3c"/>
+    <rect x="180" y="280" width="5" height="36" fill="#e74c3c"/>
+    <rect x="180" y="340" width="5" height="36" fill="#e74c3c"/>
+    <!-- red contact on end face against flange -->
+    <rect x="182" y="136" width="70" height="5" fill="#e74c3c"/>
+    <text x="270" y="200" class="b">轴承外圈</text>
+    <text x="270" y="225" class="w">红边=实际接触面</text>
+
+    <!-- gap annotation: outer race to dark green wall -->
+    <line x1="155" y1="205" x2="155" y2="205" />
+    <path d="M148,200 L155,200" stroke="#2980b9" stroke-width="2"/>
+    <text x="270" y="260" class="s">外圈外径 ↔ 深绿壁：不贴</text>
+    <text x="270" y="280" class="s">只通过浅绿筋传力</text>
+
+    <!-- ball and inner race -->
+    <circle cx="240" cy="270" r="28" fill="#f7dc6f" stroke="#9a7d0a" stroke-width="2"/>
+    <text x="270" y="320" class="t">滚动体</text>
+    <rect x="250" y="230" width="45" height="80" fill="#bdc3c7" stroke="#2c3e50" stroke-width="2"/>
+    <text x="300" y="275" class="t">内圈</text>
+    <rect x="300" y="250" width="220" height="40" fill="#6b2c1a"/>
+    <text x="320" y="275" class="t" fill="#fff">轴</text>
+
+    <!-- callout boxes -->
+    <rect x="520" y="80" width="350" height="100" fill="#fdebd0" stroke="#e67e22"/>
+    <text x="535" y="110" class="h">接触① 轴向</text>
+    <text x="535" y="140" class="t">轴承外圈端面</text>
+    <text x="535" y="165" class="ok">顶住深绿座的内台阶 A</text>
+
+    <rect x="520" y="200" width="350" height="120" fill="#d5f5e3" stroke="#27ae60"/>
+    <text x="535" y="230" class="h">接触② 径向</text>
+    <text x="535" y="260" class="t">轴承外圈外圆</text>
+    <text x="535" y="285" class="ok">只压在浅绿减震筋顶上</text>
+    <text x="535" y="310" class="s">筋间空腔不接触</text>
+
+    <rect x="520" y="340" width="350" height="100" fill="#d6eaf8" stroke="#2980b9"/>
+    <text x="535" y="370" class="h">不接触</text>
+    <text x="535" y="400" class="t">外圈外圆 ↔ 深绿座内壁光面</text>
+    <text x="535" y="425" class="s">中间隔着筋高，故意留空</text>
+  </g>
+
+  <!-- RIGHT: end view / circumferential -->
+  <g transform="translate(970,90)">
+    <rect x="0" y="0" width="390" height="520" class="box"/>
+    <text x="20" y="32" class="h">端面看减震筋（周向）</text>
+    <!-- outer dark green ring -->
+    <circle cx="195" cy="220" r="140" fill="#145a32" stroke="#0b3d1f" stroke-width="2"/>
+    <!-- bore -->
+    <circle cx="195" cy="220" r="95" fill="#faf8f2"/>
+    <!-- 8 ribs -->
+    <g stroke="#1e8449" stroke-width="1">
+      <rect x="185" y="125" width="20" height="28" fill="#82e0aa" stroke="#1e8449" stroke-width="2"/>
+      <rect x="185" y="287" width="20" height="28" fill="#82e0aa" stroke="#1e8449" stroke-width="2"/>
+      <rect x="100" y="210" width="28" height="20" fill="#82e0aa" stroke="#1e8449" stroke-width="2"/>
+      <rect x="262" y="210" width="28" height="20" fill="#82e0aa" stroke="#1e8449" stroke-width="2"/>
+      <rect x="125" y="145" width="22" height="22" fill="#82e0aa" stroke="#1e8449" stroke-width="2" transform="rotate(-40 136 156)"/>
+      <rect x="243" y="145" width="22" height="22" fill="#82e0aa" stroke="#1e8449" stroke-width="2" transform="rotate(40 254 156)"/>
+      <rect x="125" y="273" width="22" height="22" fill="#82e0aa" stroke="#1e8449" stroke-width="2" transform="rotate(40 136 284)"/>
+      <rect x="243" y="273" width="22" height="22" fill="#82e0aa" stroke="#1e8449" stroke-width="2" transform="rotate(-40 254 284)"/>
+    </g>
+    <!-- outer race ring -->
+    <circle cx="195" cy="220" r="78" fill="none" stroke="#7f8c8d" stroke-width="16"/>
+    <circle cx="195" cy="220" r="55" fill="#faf8f2" stroke="#2c3e50" stroke-width="1"/>
+    <text x="175" y="225" class="s">外圈</text>
+    <text x="20" y="400" class="t">8 条浅绿筋均布</text>
+    <text x="20" y="425" class="ok">外圈外圆压在筋顶圆上</text>
+    <text x="20" y="450" class="s">筋与筋之间是空腔</text>
+    <text x="20" y="475" class="s">深绿环=座体本体</text>
+    <text x="20" y="500" class="s">建议筋数 6～8</text>
+  </g>
+
+  <!-- bottom structure list -->
+  <rect x="40" y="640" width="1320" height="300" fill="#eaf2f8" stroke="#5dade2" stroke-width="2"/>
+  <text x="60" y="680" class="h">结构关系（装拆顺序也能对上）</text>
+  <text x="60" y="715" class="t">1. 深绿座体：一大块聚合物（PA66+GF），外圆进钢管/端壳，内孔带筋+台阶。</text>
+  <text x="60" y="745" class="t">2. 浅绿减震筋：是深绿座体内孔上的凸起，不是单独零件；和座体一体制造。</text>
+  <text x="60" y="775" class="t">3. 轴承推进去：外圈外圆被筋抱紧（径向定位）；外圈外侧端面顶到内台阶（轴向定位）。</text>
+  <text x="60" y="805" class="t">4. 外圈外圆与深绿内壁光面之间：故意留空（约等于筋高），所以“看起来没贴座壁”——正常。</text>
+  <text x="60" y="835" class="t">5. 内圈仍配在轴上；滚动体在内外圈之间。黄封公、红唇在轴承外侧，本图未展开。</text>
+  <text x="60" y="870" class="ok">所以：不是外圈不挨着；是外圈只挨「筋顶 + 台阶端面」两处。</text>
+  <text x="60" y="905" class="s">若你说的「简论今」不是减震筋而是别的零件，指出颜色/位置我再改认件。</text>
+</svg>

@@ -32,6 +32,7 @@
 | [`docs/silent-idler/ISOLATOR_OPTIMIZE.md`](./docs/silent-idler/ISOLATOR_OPTIMIZE.md) | 隔振套减震优化（对着三版零件） |
 | [`docs/silent-idler/DAMPER_SEAT_QUIETER.md`](./docs/silent-idler/DAMPER_SEAT_QUIETER.md) | 减震座更静音优化 |
 | [`docs/silent-idler/GLOBAL_SILENT_PHILOSOPHY.md`](./docs/silent-idler/GLOBAL_SILENT_PHILOSOPHY.md) | **国外静音理念与可推翻路径** |
+| [`docs/silent-idler/RIB_SEAT_DETAIL.md`](./docs/silent-idler/RIB_SEAT_DETAIL.md) | **减震筋/端面/座体细部** |
 | [`docs/silent-idler/RED_SEAL_SOUND.md`](./docs/silent-idler/RED_SEAL_SOUND.md) | **红色密封能否隔音（示意图+说明）** |
 | [`docs/silent-idler/RED_SEAL_IMPROVE.md`](./docs/silent-idler/RED_SEAL_IMPROVE.md) | **红色密封改进（示意图+说明）** |
 | [`docs/silent-idler/DARK_BLUE_THERMAL.md`](./docs/silent-idler/DARK_BLUE_THERMAL.md) | **深蓝软件与热变形（示意图+说明）** |
