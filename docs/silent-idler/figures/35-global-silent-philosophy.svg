@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="980" viewBox="0 0 1400 980">
+  <defs>
+    <style type="text/css"><![CDATA[
+      .title { font: 700 26px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .sub { font: 400 13px "WenQuanYi Micro Hei", sans-serif; fill:#444; }
+      .h { font: 700 16px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .t { font: 400 13px "WenQuanYi Micro Hei", sans-serif; fill:#222; }
+      .b { font: 700 13px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .ok { font: 700 13px "WenQuanYi Micro Hei", sans-serif; fill:#0a7; }
+      .bad { font: 700 12px "WenQuanYi Micro Hei", sans-serif; fill:#b00020; }
+      .eu { font: 700 12px "WenQuanYi Micro Hei", sans-serif; fill:#1a5276; }
+      .s { font: 400 12px "WenQuanYi Micro Hei", sans-serif; fill:#555; }
+      .box { fill:#fffdf8; stroke:#bfb6a3; }
+    ]]></style>
+  </defs>
+  <rect width="1400" height="980" fill="#f2eee4"/>
+  <text x="40" y="40" class="title">国外静音托辊理念 → 你的结构怎么推翻/升级</text>
+  <text x="40" y="65" class="sub">欧洲 Rulmeca/Interroll · 澳矿 Sandvik/PROK · 相对你现「钢座+绿减震套」</text>
+
+  <!-- three philosophies -->
+  <g transform="translate(40,90)">
+    <rect x="0" y="0" width="430" height="280" class="box"/>
+    <text x="14" y="30" class="h">A 你现在（国内常见）</text>
+    <text x="14" y="58" class="t">钢/硬端座 + 绿减震套夹外圈</text>
+    <text x="14" y="82" class="t">钢双层管当鼓面</text>
+    <text x="14" y="106" class="t">迷宫+脂防尘（兼端部隔声）</text>
+    <text x="14" y="140" class="bad">理念：钢结构不动，只在轴承处堵振</text>
+    <text x="14" y="168" class="s">优点：强度熟、改局部</text>
+    <text x="14" y="192" class="bad">短板：管体仍是大辐射面</text>
+    <text x="14" y="216" class="bad">绿套再好，鼓面还在</text>
+    <text x="14" y="250" class="s">≈ 治振源传振，不治音箱</text>
+  </g>
+
+  <g transform="translate(485,90)">
+    <rect x="0" y="0" width="430" height="280" class="box"/>
+    <text x="14" y="30" class="h">B 欧洲单元输送</text>
+    <text x="14" y="52" class="eu">Rulmeca 117 / Interroll</text>
+    <text x="14" y="80" class="t">① 轴承直接装进 PA/POM 端座</text>
+    <text x="14" y="104" class="t">　（端座本身就是聚合物，不只套一层）</text>
+    <text x="14" y="128" class="t">② 管可用钢或 PVC；轻载全塑</text>
+    <text x="14" y="152" class="t">③ 精密轴承 + 非接触迷宫</text>
+    <text x="14" y="176" class="t">④ 支架侧锥形弹性衬套消间隙</text>
+    <text x="14" y="210" class="ok">理念：聚合物承座吸振 + 精密度</text>
+    <text x="14" y="238" class="ok">+ 机架连接消间隙</text>
+    <text x="14" y="262" class="s">治：座材料 / 精度 / 架侧</text>
+  </g>
+
+  <g transform="translate(930,90)">
+    <rect x="0" y="0" width="430" height="280" class="box"/>
+    <text x="14" y="30" class="h">C 澳矿/港口重载静音</text>
+    <text x="14" y="52" class="eu">Sandvik HR185 / PROK HDPE</text>
+    <text x="14" y="80" class="t">① 管体改 HDPE/复合材料</text>
+    <text x="14" y="104" class="t">　（材料本身阻尼，噪声可降半）</text>
+    <text x="14" y="128" class="t">② 聚合物端盖/摩擦焊连管</text>
+    <text x="14" y="152" class="t">③ 钢辊则靠极低跳动+动平衡</text>
+    <text x="14" y="176" class="t">④ 密封保轴承寿命=保安静</text>
+    <text x="14" y="210" class="ok">理念：先换掉“钢鼓”辐射面</text>
+    <text x="14" y="238" class="ok">端座聚合物化，不只塞绿套</text>
+    <text x="14" y="262" class="s">治：音箱本体 / 整辊系统</text>
+  </g>
+
+  <!-- overturn recommendation -->
+  <text x="40" y="410" class="h">推荐：可推翻你原理念的升级路线</text>
+  <g transform="translate(40,425)">
+    <rect x="0" y="0" width="1320" height="320" class="box"/>
+
+    <rect x="20" y="20" width="400" height="280" fill="#fdebd0" stroke="#e67e22"/>
+    <text x="35" y="50" class="h">路径1 · 局部升级（少推翻）</text>
+    <text x="35" y="80" class="t">保留钢双层管 + 青绿座</text>
+    <text x="35" y="105" class="t">绿减震座：筋定位+防转+盲孔</text>
+    <text x="35" y="130" class="t">低噪声轴承 Z2/Z3·C3</text>
+    <text x="35" y="155" class="t">管跳动/动平衡做严</text>
+    <text x="35" y="180" class="t">支架槽口弹性垫（欧式架侧）</text>
+    <text x="35" y="210" class="ok">适合：模具已开、要快改</text>
+    <text x="35" y="240" class="bad">上限：钢鼓还在，降噪有天花板</text>
+    <text x="35" y="270" class="s">≈ 你现在的方向做透</text>
+
+    <rect x="450" y="20" width="400" height="280" fill="#d5f5e3" stroke="#27ae60"/>
+    <text x="465" y="50" class="h">路径2 · 半推翻（推荐）</text>
+    <text x="465" y="80" class="t">取消「硬座+薄绿套」拼法</text>
+    <text x="465" y="105" class="ok">改成：整段 PA66+GF 轴承座</text>
+    <text x="465" y="130" class="t">轴承外圈直接进聚合物座孔</text>
+    <text x="465" y="155" class="t">（减震筋做在座内孔上）</text>
+    <text x="465" y="180" class="t">聚合物座与钢管过盈/焊接连接</text>
+    <text x="465" y="205" class="t">密封仍用黄定子+紫转子+脂</text>
+    <text x="465" y="235" class="ok">理念对齐欧洲：座即阻尼体</text>
+    <text x="465" y="265" class="s">绿薄套升级成「厚聚合物端座」</text>
+
+    <rect x="880" y="20" width="420" height="280" fill="#d6eaf8" stroke="#2980b9"/>
+    <text x="895" y="50" class="h">路径3 · 全推翻（最静）</text>
+    <text x="895" y="80" class="t">管体改 HDPE/UHMWPE/复合</text>
+    <text x="895" y="105" class="t">端盖聚合物，与管一体/摩擦焊</text>
+    <text x="895" y="130" class="t">轴承在聚合物座里</text>
+    <text x="895" y="155" class="t">支架侧弹性衬套</text>
+    <text x="895" y="180" class="t">钢辊方案则：精车+动平衡为主</text>
+    <text x="895" y="210" class="ok">理念对齐澳矿：换音箱</text>
+    <text x="895" y="240" class="s">噪声可相对钢辊大幅下降</text>
+    <text x="895" y="270" class="s">代价：模具/载荷校核重做</text>
+  </g>
+
+  <rect x="40" y="770" width="1320" height="170" fill="#e8f6f3" stroke="#27ae60" stroke-width="2"/>
+  <text x="60" y="810" class="h">结论（可推翻原「只靠绿套」）</text>
+  <text x="60" y="845" class="t">国外主流不只「轴承外圈塞一层套」，而是：①聚合物端座/管体吸振 ②极低跳动与动平衡 ③机架连接消间隙 ④密封保轴承健康。</text>
+  <text x="60" y="875" class="t">若要明显更静：优先走路径2（聚合物端座取代硬座+薄套）；要极致静音走路径3（聚合物管）。路径1是保底。</text>
+  <text x="60" y="905" class="t">原绿套优化仍有用，但不应再当作唯一理念。</text>
+</svg>

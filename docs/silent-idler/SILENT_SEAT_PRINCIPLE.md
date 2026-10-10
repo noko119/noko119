@@ -5,6 +5,7 @@
 > 只保留示意图与说明。  
 > **红色密封改进：** [`RED_SEAL_IMPROVE.md`](./RED_SEAL_IMPROVE.md)  
 > **减震座更静音：** [`DAMPER_SEAT_QUIETER.md`](./DAMPER_SEAT_QUIETER.md)  
+> **国外理念/可推翻路径：** [`GLOBAL_SILENT_PHILOSOPHY.md`](./GLOBAL_SILENT_PHILOSOPHY.md)  
 > **内圈与轴能否隔离：** [`INNER_RACE_SHAFT.md`](./INNER_RACE_SHAFT.md)
 
 ![完整轴承半剖（认件用）](./figures/29-complete-bearing-schematic.jpg)
