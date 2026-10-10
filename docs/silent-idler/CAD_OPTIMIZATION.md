@@ -1,13 +1,12 @@
 # 现有 CAD 端部结构优化说明
 
 > 针对仓库内 CAD 截图 [`figures/ref-cad-current.jpg`](./figures/ref-cad-current.jpg) 的优化改法。  
-> **彩色示意图（主推）：** [`figures/09-optimized-color-render.jpg`](./figures/09-optimized-color-render.jpg) · [`figures/09-optimized-color.png`](./figures/09-optimized-color.png)  
-> 黑白工程图（制图用）：[`figures/08-cad-optimized.png`](./figures/08-cad-optimized.png) · [`figures/07-end-drawing-gb.png`](./figures/07-end-drawing-gb.png)  
+> **彩色示意图（最终·主推）：** [`figures/10-final-color-schematic-render.jpg`](./figures/10-final-color-schematic-render.jpg)  
+> 风格对齐用户确认的「冲压座+尼龙座」示意；迷宫动静已纠正。  
+> 黑白工程图（制图用）：[`figures/07-end-drawing-gb.png`](./figures/07-end-drawing-gb.png)  
 > 完整推荐构型仍见 [`INTEGRATED_DESIGN.md`](./INTEGRATED_DESIGN.md)。
 
-![彩色优化示意图](./figures/09-optimized-color-render.jpg)
-
-![彩色优化示意图（矢量导出）](./figures/09-optimized-color.png)
+![彩色示意图最终版](./figures/10-final-color-schematic-render.jpg)
 
 ---
 

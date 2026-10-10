@@ -15,7 +15,8 @@
 | 概念效果图（非制图） | [`figures/silent-idler-integrated-end.jpg`](./figures/silent-idler-integrated-end.jpg) |
 | 现 CAD 截图 | [`figures/ref-cad-current.jpg`](./figures/ref-cad-current.jpg) |
 | **CAD 优化改法** | [`CAD_OPTIMIZATION.md`](./CAD_OPTIMIZATION.md) |
-| **彩色优化示意图** | [`figures/09-optimized-color-render.jpg`](./figures/09-optimized-color-render.jpg) · [`figures/09-optimized-color.png`](./figures/09-optimized-color.png) |
+| **彩色示意图（最终·推荐）** | [`figures/10-final-color-schematic-render.jpg`](./figures/10-final-color-schematic-render.jpg) · [`figures/10-final-color-schematic.png`](./figures/10-final-color-schematic.png) |
+| 用户偏好风格原图 | [`figures/ref-user-preferred-style.jpg`](./figures/ref-user-preferred-style.jpg) |
 
 出处分级见 [`REFERENCES.md`](./REFERENCES.md)。
 
