@@ -2,6 +2,7 @@
 
 > 依据你 CAD 里的绿色隔振/消音安装（见总原理）。  
 > 总原理：[`SILENT_SEAT_PRINCIPLE.md`](./SILENT_SEAT_PRINCIPLE.md)。  
+> **隔音套改法：** [`GREEN_MUFFLER_IMPROVE.md`](./GREEN_MUFFLER_IMPROVE.md)。  
 > 只保留示意图与说明。  
 > **红色密封能否隔音：** [`RED_SEAL_SOUND.md`](./RED_SEAL_SOUND.md)
 

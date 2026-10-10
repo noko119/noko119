@@ -3,7 +3,7 @@
 > 对象：你 CAD 中的静音轴承座（绿消音隔振 / 红迷宫+脂 / 深蓝热补偿）。  
 > 只保留示意图与说明。  
 > **原理纠正（先看这个）：** [`SILENT_SEAT_PRINCIPLE.md`](./SILENT_SEAT_PRINCIPLE.md)  
-> 红密封+脂：[`RED_SEAL_SOUND.md`](./RED_SEAL_SOUND.md) · **红密封改进：** [`RED_SEAL_IMPROVE.md`](./RED_SEAL_IMPROVE.md) · 深蓝热补偿：[`DARK_BLUE_THERMAL.md`](./DARK_BLUE_THERMAL.md) · 绿隔振：[`BEARING_IMPROVE.md`](./BEARING_IMPROVE.md)
+> 红密封改进：[`RED_SEAL_IMPROVE.md`](./RED_SEAL_IMPROVE.md) · **绿隔音套改进：** [`GREEN_MUFFLER_IMPROVE.md`](./GREEN_MUFFLER_IMPROVE.md) · 深蓝热补偿：[`DARK_BLUE_THERMAL.md`](./DARK_BLUE_THERMAL.md)
 
 ![实心轴与尼龙座](./figures/18-shaft-vs-nylon-damping.jpg)
 
