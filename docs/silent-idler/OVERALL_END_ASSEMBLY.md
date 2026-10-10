@@ -27,3 +27,5 @@
 装配：黄封公上轴 → 绿座+轴承进轴承座 → 紫/端盖套入 → 红密封压入并逐腔补脂。
 
 相关细部：[`INTEGRAL_SEAT_AXON.md`](./INTEGRAL_SEAT_AXON.md) · [`RED_SEAL_IMPROVE.md`](./RED_SEAL_IMPROVE.md) · [`COLOR_LEGEND.md`](./COLOR_LEGEND.md)
+
+轴向长度（Φ159，绿座与轴承齐平）：[`PHI159_AXIAL_LENGTHS.md`](./PHI159_AXIAL_LENGTHS.md)

@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1080" viewBox="0 0 1500 1080">
+  <defs>
+    <style type="text/css"><![CDATA[
+      .title { font: 700 26px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .sub { font: 400 14px "WenQuanYi Micro Hei", sans-serif; fill:#444; }
+      .h { font: 700 16px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .t { font: 400 14px "WenQuanYi Micro Hei", sans-serif; fill:#222; }
+      .ok { font: 700 14px "WenQuanYi Micro Hei", sans-serif; fill:#0a7; }
+      .w { font: 700 13px "WenQuanYi Micro Hei", sans-serif; fill:#a60; }
+      .s { font: 400 12px "WenQuanYi Micro Hei", sans-serif; fill:#555; }
+      .dim { font: 700 13px "WenQuanYi Micro Hei", sans-serif; fill:#1a5276; }
+      .box { fill:#fffdf8; stroke:#bfb6a3; }
+    ]]></style>
+    <marker id="darr" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#1a5276"/>
+    </marker>
+  </defs>
+  <rect width="1500" height="1080" fill="#f2eee4"/>
+  <text x="40" y="38" class="title">Φ159 托辊端组 · 轴向长度对齐</text>
+  <text x="40" y="66" class="sub">减震座有效长度 = 轴承宽度 B；外端面与轴承外端面齐平。下面按常用 6305 / 6306 给出各段长度。</text>
+
+  <!-- ========== ALIGNED SECTION ========== -->
+  <g transform="translate(40,90)">
+    <rect x="0" y="0" width="1420" height="420" class="box"/>
+    <text x="20" y="32" class="h">对齐原则（先看这条）</text>
+    <text x="20" y="58" class="ok">绿色减震座内孔（抱轴承段）长度 Lg = 轴承宽度 B；外侧端面与轴承外圈外端面齐平。</text>
+
+    <!-- steel housing -->
+    <path d="M60,100 L380,100 L380,125 L140,125 L140,360 L380,360 L380,385 L60,385 L60,360 L110,360 L110,125 L60,125 Z"
+          fill="#1a5276" stroke="#0e2f44" stroke-width="2"/>
+    <text x="70" y="118" class="s" fill="#fff">轴承座</text>
+
+    <!-- GREEN seat: length MATCHES bearing exactly between faces -->
+    <!-- Bearing from x=200 to x=200+B_draw, B_draw=170 for visual (=17mm scale ~10x for 6305) -->
+    <!-- Use scale: 10 px = 1 mm -->
+    <!-- Place bearing at x=220, B=170px for 17mm (6305) visual - label both options in table -->
+    <!-- Green seat body: shoulder at left (inner), bore from 220 to 390, outer face at 390 flush with bearing -->
+    
+    <!-- Inner shoulder of green (thickness ~3mm = 30px) at x=190 -->
+    <path d="M140,145 L390,145 L390,165 L200,165 L200,340 L390,340 L390,360 L140,360 L140,340 L170,340 L170,165 L140,165 Z"
+          fill="#145a32" stroke="#0b3d1f" stroke-width="2"/>
+    <!-- shoulder face at x=200 -->
+    <rect x="170" y="165" width="30" height="18" fill="#1e8449" stroke="#0b3d1f"/>
+    
+    <!-- ribs covering full B -->
+    <rect x="200" y="195" width="14" height="28" fill="#82e0aa" stroke="#1e8449"/>
+    <rect x="200" y="245" width="14" height="28" fill="#82e0aa" stroke="#1e8449"/>
+    <rect x="200" y="295" width="14" height="28" fill="#82e0aa" stroke="#1e8449"/>
+
+    <!-- BEARING outer race: exactly from x=200 to x=370 (Lg=B) -->
+    <rect x="214" y="183" width="156" height="172" fill="#7f8c8d" stroke="#2c3e50" stroke-width="2"/>
+    <!-- flush marks -->
+    <line x1="214" y1="165" x2="214" y2="183" stroke="#e74c3c" stroke-width="3"/>
+    <line x1="370" y1="165" x2="370" y2="183" stroke="#e74c3c" stroke-width="3"/>
+    <line x1="370" y1="145" x2="370" y2="360" stroke="#e74c3c" stroke-width="2" stroke-dasharray="4 2"/>
+    <text x="300" y="135" class="ok">外端面齐平</text>
+    
+    <circle cx="310" cy="270" r="28" fill="#f7dc6f" stroke="#9a7d0a" stroke-width="2"/>
+    <rect x="320" y="230" width="36" height="80" fill="#bdc3c7" stroke="#2c3e50" stroke-width="2"/>
+
+    <!-- shaft -->
+    <rect x="350" y="250" width="720" height="40" fill="#6b2c1a"/>
+
+    <!-- dark blue -->
+    <rect x="390" y="165" width="25" height="85" fill="#2874a6" stroke="#1a5276" stroke-width="1.5"/>
+    <text x="388" y="155" class="s" fill="#1a5276">深蓝</text>
+
+    <!-- yellow -->
+    <path d="M430,195 L480,195 L480,250 L455,250 L455,290 L430,290 Z" fill="#f4d03f" stroke="#9a7d0a" stroke-width="2"/>
+    <rect x="480" y="220" width="50" height="12" fill="#f4d03f" stroke="#9a7d0a"/>
+    <rect x="480" y="240" width="70" height="12" fill="#f4d03f" stroke="#9a7d0a"/>
+    <text x="430" y="185" class="s">黄封公</text>
+
+    <!-- purple + red -->
+    <path d="M500,110 L820,110 L820,140 L560,140 L560,195 L520,195 L520,130 L500,130 Z" fill="#8e44ad" stroke="#5b2c6f" stroke-width="2"/>
+    <rect x="560" y="140" width="35" height="35" fill="#8e44ad" stroke="#5b2c6f"/>
+    <rect x="620" y="140" width="35" height="45" fill="#8e44ad" stroke="#5b2c6f"/>
+    <rect x="480" y="232" width="50" height="8" fill="#f9e79f"/>
+    <rect x="595" y="185" width="25" height="45" fill="#f9e79f" fill-opacity="0.8"/>
+    <!-- red -->
+    <rect x="700" y="140" width="10" height="80" fill="#e74c3c"/>
+    <rect x="730" y="140" width="10" height="80" fill="#e74c3c"/>
+    <rect x="760" y="140" width="10" height="80" fill="#e74c3c"/>
+    <rect x="710" y="155" width="20" height="50" fill="#f9e79f" fill-opacity="0.85"/>
+    <rect x="740" y="155" width="20" height="50" fill="#f9e79f" fill-opacity="0.85"/>
+    <polygon points="790,140 830,140 810,290" fill="#e74c3c" stroke="#922b21" stroke-width="2"/>
+    <text x="700" y="320" class="s">红密封满脂</text>
+
+    <!-- end cover -->
+    <path d="M820,95 L960,95 L960,140 L880,140 L880,195 L960,195 L960,230 L820,230 L820,195 L850,195 L850,140 L820,140 Z"
+          fill="#5d6d7e" stroke="#2c3e50" stroke-width="2"/>
+    <text x="870" y="85" class="s">端盖</text>
+
+    <!-- DIMENSION LINE for B / Lg -->
+    <line x1="214" y1="400" x2="370" y2="400" stroke="#1a5276" stroke-width="2"/>
+    <line x1="214" y1="390" x2="214" y2="410" stroke="#1a5276" stroke-width="2"/>
+    <line x1="370" y1="390" x2="370" y2="410" stroke="#1a5276" stroke-width="2"/>
+    <text x="250" y="395" class="dim">Lg = B（轴承宽度）</text>
+
+    <!-- dim for shoulder -->
+    <line x1="170" y1="400" x2="214" y2="400" stroke="#a60" stroke-width="2"/>
+    <text x="155" y="415" class="w">ts</text>
+
+    <!-- stack dims below parts -->
+    <line x1="390" y1="400" x2="415" y2="400" stroke="#1a5276" stroke-width="1.5"/>
+    <text x="392" y="415" class="dim">Lb</text>
+    <line x1="430" y1="400" x2="550" y2="400" stroke="#1a5276" stroke-width="1.5"/>
+    <text x="470" y="415" class="dim">Ly 黄</text>
+    <line x1="560" y1="400" x2="700" y2="400" stroke="#1a5276" stroke-width="1.5"/>
+    <text x="600" y="415" class="dim">Lm 迷宫</text>
+    <line x1="700" y1="400" x2="830" y2="400" stroke="#1a5276" stroke-width="1.5"/>
+    <text x="740" y="415" class="dim">Lr 红</text>
+    <line x1="820" y1="400" x2="960" y2="400" stroke="#1a5276" stroke-width="1.5"/>
+    <text x="860" y="415" class="dim">Le 端盖</text>
+  </g>
+
+  <!-- ========== LENGTH TABLE ========== -->
+  <g transform="translate(40,540)">
+    <rect x="0" y="0" width="1420" height="500" fill="#eaf2f8" stroke="#5dade2" stroke-width="2"/>
+    <text x="20" y="36" class="h">Φ159 各段轴向长度（建议，单位 mm）</text>
+    <text x="20" y="62" class="s">托辊外径 Φ159；轴承座外径约 Φ153（压入管内）。轴承按现场二选一：6305（轴 Φ25）或 6306（轴 Φ30）。</text>
+
+    <!-- table header -->
+    <rect x="20" y="80" width="1380" height="36" fill="#d4e6f1"/>
+    <text x="30" y="104" class="h">段</text>
+    <text x="200" y="104" class="h">符号</text>
+    <text x="320" y="104" class="h">对齐要求</text>
+    <text x="620" y="104" class="h">配 6305</text>
+    <text x="820" y="104" class="h">配 6306</text>
+    <text x="1020" y="104" class="h">说明</text>
+
+    <!-- rows -->
+    <text x="30" y="145" class="t">轴承宽度</text>
+    <text x="200" y="145" class="dim">B</text>
+    <text x="320" y="145" class="t">基准</text>
+    <text x="620" y="145" class="ok">17</text>
+    <text x="820" y="145" class="ok">19</text>
+    <text x="1020" y="145" class="s">外圈宽度</text>
+
+    <text x="30" y="180" class="t">减震座有效长</text>
+    <text x="200" y="180" class="dim">Lg</text>
+    <text x="320" y="180" class="ok">= B，两端面齐平</text>
+    <text x="620" y="180" class="ok">17</text>
+    <text x="820" y="180" class="ok">19</text>
+    <text x="1020" y="180" class="s">筋区长度=轴承宽</text>
+
+    <text x="30" y="215" class="t">减震座内台阶厚</text>
+    <text x="200" y="215" class="dim">ts</text>
+    <text x="320" y="215" class="t">挡内端面</text>
+    <text x="620" y="215" class="t">2.5～3.5</text>
+    <text x="820" y="215" class="t">2.5～3.5</text>
+    <text x="1020" y="215" class="s">轴向定位，另加</text>
+
+    <text x="30" y="250" class="t">减震座总长</text>
+    <text x="200" y="250" class="dim">Lg+ts</text>
+    <text x="320" y="250" class="t">台阶在内侧</text>
+    <text x="620" y="250" class="ok">≈20～20.5</text>
+    <text x="820" y="250" class="ok">≈22～22.5</text>
+    <text x="1020" y="250" class="s">外端面仍与轴承齐</text>
+
+    <text x="30" y="285" class="t">深蓝热补偿</text>
+    <text x="200" y="285" class="dim">Lb</text>
+    <text x="320" y="285" class="t">贴轴承外侧</text>
+    <text x="620" y="285" class="t">2～4</text>
+    <text x="820" y="285" class="t">2～4</text>
+    <text x="1020" y="285" class="s">软质，吃热胀</text>
+
+    <text x="30" y="320" class="t">黄封公轴向</text>
+    <text x="200" y="320" class="dim">Ly</text>
+    <text x="320" y="320" class="t">装在轴上</text>
+    <text x="620" y="320" class="t">12～18</text>
+    <text x="820" y="320" class="t">12～18</text>
+    <text x="1020" y="320" class="s">含台阶迷宫段</text>
+
+    <text x="30" y="355" class="t">紫/迷宫重叠</text>
+    <text x="200" y="355" class="dim">Lm</text>
+    <text x="320" y="355" class="t">与黄交错区</text>
+    <text x="620" y="355" class="t">15～25</text>
+    <text x="820" y="355" class="t">15～25</text>
+    <text x="1020" y="355" class="s">腔满脂</text>
+
+    <text x="30" y="390" class="t">红色密封区</text>
+    <text x="200" y="390" class="dim">Lr</text>
+    <text x="320" y="390" class="t">多腔+外唇</text>
+    <text x="620" y="390" class="t">12～20</text>
+    <text x="820" y="390" class="t">12～20</text>
+    <text x="1020" y="390" class="s">腔间满脂</text>
+
+    <text x="30" y="425" class="t">端盖伸出</text>
+    <text x="200" y="425" class="dim">Le</text>
+    <text x="320" y="425" class="t">相对轴端/架</text>
+    <text x="620" y="425" class="t">按开档定</text>
+    <text x="820" y="425" class="t">按开档定</text>
+    <text x="1020" y="425" class="s">与支架留 δ</text>
+
+    <text x="30" y="460" class="t">轴承座孔深</text>
+    <text x="200" y="460" class="dim">Hh</text>
+    <text x="320" y="460" class="t">≥ 绿座总长</text>
+    <text x="620" y="460" class="t">≈49～52</text>
+    <text x="820" y="460" class="t">≈51～55</text>
+    <text x="1020" y="460" class="s">TK 座常见深度</text>
+
+    <text x="30" y="490" class="ok">关键：减震座与轴承外端面齐平；不要绿座短一截露外圈，也不要绿座超出外圈去蹭密封。</text>
+  </g>
+</svg>
