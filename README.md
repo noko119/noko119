@@ -34,6 +34,7 @@
 | [`docs/silent-idler/GLOBAL_SILENT_PHILOSOPHY.md`](./docs/silent-idler/GLOBAL_SILENT_PHILOSOPHY.md) | **国外静音理念与可推翻路径** |
 | [`docs/silent-idler/RIB_SEAT_DETAIL.md`](./docs/silent-idler/RIB_SEAT_DETAIL.md) | **减震筋/端面/座体细部** |
 | [`docs/silent-idler/TWO_PARTS_ASSEMBLE.md`](./docs/silent-idler/TWO_PARTS_ASSEMBLE.md) | **减震座+轴承怎么装** |
+| [`docs/silent-idler/INTEGRAL_SEAT_AXON.md`](./docs/silent-idler/INTEGRAL_SEAT_AXON.md) | **一体减震座轴测图** |
 | [`docs/silent-idler/RED_SEAL_SOUND.md`](./docs/silent-idler/RED_SEAL_SOUND.md) | **红色密封能否隔音（示意图+说明）** |
 | [`docs/silent-idler/RED_SEAL_IMPROVE.md`](./docs/silent-idler/RED_SEAL_IMPROVE.md) | **红色密封改进（示意图+说明）** |
 | [`docs/silent-idler/DARK_BLUE_THERMAL.md`](./docs/silent-idler/DARK_BLUE_THERMAL.md) | **深蓝软件与热变形（示意图+说明）** |
