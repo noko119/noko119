@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="860" viewBox="0 0 1400 860">
+  <defs>
+    <style type="text/css"><![CDATA[
+      .title { font: 700 28px "WenQuanYi Micro Hei", sans-serif; fill:#1a1a1a; }
+      .sub { font: 400 13px "WenQuanYi Micro Hei", sans-serif; fill:#555; }
+      .h { font: 700 16px "WenQuanYi Micro Hei", sans-serif; fill:#222; }
+      .t { font: 400 13px "WenQuanYi Micro Hei", sans-serif; fill:#222; }
+      .s { font: 400 12px "WenQuanYi Micro Hei", sans-serif; fill:#666; }
+      .ok { font: 700 13px "WenQuanYi Micro Hei", sans-serif; fill:#0a7; }
+      .bad { font: 700 12px "WenQuanYi Micro Hei", sans-serif; fill:#b00020; }
+      .box { fill:#faf8f2; stroke:#c8c0b0; }
+    ]]></style>
+  </defs>
+  <rect width="1400" height="860" fill="#f3efe6"/>
+  <text x="40" y="42" class="title">减震座更静音优化方案（整环一件）</text>
+  <text x="40" y="68" class="sub">对象：轴承外圈与轴承座之间的绿色减震座 · 目标：切断外圈→座硬传振，少啸叫</text>
+
+  <!-- LEFT before -->
+  <g transform="translate(40,95)">
+    <rect x="0" y="0" width="640" height="520" class="box"/>
+    <text x="20" y="34" class="h">现减震座（综合你零件）</text>
+    <line x1="30" y1="260" x2="610" y2="260" stroke="#ccc" stroke-dasharray="5 4"/>
+
+    <!-- shaft -->
+    <rect x="40" y="235" width="560" height="50" fill="#6b2c1a"/>
+    <!-- housing -->
+    <path d="M200,120 L420,120 L420,400 L200,400 L200,380 L400,380 L400,140 L200,140 Z"
+          fill="#5dade2" fill-opacity="0.25" stroke="#2e86ab"/>
+    <!-- plain/green thin sleeve with dense holes on flange -->
+    <rect x="250" y="160" width="55" height="200" fill="#82e0aa" stroke="#1e8449"/>
+    <circle cx="262" cy="150" r="4" fill="#faf8f2" stroke="#145a32"/>
+    <circle cx="275" cy="148" r="4" fill="#faf8f2" stroke="#145a32"/>
+    <circle cx="288" cy="148" r="4" fill="#faf8f2" stroke="#145a32"/>
+    <circle cx="301" cy="150" r="4" fill="#faf8f2" stroke="#145a32"/>
+    <!-- bearing complete -->
+    <rect x="262" y="180" width="40" height="140" fill="#85929e" stroke="#2c3e50"/>
+    <rect x="280" y="210" width="28" height="80" fill="#aeb6bf" stroke="#2c3e50"/>
+    <circle cx="285" cy="250" r="16" fill="#f7dc6f" stroke="#9a7d0a"/>
+
+    <text x="30" y="440" class="bad">• 内孔光面硬抱外圈 → 传振强</text>
+    <text x="30" y="465" class="bad">• 外圆光滑 → 易微转啸叫</text>
+    <text x="30" y="490" class="bad">• 端面小孔过密 → 承力弱、裂口风险</text>
+    <text x="30" y="515" class="bad">• 外圈仍可能蹭到硬座</text>
+  </g>
+
+  <!-- RIGHT after -->
+  <g transform="translate(720,95)">
+    <rect x="0" y="0" width="640" height="520" class="box"/>
+    <text x="20" y="34" class="h">更静音减震座</text>
+    <line x1="30" y1="260" x2="610" y2="260" stroke="#ccc" stroke-dasharray="5 4"/>
+
+    <rect x="40" y="235" width="560" height="50" fill="#6b2c1a"/>
+    <path d="M180,110 L450,110 L450,410 L180,410 L180,390 L430,390 L430,130 L180,130 Z"
+          fill="#5dade2" fill-opacity="0.2" stroke="#2e86ab"/>
+
+    <!-- optimized sleeve with flange -->
+    <path d="M230,140 L330,140 L330,158 L250,158 L250,362 L330,362 L330,380 L230,380 Z"
+          fill="#1e8449" stroke="#145a32" stroke-width="2"/>
+    <!-- sparse deep blind holes -->
+    <circle cx="255" cy="149" r="7" fill="#faf8f2" stroke="#145a32" stroke-width="1.5"/>
+    <circle cx="280" cy="149" r="7" fill="#faf8f2" stroke="#145a32" stroke-width="1.5"/>
+    <circle cx="305" cy="149" r="7" fill="#faf8f2" stroke="#145a32" stroke-width="1.5"/>
+    <text x="340" y="154" class="ok">少深盲孔</text>
+    <!-- anti-rot -->
+    <rect x="218" y="235" width="14" height="50" fill="#145a32"/>
+    <text x="340" y="255" class="ok">防转凸筋</text>
+    <!-- ribs -->
+    <rect x="252" y="175" width="9" height="30" fill="#82e0aa"/>
+    <rect x="252" y="220" width="9" height="30" fill="#82e0aa"/>
+    <rect x="252" y="265" width="9" height="30" fill="#82e0aa"/>
+    <rect x="252" y="310" width="9" height="30" fill="#82e0aa"/>
+    <text x="340" y="300" class="ok">内孔减震筋×8</text>
+
+    <!-- bearing fully inside green -->
+    <rect x="265" y="175" width="48" height="160" fill="#85929e" stroke="#2c3e50"/>
+    <rect x="285" y="210" width="32" height="90" fill="#aeb6bf" stroke="#2c3e50"/>
+    <circle cx="292" cy="255" r="18" fill="#f7dc6f" stroke="#9a7d0a"/>
+    <!-- air gap mark -->
+    <text x="340" y="200" class="ok">外圈悬空不碰座</text>
+    <text x="340" y="345" class="ok">内台阶挡外圈</text>
+    <text x="340" y="370" class="ok">PA66+GF</text>
+
+    <text x="30" y="440" class="ok">① 减震筋：接触从“面”变“线/筋”→ 高频被吸</text>
+    <text x="30" y="465" class="ok">② 防转：杜绝套—座相对滑→ 消啸叫</text>
+    <text x="30" y="490" class="ok">③ 盲孔：加长声路，不密穿削弱</text>
+    <text x="30" y="515" class="ok">④ 完整包外圈：硬传振路径切断</text>
+  </g>
+
+  <!-- bottom recipe -->
+  <rect x="40" y="640" width="1320" height="190" fill="#e8f6f3" stroke="#a8d5c5"/>
+  <text x="60" y="675" class="h">更静音改法（直接改你 SolidWorks 绿件）</text>
+  <text x="60" y="705" class="t">1. 内孔：光面删除 → 均布 6～8 条轴向减震筋（筋顶圆略小于轴承外径，过盈抱合）</text>
+  <text x="60" y="730" class="t">2. 外圆：加 3 条防转凸筋；座孔对应开槽；过盈压入轴承座</text>
+  <text x="60" y="755" class="t">3. 端面：过密小孔改为 8～12 个较深盲孔（消声腔）；保留内台阶挡轴承外圈</text>
+  <text x="60" y="780" class="t">4. 材料改为 PA66+GF；检查装配后外圈与座孔零接触。黄封公/红唇脂/深蓝热补偿不动。</text>
+  <text x="60" y="810" class="s">周向剖视图只用来看截面，零件仍是整环一件。</text>
+</svg>

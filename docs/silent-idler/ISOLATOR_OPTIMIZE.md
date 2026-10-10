@@ -4,6 +4,8 @@
 > **纠正：** 第三张不是「对开半环」，而是**整环的周向剖视（断开看截面）**。  
 > 原图：[`ref-isolator-v2-plain.jpg`](./figures/ref-isolator-v2-plain.jpg) · [`ref-isolator-v1-holes.jpg`](./figures/ref-isolator-v1-holes.jpg) · [`ref-isolator-v3-half.jpg`](./figures/ref-isolator-v3-half.jpg)（周向剖视）
 
+> **更静音专页（主推）：** [`DAMPER_SEAT_QUIETER.md`](./DAMPER_SEAT_QUIETER.md)
+
 ![隔振套减震优化](./figures/31-isolator-damping-optimize.jpg)
 
 ---

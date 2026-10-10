@@ -4,7 +4,7 @@
 > 对照你的 CAD 颜色 + 公开专利表述，重新说明。  
 > 只保留示意图与说明。  
 > **红色密封改进：** [`RED_SEAL_IMPROVE.md`](./RED_SEAL_IMPROVE.md)  
-> **外圈隔振套减震优化：** [`ISOLATOR_OPTIMIZE.md`](./ISOLATOR_OPTIMIZE.md)  
+> **减震座更静音：** [`DAMPER_SEAT_QUIETER.md`](./DAMPER_SEAT_QUIETER.md)  
 > **内圈与轴能否隔离：** [`INNER_RACE_SHAFT.md`](./INNER_RACE_SHAFT.md)
 
 ![完整轴承半剖（认件用）](./figures/29-complete-bearing-schematic.jpg)
