@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900">
+  <defs>
+    <style type="text/css"><![CDATA[
+      .title { font: 700 26px "WenQuanYi Micro Hei", sans-serif; fill:#1a1a1a; }
+      .sub { font: 400 13px "WenQuanYi Micro Hei", sans-serif; fill:#555; }
+      .h { font: 700 14px "WenQuanYi Micro Hei", sans-serif; fill:#222; }
+      .t { font: 400 12px "WenQuanYi Micro Hei", sans-serif; fill:#222; }
+      .s { font: 400 11px "WenQuanYi Micro Hei", sans-serif; fill:#666; }
+      .ok { font: 700 12px "WenQuanYi Micro Hei", sans-serif; fill:#0a7; }
+      .bad { font: 700 11px "WenQuanYi Micro Hei", sans-serif; fill:#b00020; }
+      .box { fill:#faf8f2; stroke:#c8c0b0; }
+    ]]></style>
+  </defs>
+  <rect width="1400" height="900" fill="#f3efe6"/>
+  <text x="40" y="38" class="title">轴承隔振套减震优化（对着你三版零件）</text>
+  <text x="40" y="60" class="sub">现有：光环 / 端面多孔环 / 半环挖槽 · 优化目标：更隔振、能承力、可防转、外圈不碰硬座</text>
+
+  <!-- ===== row 1: three current ===== -->
+  <text x="40" y="95" class="h">你现在的三版</text>
+
+  <!-- A plain -->
+  <g transform="translate(40,110)">
+    <rect x="0" y="0" width="420" height="220" class="box"/>
+    <text x="14" y="26" class="h">A 光环</text>
+    <!-- ring iso-ish -->
+    <ellipse cx="120" cy="120" rx="70" ry="28" fill="none" stroke="#1e8449" stroke-width="14"/>
+    <ellipse cx="120" cy="100" rx="70" ry="28" fill="#82e0aa" stroke="#1e8449" stroke-width="2"/>
+    <ellipse cx="120" cy="100" rx="48" ry="18" fill="#faf8f2" stroke="#1e8449" stroke-width="1"/>
+    <text x="210" y="80" class="bad">壁光面</text>
+    <text x="210" y="102" class="bad">无防转</text>
+    <text x="210" y="124" class="bad">无减震筋</text>
+    <text x="210" y="146" class="bad">阻尼全靠材料</text>
+    <text x="14" y="200" class="s">对应你孤立显示的光滑绿环</text>
+  </g>
+
+  <!-- B holed -->
+  <g transform="translate(490,110)">
+    <rect x="0" y="0" width="420" height="220" class="box"/>
+    <text x="14" y="26" class="h">B 端面多孔 + 内台阶</text>
+    <ellipse cx="120" cy="120" rx="70" ry="28" fill="none" stroke="#1e8449" stroke-width="14"/>
+    <ellipse cx="120" cy="100" rx="70" ry="28" fill="#27ae60" stroke="#145a32" stroke-width="2"/>
+    <ellipse cx="120" cy="100" rx="48" ry="18" fill="#faf8f2"/>
+    <!-- holes on face -->
+    <circle cx="90" cy="90" r="4" fill="#faf8f2" stroke="#145a32"/>
+    <circle cx="110" cy="85" r="4" fill="#faf8f2" stroke="#145a32"/>
+    <circle cx="130" cy="85" r="4" fill="#faf8f2" stroke="#145a32"/>
+    <circle cx="150" cy="90" r="4" fill="#faf8f2" stroke="#145a32"/>
+    <circle cx="85" cy="110" r="4" fill="#faf8f2" stroke="#145a32"/>
+    <circle cx="155" cy="110" r="4" fill="#faf8f2" stroke="#145a32"/>
+    <text x="210" y="80" class="ok">有消声孔思路对</text>
+    <text x="210" y="102" class="ok">内台阶可挡轴承</text>
+    <text x="210" y="124" class="bad">孔过密易裂/承力弱</text>
+    <text x="210" y="146" class="bad">内孔仍光面硬抱</text>
+    <text x="210" y="168" class="bad">外圆仍无防转</text>
+    <text x="14" y="200" class="s">对应端面一圈小孔的整环</text>
+  </g>
+
+  <!-- C half -->
+  <g transform="translate(940,110)">
+    <rect x="0" y="0" width="420" height="220" class="box"/>
+    <text x="14" y="26" class="h">C 半环 + 边孔</text>
+    <path d="M50,130 A70,70 0 0,1 190,130 L180,130 A60,60 0 0,0 60,130 Z" fill="#27ae60" stroke="#145a32" stroke-width="2"/>
+    <circle cx="80" cy="100" r="3" fill="#faf8f2" stroke="#145a32"/>
+    <circle cx="100" cy="88" r="3" fill="#faf8f2" stroke="#145a32"/>
+    <circle cx="120" cy="82" r="3" fill="#faf8f2" stroke="#145a32"/>
+    <circle cx="140" cy="88" r="3" fill="#faf8f2" stroke="#145a32"/>
+    <circle cx="160" cy="100" r="3" fill="#faf8f2" stroke="#145a32"/>
+    <text x="210" y="80" class="ok">对开便于装配</text>
+    <text x="210" y="102" class="bad">合缝处刚度突变</text>
+    <text x="210" y="124" class="bad">易产生合缝异响</text>
+    <text x="210" y="146" class="bad">外圈包覆不连续</text>
+    <text x="14" y="200" class="s">对应半环孤立件</text>
+  </g>
+
+  <!-- ===== recommended ===== -->
+  <text x="40" y="360" class="h">推荐优化件（在 B 基础上改，优先整环）</text>
+  <g transform="translate(40,375)">
+    <rect x="0" y="0" width="1320" height="400" class="box"/>
+
+    <!-- left: section -->
+    <text x="20" y="30" class="h">径向剖视（装轴承外圈）</text>
+    <!-- housing -->
+    <rect x="80" y="60" width="40" height="280" fill="#5dade2" fill-opacity="0.35" stroke="#2e86ab"/>
+    <text x="70" y="55" class="s">轴承座</text>
+    <!-- optimized green -->
+    <path d="M120,80 L200,80 L200,100 L145,100 L145,300 L200,300 L200,320 L120,320 L120,300 L135,300 L135,100 L120,100 Z"
+          fill="#1e8449" stroke="#145a32" stroke-width="2"/>
+    <!-- blind holes on flange -->
+    <circle cx="140" cy="90" r="6" fill="#faf8f2" stroke="#145a32"/>
+    <circle cx="165" cy="90" r="6" fill="#faf8f2" stroke="#145a32"/>
+    <circle cx="190" cy="90" r="6" fill="#faf8f2" stroke="#145a32"/>
+    <text x="210" y="95" class="ok">① 端面盲孔（少而深，非过密通孔）</text>
+    <!-- anti-rot -->
+    <rect x="110" y="170" width="12" height="40" fill="#145a32"/>
+    <text x="210" y="195" class="ok">② 外圆防转凸筋 → 座孔槽</text>
+    <!-- damping ribs -->
+    <rect x="145" y="120" width="8" height="28" fill="#82e0aa"/>
+    <rect x="145" y="165" width="8" height="28" fill="#82e0aa"/>
+    <rect x="145" y="210" width="8" height="28" fill="#82e0aa"/>
+    <rect x="145" y="255" width="8" height="28" fill="#82e0aa"/>
+    <text x="210" y="240" class="ok">③ 内孔减震筋抱外圈</text>
+    <!-- bearing outer race -->
+    <rect x="155" y="120" width="35" height="160" fill="#85929e" stroke="#2c3e50"/>
+    <circle cx="185" cy="200" r="14" fill="#f7dc6f" stroke="#9a7d0a"/>
+    <rect x="175" y="160" width="28" height="80" fill="#aeb6bf" stroke="#2c3e50"/>
+    <text x="210" y="285" class="ok">④ 内台阶挡外圈端面（你已有，保留）</text>
+    <text x="210" y="315" class="ok">⑤ 材料 PA66+GF；径向壁厚够（约 3～4）</text>
+    <text x="210" y="345" class="bad">外圈不得露出碰到座孔</text>
+
+    <!-- right: isometric style tips -->
+    <text x="720" y="30" class="h">相对你三版怎么取舍</text>
+    <text x="720" y="60" class="t">相对 A：加上 B 的孔+台阶，再加筋/防转</text>
+    <text x="720" y="85" class="t">相对 B：孔改「少、深、盲孔」；内孔改减震筋；</text>
+    <text x="720" y="108" class="t">　　　外圆加防转；不要密密麻麻通孔</text>
+    <text x="720" y="133" class="t">相对 C：装配若必须对开，合缝做榫扣+胶；</text>
+    <text x="720" y="156" class="t">　　　静音优先仍建议整环压装</text>
+
+    <rect x="720" y="180" width="560" height="180" fill="#e8f6f3" stroke="#a8d5c5"/>
+    <text x="740" y="210" class="h">减震逻辑（一句话）</text>
+    <text x="740" y="240" class="t">外圈振动 → 减震筋局部变形吸能</text>
+    <text x="740" y="265" class="t">→ 套体阻尼 + 盲孔加长声路</text>
+    <text x="740" y="290" class="t">→ 防转避免打滑啸叫</text>
+    <text x="740" y="315" class="t">→ 硬座几乎收不到高频振动</text>
+    <text x="740" y="345" class="s">黄封公 / 红唇脂 / 深蓝热补偿不动</text>
+  </g>
+</svg>

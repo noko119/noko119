@@ -44,4 +44,5 @@
 ```
 
 这是主静音件。内圈—轴隔离仍是次要选项，见 [`INNER_RACE_SHAFT.md`](./INNER_RACE_SHAFT.md)。  
-总认件图：[`COMPLETE_BEARING.md`](./COMPLETE_BEARING.md)。
+总认件图：[`COMPLETE_BEARING.md`](./COMPLETE_BEARING.md)。  
+**对着你三版零件的减震优化：** [`ISOLATOR_OPTIMIZE.md`](./ISOLATOR_OPTIMIZE.md)
