@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900">
+  <defs>
+    <style type="text/css"><![CDATA[
+      .title { font: 700 26px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .sub { font: 400 14px "WenQuanYi Micro Hei", sans-serif; fill:#444; }
+      .h { font: 700 17px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .t { font: 400 14px "WenQuanYi Micro Hei", sans-serif; fill:#222; }
+      .ok { font: 700 14px "WenQuanYi Micro Hei", sans-serif; fill:#0a7; }
+      .bad { font: 700 14px "WenQuanYi Micro Hei", sans-serif; fill:#c0392b; }
+      .s { font: 400 12px "WenQuanYi Micro Hei", sans-serif; fill:#555; }
+      .box { fill:#fffdf8; stroke:#bfb6a3; }
+    ]]></style>
+  </defs>
+  <rect width="1400" height="900" fill="#f2eee4"/>
+  <text x="40" y="40" class="title">红色四道圈 · 怎么改</text>
+  <text x="40" y="68" class="sub">现在：4 道软唇都贴轴　→　改成：最外 1 道轻贴 + 内侧非接触迷宫满脂</text>
+
+  <!-- LEFT: current -->
+  <g transform="translate(40,90)">
+    <rect x="0" y="0" width="640" height="520" class="box"/>
+    <text x="20" y="36" class="h">现在（四道红圈）</text>
+    <!-- shaft -->
+    <rect x="40" y="220" width="560" height="50" fill="#6b2c1a"/>
+    <text x="480" y="252" class="s" fill="#fff">轴</text>
+    <!-- yellow stator block -->
+    <rect x="80" y="100" width="40" height="120" fill="#f4d03f" stroke="#9a7d0a" stroke-width="1.5"/>
+    <text x="70" y="90" class="s">黄封公</text>
+    <!-- purple rotor -->
+    <path d="M140,80 L420,80 L420,120 L200,120 L200,200 L140,200 Z" fill="#8e44ad" stroke="#5b2c6f" stroke-width="1.5"/>
+    <text x="250" y="105" class="s" fill="#fff">紫封母</text>
+    <!-- 4 red V lips all contacting shaft -->
+    <g fill="#e74c3c" stroke="#922b21" stroke-width="1.5">
+      <polygon points="220,200 250,200 235,270"/>
+      <polygon points="270,200 300,200 285,270"/>
+      <polygon points="320,200 350,200 335,270"/>
+      <polygon points="370,200 400,200 385,270"/>
+    </g>
+    <!-- contact marks on shaft -->
+    <line x1="235" y1="270" x2="235" y2="220" stroke="#c0392b" stroke-width="3"/>
+    <line x1="285" y1="270" x2="285" y2="220" stroke="#c0392b" stroke-width="3"/>
+    <line x1="335" y1="270" x2="335" y2="220" stroke="#c0392b" stroke-width="3"/>
+    <line x1="385" y1="270" x2="385" y2="220" stroke="#c0392b" stroke-width="3"/>
+    <text x="220" y="310" class="bad">①②③④ 四道都贴轴</text>
+    <!-- grease dots -->
+    <circle cx="255" cy="195" r="4" fill="#f9e79f"/><circle cx="305" cy="195" r="4" fill="#f9e79f"/>
+    <circle cx="355" cy="195" r="4" fill="#f9e79f"/>
+    <text x="220" y="350" class="t">唇间有脂，但曲路靠多唇硬挤</text>
+    <text x="220" y="385" class="bad">短板：阻力叠高 · 易啸叫</text>
+    <text x="220" y="420" class="s">防尘/端部隔声思路对，接触太多</text>
+    <text x="220" y="460" class="s">绿消音套、深蓝热补偿：先不动</text>
+  </g>
+
+  <!-- RIGHT: improved -->
+  <g transform="translate(720,90)">
+    <rect x="0" y="0" width="640" height="520" class="box"/>
+    <text x="20" y="36" class="h">改进后</text>
+    <rect x="40" y="220" width="560" height="50" fill="#6b2c1a"/>
+    <text x="480" y="252" class="s" fill="#fff">轴</text>
+    <!-- yellow stator with teeth -->
+    <rect x="80" y="100" width="36" height="120" fill="#f4d03f" stroke="#9a7d0a" stroke-width="1.5"/>
+    <!-- yellow teeth up into cavity -->
+    <rect x="200" y="160" width="22" height="60" fill="#f4d03f" stroke="#9a7d0a"/>
+    <rect x="280" y="150" width="22" height="70" fill="#f4d03f" stroke="#9a7d0a"/>
+    <rect x="360" y="160" width="22" height="60" fill="#f4d03f" stroke="#9a7d0a"/>
+    <text x="70" y="90" class="s">黄封公加齿</text>
+    <!-- purple with teeth down -->
+    <path d="M140,80 L480,80 L480,120 L200,120 L200,150 L140,150 Z" fill="#8e44ad" stroke="#5b2c6f" stroke-width="1.5"/>
+    <rect x="240" y="120" width="22" height="55" fill="#8e44ad" stroke="#5b2c6f"/>
+    <rect x="320" y="120" width="22" height="65" fill="#8e44ad" stroke="#5b2c6f"/>
+    <rect x="400" y="120" width="22" height="55" fill="#8e44ad" stroke="#5b2c6f"/>
+    <text x="300" y="105" class="s" fill="#fff">紫封母交错齿</text>
+    <!-- grease fill -->
+    <rect x="200" y="150" width="260" height="70" fill="#f9e79f" fill-opacity="0.55"/>
+    <text x="280" y="195" class="ok">满脂</text>
+    <!-- only ONE outer red lip -->
+    <polygon points="450,150 490,150 470,270" fill="#e74c3c" stroke="#922b21" stroke-width="2"/>
+    <line x1="470" y1="270" x2="470" y2="220" stroke="#c0392b" stroke-width="3"/>
+    <text x="430" y="310" class="ok">只留最外 1 道轻贴</text>
+    <!-- gap annotations for labyrinth -->
+    <text x="200" y="350" class="ok">内侧 3 道红唇 → 取消</text>
+    <text x="200" y="380" class="ok">改成：黄紫交错迷宫（不碰轴）</text>
+    <text x="200" y="410" class="t">间隙约 0.3～0.6 mm，腔里灌满脂</text>
+    <text x="200" y="450" class="ok">防尘更好 · 端部隔声保留 · 少啸叫</text>
+    <text x="200" y="485" class="s">绿套 / 深蓝：不动</text>
+  </g>
+
+  <!-- bottom summary -->
+  <rect x="40" y="640" width="1320" height="220" fill="#eaf2f8" stroke="#5dade2" stroke-width="2"/>
+  <text x="60" y="680" class="h">四道红圈改法（对照表）</text>
+  <text x="60" y="720" class="t">第 1 道（最外）　→　保留，软质轻贴轴（防尘主唇）</text>
+  <text x="60" y="755" class="t">第 2、3、4 道　　→　取消接触唇；改成黄封公 ╳ 紫封母的非接触迷宫齿 + 满脂</text>
+  <text x="60" y="790" class="t">脂　　　　　　　→　迷宫/储油槽灌满（端部隔声靠脂腔曲路，不靠多唇死压）</text>
+  <text x="60" y="830" class="ok">一句话：4 贴 → 1 贴 + 迷宫满脂。</text>
+</svg>
