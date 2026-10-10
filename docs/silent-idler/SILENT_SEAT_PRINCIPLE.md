@@ -4,7 +4,8 @@
 > 对照你的 CAD 颜色 + 公开专利表述，重新说明。  
 > 只保留示意图与说明。  
 > **红色密封改进：** [`RED_SEAL_IMPROVE.md`](./RED_SEAL_IMPROVE.md)  
-> **绿色隔音套改进：** [`GREEN_MUFFLER_IMPROVE.md`](./GREEN_MUFFLER_IMPROVE.md)
+> **绿色隔音套改进：** [`GREEN_MUFFLER_IMPROVE.md`](./GREEN_MUFFLER_IMPROVE.md)  
+> **内圈与轴能否隔离：** [`INNER_RACE_SHAFT.md`](./INNER_RACE_SHAFT.md)
 
 ![静音轴承座原理纠正](./figures/24-silent-seat-principle-corrected.jpg)
 
