@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1100" viewBox="0 0 1500 1100">
+  <defs>
+    <style type="text/css"><![CDATA[
+      .title { font: 700 26px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .sub { font: 400 14px "WenQuanYi Micro Hei", sans-serif; fill:#444; }
+      .h { font: 700 16px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .t { font: 400 14px "WenQuanYi Micro Hei", sans-serif; fill:#222; }
+      .ok { font: 700 14px "WenQuanYi Micro Hei", sans-serif; fill:#0a7; }
+      .s { font: 400 12px "WenQuanYi Micro Hei", sans-serif; fill:#555; }
+      .b { font: 700 13px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .box { fill:#fffdf8; stroke:#bfb6a3; }
+      .leg { font: 400 13px "WenQuanYi Micro Hei", sans-serif; fill:#222; }
+    ]]></style>
+  </defs>
+  <rect width="1500" height="1100" fill="#f2eee4"/>
+  <text x="40" y="38" class="title">静音托辊端组 · 整体效果示意</text>
+  <text x="40" y="66" class="sub">轴承座 + 绿色减震座 + 密封（黄封公/紫封母）+ 红色密封满脂 + 端盖；深蓝热补偿保留。上半剖。</text>
+
+  <!-- ========== MAIN HALF SECTION ========== -->
+  <g transform="translate(40,85)">
+    <rect x="0" y="0" width="1100" height="620" class="box"/>
+
+    <!-- tube / steel housing outer -->
+    <!-- 青绿轴承座 / 管端 -->
+    <path d="M80,80 L520,80 L520,120 L200,120 L200,480 L520,480 L520,520 L80,520 L80,480 L160,480 L160,120 L80,120 Z"
+          fill="#1a5276" stroke="#0e2f44" stroke-width="2"/>
+    <text x="90" y="105" class="b" fill="#fff">轴承座</text>
+    <text x="90" y="500" class="s" fill="#d4e6f1">（管端/冲压座）</text>
+
+    <!-- GREEN damper seat inside steel seat -->
+    <path d="M200,140 L400,140 L400,165 L260,165 L260,420 L400,420 L400,445 L200,445 L200,420 L230,420 L230,165 L200,165 Z"
+          fill="#145a32" stroke="#0b3d1f" stroke-width="2"/>
+    <!-- light green ribs -->
+    <rect x="260" y="200" width="16" height="32" fill="#82e0aa" stroke="#1e8449"/>
+    <rect x="260" y="260" width="16" height="32" fill="#82e0aa" stroke="#1e8449"/>
+    <rect x="260" y="320" width="16" height="32" fill="#82e0aa" stroke="#1e8449"/>
+    <rect x="260" y="375" width="16" height="28" fill="#82e0aa" stroke="#1e8449"/>
+    <!-- shoulder -->
+    <rect x="230" y="165" width="50" height="14" fill="#1e8449" stroke="#0b3d1f"/>
+    <text x="210" y="155" class="ok">绿色减震座</text>
+    <text x="205" y="470" class="s">一体：筋+台阶</text>
+
+    <!-- BEARING complete -->
+    <!-- outer race -->
+    <rect x="276" y="179" width="55" height="255" fill="#7f8c8d" stroke="#2c3e50" stroke-width="2"/>
+    <!-- contact red marks on ribs -->
+    <rect x="274" y="200" width="4" height="32" fill="#e74c3c"/>
+    <rect x="274" y="260" width="4" height="32" fill="#e74c3c"/>
+    <rect x="274" y="320" width="4" height="32" fill="#e74c3c"/>
+    <rect x="276" y="177" width="55" height="4" fill="#e74c3c"/>
+    <!-- ball -->
+    <circle cx="340" cy="300" r="32" fill="#f7dc6f" stroke="#9a7d0a" stroke-width="2"/>
+    <!-- inner race -->
+    <rect x="350" y="230" width="42" height="140" fill="#bdc3c7" stroke="#2c3e50" stroke-width="2"/>
+    <text x="400" y="250" class="s">轴承</text>
+    <text x="400" y="270" class="s">外圈/球/内圈</text>
+
+    <!-- SHAFT continuous -->
+    <rect x="390" y="275" width="650" height="50" fill="#6b2c1a"/>
+    <text x="950" y="305" class="s" fill="#fff">实心轴（固定）</text>
+
+    <!-- DARK BLUE thermal soft - near bearing face / between green and seal zone -->
+    <rect x="400" y="165" width="22" height="110" fill="#1a5276" stroke="#0b3d1f" stroke-width="1"/>
+    <rect x="400" y="165" width="22" height="110" fill="#2874a6" stroke="#1a5276" stroke-width="1.5"/>
+    <text x="395" y="150" class="s" fill="#1a5276">深蓝</text>
+    <text x="390" y="140" class="s" fill="#1a5276">热补偿</text>
+
+    <!-- YELLOW stator on shaft - left of seal stack toward bearing -->
+    <path d="M430,200 L490,200 L490,275 L460,275 L460,325 L430,325 Z"
+          fill="#f4d03f" stroke="#9a7d0a" stroke-width="2"/>
+    <rect x="490" y="230" width="55" height="14" fill="#f4d03f" stroke="#9a7d0a"/>
+    <rect x="490" y="255" width="80" height="14" fill="#f4d03f" stroke="#9a7d0a"/>
+    <text x="435" y="190" class="b">黄封公</text>
+    <text x="435" y="345" class="s">（密封·不转）</text>
+
+    <!-- PURPLE rotor / end cover side -->
+    <path d="M500,100 L900,100 L900,140 L560,140 L560,200 L520,200 L520,120 L500,120 Z"
+          fill="#8e44ad" stroke="#5b2c6f" stroke-width="2"/>
+    <!-- purple teeth down -->
+    <rect x="560" y="140" width="40" height="40" fill="#8e44ad" stroke="#5b2c6f"/>
+    <rect x="630" y="140" width="40" height="50" fill="#8e44ad" stroke="#5b2c6f"/>
+    <rect x="700" y="140" width="40" height="40" fill="#8e44ad" stroke="#5b2c6f"/>
+    <text x="620" y="90" class="b" fill="#5b2c6f">紫封母 / 端盖侧</text>
+    <text x="620" y="125" class="s" fill="#fff">（密封·随辊转）</text>
+
+    <!-- grease in labyrinth -->
+    <rect x="490" y="244" width="55" height="10" fill="#f9e79f"/>
+    <rect x="545" y="230" width="20" height="45" fill="#f9e79f" fill-opacity="0.8"/>
+    <rect x="490" y="269" width="80" height="8" fill="#f9e79f"/>
+    <rect x="600" y="190" width="30" height="55" fill="#f9e79f" fill-opacity="0.75"/>
+    <rect x="670" y="190" width="30" height="55" fill="#f9e79f" fill-opacity="0.75"/>
+
+    <!-- RED seal stack - 4 chambers with grease, outer lip -->
+    <rect x="760" y="140" width="12" height="90" fill="#e74c3c" stroke="#922b21"/>
+    <rect x="800" y="140" width="12" height="90" fill="#e74c3c" stroke="#922b21"/>
+    <rect x="840" y="140" width="12" height="90" fill="#e74c3c" stroke="#922b21"/>
+    <rect x="772" y="155" width="28" height="60" fill="#f9e79f" fill-opacity="0.85"/>
+    <rect x="812" y="155" width="28" height="60" fill="#f9e79f" fill-opacity="0.85"/>
+    <rect x="852" y="155" width="28" height="60" fill="#f9e79f" fill-opacity="0.85"/>
+    <!-- outer lip -->
+    <polygon points="880,140 930,140 905,325" fill="#e74c3c" stroke="#922b21" stroke-width="2"/>
+    <line x1="905" y1="325" x2="905" y2="275" stroke="#922b21" stroke-width="3"/>
+    <text x="760" y="360" class="ok">红色密封（腔间满脂）</text>
+    <text x="760" y="380" class="s">内三道近间隙 · 最外轻贴</text>
+
+    <!-- END COVER / 端盖 - outer end -->
+    <path d="M900,80 L1040,80 L1040,140 L960,140 L960,200 L1040,200 L1040,240 L900,240 L900,200 L930,200 L930,140 L900,140 Z"
+          fill="#5d6d7e" stroke="#2c3e50" stroke-width="2"/>
+    <text x="950" y="70" class="b">端盖</text>
+    <text x="945" y="265" class="s">（短边/端头）</text>
+
+    <!-- tube wall hint right? left is inside roller -->
+    <text x="100" y="300" class="s" fill="#d4e6f1" transform="rotate(-90 100 300)">← 辊筒内侧</text>
+    <text x="1020" y="400" class="s">外侧 →</text>
+
+    <!-- bottom legend strip inside panel -->
+    <text x="80" y="560" class="h">从里到外读</text>
+    <text x="80" y="590" class="t">辊内 → 轴承座 → 绿减震座（抱轴承）→ 深蓝热补偿 → 黄封公 → 紫封母+红密封满脂 → 端盖</text>
+  </g>
+
+  <!-- RIGHT legend -->
+  <g transform="translate(1160,85)">
+    <rect x="0" y="0" width="300" height="620" fill="#eaf2f8" stroke="#5dade2" stroke-width="2"/>
+    <text x="16" y="36" class="h">零件对照</text>
+
+    <rect x="16" y="55" width="22" height="16" fill="#1a5276"/><text x="48" y="68" class="leg">轴承座（管端）</text>
+    <rect x="16" y="90" width="22" height="16" fill="#145a32"/><text x="48" y="103" class="leg">绿色减震座</text>
+    <rect x="16" y="125" width="22" height="16" fill="#82e0aa"/><text x="48" y="138" class="leg">减震筋（一体）</text>
+    <rect x="16" y="160" width="22" height="16" fill="#7f8c8d"/><text x="48" y="173" class="leg">轴承外圈</text>
+    <circle cx="27" cy="205" r="9" fill="#f7dc6f"/><text x="48" y="210" class="leg">滚动体</text>
+    <rect x="16" y="230" width="22" height="16" fill="#bdc3c7"/><text x="48" y="243" class="leg">轴承内圈</text>
+    <rect x="16" y="265" width="22" height="16" fill="#6b2c1a"/><text x="48" y="278" class="leg">实心轴</text>
+    <rect x="16" y="300" width="22" height="16" fill="#2874a6"/><text x="48" y="313" class="leg">深蓝热补偿</text>
+    <rect x="16" y="335" width="22" height="16" fill="#f4d03f"/><text x="48" y="348" class="leg">黄封公（密封）</text>
+    <rect x="16" y="370" width="22" height="16" fill="#8e44ad"/><text x="48" y="383" class="leg">紫封母（密封）</text>
+    <rect x="16" y="405" width="22" height="16" fill="#e74c3c"/><text x="48" y="418" class="leg">红色密封</text>
+    <rect x="16" y="440" width="22" height="16" fill="#f9e79f"/><text x="48" y="453" class="leg">润滑脂（隔音）</text>
+    <rect x="16" y="475" width="22" height="16" fill="#5d6d7e"/><text x="48" y="488" class="leg">端盖（短边）</text>
+
+    <text x="16" y="540" class="ok">蜜蜂 = 密封</text>
+    <text x="16" y="570" class="s">卷根/卷带座 =</text>
+    <text x="16" y="590" class="s">轴承座 / 减震座</text>
+  </g>
+
+  <!-- bottom roles -->
+  <rect x="40" y="730" width="1420" height="330" fill="#fdebd0" stroke="#e67e22" stroke-width="2"/>
+  <text x="60" y="770" class="h">整体各自干什么</text>
+  <text x="60" y="810" class="t">1. 轴承座：钢管端承力壳，绿座装进它里面。</text>
+  <text x="60" y="845" class="t">2. 绿色减震座：一体筋+台阶，抱轴承外圈 → 主隔振静音。</text>
+  <text x="60" y="880" class="t">3. 密封（黄封公不转 + 紫封母转）：台阶迷宫，腔满脂。</text>
+  <text x="60" y="915" class="t">4. 红色密封：最外轻贴 + 内侧近间隙腔；腔间满脂 → 防尘 + 端部隔音。</text>
+  <text x="60" y="950" class="t">5. 端盖（短边）：封住端部外形，和紫件一起转（或一体）。</text>
+  <text x="60" y="985" class="t">6. 深蓝：软质热变形补偿，不是主隔音件。</text>
+  <text x="60" y="1025" class="ok">装配顺序：黄封公上轴 → 绿座+轴承进轴承座 → 紫/端盖套入 → 红密封组件压入并逐腔补脂。</text>
+</svg>
