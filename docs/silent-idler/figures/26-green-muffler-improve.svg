@@ -60,8 +60,13 @@
     <!-- seals kept -->
     <rect x="80" y="140" width="160" height="40" fill="#6c3483"/>
     <rect x="80" y="290" width="160" height="40" fill="#6c3483"/>
+    <path d="M95,175 L220,175 L220,255 L200,255 L200,195 L115,195 L115,255 L95,255 Z" fill="#f1c40f" stroke="#b7950b" stroke-width="1.5"/>
     <path d="M100,180 L115,200 L100,205" fill="none" stroke="#c0392b" stroke-width="4"/>
-    <path d="M150,185 L200,185 L200,190 L170,190 L170,198 L200,198 L200,206 L170,206 L170,214 L200,214 L200,222 L150,222 Z" fill="#f4d03f" stroke="#b7950b"/>
+    <text x="125" y="188" class="t">黄件=保持架</text>
+    <circle cx="140" cy="220" r="3" fill="#f9e79f" stroke="#b7950b"/>
+    <circle cx="160" cy="225" r="3" fill="#f9e79f" stroke="#b7950b"/>
+    <circle cx="180" cy="220" r="3" fill="#f9e79f" stroke="#b7950b"/>
+    <text x="125" y="248" class="ok">点=润滑脂</text>
     <text x="100" y="130" class="ok">红密封保留</text>
     <!-- improved green muffler with flange and ribs -->
     <path d="M270,160 L400,160 L400,170 L390,170 L390,310 L400,310 L400,320 L270,320 L270,310 L280,310 L280,170 L270,170 Z"
