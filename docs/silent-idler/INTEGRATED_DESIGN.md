@@ -13,6 +13,8 @@
 | 乙：密封/支架修正方案 | [`figures/ref-seal-bracket-corrected.png`](./figures/ref-seal-bracket-corrected.png) |
 | **完善版工程图（剖视+端面）** | [`figures/07-end-drawing-gb.png`](./figures/07-end-drawing-gb.png) · [`figures/06-integrated-end.png`](./figures/06-integrated-end.png) |
 | 概念效果图（非制图） | [`figures/silent-idler-integrated-end.jpg`](./figures/silent-idler-integrated-end.jpg) |
+| 现 CAD 截图 | [`figures/ref-cad-current.jpg`](./figures/ref-cad-current.jpg) |
+| **CAD 优化改法** | [`CAD_OPTIMIZATION.md`](./CAD_OPTIMIZATION.md) · [`figures/08-cad-optimized.png`](./figures/08-cad-optimized.png) |
 
 出处分级见 [`REFERENCES.md`](./REFERENCES.md)。
 
