@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 900" width="1280" height="900">
+  <defs>
+    <pattern id="grease" width="5" height="5" patternUnits="userSpaceOnUse">
+      <circle cx="1.5" cy="1.5" r="1" fill="#e6c84a"/>
+    </pattern>
+    <style>
+      .T{font:700 20px "WenQuanYi Micro Hei","Noto Sans CJK SC",sans-serif;fill:#1a2332}
+      .b{font:600 14px "WenQuanYi Micro Hei","Noto Sans CJK SC",sans-serif;fill:#1a2332}
+      .t{font:400 12px "WenQuanYi Micro Hei","Noto Sans CJK SC",sans-serif;fill:#334}
+      .s{font:400 11px "WenQuanYi Micro Hei","Noto Sans CJK SC",sans-serif;fill:#556}
+      .ok{font:600 12px "WenQuanYi Micro Hei","Noto Sans CJK SC",sans-serif;fill:#1a6b35}
+      .w{font:600 12px "WenQuanYi Micro Hei","Noto Sans CJK SC",sans-serif;fill:#a33}
+      .n{font:700 13px "WenQuanYi Micro Hei","Noto Sans CJK SC",sans-serif;fill:#fff}
+    </style>
+  </defs>
+  <rect width="1280" height="900" fill="#f4f6f8"/>
+  <text x="32" y="36" class="T">迷宫密封：定子 / 转子单件示意 + 装配</text>
+  <text x="32" y="58" class="s">定子随轴固定不转；转子随端盖/轴承座转动；齿交错非接触，间隙满脂</text>
+
+  <!-- ========== PANEL 1: STATOR ========== -->
+  <g transform="translate(30,80)">
+    <rect width="400" height="420" fill="#fff" stroke="#d0d5da" rx="6"/>
+    <text x="16" y="28" class="b">一、迷宫定子（单件）</text>
+    <text x="16" y="50" class="s">材料：PA6 / POM　颜色示意：棕金</text>
+
+    <!-- isometric-ish stator: hub + outward fins -->
+    <!-- section view of stator alone -->
+    <text x="16" y="80" class="t">剖视（装在轴上）</text>
+    <!-- shaft ghost -->
+    <rect x="40" y="200" width="320" height="36" fill="#c5ced6" stroke="#6a737b" stroke-dasharray="4 3"/>
+    <text x="160" y="195" class="s">轴（固定）</text>
+
+    <!-- stator hub on shaft -->
+    <rect x="100" y="185" width="200" height="15" fill="#c4a35a" stroke="#8a6a20" stroke-width="1.3"/>
+    <rect x="100" y="236" width="200" height="15" fill="#c4a35a" stroke="#8a6a20" stroke-width="1.3"/>
+    <!-- outward fins upper -->
+    <rect x="120" y="140" width="14" height="45" fill="#d4b36a" stroke="#8a6a20"/>
+    <rect x="155" y="140" width="14" height="45" fill="#d4b36a" stroke="#8a6a20"/>
+    <rect x="190" y="140" width="14" height="45" fill="#d4b36a" stroke="#8a6a20"/>
+    <rect x="225" y="140" width="14" height="45" fill="#d4b36a" stroke="#8a6a20"/>
+    <rect x="260" y="140" width="14" height="45" fill="#d4b36a" stroke="#8a6a20"/>
+    <!-- outward fins lower -->
+    <rect x="120" y="251" width="14" height="45" fill="#d4b36a" stroke="#8a6a20"/>
+    <rect x="155" y="251" width="14" height="45" fill="#d4b36a" stroke="#8a6a20"/>
+    <rect x="190" y="251" width="14" height="45" fill="#d4b36a" stroke="#8a6a20"/>
+    <rect x="225" y="251" width="14" height="45" fill="#d4b36a" stroke="#8a6a20"/>
+    <rect x="260" y="251" width="14" height="45" fill="#d4b36a" stroke="#8a6a20"/>
+
+    <!-- end view circle -->
+    <text x="16" y="330" class="t">端面示意</text>
+    <circle cx="120" cy="370" r="40" fill="none" stroke="#8a6a20" stroke-width="2"/>
+    <circle cx="120" cy="370" r="18" fill="#c5ced6" stroke="#6a737b"/>
+    <!-- radial fins in end view -->
+<line x1="142.0" y1="370.0" x2="160.0" y2="370.0" stroke="#c4a35a" stroke-width="4"/>
+<line x1="135.6" y1="385.6" x2="148.3" y2="398.3" stroke="#c4a35a" stroke-width="4"/>
+<line x1="120.0" y1="392.0" x2="120.0" y2="410.0" stroke="#c4a35a" stroke-width="4"/>
+<line x1="104.4" y1="385.6" x2="91.7" y2="398.3" stroke="#c4a35a" stroke-width="4"/>
+<line x1="98.0" y1="370.0" x2="80.0" y2="370.0" stroke="#c4a35a" stroke-width="4"/>
+<line x1="104.4" y1="354.4" x2="91.7" y2="341.7" stroke="#c4a35a" stroke-width="4"/>
+<line x1="120.0" y1="348.0" x2="120.0" y2="330.0" stroke="#c4a35a" stroke-width="4"/>
+<line x1="135.6" y1="354.4" x2="148.3" y2="341.7" stroke="#c4a35a" stroke-width="4"/>
+
+    <text x="180" y="360" class="s">内孔 → 配轴</text>
+    <text x="180" y="380" class="s">外伸齿 → 与转子交错</text>
+
+    <text x="16" y="430" class="ok">要点：过盈/挡圈固定在轴上，装配后不转</text>
+  </g>
+
+  <!-- ========== PANEL 2: ROTOR ========== -->
+  <g transform="translate(450,80)">
+    <rect width="400" height="420" fill="#fff" stroke="#d0d5da" rx="6"/>
+    <text x="16" y="28" class="b">二、迷宫转子（单件）</text>
+    <text x="16" y="50" class="s">材料：PA6 / POM　颜色示意：青色</text>
+
+    <text x="16" y="80" class="t">剖视（装在端盖内）</text>
+    <!-- end cap ghost yellow -->
+    <path d="M50 120 L330 120 L330 320 L50 320 L50 280 L280 280 L280 160 L50 160 Z"
+          fill="#f5e6a8" stroke="#c4a020" stroke-width="1.2" stroke-dasharray="5 3" opacity="0.7"/>
+    <text x="290" y="145" class="s">端盖</text>
+
+    <!-- rotor body + inward fins -->
+    <rect x="70" y="170" width="200" height="18" fill="#2aa4c4" stroke="#156a80" stroke-width="1.3"/>
+    <rect x="70" y="248" width="200" height="18" fill="#2aa4c4" stroke="#156a80" stroke-width="1.3"/>
+    <!-- inward fins (toward shaft axis in middle) -->
+    <rect x="90" y="188" width="14" height="60" fill="#3db8d4" stroke="#156a80"/>
+    <rect x="125" y="188" width="14" height="60" fill="#3db8d4" stroke="#156a80"/>
+    <rect x="160" y="188" width="14" height="60" fill="#3db8d4" stroke="#156a80"/>
+    <rect x="195" y="188" width="14" height="60" fill="#3db8d4" stroke="#156a80"/>
+    <rect x="230" y="188" width="14" height="60" fill="#3db8d4" stroke="#156a80"/>
+    <!-- outer flange for press fit -->
+    <rect x="60" y="165" width="12" height="100" fill="#1e8aa8" stroke="#156a80"/>
+    <text x="40" y="160" class="s">外圆</text>
+    <text x="40" y="290" class="s">配端盖</text>
+
+    <text x="16" y="350" class="t">端面示意</text>
+    <circle cx="120" cy="380" r="42" fill="#e8f7fb" stroke="#156a80" stroke-width="2"/>
+    <circle cx="120" cy="380" r="20" fill="#fff" stroke="#156a80"/>
+<line x1="140.3" y1="388.4" x2="157.0" y2="395.3" stroke="#2aa4c4" stroke-width="4"/>
+<line x1="128.4" y1="400.3" x2="135.3" y2="417.0" stroke="#2aa4c4" stroke-width="4"/>
+<line x1="111.6" y1="400.3" x2="104.7" y2="417.0" stroke="#2aa4c4" stroke-width="4"/>
+<line x1="99.7" y1="388.4" x2="83.0" y2="395.3" stroke="#2aa4c4" stroke-width="4"/>
+<line x1="99.7" y1="371.6" x2="83.0" y2="364.7" stroke="#2aa4c4" stroke-width="4"/>
+<line x1="111.6" y1="359.7" x2="104.7" y2="343.0" stroke="#2aa4c4" stroke-width="4"/>
+<line x1="128.4" y1="359.7" x2="135.3" y2="343.0" stroke="#2aa4c4" stroke-width="4"/>
+<line x1="140.3" y1="371.6" x2="157.0" y2="364.7" stroke="#2aa4c4" stroke-width="4"/>
+
+    <text x="180" y="370" class="s">内伸齿 → 插入定子齿槽</text>
+    <text x="180" y="390" class="s">外圆/凸缘 → 压入端盖</text>
+    <text x="16" y="430" class="ok">要点：与端盖一起随辊转动</text>
+  </g>
+
+  <!-- ========== PANEL 3: ASSEMBLY ========== -->
+  <g transform="translate(870,80)">
+    <rect width="380" height="420" fill="#fff" stroke="#3d7a52" rx="6"/>
+    <text x="16" y="28" class="b">三、合装后（交错）</text>
+
+    <!-- shaft -->
+    <rect x="30" y="180" width="320" height="32" fill="#8a9299" stroke="#4a5560"/>
+    <!-- stator brown -->
+    <rect x="80" y="168" width="180" height="12" fill="#c4a35a" stroke="#8a6a20"/>
+    <rect x="80" y="212" width="180" height="12" fill="#c4a35a" stroke="#8a6a20"/>
+    <rect x="95" y="130" width="12" height="38" fill="#d4b36a" stroke="#8a6a20"/>
+    <rect x="130" y="130" width="12" height="38" fill="#d4b36a" stroke="#8a6a20"/>
+    <rect x="165" y="130" width="12" height="38" fill="#d4b36a" stroke="#8a6a20"/>
+    <rect x="200" y="130" width="12" height="38" fill="#d4b36a" stroke="#8a6a20"/>
+    <rect x="95" y="224" width="12" height="38" fill="#d4b36a" stroke="#8a6a20"/>
+    <rect x="130" y="224" width="12" height="38" fill="#d4b36a" stroke="#8a6a20"/>
+    <rect x="165" y="224" width="12" height="38" fill="#d4b36a" stroke="#8a6a20"/>
+    <rect x="200" y="224" width="12" height="38" fill="#d4b36a" stroke="#8a6a20"/>
+
+    <!-- rotor cyan interleaved -->
+    <rect x="110" y="145" width="12" height="28" fill="#2aa4c4" stroke="#156a80"/>
+    <rect x="145" y="145" width="12" height="28" fill="#2aa4c4" stroke="#156a80"/>
+    <rect x="180" y="145" width="12" height="28" fill="#2aa4c4" stroke="#156a80"/>
+    <rect x="215" y="145" width="12" height="28" fill="#2aa4c4" stroke="#156a80"/>
+    <rect x="110" y="219" width="12" height="28" fill="#2aa4c4" stroke="#156a80"/>
+    <rect x="145" y="219" width="12" height="28" fill="#2aa4c4" stroke="#156a80"/>
+    <rect x="180" y="219" width="12" height="28" fill="#2aa4c4" stroke="#156a80"/>
+    <rect x="215" y="219" width="12" height="28" fill="#2aa4c4" stroke="#156a80"/>
+    <rect x="70" y="148" width="20" height="96" fill="#1e8aa8" stroke="#156a80"/>
+
+    <!-- grease -->
+    <rect x="100" y="160" width="130" height="72" fill="url(#grease)" opacity="0.5"/>
+
+    <!-- gap callout -->
+    <line x1="107" y1="130" x2="110" y2="130" stroke="#c45c26" stroke-width="1.5"/>
+    <text x="250" y="140" class="w">间隙 0.3~0.6</text>
+    <text x="250" y="158" class="s">齿间满脂</text>
+    <text x="250" y="176" class="s">定转子不得相蹭</text>
+
+    <text x="30" y="290" class="ok">棕齿 = 定子（轴）</text>
+    <text x="30" y="310" class="ok">青齿 = 转子（端盖）</text>
+    <text x="30" y="330" class="t">交错插入，形成曲折通道</text>
+    <text x="30" y="360" class="w">禁止：定转子装反或压死接触</text>
+    <text x="30" y="390" class="s">（MT/T 821：内外密封件不得接触）</text>
+  </g>
+
+  <!-- ========== ASSEMBLY STEPS ========== -->
+  <g transform="translate(30,520)">
+    <rect width="1220" height="350" fill="#fff" stroke="#d0d5da" rx="6"/>
+    <text x="16" y="30" class="b">四、装配步骤（一端）</text>
+
+    <!-- step boxes -->
+
+    <rect x="20" y="50" width="220" height="200" rx="6" fill="#f7faf8" stroke="#3d7a52"/>
+    <circle cx="44" cy="78" r="14" fill="#1a6b35"/>
+    <text x="39" y="83" class="n">1</text>
+    <text x="68" y="84" class="b">轴上装定子</text>
+<text x="36" y="120" class="t">清洁轴颈 → 涂脂 →</text>
+<text x="36" y="142" class="t">定子内孔压/推入轴</text>
+<text x="36" y="164" class="t">挡圈或台肩轴向定位</text>
+<text x="242" y="140" class="b" fill="#c45c26">→</text>
+
+    <rect x="260" y="50" width="220" height="200" rx="6" fill="#f7faf8" stroke="#3d7a52"/>
+    <circle cx="284" cy="78" r="14" fill="#1a6b35"/>
+    <text x="279" y="83" class="n">2</text>
+    <text x="308" y="84" class="b">定子齿涂脂</text>
+<text x="276" y="120" class="t">定子各齿槽空隙</text>
+<text x="276" y="142" class="t">充满润滑脂</text>
+<text x="276" y="164" class="t">（脂障）</text>
+<text x="482" y="140" class="b" fill="#c45c26">→</text>
+
+    <rect x="500" y="50" width="220" height="200" rx="6" fill="#f7faf8" stroke="#3d7a52"/>
+    <circle cx="524" cy="78" r="14" fill="#1a6b35"/>
+    <text x="519" y="83" class="n">3</text>
+    <text x="548" y="84" class="b">端盖装转子</text>
+<text x="516" y="120" class="t">转子外圆压入端盖/</text>
+<text x="516" y="142" class="t">密封座孔</text>
+<text x="516" y="164" class="t">保证与端盖一同转</text>
+<text x="722" y="140" class="b" fill="#c45c26">→</text>
+
+    <rect x="740" y="50" width="220" height="200" rx="6" fill="#f7faf8" stroke="#3d7a52"/>
+    <circle cx="764" cy="78" r="14" fill="#1a6b35"/>
+    <text x="759" y="83" class="n">4</text>
+    <text x="788" y="84" class="b">合装交错</text>
+<text x="756" y="120" class="t">端盖组件轴向推入</text>
+<text x="756" y="142" class="t">转子齿插入定子齿槽</text>
+<text x="756" y="164" class="t">检查无刮蹭、间隙均匀</text>
+<text x="962" y="140" class="b" fill="#c45c26">→</text>
+
+    <rect x="980" y="50" width="220" height="200" rx="6" fill="#f7faf8" stroke="#3d7a52"/>
+    <circle cx="1004" cy="78" r="14" fill="#1a6b35"/>
+    <text x="999" y="83" class="n">5</text>
+    <text x="1028" y="84" class="b">外唇+挡圈</text>
+<text x="996" y="120" class="t">装单道轻接触外唇</text>
+<text x="996" y="142" class="t">装挡圈锁定</text>
+<text x="996" y="164" class="t">手转灵活无摩擦啸叫</text>
+
+    <text x="16" y="280" class="b">装配检查</text>
+    <text x="16" y="304" class="t">□ 定子在轴上无周向松动　□ 转子随端盖转动　□ 齿间无金属/塑料刮擦声　□ 轴向推入到位后仍可轻灵活转</text>
+    <text x="16" y="328" class="t">□ 脂已充满迷宫　□ 外唇仅轻微接触　□ 端盖与支架预留 δ　□ 两端对称装配</text>
+  </g>
+</svg>
