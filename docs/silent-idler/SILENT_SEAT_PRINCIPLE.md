@@ -4,7 +4,7 @@
 > 对照你的 CAD 颜色 + 公开专利表述，重新说明。  
 > 只保留示意图与说明。  
 > **红色密封改进：** [`RED_SEAL_IMPROVE.md`](./RED_SEAL_IMPROVE.md)  
-> **绿色隔音套改进：** [`GREEN_MUFFLER_IMPROVE.md`](./GREEN_MUFFLER_IMPROVE.md)  
+> **外圈—座隔振套改进：** [`OUTER_RACE_ISOLATOR.md`](./OUTER_RACE_ISOLATOR.md)  
 > **内圈与轴能否隔离：** [`INNER_RACE_SHAFT.md`](./INNER_RACE_SHAFT.md)
 
 ![完整轴承半剖（认件用）](./figures/29-complete-bearing-schematic.jpg)

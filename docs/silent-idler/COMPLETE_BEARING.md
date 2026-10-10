@@ -18,4 +18,5 @@
 
 可选：内圈与轴之间薄橙衬套（次要，见 [`INNER_RACE_SHAFT.md`](./INNER_RACE_SHAFT.md)）。
 
-颜色对照：[`COLOR_LEGEND.md`](./COLOR_LEGEND.md)
+颜色对照：[`COLOR_LEGEND.md`](./COLOR_LEGEND.md)  
+外圈隔振套改进：[`OUTER_RACE_ISOLATOR.md`](./OUTER_RACE_ISOLATOR.md)

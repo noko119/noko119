@@ -1,6 +1,7 @@
 # 轴承隔音套（绿色）改进
 
 > 依据你 CAD 里包在轴承外圈的绿色消音/隔振套。  
+> **外圈—座隔振套专页（轴承画全）：** [`OUTER_RACE_ISOLATOR.md`](./OUTER_RACE_ISOLATOR.md)  
 > 总原理：[`SILENT_SEAT_PRINCIPLE.md`](./SILENT_SEAT_PRINCIPLE.md)  
 > 只保留示意图与说明。
 
