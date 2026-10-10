@@ -17,6 +17,7 @@
 | **CAD 优化改法** | [`CAD_OPTIMIZATION.md`](./CAD_OPTIMIZATION.md) |
 | **彩色示意图（最终·推荐）** | [`figures/10-final-color-schematic-render.jpg`](./figures/10-final-color-schematic-render.jpg) · [`figures/10-final-color-schematic.png`](./figures/10-final-color-schematic.png) |
 | 用户偏好风格原图 | [`figures/ref-user-preferred-style.jpg`](./figures/ref-user-preferred-style.jpg) |
+| **唇封改型** | [`LIP_SEAL_REDESIGN.md`](./LIP_SEAL_REDESIGN.md) · [`figures/11-lip-seal-redesign-render.jpg`](./figures/11-lip-seal-redesign-render.jpg) |
 
 出处分级见 [`REFERENCES.md`](./REFERENCES.md)。
 
