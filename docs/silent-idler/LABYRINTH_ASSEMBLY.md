@@ -1,8 +1,10 @@
 # 迷宫定子 / 转子单件与装配
 
-> 示意图：[`figures/12-labyrinth-parts-assembly-render.jpg`](./figures/12-labyrinth-parts-assembly-render.jpg) · [`figures/12-labyrinth-parts-assembly.png`](./figures/12-labyrinth-parts-assembly.png)
+> **推荐先看（更清楚）：** [`figures/13-labyrinth-clear-render.jpg`](./figures/13-labyrinth-clear-render.jpg) · [`figures/13-labyrinth-clear.png`](./figures/13-labyrinth-clear.png)
+>
+> 详细版：[`figures/12-labyrinth-parts-assembly-render.jpg`](./figures/12-labyrinth-parts-assembly-render.jpg)
 
-![迷宫定转子单件与装配](./figures/12-labyrinth-parts-assembly-render.jpg)
+![迷宫说明（清楚版）](./figures/13-labyrinth-clear-render.jpg)
 
 ---
 
