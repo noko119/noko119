@@ -43,3 +43,5 @@
 装配：黄封公上轴 → 紫封母套入 → 红件轴向压槽 → 注脂孔灌满三腔。
 
 改进原则：[`RED_SEAL_IMPROVE.md`](./RED_SEAL_IMPROVE.md)
+
+「4个变一体」对照：[`RED_SEAL_ONE_PIECE.md`](./RED_SEAL_ONE_PIECE.md)
