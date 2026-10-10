@@ -21,6 +21,7 @@
 | [`docs/golden-cases/GC-01_blast_furnace_feeder.md`](./docs/golden-cases/GC-01_blast_furnace_feeder.md) | 黄金算例 |
 | [`docs/silent-idler/FINAL_SCHEME.md`](./docs/silent-idler/FINAL_SCHEME.md) | **静音托辊推荐方案（最终版）** |
 | [`docs/silent-idler/IMPROVE_COMPETITOR.md`](./docs/silent-idler/IMPROVE_COMPETITOR.md) | **竞品静音托辊更静音改进（示意图+说明）** |
+| [`docs/silent-idler/EXISTING_SEAT_IMPROVE.md`](./docs/silent-idler/EXISTING_SEAT_IMPROVE.md) | **现有阻尼座能否改进（示意图+说明）** |
 | [`docs/silent-idler/INTEGRATED_DESIGN.md`](./docs/silent-idler/INTEGRATED_DESIGN.md) | 静音托辊完善版过程稿 |
 | [`docs/silent-idler/CAD_OPTIMIZATION.md`](./docs/silent-idler/CAD_OPTIMIZATION.md) | 现 CAD 端部结构优化改法 |
 | [`docs/silent-idler/LIP_SEAL_REDESIGN.md`](./docs/silent-idler/LIP_SEAL_REDESIGN.md) | 唇型密封改型（单外唇+迷宫） |
