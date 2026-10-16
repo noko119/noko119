@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="820" viewBox="0 0 1400 820">
+  <defs>
+    <style type="text/css"><![CDATA[
+      .title { font: 700 26px "WenQuanYi Micro Hei", sans-serif; fill:#1a1a1a; }
+      .sub { font: 400 13px "WenQuanYi Micro Hei", sans-serif; fill:#555; }
+      .h { font: 700 15px "WenQuanYi Micro Hei", sans-serif; fill:#222; }
+      .t { font: 400 13px "WenQuanYi Micro Hei", sans-serif; fill:#222; }
+      .s { font: 400 12px "WenQuanYi Micro Hei", sans-serif; fill:#555; }
+      .ok { font: 700 12px "WenQuanYi Micro Hei", sans-serif; fill:#0a7; }
+      .bad { font: 700 12px "WenQuanYi Micro Hei", sans-serif; fill:#b00020; }
+      .box { fill:#faf8f2; stroke:#c8c0b0; }
+    ]]></style>
+  </defs>
+  <rect width="1400" height="820" fill="#f3efe6"/>
+  <text x="40" y="40" class="title">轴承外圈 — 轴承座 隔振套改进</text>
+  <text x="40" y="64" class="sub">只改绿隔振套；轴贯通；轴承画全（内圈/滚动体/外圈）；红密封与深蓝热补偿保留</text>
+
+  <!-- ========== LEFT: current ========== -->
+  <g transform="translate(30,85)">
+    <rect x="0" y="0" width="660" height="520" class="box"/>
+    <text x="20" y="32" class="h">现隔振套</text>
+    <line x1="20" y1="250" x2="640" y2="250" stroke="#bbb" stroke-dasharray="5 4"/>
+
+    <!-- shaft continuous -->
+    <rect x="30" y="225" width="600" height="50" fill="#6b2c1a"/>
+    <text x="40" y="255" class="t" fill="#fff">实心轴贯通</text>
+
+    <!-- simplified seal left -->
+    <rect x="60" y="170" width="90" height="30" fill="#7d3c98"/>
+    <rect x="60" y="320" width="90" height="30" fill="#7d3c98"/>
+    <rect x="70" y="200" width="70" height="120" fill="#f1c40f" stroke="#b7950b"/>
+    <text x="75" y="265" class="s">黄定子</text>
+
+    <!-- thin weak green sleeve -->
+    <rect x="200" y="175" width="50" height="150" fill="#82e0aa" stroke="#1e8449"/>
+    <!-- complete bearing -->
+    <rect x="215" y="185" width="45" height="130" fill="#85929e" stroke="#2c3e50" stroke-width="1.5"/>
+    <rect x="235" y="215" width="30" height="70" fill="#aeb6bf" stroke="#2c3e50" stroke-width="1.5"/>
+    <circle cx="240" cy="250" r="16" fill="#f7dc6f" stroke="#9a7d0a" stroke-width="1.5"/>
+    <!-- housing touching almost -->
+    <path d="M180,150 L360,150 L360,350 L180,350 L180,330 L340,330 L340,170 L180,170 Z"
+          fill="#5dade2" fill-opacity="0.3" stroke="#2e86ab"/>
+    <text x="280" y="175" class="t">青绿轴承座</text>
+    <!-- dark blue -->
+    <rect x="280" y="215" width="30" height="70" fill="#1a5276"/>
+    <text x="282" y="255" class="s" fill="#fff">热</text>
+
+    <!-- problem callouts -->
+    <text x="30" y="400" class="bad">问题：</text>
+    <text x="30" y="425" class="bad">1. 绿套壁薄，包覆不完整</text>
+    <text x="30" y="448" class="bad">2. 外圈仍可能局部碰硬座</text>
+    <text x="30" y="471" class="bad">3. 缺防转凸筋 / 内孔减震筋</text>
+    <text x="30" y="494" class="bad">4. 无消声腔，阻尼路径短</text>
+  </g>
+
+  <!-- ========== RIGHT: improved ========== -->
+  <g transform="translate(710,85)">
+    <rect x="0" y="0" width="660" height="520" class="box"/>
+    <text x="20" y="32" class="h">改进后隔振套</text>
+    <line x1="20" y1="250" x2="640" y2="250" stroke="#bbb" stroke-dasharray="5 4"/>
+
+    <rect x="30" y="225" width="600" height="50" fill="#6b2c1a"/>
+    <text x="40" y="255" class="t" fill="#fff">实心轴贯通</text>
+
+    <rect x="60" y="170" width="90" height="30" fill="#7d3c98"/>
+    <rect x="60" y="320" width="90" height="30" fill="#7d3c98"/>
+    <rect x="70" y="200" width="70" height="120" fill="#f1c40f" stroke="#b7950b"/>
+    <text x="75" y="265" class="s">黄定子保留</text>
+
+    <!-- improved green muffler with flange -->
+    <path d="M185,155 L280,155 L280,170 L205,170 L205,330 L280,330 L280,345 L185,345 Z"
+          fill="#1e8449" stroke="#145a32" stroke-width="2"/>
+    <!-- flange holes (muffler cavities) -->
+    <circle cx="200" cy="162" r="5" fill="#faf8f2" stroke="#145a32"/>
+    <circle cx="220" cy="162" r="5" fill="#faf8f2" stroke="#145a32"/>
+    <circle cx="240" cy="162" r="5" fill="#faf8f2" stroke="#145a32"/>
+    <text x="255" y="166" class="ok">盲孔消声</text>
+    <!-- damping ribs -->
+    <rect x="207" y="185" width="7" height="25" fill="#82e0aa"/>
+    <rect x="207" y="220" width="7" height="25" fill="#82e0aa"/>
+    <rect x="207" y="255" width="7" height="25" fill="#82e0aa"/>
+    <rect x="207" y="290" width="7" height="25" fill="#82e0aa"/>
+    <text x="100" y="210" class="ok">减震筋</text>
+    <!-- anti-rotation -->
+    <rect x="175" y="235" width="12" height="30" fill="#145a32"/>
+    <text x="100" y="255" class="ok">防转凸筋</text>
+
+    <!-- complete bearing INSIDE green only -->
+    <rect x="218" y="185" width="48" height="130" fill="#85929e" stroke="#2c3e50" stroke-width="1.5"/>
+    <rect x="240" y="215" width="32" height="70" fill="#aeb6bf" stroke="#2c3e50" stroke-width="1.5"/>
+    <circle cx="245" cy="250" r="16" fill="#f7dc6f" stroke="#9a7d0a" stroke-width="1.5"/>
+    <text x="300" y="220" class="t">外圈</text>
+    <text x="300" y="250" class="t">滚动体</text>
+    <text x="300" y="280" class="t">内圈</text>
+
+    <!-- clearance to housing -->
+    <path d="M165,135 L400,135 L400,365 L165,365 L165,350 L385,350 L385,150 L165,150 Z"
+          fill="#5dade2" fill-opacity="0.2" stroke="#2e86ab"/>
+    <text x="320" y="160" class="t">青绿轴承座</text>
+    <text x="320" y="185" class="ok">外圈不碰硬座</text>
+
+    <rect x="290" y="215" width="28" height="70" fill="#1a5276"/>
+    <text x="292" y="255" class="s" fill="#fff">热</text>
+
+    <text x="30" y="400" class="ok">改进：</text>
+    <text x="30" y="425" class="ok">1. PA66+GF，壁厚够，完整包外圈</text>
+    <text x="30" y="448" class="ok">2. 内孔减震筋抱外圈（少硬传）</text>
+    <text x="30" y="471" class="ok">3. 外圆过盈 + 防转凸筋进座孔</text>
+    <text x="30" y="494" class="ok">4. 翻边盲孔加长声路；外圈悬空不碰钢</text>
+  </g>
+
+  <!-- bottom -->
+  <rect x="30" y="630" width="1340" height="160" fill="#e8f6f3" stroke="#a8d5c5"/>
+  <text x="50" y="665" class="h">隔振套改什么（就这一件）</text>
+  <text x="50" y="695" class="t">位置：轴承外圈 ↔ 绿隔振套 ↔ 青绿轴承座。内圈仍配轴；黄封公、紫封母、红唇满脂、深蓝热补偿先不动。</text>
+  <text x="50" y="722" class="t">振动路径：滚动体噪声 → 外圈 → 绿套阻尼/消声 → 再传到轴承座/管（被削弱）。</text>
+  <text x="50" y="750" class="t">材料建议：PA66+GF。禁忌：外圈任何一点直接碰轴承座硬孔。</text>
+</svg>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="980" viewBox="0 0 1400 980">
+  <defs>
+    <style type="text/css"><![CDATA[
+      .title { font: 700 26px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .sub { font: 400 14px "WenQuanYi Micro Hei", sans-serif; fill:#444; }
+      .h { font: 700 16px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .t { font: 400 14px "WenQuanYi Micro Hei", sans-serif; fill:#222; }
+      .ok { font: 700 14px "WenQuanYi Micro Hei", sans-serif; fill:#0a7; }
+      .bad { font: 700 14px "WenQuanYi Micro Hei", sans-serif; fill:#c0392b; }
+      .s { font: 400 12px "WenQuanYi Micro Hei", sans-serif; fill:#555; }
+      .box { fill:#fffdf8; stroke:#bfb6a3; }
+    ]]></style>
+  </defs>
+  <rect width="1400" height="980" fill="#f2eee4"/>
+  <text x="40" y="38" class="title">减震筋 vs 原来光孔 · 利弊对照</text>
+  <text x="40" y="66" class="sub">原来：内孔光面整圈抱外圈　现在：8 条凸筋顶外圈、筋间留空</text>
+
+  <!-- LEFT original -->
+  <g transform="translate(40,90)">
+    <rect x="0" y="0" width="640" height="300" class="box"/>
+    <text x="20" y="32" class="h">原来 · 光孔</text>
+    <circle cx="160" cy="170" r="90" fill="#145a32" stroke="#0b3d1f" stroke-width="2"/>
+    <circle cx="160" cy="170" r="62" fill="#faf8f2"/>
+    <circle cx="160" cy="170" r="58" fill="none" stroke="#7f8c8d" stroke-width="12"/>
+    <circle cx="160" cy="170" r="40" fill="#faf8f2"/>
+    <text x="145" y="175" class="s">外圈</text>
+    <text x="280" y="130" class="t">整圈面接触</text>
+    <text x="280" y="160" class="t">外圈贴满内孔</text>
+    <text x="280" y="200" class="ok">利：定心稳、承力匀</text>
+    <text x="280" y="230" class="bad">弊：硬传振多、易啸叫</text>
+    <text x="280" y="260" class="bad">弊：高频难吸</text>
+  </g>
+
+  <!-- RIGHT ribs -->
+  <g transform="translate(720,90)">
+    <rect x="0" y="0" width="640" height="300" class="box"/>
+    <text x="20" y="32" class="h">现在 · 减震筋</text>
+    <circle cx="160" cy="170" r="90" fill="#145a32" stroke="#0b3d1f" stroke-width="2"/>
+    <circle cx="160" cy="170" r="62" fill="#faf8f2"/>
+    <!-- 8 ribs -->
+    <g fill="#82e0aa" stroke="#1e8449">
+      <rect x="150" y="108" width="20" height="22"/>
+      <rect x="150" y="210" width="20" height="22"/>
+      <rect x="98" y="160" width="22" height="20"/>
+      <rect x="200" y="160" width="22" height="20"/>
+      <rect x="115" y="125" width="18" height="18" transform="rotate(-40 124 134)"/>
+      <rect x="187" y="125" width="18" height="18" transform="rotate(40 196 134)"/>
+      <rect x="115" y="195" width="18" height="18" transform="rotate(40 124 204)"/>
+      <rect x="187" y="195" width="18" height="18" transform="rotate(-40 196 204)"/>
+    </g>
+    <circle cx="160" cy="170" r="48" fill="none" stroke="#7f8c8d" stroke-width="12"/>
+    <circle cx="160" cy="170" r="32" fill="#faf8f2"/>
+    <text x="280" y="130" class="t">8 点/线接触</text>
+    <text x="280" y="160" class="t">筋顶抱、筋间空</text>
+    <text x="280" y="200" class="ok">利：隔振好、少啸叫</text>
+    <text x="280" y="230" class="bad">弊：局部应力高</text>
+    <text x="280" y="260" class="bad">弊：尺寸/模具更严</text>
+  </g>
+
+  <!-- comparison table -->
+  <rect x="40" y="420" width="1320" height="520" fill="#eaf2f8" stroke="#5dade2" stroke-width="2"/>
+  <text x="60" y="460" class="h">利弊对照表</text>
+
+  <rect x="60" y="480" width="1280" height="32" fill="#d4e6f1"/>
+  <text x="80" y="502" class="h">项目</text>
+  <text x="320" y="502" class="h">原来光孔</text>
+  <text x="700" y="502" class="h">减震筋（8×12°）</text>
+
+  <text x="80" y="545" class="t">接触形式</text>
+  <text x="320" y="545" class="t">整圈面接触</text>
+  <text x="700" y="545" class="t">筋顶局部接触 + 空腔</text>
+
+  <text x="80" y="585" class="t">静音/隔振</text>
+  <text x="320" y="585" class="bad">较差：振易整圈传出</text>
+  <text x="700" y="585" class="ok">较好：接触少、空腔耗能</text>
+
+  <text x="80" y="625" class="t">定心/承力</text>
+  <text x="320" y="625" class="ok">较好：接触匀、刚</text>
+  <text x="700" y="625" class="w">中等：靠筋过盈，要控尺寸</text>
+
+  <text x="80" y="665" class="t">啸叫/摩擦热</text>
+  <text x="320" y="665" class="bad">面大，易蹭振啸叫</text>
+  <text x="700" y="665" class="ok">接触小，风险低</text>
+
+  <text x="80" y="705" class="t">装配</text>
+  <text x="320" y="705" class="ok">简单，压入顺</text>
+  <text x="700" y="705" class="w">过盈略敏感，要导向</text>
+
+  <text x="80" y="745" class="t">模具/成本</text>
+  <text x="320" y="745" class="ok">内孔光面，便宜</text>
+  <text x="700" y="745" class="bad">要抽筋槽，模具复杂一点</text>
+
+  <text x="80" y="785" class="t">蠕变/久用</text>
+  <text x="320" y="785" class="ok">面压低，松得慢</text>
+  <text x="700" y="785" class="bad">筋顶压高，要 PA66+GF</text>
+
+  <text x="80" y="825" class="t">防转/打滑</text>
+  <text x="320" y="825" class="w">靠整圈过盈</text>
+  <text x="700" y="825" class="ok">筋本身有周向咬合感</text>
+
+  <text x="80" y="875" class="ok">结论：要静音 → 筋更好；要最省事最硬扛 → 光孔更稳。Φ159 静音托辊优先筋，并用玻纤料+端面齐平控风险。</text>
+  <text x="80" y="910" class="s">外圆防转凸筋、内台阶轴向挡，两种内孔都建议保留。</text>
+</svg>

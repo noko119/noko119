@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1300" viewBox="0 0 1600 1300">
+  <defs>
+    <style type="text/css"><![CDATA[
+      .title { font: 700 28px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .sub { font: 400 14px "WenQuanYi Micro Hei", sans-serif; fill:#444; }
+      .h { font: 700 16px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .t { font: 400 13px "WenQuanYi Micro Hei", sans-serif; fill:#222; }
+      .ok { font: 700 13px "WenQuanYi Micro Hei", sans-serif; fill:#0a7; }
+      .w { font: 700 12px "WenQuanYi Micro Hei", sans-serif; fill:#a60; }
+      .s { font: 400 12px "WenQuanYi Micro Hei", sans-serif; fill:#555; }
+      .box { fill:#fffdf8; stroke:#bfb6a3; stroke-width:1.5; }
+      .lab { font: 700 12px "WenQuanYi Micro Hei", sans-serif; fill:#922b21; }
+    ]]></style>
+    <pattern id="hatch" patternUnits="userSpaceOnUse" width="6" height="6" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="6" stroke="#922b21" stroke-width="1.2"/>
+    </pattern>
+  </defs>
+  <rect width="1600" height="1300" fill="#f2eee4"/>
+  <text x="40" y="40" class="title">红色密封件 · 合理结构 · 多视图</text>
+  <text x="40" y="68" class="sub">一件软质环（NBR/TPE）· 压入紫封母 · 三腔满脂近间隙 + 一道外唇轻贴轴</text>
+
+  <!-- ================= A: PART HALF-SECTION (the seal alone) ================= -->
+  <g transform="translate(40,90)">
+    <rect x="0" y="0" width="760" height="380" class="box"/>
+    <text x="18" y="30" class="h">A. 红密封单件 · 轴向半剖（零件图）</text>
+
+    <!-- centerline -->
+    <line x1="40" y1="220" x2="720" y2="220" stroke="#888" stroke-width="1" stroke-dasharray="8 4 2 4"/>
+    <text x="680" y="215" class="s">轴线</text>
+
+    <!-- Draw UPPER half profile of red seal only, then mirror conceptually with hatch -->
+    <!-- Outer press-fit OD from x=80 to x=100 (shoulder), body OD lower, lip at right -->
+    <!-- Scale: axial left=inner (toward bearing), right=outer (toward end cover) -->
+
+    <!-- UPPER body outline (path) -->
+    <!-- Press shoulder: tall OD -->
+    <path d="
+      M 100,120
+      L 130,120
+      L 130,145
+      L 200,145
+      L 200,155
+      L 250,155
+      L 250,145
+      L 300,145
+      L 300,155
+      L 350,155
+      L 350,145
+      L 400,145
+      L 400,155
+      L 460,155
+      L 500,120
+      L 540,120
+      L 510,210
+      L 480,210
+      L 500,170
+      L 400,170
+      L 400,195
+      L 350,195
+      L 350,170
+      L 300,170
+      L 300,195
+      L 250,195
+      L 250,170
+      L 200,170
+      L 200,195
+      L 130,195
+      L 130,210
+      L 100,210
+      Z
+    " fill="#e74c3c" stroke="#922b21" stroke-width="2"/>
+    <!-- hatch overlay -->
+    <path d="
+      M 100,120 L 130,120 L 130,145 L 200,145 L 200,155 L 250,155 L 250,145 L 300,145 L 300,155 L 350,155 L 350,145 L 400,145 L 400,155 L 460,155 L 500,120 L 540,120 L 510,210 L 480,210 L 500,170 L 400,170 L 400,195 L 350,195 L 350,170 L 300,170 L 300,195 L 250,195 L 250,170 L 200,170 L 200,195 L 130,195 L 130,210 L 100,210 Z
+    " fill="url(#hatch)" fill-opacity="0.35"/>
+
+    <!-- LOWER mirror (simpler band for half-section look) -->
+    <path d="
+      M 100,230 L 130,230 L 130,245 L 400,245 L 460,245 L 500,280 L 540,280 L 510,230 L 480,230 L 500,270 L 400,270 L 400,245 L 130,245 L 130,230 L 100,230
+      L 100,290 L 130,290 L 130,305 L 480,305 L 510,290 L 540,320 L 500,320 L 460,285 L 130,285 L 130,320 L 100,320 Z
+    " fill="#e74c3c" stroke="#922b21" stroke-width="2"/>
+
+    <!-- labels -->
+    <text x="95" y="100" class="lab">①压入肩</text>
+    <text x="210" y="135" class="lab">②隔腔筋×3</text>
+    <text x="480" y="105" class="lab">③外唇</text>
+    <text x="210" y="185" class="ok" fill="#7d6608">脂腔</text>
+    <text x="290" y="185" class="ok" fill="#7d6608">脂腔</text>
+    <text x="370" y="185" class="ok" fill="#7d6608">脂腔</text>
+
+    <!-- dim δ -->
+    <line x1="200" y1="195" x2="200" y2="220" stroke="#27ae60" stroke-width="1.5"/>
+    <line x1="130" y1="210" x2="400" y2="210" stroke="#27ae60" stroke-width="1.5" stroke-dasharray="3 2"/>
+    <text x="250" y="235" class="ok">内孔近轴间隙 δ（不贴轴）</text>
+    <text x="470" y="230" class="w">仅外唇贴轴</text>
+
+    <!-- axial dim -->
+    <line x1="100" y1="340" x2="510" y2="340" stroke="#1a5276" stroke-width="1.5"/>
+    <line x1="100" y1="332" x2="100" y2="348" stroke="#1a5276"/>
+    <line x1="510" y1="332" x2="510" y2="348" stroke="#1a5276"/>
+    <text x="250" y="360" class="s" fill="#1a5276">轴向长度 Lr ≈ 12～20 mm（Φ159）</text>
+  </g>
+
+  <!-- ================= B: END VIEW ================= -->
+  <g transform="translate(820,90)">
+    <rect x="0" y="0" width="740" height="380" class="box"/>
+    <text x="18" y="30" class="h">B. 端面视图（从外侧看）</text>
+    <!-- purple OD -->
+    <circle cx="280" cy="210" r="145" fill="#8e44ad" fill-opacity="0.2" stroke="#5b2c6f" stroke-width="2"/>
+    <!-- red OD press fit -->
+    <circle cx="280" cy="210" r="120" fill="#e74c3c" stroke="#922b21" stroke-width="2"/>
+    <!-- red ID (gap bore) -->
+    <circle cx="280" cy="210" r="70" fill="#faf8f2" stroke="#922b21" stroke-width="2"/>
+    <!-- shaft -->
+    <circle cx="280" cy="210" r="55" fill="#6b2c1a"/>
+    <!-- lip ring hint - slightly smaller than ID for contact zone shown as thin ring -->
+    <circle cx="280" cy="210" r="58" fill="none" stroke="#c0392b" stroke-width="3"/>
+    <text x="265" y="215" class="s" fill="#fff">轴</text>
+    <text x="200" y="100" class="lab">红密封外圆</text>
+    <text x="200" y="95" class="s">（压入紫槽）</text>
+    <line x1="280" y1="210" x2="400" y2="120" stroke="#555" stroke-width="1"/>
+    <text x="405" y="115" class="t">外圆 D1 过盈进紫槽</text>
+    <line x1="280" y1="210" x2="400" y2="180" stroke="#555" stroke-width="1"/>
+    <text x="405" y="185" class="t">内孔 d0 = 轴径 + 2δ</text>
+    <line x1="280" y1="210" x2="400" y2="240" stroke="#555" stroke-width="1"/>
+    <text x="405" y="245" class="ok">唇口内径 ≈ 轴径（轻过盈）</text>
+    <text x="405" y="275" class="s">δ ≈ 0.2～0.5 mm</text>
+    <text x="18" y="355" class="t">整圈一件，周向无开口；脂腔在剖视里才看得见。</text>
+  </g>
+
+  <!-- ================= C: ISO CUTAWAY ================= -->
+  <g transform="translate(40,490)">
+    <rect x="0" y="0" width="760" height="400" class="box"/>
+    <text x="18" y="30" class="h">C. 轴测剖切（看清三腔）</text>
+
+    <!-- isometric-ish cup drawn with ellipses -->
+    <!-- back ellipse -->
+    <ellipse cx="380" cy="160" rx="220" ry="55" fill="#c0392b" stroke="#922b21" stroke-width="2"/>
+    <!-- body sides -->
+    <path d="M160,160 L160,300 L600,300 L600,160" fill="#e74c3c" stroke="#922b21" stroke-width="2"/>
+    <ellipse cx="380" cy="300" rx="220" ry="55" fill="#e74c3c" stroke="#922b21" stroke-width="2"/>
+    <!-- cut plane - show chambers as yellow pockets -->
+    <path d="M380,160 L380,300 L600,300 L600,160" fill="#f5b7b1" stroke="#922b21" stroke-width="1"/>
+    <!-- three chamber rectangles on cut face -->
+    <rect x="420" y="185" width="50" height="70" fill="#f9e79f" stroke="#b7950b" stroke-width="1.5"/>
+    <rect x="485" y="185" width="50" height="70" fill="#f9e79f" stroke="#b7950b" stroke-width="1.5"/>
+    <rect x="550" y="185" width="40" height="70" fill="#f9e79f" stroke="#b7950b" stroke-width="1.5"/>
+    <!-- partition walls -->
+    <rect x="410" y="175" width="10" height="90" fill="#922b21"/>
+    <rect x="475" y="175" width="10" height="90" fill="#922b21"/>
+    <rect x="540" y="175" width="10" height="90" fill="#922b21"/>
+    <!-- lip at right front -->
+    <path d="M600,200 L660,160 L660,240 L600,260 Z" fill="#c0392b" stroke="#922b21" stroke-width="2"/>
+    <!-- bore -->
+    <ellipse cx="380" cy="230" rx="70" ry="22" fill="#faf8f2" stroke="#922b21" stroke-width="1.5"/>
+
+    <text x="430" y="225" class="s">腔1</text>
+    <text x="495" y="225" class="s">腔2</text>
+    <text x="555" y="225" class="s">腔3</text>
+    <text x="640" y="150" class="lab">外唇</text>
+    <text x="18" y="350" class="t">剖开后：三格储脂腔一字排开；底部内孔不贴轴。</text>
+    <text x="18" y="375" class="ok">浅黄 = 润滑脂（防尘 + 端部隔音）</text>
+  </g>
+
+  <!-- ================= D: ASSEMBLY SECTION ================= -->
+  <g transform="translate(820,490)">
+    <rect x="0" y="0" width="740" height="400" class="box"/>
+    <text x="18" y="30" class="h">D. 装配半剖（装在紫封母里）</text>
+
+    <rect x="40" y="200" width="660" height="40" fill="#6b2c1a"/>
+    <text x="620" y="225" class="s" fill="#fff">轴</text>
+
+    <!-- yellow -->
+    <rect x="60" y="150" width="40" height="90" fill="#f4d03f" stroke="#9a7d0a" stroke-width="1.5"/>
+    <text x="55" y="140" class="s">黄封公</text>
+
+    <!-- purple pocket -->
+    <path d="M120,90 L580,90 L580,120 L160,120 L160,150 L580,150 L580,260 L160,260 L160,290 L580,290 L580,320 L120,320 L120,290 L140,290 L140,260 L120,260 L120,150 L140,150 L140,120 L120,120 Z"
+          fill="#8e44ad" fill-opacity="0.3" stroke="#5b2c6f" stroke-width="2"/>
+    <text x="400" y="80" class="s">紫封母</text>
+
+    <!-- red assembled -->
+    <rect x="160" y="120" width="22" height="140" fill="#e74c3c" stroke="#922b21"/>
+    <rect x="210" y="135" width="8" height="60" fill="#e74c3c" stroke="#922b21"/>
+    <rect x="270" y="135" width="8" height="60" fill="#e74c3c" stroke="#922b21"/>
+    <rect x="330" y="135" width="8" height="60" fill="#e74c3c" stroke="#922b21"/>
+    <rect x="218" y="145" width="52" height="40" fill="#f9e79f"/>
+    <rect x="278" y="145" width="52" height="40" fill="#f9e79f"/>
+    <rect x="338" y="145" width="40" height="40" fill="#f9e79f"/>
+    <line x1="210" y1="195" x2="340" y2="195" stroke="#27ae60" stroke-width="2" stroke-dasharray="3 2"/>
+    <polygon points="400,120 450,120 425,240" fill="#c0392b" stroke="#922b21" stroke-width="2"/>
+    <line x1="425" y1="240" x2="425" y2="200" stroke="#922b21" stroke-width="3"/>
+
+    <text x="200" y="280" class="ok">三腔满脂 · 近间隙</text>
+    <text x="380" y="280" class="w">外唇轻贴</text>
+    <text x="18" y="355" class="t">装法：红件从外侧轴向压入紫槽 → 注脂孔灌满三腔</text>
+    <text x="18" y="380" class="t">与黄封公之间另有一级迷宫（本图左侧简化）</text>
+  </g>
+
+  <!-- ================= E: SPECS ================= -->
+  <rect x="40" y="910" width="1520" height="350" fill="#eaf2f8" stroke="#5dade2" stroke-width="2"/>
+  <text x="60" y="950" class="h">E. 结构说明（应该是什么样子）</text>
+
+  <text x="60" y="990" class="t">外形：环形一体件，像“带内隔板的杯形密封圈”，不是四道独立 O 形圈。</text>
+  <text x="60" y="1025" class="t">① 压入肩（外圆）——过盈压进紫封母槽，跟紫件一起转，防窜。</text>
+  <text x="60" y="1060" class="t">② 三道隔腔筋 —— 围出腔1/2/3；筋内径比轴大 2δ，不压轴；腔里灌满润滑脂。</text>
+  <text x="60" y="1095" class="t">③ 最外软唇 —— V/斜唇朝外防尘，唇口单独轻贴轴（唯一接触道）。</text>
+  <text x="60" y="1130" class="ok">材料：NBR 或 TPE，邵氏 A 55～70。Φ159：Lr≈12～20 mm，δ≈0.2～0.5 mm。</text>
+  <text x="60" y="1165" class="t">作用：防尘 + 脂腔端部隔音。少的是“四道死压轴”，不是少脂。</text>
+  <text x="60" y="1200" class="t">四视图用法：A 看零件剖面 · B 看环形外形 · C 看三腔立体 · D 看装进紫件后的关系。</text>
+  <text x="60" y="1235" class="s">装配顺序：黄封公上轴 → 紫封母套入 → 红密封压槽 → 三腔注满脂。</text>
+</svg>

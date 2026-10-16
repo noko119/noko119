@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="720" viewBox="0 0 1400 720">
+  <defs>
+    <style type="text/css"><![CDATA[
+      .title { font: 700 26px "WenQuanYi Micro Hei", sans-serif; fill:#1a1a1a; }
+      .h { font: 700 16px "WenQuanYi Micro Hei", sans-serif; fill:#222; }
+      .t { font: 400 13px "WenQuanYi Micro Hei", sans-serif; fill:#222; }
+      .dim { font: 700 12px "WenQuanYi Micro Hei", sans-serif; fill:#b00020; }
+      .ok { font: 700 12px "WenQuanYi Micro Hei", sans-serif; fill:#0a7; }
+      .box { fill:#f7f4ec; stroke:#bbb; }
+    ]]></style>
+  </defs>
+  <rect width="1400" height="720" fill="#f3efe6"/>
+  <text x="40" y="40" class="title">轴承隔音套改进（轴贯通·不断开）</text>
+  <text x="40" y="64" class="t">左右均为同一根实心轴连续穿过密封、轴承与端座；示意图禁止画成断开</text>
+
+  <!-- LEFT panel -->
+  <g transform="translate(30,90)">
+    <rect x="0" y="0" width="660" height="480" class="box"/>
+    <text x="20" y="32" class="h">现绿色隔音套</text>
+    <!-- continuous shaft -->
+    <rect x="20" y="210" width="620" height="50" fill="#6b2c1a"/>
+    <text x="30" y="240" class="t" fill="#fff">实心轴贯通</text>
+    <!-- purple/yellow seal area -->
+    <rect x="80" y="140" width="160" height="40" fill="#6c3483"/>
+    <rect x="80" y="290" width="160" height="40" fill="#6c3483"/>
+    <!-- red lips -->
+    <path d="M100,180 L115,200 L100,205" fill="none" stroke="#c0392b" stroke-width="4"/>
+    <path d="M130,180 L145,200 L130,205" fill="none" stroke="#c0392b" stroke-width="4"/>
+    <path d="M160,180 L175,200 L160,205" fill="none" stroke="#c0392b" stroke-width="4"/>
+    <path d="M190,180 L205,200 L190,205" fill="none" stroke="#c0392b" stroke-width="4"/>
+    <path d="M100,290 L115,270 L100,265" fill="none" stroke="#c0392b" stroke-width="4"/>
+    <path d="M130,290 L145,270 L130,265" fill="none" stroke="#c0392b" stroke-width="4"/>
+    <path d="M160,290 L175,270 L160,265" fill="none" stroke="#c0392b" stroke-width="4"/>
+    <path d="M190,290 L205,270 L190,265" fill="none" stroke="#c0392b" stroke-width="4"/>
+    <text x="100" y="130" class="dim">红密封+脂</text>
+    <!-- thin green sleeve -->
+    <rect x="280" y="175" width="70" height="120" fill="#58d68d" stroke="#1e8449" stroke-width="1"/>
+    <!-- bearing -->
+    <rect x="295" y="190" width="40" height="90" fill="#5dade2" stroke="#2874a6"/>
+    <circle cx="315" cy="235" r="12" fill="#f7dc6f" stroke="#b7950b"/>
+    <!-- teal housing -->
+    <path d="M260,150 L420,150 L420,330 L260,330 L260,300 L350,300 L350,180 L260,180 Z" fill="#5dade2" fill-opacity="0.35" stroke="#2e86ab"/>
+    <!-- dark blue thermal -->
+    <rect x="360" y="190" width="40" height="90" fill="#1a5276"/>
+    <text x="365" y="240" class="t" fill="#fff">热</text>
+    <text x="280" y="370" class="dim">壁薄·包覆弱</text>
+    <text x="280" y="390" class="dim">缺防转/减震筋</text>
+    <text x="280" y="410" class="dim">外圈易碰硬座</text>
+    <text x="20" y="450" class="ok">轴：连续一根（不断）</text>
+  </g>
+
+  <!-- RIGHT panel -->
+  <g transform="translate(710,90)">
+    <rect x="0" y="0" width="660" height="480" class="box"/>
+    <text x="20" y="32" class="h">改进后绿色隔音套</text>
+    <!-- continuous shaft SAME -->
+    <rect x="20" y="210" width="620" height="50" fill="#6b2c1a"/>
+    <text x="30" y="240" class="t" fill="#fff">实心轴贯通（不断开）</text>
+    <!-- seals kept -->
+    <rect x="80" y="140" width="160" height="40" fill="#6c3483"/>
+    <rect x="80" y="290" width="160" height="40" fill="#6c3483"/>
+    <path d="M95,175 L220,175 L220,255 L200,255 L200,195 L115,195 L115,255 L95,255 Z" fill="#f1c40f" stroke="#b7950b" stroke-width="1.5"/>
+    <path d="M100,180 L115,200 L100,205" fill="none" stroke="#c0392b" stroke-width="4"/>
+    <text x="125" y="188" class="t">黄件=保持架</text>
+    <circle cx="140" cy="220" r="3" fill="#f9e79f" stroke="#b7950b"/>
+    <circle cx="160" cy="225" r="3" fill="#f9e79f" stroke="#b7950b"/>
+    <circle cx="180" cy="220" r="3" fill="#f9e79f" stroke="#b7950b"/>
+    <text x="125" y="248" class="ok">点=润滑脂</text>
+    <text x="100" y="130" class="ok">红密封保留</text>
+    <!-- improved green muffler with flange and ribs -->
+    <path d="M270,160 L400,160 L400,170 L390,170 L390,310 L400,310 L400,320 L270,320 L270,310 L280,310 L280,170 L270,170 Z"
+          fill="#27ae60" stroke="#145a32" stroke-width="2"/>
+    <!-- damping ribs inside -->
+    <rect x="282" y="195" width="6" height="80" fill="#196f3d"/>
+    <rect x="292" y="195" width="6" height="80" fill="#196f3d"/>
+    <rect x="302" y="195" width="6" height="80" fill="#196f3d"/>
+    <!-- bearing in green only -->
+    <rect x="310" y="190" width="45" height="90" fill="#5dade2" stroke="#2874a6"/>
+    <circle cx="332" cy="235" r="12" fill="#f7dc6f" stroke="#b7950b"/>
+    <!-- anti-rotation lug -->
+    <rect x="395" y="220" width="14" height="30" fill="#1e8449"/>
+    <!-- blind holes on flange -->
+    <circle cx="285" cy="155" r="5" fill="#f3efe6" stroke="#145a32"/>
+    <circle cx="305" cy="155" r="5" fill="#f3efe6" stroke="#145a32"/>
+    <circle cx="325" cy="155" r="5" fill="#f3efe6" stroke="#145a32"/>
+    <!-- teal housing away from outer race -->
+    <path d="M250,140 L450,140 L450,340 L250,340 L250,320 L410,320 L410,160 L250,160 Z" fill="#5dade2" fill-opacity="0.25" stroke="#2e86ab"/>
+    <!-- dark blue -->
+    <rect x="370" y="195" width="25" height="80" fill="#1a5276"/>
+    <text x="372" y="240" class="t" fill="#fff">热</text>
+    <text x="270" y="370" class="ok">完整包外圈·不碰硬座</text>
+    <text x="270" y="390" class="ok">防转凸筋 + 内孔减震筋</text>
+    <text x="270" y="410" class="ok">盲孔消声 · PA66+GF</text>
+    <text x="20" y="450" class="ok">轴：连续一根（不断）· 深蓝热补偿保留</text>
+  </g>
+
+  <rect x="30" y="590" width="1340" height="100" fill="#e8f6f3" stroke="#a8d5c5"/>
+  <text x="50" y="625" class="h">要点</text>
+  <text x="50" y="650" class="t">1. 轴始终实心贯通，左右示意图都不允许断开　2. 绿套完整包轴承外圈　3. 防转+减震筋+盲孔消声　4. 红密封满脂、深蓝热补偿保留</text>
+</svg>

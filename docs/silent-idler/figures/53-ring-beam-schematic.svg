@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="920" viewBox="0 0 1400 920">
+  <defs>
+    <style type="text/css"><![CDATA[
+      .title { font: 700 26px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .sub { font: 400 14px "WenQuanYi Micro Hei", sans-serif; fill:#444; }
+      .h { font: 700 16px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .t { font: 400 14px "WenQuanYi Micro Hei", sans-serif; fill:#222; }
+      .ok { font: 700 14px "WenQuanYi Micro Hei", sans-serif; fill:#0a7; }
+      .w { font: 700 13px "WenQuanYi Micro Hei", sans-serif; fill:#a60; }
+      .s { font: 400 12px "WenQuanYi Micro Hei", sans-serif; fill:#555; }
+      .box { fill:#fffdf8; stroke:#bfb6a3; }
+    ]]></style>
+  </defs>
+  <rect width="1400" height="920" fill="#f2eee4"/>
+  <text x="40" y="40" class="title">上横梁（圈梁）示意 · 地面 4×5 m</text>
+  <text x="40" y="68" class="sub">圈梁 = 墙顶一圈封闭方管，压住隔音板；型钢 □60×60×3；立柱分段，不是空跨 4 m</text>
+
+  <!-- PLAN of ring beam -->
+  <g transform="translate(40,90)">
+    <rect x="0" y="0" width="720" height="520" class="box"/>
+    <text x="16" y="32" class="h">① 俯视：圈梁一圈封闭</text>
+
+    <!-- outer ring beam highlight -->
+    <rect x="80" y="80" width="560" height="360" fill="none" stroke="#f39c12" stroke-width="18"/>
+    <rect x="95" y="95" width="530" height="330" fill="#eaf2f8" stroke="#5dade2" stroke-width="1"/>
+
+    <!-- columns at corners and along sides -->
+    <!-- 5m horizontal = longer side in drawing; 4m vertical -->
+    <!-- bottom side 5m: posts at 80, 220, 360, 500, 640 (x) y=440 -->
+    <!-- Use grid: width 560 = 5m, height 360 = 4m -->
+    <g fill="#7f8c8d" stroke="#2c3e50" stroke-width="1.5">
+      <!-- bottom row -->
+      <rect x="95" y="415" width="22" height="22"/>
+      <rect x="220" y="415" width="22" height="22"/>
+      <rect x="350" y="415" width="22" height="22"/>
+      <rect x="480" y="415" width="22" height="22"/>
+      <rect x="603" y="415" width="22" height="22"/>
+      <!-- top row -->
+      <rect x="95" y="95" width="22" height="22"/>
+      <rect x="220" y="95" width="22" height="22"/>
+      <rect x="350" y="95" width="22" height="22"/>
+      <rect x="480" y="95" width="22" height="22"/>
+      <rect x="603" y="95" width="22" height="22"/>
+      <!-- left mid -->
+      <rect x="95" y="200" width="22" height="22"/>
+      <rect x="95" y="310" width="22" height="22"/>
+      <!-- right mid -->
+      <rect x="603" y="200" width="22" height="22"/>
+      <rect x="603" y="310" width="22" height="22"/>
+    </g>
+
+    <text x="300" y="70" class="w">橙圈 = 上横梁（圈梁）□60×60×3</text>
+    <text x="300" y="250" class="s">灰方块 = 立柱 □80×80×3</text>
+    <text x="250" y="500" class="ok">平面外包约 5 m（长）× 4 m（宽）</text>
+    <text x="80" y="55" class="dim" fill="#1a5276" style="font:700 12px sans-serif">← 5 m →</text>
+    <text x="20" y="260" class="s" transform="rotate(-90 20 260)">4 m</text>
+  </g>
+
+  <!-- SECTION elevation -->
+  <g transform="translate(780,90)">
+    <rect x="0" y="0" width="580" height="520" class="box"/>
+    <text x="16" y="32" class="h">② 立面剖：圈梁怎么压板</text>
+
+    <!-- left column -->
+    <rect x="80" y="100" width="36" height="320" fill="#7f8c8d" stroke="#2c3e50" stroke-width="2"/>
+    <!-- right column -->
+    <rect x="400" y="100" width="36" height="320" fill="#7f8c8d" stroke="#2c3e50" stroke-width="2"/>
+    <!-- RING BEAM on top -->
+    <rect x="70" y="80" width="376" height="36" fill="#f39c12" stroke="#b9770e" stroke-width="2"/>
+    <text x="200" y="105" class="t">上横梁 □60×60×3</text>
+
+    <!-- panel between columns -->
+    <rect x="125" y="120" width="265" height="280" fill="#5dade2" stroke="#2874a6" stroke-width="2"/>
+    <text x="200" y="270" class="t">隔音板</text>
+    <text x="190" y="295" class="s">100～150 厚</text>
+
+    <!-- clamp -->
+    <rect x="116" y="120" width="10" height="280" fill="#27ae60"/>
+    <rect x="390" y="120" width="10" height="280" fill="#27ae60"/>
+    <text x="450" y="200" class="ok">橡胶条</text>
+    <text x="450" y="230" class="s">+ 压条</text>
+
+    <!-- arrow: beam sits on columns -->
+    <text x="16" y="450" class="ok">圈梁骑在立柱顶上，焊牢或螺栓连接</text>
+    <text x="16" y="480" class="t">板顶顶进圈梁下缘 / 卡进槽口</text>
+    <text x="16" y="508" class="w">跨度 = 柱距≈1 m，不是整跨 4 m</text>
+  </g>
+
+  <!-- bottom notes -->
+  <rect x="40" y="640" width="1320" height="250" fill="#eaf2f8" stroke="#5dade2" stroke-width="2"/>
+  <text x="60" y="680" class="h">上横梁（圈梁）是什么</text>
+  <text x="60" y="720" class="t">墙顶四周一圈方管，把四边墙板“箍”住，并托/压顶板模块。</text>
+  <text x="60" y="755" class="t">4×5 m 舱：四边都有 → 两根约 5 m 长 + 两根约 4 m 长，在角柱处交圈焊接。</text>
+  <text x="60" y="790" class="t">每边下面每隔 0.9～1.2 m 一根立柱顶着，所以梁不是悬空飞 4 m。</text>
+  <text x="60" y="830" class="ok">规格：□60×60×3。门洞顶那段局部可换成 □80×80×3 过梁。</text>
+  <text x="60" y="865" class="s">顶檩（另件）搁在圈梁上或与圈梁齐平，间距 0.8～1.0 m，再铺顶隔音板。</text>
+</svg>

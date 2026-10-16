@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1250" viewBox="0 0 1500 1250">
+  <defs>
+    <style type="text/css"><![CDATA[
+      .title { font: 700 26px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .sub { font: 400 14px "WenQuanYi Micro Hei", sans-serif; fill:#444; }
+      .h { font: 700 16px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .t { font: 400 13px "WenQuanYi Micro Hei", sans-serif; fill:#222; }
+      .ok { font: 700 13px "WenQuanYi Micro Hei", sans-serif; fill:#0a7; }
+      .w { font: 700 12px "WenQuanYi Micro Hei", sans-serif; fill:#a60; }
+      .s { font: 400 12px "WenQuanYi Micro Hei", sans-serif; fill:#555; }
+      .box { fill:#fffdf8; stroke:#bfb6a3; stroke-width:1.5; }
+      .dim { font: 700 12px "WenQuanYi Micro Hei", sans-serif; fill:#1a5276; }
+    ]]></style>
+  </defs>
+  <rect width="1500" height="1250" fill="#f2eee4"/>
+  <text x="40" y="38" class="title">静音托辊试验 · 隔音房布置</text>
+  <text x="40" y="66" class="sub">半消声试验舱：测Φ159托辊空载噪声；本底低、测点固定、驱动噪声隔离。</text>
+
+  <!-- ========== PLAN VIEW ========== -->
+  <g transform="translate(40,85)">
+    <rect x="0" y="0" width="900" height="620" class="box"/>
+    <text x="16" y="28" class="h">① 平面布置（俯视）</text>
+
+    <!-- outer shell -->
+    <rect x="60" y="60" width="780" height="500" fill="none" stroke="#1a5276" stroke-width="8"/>
+    <text x="70" y="55" class="dim">外框 ≈ 5.0 m × 4.0 m（净）</text>
+
+    <!-- acoustic lining hatch -->
+    <rect x="68" y="68" width="24" height="484" fill="#5dade2" fill-opacity="0.35"/>
+    <rect x="808" y="68" width="24" height="484" fill="#5dade2" fill-opacity="0.35"/>
+    <rect x="68" y="68" width="764" height="24" fill="#5dade2" fill-opacity="0.35"/>
+    <rect x="68" y="528" width="764" height="24" fill="#5dade2" fill-opacity="0.35"/>
+    <text x="100" y="95" class="s">吸声尖劈/楔形棉</text>
+
+    <!-- floating floor -->
+    <rect x="120" y="140" width="520" height="320" fill="#d5f5e3" stroke="#1e8449" stroke-width="1.5" stroke-dasharray="6 3"/>
+    <text x="140" y="160" class="ok">浮筑地面（隔振）</text>
+
+    <!-- test stand / roller -->
+    <rect x="200" y="250" width="280" height="80" fill="#7f8c8d" stroke="#2c3e50" stroke-width="2"/>
+    <text x="270" y="280" class="t" fill="#fff">托辊台架</text>
+    <text x="250" y="300" class="s" fill="#fff">Φ159 · 长至 1600</text>
+    <!-- roller cylinder -->
+    <ellipse cx="340" cy="290" rx="100" ry="22" fill="#bdc3c7" stroke="#2c3e50"/>
+
+    <!-- drive outside or in vestibule -->
+    <rect x="520" y="240" width="90" height="100" fill="#f5b041" stroke="#b9770e" stroke-width="2"/>
+    <text x="535" y="285" class="s">驱动舱</text>
+    <text x="530" y="305" class="s">电机隔间</text>
+
+    <!-- mic positions -->
+    <circle cx="340" cy="200" r="10" fill="#e74c3c"/>
+    <text x="355" y="205" class="w">M1 1m上方</text>
+    <circle cx="200" cy="290" r="10" fill="#e74c3c"/>
+    <text x="130" y="285" class="w">M2</text>
+    <circle cx="480" cy="290" r="10" fill="#e74c3c"/>
+    <text x="495" y="285" class="w">M3</text>
+    <circle cx="340" cy="400" r="10" fill="#e74c3c"/>
+    <text x="355" y="420" class="w">M4 1m侧</text>
+
+    <!-- door + vestibule -->
+    <rect x="700" y="220" width="100" height="140" fill="#fadbd8" stroke="#c0392b" stroke-width="2"/>
+    <text x="715" y="280" class="s">声闸</text>
+    <text x="710" y="300" class="s">双道门</text>
+    <path d="M800,250 L850,250 L850,330 L800,330" fill="none" stroke="#c0392b" stroke-width="3"/>
+
+    <!-- control -->
+    <rect x="640" y="400" width="120" height="80" fill="#d6eaf8" stroke="#2980b9"/>
+    <text x="655" y="440" class="s">观察窗</text>
+    <text x="650" y="460" class="s">控制室侧</text>
+
+    <!-- dims -->
+    <line x1="60" y1="580" x2="840" y2="580" stroke="#1a5276" stroke-width="1.5"/>
+    <text x="400" y="600" class="dim">内净长 5.0 m</text>
+  </g>
+
+  <!-- ========== RIGHT: SECTION + WALL ========== -->
+  <g transform="translate(960,85)">
+    <rect x="0" y="0" width="500" height="620" class="box"/>
+    <text x="16" y="28" class="h">② 墙体/剖面构造</text>
+
+    <!-- wall layers left to right: outside factory -> inside room -->
+    <text x="16" y="60" class="s">由外 → 内</text>
+    <rect x="40" y="80" width="28" height="200" fill="#7f8c8d" stroke="#2c3e50"/>
+    <text x="30" y="300" class="s">①砖/砼</text>
+    <text x="30" y="318" class="s">或钢板</text>
+
+    <rect x="75" y="80" width="18" height="200" fill="#f9e79f" stroke="#b7950b"/>
+    <text x="70" y="300" class="s">②空腔</text>
+    <text x="68" y="318" class="s">50～80</text>
+
+    <rect x="100" y="80" width="36" height="200" fill="#5dade2" stroke="#2874a6"/>
+    <text x="100" y="300" class="s">③岩棉</text>
+    <text x="95" y="318" class="s">100厚</text>
+
+    <rect x="143" y="80" width="22" height="200" fill="#85929e" stroke="#2c3e50"/>
+    <text x="140" y="300" class="s">④内板</text>
+
+    <rect x="175" y="80" width="50" height="200" fill="#aed6f1" stroke="#2980b9"/>
+    <!-- wedges -->
+    <polygon points="225,90 255,110 225,130" fill="#5dade2"/>
+    <polygon points="225,140 255,160 225,180" fill="#5dade2"/>
+    <polygon points="225,190 255,210 225,230" fill="#5dade2"/>
+    <text x="180" y="300" class="s">⑤吸声</text>
+    <text x="175" y="318" class="s">尖劈/棉</text>
+
+    <text x="16" y="360" class="ok">目标隔声：Rw ≥ 40 dB</text>
+    <text x="16" y="390" class="t">本底（关门电机停）：</text>
+    <text x="16" y="415" class="ok">≤ 25～30 dB(A)</text>
+    <text x="16" y="450" class="t">地面：浮筑板 + 隔振垫</text>
+    <text x="16" y="480" class="t">天花：同墙吸声</text>
+    <text x="16" y="510" class="t">门：双道声闸，气密条</text>
+    <text x="16" y="540" class="t">窗：双层夹胶观察窗</text>
+    <text x="16" y="575" class="w">通风：进出风加消声器</text>
+    <text x="16" y="600" class="s">灯具嵌装，不硬连结构</text>
+  </g>
+
+  <!-- ========== BOTTOM: TEST SETUP ========== -->
+  <g transform="translate(40,730)">
+    <rect x="0" y="0" width="1420" height="480" fill="#eaf2f8" stroke="#5dade2" stroke-width="2"/>
+    <text x="20" y="36" class="h">③ 试验怎么做（静音托辊专用）</text>
+
+    <!-- setup sketch -->
+    <g transform="translate(40,60)">
+      <!-- frame -->
+      <rect x="40" y="80" width="20" height="120" fill="#5d6d7e"/>
+      <rect x="300" y="80" width="20" height="120" fill="#5d6d7e"/>
+      <!-- shaft through roller -->
+      <rect x="20" y="120" width="340" height="16" fill="#6b2c1a"/>
+      <!-- roller -->
+      <rect x="80" y="90" width="200" height="80" rx="8" fill="#bdc3c7" stroke="#2c3e50" stroke-width="2"/>
+      <text x="140" y="135" class="t">Φ159 托辊</text>
+      <!-- belt drive from side cabin -->
+      <circle cx="380" cy="128" r="28" fill="#f5b041" stroke="#b9770e"/>
+      <text x="360" y="175" class="s">皮带/联轴</text>
+      <text x="420" y="120" class="s">→电机在驱动舱</text>
+      <!-- mic -->
+      <line x1="180" y1="40" x2="180" y2="90" stroke="#e74c3c" stroke-width="2"/>
+      <circle cx="180" cy="35" r="12" fill="#e74c3c"/>
+      <text x="200" y="40" class="w">传声器 1 m</text>
+      <text x="40" y="230" class="ok">辊轴固定在支架槽；电机噪声关在驱动舱外/隔壁</text>
+    </g>
+
+    <g transform="translate(520,70)">
+      <text x="0" y="0" class="h">测什么</text>
+      <text x="0" y="35" class="t">1. 本底噪声（空舱）</text>
+      <text x="0" y="65" class="t">2. 普通对比辊 @ 额定转速</text>
+      <text x="0" y="95" class="t">3. 静音改进辊 同速同点</text>
+      <text x="0" y="125" class="t">4. 差值 ≥ 8 dB(A) 作验收参考</text>
+      <text x="0" y="165" class="h">转速建议</text>
+      <text x="0" y="195" class="t">对应带速 2.0～3.5 m/s</text>
+      <text x="0" y="225" class="t">（Φ159：n ≈ 240～420 r/min）</text>
+      <text x="0" y="255" class="s">空载为主；可加轻载压轮选做</text>
+    </g>
+
+    <g transform="translate(900,70)">
+      <text x="0" y="0" class="h">房间规格（推荐）</text>
+      <text x="0" y="35" class="ok">内净：5.0×4.0×3.0 m</text>
+      <text x="0" y="65" class="t">可测辊长：至 B1600</text>
+      <text x="0" y="95" class="t">型式：半消声（地面硬/浮筑）</text>
+      <text x="0" y="125" class="t">仪器：1 级声级计 + 频谱</text>
+      <text x="0" y="155" class="t">计权：A；同时记 1/3 倍频</text>
+      <text x="0" y="195" class="h">禁忌</text>
+      <text x="0" y="225" style="font:700 13px 'WenQuanYi Micro Hei',sans-serif;fill:#c0392b">电机裸露同舱硬拖</text>
+      <text x="0" y="255" style="font:700 13px 'WenQuanYi Micro Hei',sans-serif;fill:#c0392b">硬墙空房（混响大）</text>
+      <text x="0" y="285" style="font:700 13px 'WenQuanYi Micro Hei',sans-serif;fill:#c0392b">门缝漏声 / 无声闸</text>
+    </g>
+
+    <text x="40" y="360" class="t">④ 气流：进风消声箱 → 舱内微正压或微负压均可，风速 &lt; 0.5 m/s（不吹传声器）。</text>
+    <text x="40" y="395" class="t">⑤ 安全：急停在舱外；观察窗旁操作台；辊转动时人在舱外。</text>
+    <text x="40" y="430" class="ok">⑥ 对比试验必须：同支架、同转速、同测点、同本底——只换托辊。</text>
+    <text x="40" y="460" class="s">若厂房太吵：外墙加厚或整舱做“房中房”。场地不够可缩到 4×3×2.8 m，辊长限 B1200。</text>
+  </g>
+</svg>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" width="1200" height="720">
+  <defs>
+    <pattern id="gdot" width="5" height="5" patternUnits="userSpaceOnUse">
+      <circle cx="1.5" cy="1.5" r="1" fill="#e6c84a"/>
+    </pattern>
+    <style>
+      .T{font:700 20px "WenQuanYi Micro Hei","Noto Sans CJK SC",sans-serif;fill:#1a2332}
+      .b{font:600 14px "WenQuanYi Micro Hei","Noto Sans CJK SC",sans-serif;fill:#1a2332}
+      .t{font:400 12px "WenQuanYi Micro Hei","Noto Sans CJK SC",sans-serif;fill:#334}
+      .s{font:400 11px "WenQuanYi Micro Hei","Noto Sans CJK SC",sans-serif;fill:#556}
+      .w{font:600 12px "WenQuanYi Micro Hei","Noto Sans CJK SC",sans-serif;fill:#a33}
+      .ok{font:600 12px "WenQuanYi Micro Hei","Noto Sans CJK SC",sans-serif;fill:#1a6b35}
+    </style>
+  </defs>
+  <rect width="1200" height="720" fill="#f4f6f8"/>
+  <text x="32" y="38" class="T">唇型密封改型示意（静音托辊端部）</text>
+  <text x="32" y="60" class="s">针对现 CAD：四道同向斜唇 → 改「单道轻接触外唇 + 多级非接触迷宫」</text>
+
+  <!-- ===== LEFT: current ===== -->
+  <g transform="translate(40,80)">
+    <rect width="540" height="400" fill="#fff" stroke="#d0d5da" rx="6"/>
+    <text x="16" y="30" class="w">现结构（问题）</text>
+    <!-- blue body -->
+    <path d="M40 60 L220 60 L220 120 L200 120 L200 300 L40 300 Z" fill="#4a90c8" stroke="#2a5a80" stroke-width="1.5"/>
+    <!-- yellow L cover -->
+    <path d="M250 80 L360 80 L360 320 L230 320 L230 280 L300 280 L300 120 L250 120 Z" fill="#e8c84a" stroke="#9a7a20" stroke-width="1.5"/>
+    <!-- 4 same red lips on blue facing yellow -->
+    <path d="M200 140 L248 155 L248 168 L200 160 Z" fill="#d64545" stroke="#8a2020"/>
+    <path d="M200 175 L248 190 L248 203 L200 195 Z" fill="#d64545" stroke="#8a2020"/>
+    <path d="M200 210 L248 225 L248 238 L200 230 Z" fill="#d64545" stroke="#8a2020"/>
+    <path d="M200 245 L248 260 L248 273 L200 265 Z" fill="#d64545" stroke="#8a2020"/>
+    <text x="80" y="90" class="t" fill="#fff">蓝：座侧</text>
+    <text x="270" y="110" class="t">黄：端盖/对偶面</text>
+    <text x="370" y="180" class="w">四道同向斜唇</text>
+    <text x="370" y="202" class="s">· 若接触：摩擦热、啸叫</text>
+    <text x="370" y="222" class="s">· 若全留隙：不是真迷宫</text>
+    <text x="370" y="242" class="s">· 同向齿，曲路弱</text>
+    <text x="370" y="262" class="s">· 缺专用脂腔</text>
+    <text x="16" y="350" class="s">示意取自当前 CAD 剖视（红唇×4）</text>
+    <text x="16" y="372" class="s">静音工况不推荐多道重接触唇</text>
+  </g>
+
+  <!-- ===== RIGHT: redesigned ===== -->
+  <g transform="translate(620,80)">
+    <rect width="540" height="400" fill="#fff" stroke="#3d7a52" rx="6"/>
+    <text x="16" y="30" class="ok">改型方案（推荐）</text>
+    <!-- blue stator side -->
+    <path d="M40 60 L200 60 L200 120 L185 120 L185 300 L40 300 Z" fill="#4a90c8" stroke="#2a5a80" stroke-width="1.5"/>
+    <!-- yellow rotor cover -->
+    <path d="M250 70 L360 70 L360 320 L220 320 L220 280 L300 280 L300 110 L250 110 Z" fill="#e8c84a" stroke="#9a7a20" stroke-width="1.5"/>
+
+    <!-- ONE outer light-contact lip (dark blue NBR) - outermost toward open end (top in this view = outer) -->
+    <!-- Put contact lip at outer (top) side -->
+    <path d="M185 125 L248 138 L245 152 L185 145 Z" fill="#1e5f7a" stroke="#0f3344" stroke-width="1.3"/>
+    <circle cx="248" cy="145" r="3" fill="#c45c26"/>
+    <text x="370" y="140" class="ok">① 单道外唇</text>
+    <text x="370" y="158" class="s">轻接触（仅此一道）</text>
+    <text x="370" y="176" class="s">阻粗颗粒，防啸叫</text>
+
+    <!-- grease -->
+    <rect x="188" y="160" width="110" height="110" fill="url(#gdot)" opacity="0.55"/>
+
+    <!-- labyrinth stator teeth on blue (brown) -->
+    <rect x="185" y="170" width="28" height="10" fill="#c4a35a" stroke="#8a6a20"/>
+    <rect x="185" y="195" width="28" height="10" fill="#c4a35a" stroke="#8a6a20"/>
+    <rect x="185" y="220" width="28" height="10" fill="#c4a35a" stroke="#8a6a20"/>
+    <rect x="185" y="245" width="28" height="10" fill="#c4a35a" stroke="#8a6a20"/>
+    <!-- labyrinth rotor teeth on yellow (cyan) interleaved -->
+    <rect x="230" y="182" width="28" height="10" fill="#2aa4c4" stroke="#156a80"/>
+    <rect x="230" y="207" width="28" height="10" fill="#2aa4c4" stroke="#156a80"/>
+    <rect x="230" y="232" width="28" height="10" fill="#2aa4c4" stroke="#156a80"/>
+    <rect x="230" y="257" width="28" height="10" fill="#2aa4c4" stroke="#156a80"/>
+
+    <!-- gap annotation -->
+    <line x1="213" y1="170" x2="230" y2="170" stroke="#c45c26" stroke-width="1"/>
+    <text x="200" y="165" class="w">0.3~0.6</text>
+
+    <!-- flinger on yellow -->
+    <rect x="250" y="95" width="50" height="8" fill="#d4a93a" stroke="#9a7a20"/>
+    <text x="310" y="100" class="s">甩油/挡尘筋</text>
+
+    <text x="370" y="210" class="ok">② 多级迷宫</text>
+    <text x="370" y="228" class="s">棕=定子（座/轴侧）</text>
+    <text x="370" y="246" class="s">青=转子（端盖侧）</text>
+    <text x="370" y="264" class="s">非接触 + 满脂</text>
+    <text x="370" y="290" class="ok">③ 主密封=迷宫</text>
+    <text x="370" y="308" class="ok">辅密封=单外唇</text>
+
+    <text x="16" y="350" class="s">CAD 改法：删/改掉内侧 3 道斜唇</text>
+    <text x="16" y="372" class="s">改为矩形/梯形迷宫齿 + 对偶齿交错</text>
+  </g>
+
+  <!-- bottom notes -->
+  <g transform="translate(40,510)">
+    <rect width="1120" height="180" fill="#fff" stroke="#d0d5da" rx="6"/>
+    <text x="16" y="28" class="b">改型要点（落地到你的模型）</text>
+    <text x="16" y="56" class="t">1. 黄件（001-006 端盖侧）增加向内伸出的迷宫转子齿，与蓝件侧定子齿交错，齿间 0.3～0.6 mm，空隙充满润滑脂。</text>
+    <text x="16" y="80" class="t">2. 红斜唇只保留最外侧 1 道，材料改低摩擦 NBR；接触过盈宜小（线接触/轻微干涉），内侧原 3 道斜唇取消或改成非接触迷宫齿。</text>
+    <text x="16" y="104" class="t">3. 唇口朝向污染物来向（辊外侧），便于挡尘；运转中避免多唇同时刮擦。</text>
+    <text x="16" y="128" class="t">4. 端盖外缘可加一圈甩尘筋（flinger）。装配仍满足：轴固定时，轴/座侧为定子，端盖侧为转子。</text>
+    <text x="16" y="152" class="t">5. 验收：旋转阻力不升高啸叫；淋水/粉尘后阻力无明显上升（可对标 MT/T 821、GB/T 10595）。</text>
+  </g>
+</svg>

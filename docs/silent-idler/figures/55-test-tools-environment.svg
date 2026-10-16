@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1100" viewBox="0 0 1500 1100">
+  <defs>
+    <style type="text/css"><![CDATA[
+      .title { font: 700 26px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .sub { font: 400 14px "WenQuanYi Micro Hei", sans-serif; fill:#444; }
+      .h { font: 700 16px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .t { font: 400 13px "WenQuanYi Micro Hei", sans-serif; fill:#222; }
+      .ok { font: 700 13px "WenQuanYi Micro Hei", sans-serif; fill:#0a7; }
+      .w { font: 700 12px "WenQuanYi Micro Hei", sans-serif; fill:#a60; }
+      .s { font: 400 12px "WenQuanYi Micro Hei", sans-serif; fill:#555; }
+      .box { fill:#fffdf8; stroke:#bfb6a3; }
+    ]]></style>
+  </defs>
+  <rect width="1500" height="1100" fill="#f2eee4"/>
+  <text x="40" y="38" class="title">静音托辊测试 · 需要什么环境 / 什么工具</text>
+  <text x="40" y="66" class="sub">测序：环境就绪 → 本底 → 对比辊 → 静音辊 → 记数对比（同速同点同架）</text>
+
+  <!-- ENV -->
+  <g transform="translate(40,85)">
+    <rect x="0" y="0" width="700" height="480" class="box"/>
+    <text x="16" y="32" class="h">① 环境（必须）</text>
+    <rect x="40" y="55" width="620" height="200" fill="#d5f5e3" stroke="#1e8449"/>
+    <text x="60" y="90" class="ok">半消声隔音舱（钢板岩棉拼装，无砖）</text>
+    <text x="60" y="120" class="t">· 地面约 4×5 m，净高约 3 m</text>
+    <text x="60" y="150" class="t">· 本底 ≤ 25～30 dB(A)（关门、电机停）</text>
+    <text x="60" y="180" class="t">· 电机在驱动舱/隔壁，不与辊裸露同舱</text>
+    <text x="60" y="210" class="t">· 测点固定：辊旁 / 上方 1 m</text>
+    <text x="60" y="240" class="t">· 舱内风速 &lt; 0.5 m/s；温度 5～35℃ 稳定</text>
+
+    <text x="40" y="290" class="h">环境禁忌</text>
+    <text x="40" y="325" class="w">× 厂房空地直接测（本底高、混响大）</text>
+    <text x="40" y="355" class="w">× 电机硬拖同舱</text>
+    <text x="40" y="385" class="w">× 门缝漏声、无声闸</text>
+    <text x="40" y="420" class="w">× 旁边冲床/空压机开着测</text>
+    <text x="40" y="455" class="s">最小版：房中房钢板舱 + 电机外置，仍可做相对对比</text>
+  </g>
+
+  <!-- TOOLS -->
+  <g transform="translate(760,85)">
+    <rect x="0" y="0" width="700" height="480" class="box"/>
+    <text x="16" y="32" class="h">② 工具 / 仪器</text>
+    <text x="30" y="70" class="ok">噪声主测（必备）</text>
+    <text x="30" y="100" class="t">· 1 级声级计（可记 A 计权）</text>
+    <text x="30" y="128" class="t">· 传声器 + 标定器（每天开测前校准）</text>
+    <text x="30" y="156" class="t">· 三脚架 / 1 m 测距定位杆</text>
+    <text x="30" y="184" class="t">· 频谱（1/3 倍频）—— 建议有</text>
+
+    <text x="30" y="230" class="ok">驱动与台架（必备）</text>
+    <text x="30" y="260" class="t">· 托辊试验支架（槽口同现场）</text>
+    <text x="30" y="288" class="t">· 变频电机 + 减速（放驱动舱）</text>
+    <text x="30" y="316" class="t">· 转速表 / 编码器（对转速）</text>
+    <text x="30" y="344" class="t">· 软连接：皮带或联轴（隔振）</text>
+
+    <text x="30" y="390" class="ok">辅助（建议）</text>
+    <text x="30" y="420" class="t">· 百分表：径向跳动　· 阻力仪/拉力计</text>
+    <text x="30" y="450" class="t">· 温湿度计　· 记录表 / 电脑</text>
+  </g>
+
+  <!-- SEQUENCE -->
+  <rect x="40" y="590" width="1420" height="470" fill="#eaf2f8" stroke="#5dade2" stroke-width="2"/>
+  <text x="60" y="630" class="h">③ 测序（按这个顺序做）</text>
+
+  <g transform="translate(60,660)">
+    <rect x="0" y="0" width="200" height="100" fill="#fff" stroke="#27ae60" stroke-width="2"/>
+    <text x="20" y="40" class="ok">步骤 1</text>
+    <text x="20" y="70" class="t">环境检查</text>
+    <text x="20" y="90" class="s">关门·本底·校准</text>
+  </g>
+  <text x="280" y="720" class="h">→</text>
+  <g transform="translate(320,660)">
+    <rect x="0" y="0" width="200" height="100" fill="#fff" stroke="#27ae60" stroke-width="2"/>
+    <text x="20" y="40" class="ok">步骤 2</text>
+    <text x="20" y="70" class="t">装对比普通辊</text>
+    <text x="20" y="90" class="s">同架·定转速</text>
+  </g>
+  <text x="540" y="720" class="h">→</text>
+  <g transform="translate(580,660)">
+    <rect x="0" y="0" width="200" height="100" fill="#fff" stroke="#27ae60" stroke-width="2"/>
+    <text x="20" y="40" class="ok">步骤 3</text>
+    <text x="20" y="70" class="t">测噪声 M1～M4</text>
+    <text x="20" y="90" class="s">A计权+频谱</text>
+  </g>
+  <text x="800" y="720" class="h">→</text>
+  <g transform="translate(840,660)">
+    <rect x="0" y="0" width="200" height="100" fill="#fff" stroke="#27ae60" stroke-width="2"/>
+    <text x="20" y="40" class="ok">步骤 4</text>
+    <text x="20" y="70" class="t">换静音辊</text>
+    <text x="20" y="90" class="s">同速同点再测</text>
+  </g>
+  <text x="1060" y="720" class="h">→</text>
+  <g transform="translate(1100,660)">
+    <rect x="0" y="0" width="300" height="100" fill="#fff" stroke="#27ae60" stroke-width="2"/>
+    <text x="20" y="40" class="ok">步骤 5</text>
+    <text x="20" y="70" class="t">算差值 ΔL</text>
+    <text x="20" y="90" class="s">目标 ≥ 8 dB(A)</text>
+  </g>
+
+  <text x="60" y="810" class="t">每步同时记：转速、室温、本底、测点号、有无啸叫/碰擦。</text>
+  <text x="60" y="845" class="t">可选加测：径向跳动、旋转阻力、手转灵活、端盖与架间隙 δ。</text>
+  <text x="60" y="890" class="h">④ 一句话配齐清单</text>
+  <text x="60" y="925" class="ok">环境：4×5 隔音舱 + 驱动舱隔离　|　仪器：1级声级计+标定+三脚架　|　台架：支架+变频调速+转速表</text>
+  <text x="60" y="960" class="t">对比辊与静音辊各至少 1 支同规格（Φ159、同长度），只换辊不改别的。</text>
+  <text x="60" y="995" class="s">隔音房细部见 ACOUSTIC_TEST_ROOM.md；验收口径对接 DESIGN.md §7。</text>
+  <text x="60" y="1030" class="s">若暂无频谱仪，至少保证 A 计权总级对比可重复 3 次取平均。</text>
+</svg>
