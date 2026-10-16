@@ -123,3 +123,5 @@
 4. 仍用 1 m 固定测点做 **相对对比**（绝对值误差大，差值仍有用）  
 
 完整多视图见上图。验收指标对接：[`DESIGN.md`](./DESIGN.md) §7。
+
+测试工具与测序：[`TEST_TOOLS_ENV.md`](./TEST_TOOLS_ENV.md)
