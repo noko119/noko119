@@ -72,7 +72,6 @@
 | ⑥ | [`IDLER_TEST_FIXTURE.md`](./IDLER_TEST_FIXTURE.md) | **托辊试验工装设计** |
 | ⑦ | [`TEST_TOOLS_ENV.md`](./TEST_TOOLS_ENV.md) | 仪器、测序 |
 | ⑧ | 本总册 `SILENT_LAB_PACK.md` | 总清单与勾选 |
-| ⑦ | 本总册 `SILENT_LAB_PACK.md` | 总清单与勾选 |
 
 产品侧（测什么辊）可对照：[`DESIGN.md`](./DESIGN.md) §7、[`OVERALL_END_ASSEMBLY.md`](./OVERALL_END_ASSEMBLY.md)。
 
