@@ -77,4 +77,6 @@
 - 工装整机压在 **浮筑地** 上（[`LAB_FLOOR.md`](./LAB_FLOOR.md)）  
 - 电机进 **驱动隔间**（[`SILENT_LAB_STANDARD.md`](./SILENT_LAB_STANDARD.md)）  
 - 测序见 [`TEST_TOOLS_ENV.md`](./TEST_TOOLS_ENV.md)  
-- 列入完备总册：[`SILENT_LAB_PACK.md`](./SILENT_LAB_PACK.md)  
+- 列入完备总册：[`SILENT_LAB_PACK.md`](./SILENT_LAB_PACK.md)
+
+多规格开口槽（可换衬块）：[`MULTI_SIZE_SLOT.md`](./MULTI_SIZE_SLOT.md)

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="980" viewBox="0 0 1400 980">
+  <defs>
+    <style type="text/css"><![CDATA[
+      .title { font: 700 26px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .sub { font: 400 14px "WenQuanYi Micro Hei", sans-serif; fill:#444; }
+      .h { font: 700 16px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .t { font: 400 14px "WenQuanYi Micro Hei", sans-serif; fill:#222; }
+      .ok { font: 700 14px "WenQuanYi Micro Hei", sans-serif; fill:#0a7; }
+      .w { font: 700 13px "WenQuanYi Micro Hei", sans-serif; fill:#a60; }
+      .s { font: 400 12px "WenQuanYi Micro Hei", sans-serif; fill:#555; }
+      .box { fill:#fffdf8; stroke:#bfb6a3; }
+    ]]></style>
+  </defs>
+  <rect width="1400" height="980" fill="#f2eee4"/>
+  <text x="40" y="40" class="title">开口槽 · 适应多规格（可换衬块）</text>
+  <text x="40" y="68" class="sub">立板开大母槽 + 尼龙/钢衬块按轴型更换：扁位、六方、不同轴径都能装</text>
+
+  <!-- mother slot -->
+  <g transform="translate(40,90)">
+    <rect x="0" y="0" width="640" height="420" class="box"/>
+    <text x="16" y="32" class="h">① 立板上的「母槽」</text>
+    <rect x="120" y="70" width="160" height="280" fill="#7f8c8d" stroke="#2c3e50" stroke-width="2"/>
+    <!-- large U mother -->
+    <path d="M155,70 L155,160 L245,160 L245,70" fill="#faf8f2" stroke="#2c3e50" stroke-width="2"/>
+    <!-- keyways / shoulders for insert -->
+    <rect x="155" y="160" width="18" height="20" fill="#34495e"/>
+    <rect x="227" y="160" width="18" height="20" fill="#34495e"/>
+    <text x="300" y="120" class="ok">母槽：统一大开口</text>
+    <text x="300" y="155" class="t">宽约 40～45 mm</text>
+    <text x="300" y="190" class="t">深够放最大轴端</text>
+    <text x="300" y="225" class="t">底部两侧台阶/销孔</text>
+    <text x="300" y="260" class="ok">用来卡「衬块」</text>
+    <text x="300" y="310" class="t">立板本身不再按每种</text>
+    <text x="300" y="340" class="t">轴型重新开槽</text>
+    <text x="120" y="390" class="s">母槽尺寸按你最大轴（如 Φ30 六方/扁位）留余量</text>
+  </g>
+
+  <!-- inserts -->
+  <g transform="translate(720,90)">
+    <rect x="0" y="0" width="640" height="420" class="box"/>
+    <text x="16" y="32" class="h">② 可换衬块（一套多块）</text>
+
+    <!-- insert A flat -->
+    <rect x="40" y="70" width="80" height="100" fill="#82e0aa" stroke="#1e8449" stroke-width="2"/>
+    <path d="M55,70 L55,110 L105,110 L105,70" fill="#faf8f2" stroke="#1e8449"/>
+    <rect x="62" y="95" width="36" height="14" fill="#6b2c1a"/>
+    <text x="40" y="195" class="ok">A 扁位衬</text>
+    <text x="40" y="220" class="s">槽宽=扁位厚</text>
+
+    <!-- insert B hex -->
+    <rect x="160" y="70" width="80" height="100" fill="#85c1e9" stroke="#2874a6" stroke-width="2"/>
+    <polygon points="200,85 220,100 220,120 200,135 180,120 180,100" fill="#faf8f2" stroke="#2874a6"/>
+    <text x="160" y="195" class="ok">B 六方衬</text>
+    <text x="160" y="220" class="s">对边=六方</text>
+
+    <!-- insert C round+flat combo -->
+    <rect x="280" y="70" width="80" height="100" fill="#f9e79f" stroke="#b7950b" stroke-width="2"/>
+    <path d="M295,70 L295,105 L345,105 L345,70" fill="#faf8f2" stroke="#b7950b"/>
+    <circle cx="320" cy="118" r="12" fill="#6b2c1a"/>
+    <text x="280" y="195" class="ok">C 圆轴衬</text>
+    <text x="280" y="220" class="s">少用/过渡</text>
+
+    <!-- insert D blank -->
+    <rect x="400" y="70" width="80" height="100" fill="#d5d8dc" stroke="#5d6d7e" stroke-width="2"/>
+    <text x="415" y="125" class="s">备用</text>
+    <text x="400" y="195" class="t">按新规格再开</text>
+
+    <text x="40" y="270" class="t">材料：尼龙 PA66 / 夹布胶木 / 钢板镀锌</text>
+    <text x="40" y="305" class="ok">推荐尼龙：减碰擦啸叫、好换</text>
+    <text x="40" y="345" class="t">外形外廓相同，只改内槽形状</text>
+    <text x="40" y="380" class="t">掉进母槽 → 销钉或压板锁住</text>
+  </g>
+
+  <!-- assembly -->
+  <g transform="translate(40,540)">
+    <rect x="0" y="0" width="900" height="400" class="box"/>
+    <text x="16" y="32" class="h">③ 装法与压紧</text>
+    <!-- plate -->
+    <rect x="80" y="70" width="140" height="220" fill="#7f8c8d" stroke="#2c3e50"/>
+    <path d="M110,70 L110,140 L190,140 L190,70" fill="#faf8f2" stroke="#2c3e50"/>
+    <!-- green insert in place -->
+    <rect x="115" y="75" width="70" height="90" fill="#82e0aa" stroke="#1e8449" stroke-width="2"/>
+    <path d="M130,75 L130,115 L170,115 L170,75" fill="#faf8f2" stroke="#1e8449"/>
+    <rect x="138" y="100" width="24" height="12" fill="#6b2c1a"/>
+    <!-- pin -->
+    <circle cx="150" cy="155" r="6" fill="#f39c12"/>
+    <!-- keeper -->
+    <rect x="120" y="70" width="60" height="12" fill="#f39c12" stroke="#b9770e"/>
+    <text x="250" y="100" class="ok">1. 选对应衬块放入母槽</text>
+    <text x="250" y="135" class="ok">2. 横向销 / 台阶卡住衬块</text>
+    <text x="250" y="170" class="ok">3. 轴落入衬块槽口</text>
+    <text x="250" y="205" class="ok">4. 上方压板压住防跳</text>
+    <text x="250" y="250" class="t">换规格：抽销 → 换衬块 → 再测</text>
+    <text x="250" y="285" class="t">开档仍靠滑动立板调长度</text>
+    <text x="80" y="340" class="w">左右两端衬块必须成对、同规格</text>
+    <text x="80" y="370" class="s">端盖到立板内侧仍留 δ=3～12 mm</text>
+  </g>
+
+  <!-- size table -->
+  <g transform="translate(960,540)">
+    <rect x="0" y="0" width="400" height="400" fill="#eaf2f8" stroke="#5dade2" stroke-width="2"/>
+    <text x="16" y="36" class="h">④ 常用衬块表（Φ159）</text>
+    <text x="16" y="80" class="t">轴 Φ20 → 衬块按扁位开</text>
+    <text x="16" y="115" class="t">轴 Φ25（6205/6305）</text>
+    <text x="16" y="145" class="ok">　扁位 / 六方各一块</text>
+    <text x="16" y="185" class="t">轴 Φ30（6306）</text>
+    <text x="16" y="215" class="ok">　扁位 / 六方各一块</text>
+    <text x="16" y="260" class="t">母槽按最大件做</text>
+    <text x="16" y="295" class="t">建议：先备 Φ25、Φ30</text>
+    <text x="16" y="330" class="t">两套扁位+六方共 4 块</text>
+    <text x="16" y="370" class="s">（左右成对则 ×2）</text>
+  </g>
+</svg>

@@ -70,6 +70,7 @@
 | ④ | [`LAB_FLOOR.md`](./LAB_FLOOR.md) | 地面浮筑隔振 |
 | ⑤ | [`ACOUSTIC_DOOR.md`](./ACOUSTIC_DOOR.md) | 门扇；达标必须双道声闸 |
 | ⑥ | [`IDLER_TEST_FIXTURE.md`](./IDLER_TEST_FIXTURE.md) | **托辊试验工装设计** |
+| ⑥b | [`MULTI_SIZE_SLOT.md`](./MULTI_SIZE_SLOT.md) | **多规格开口槽衬块** |
 | ⑦ | [`TEST_TOOLS_ENV.md`](./TEST_TOOLS_ENV.md) | 仪器、测序 |
 | ⑧ | 本总册 `SILENT_LAB_PACK.md` | 总清单与勾选 |
 
