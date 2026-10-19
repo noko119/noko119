@@ -2,6 +2,8 @@
 
 > 无砖拼装房中房，专供静音托辊对比测噪声。  
 > 只保留示意图与说明。
+>
+> **要达标时：强制指标与升级项见 [`SILENT_LAB_STANDARD.md`](./SILENT_LAB_STANDARD.md)。**
 
 ![材料与工艺](./figures/57-lab-build-process.jpg)
 

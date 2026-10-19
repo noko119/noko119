@@ -57,3 +57,5 @@
 常规省钱实验：**先做好单道密封**，多数够用。
 
 实验室总工艺：[`SILENT_LAB_BUILD.md`](./SILENT_LAB_BUILD.md)
+
+达标要求：**必须做成双道声闸**（见 [`SILENT_LAB_STANDARD.md`](./SILENT_LAB_STANDARD.md)），单道门只作省钱过渡。

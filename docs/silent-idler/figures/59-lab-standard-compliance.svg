@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1100" viewBox="0 0 1500 1100">
+  <defs>
+    <style type="text/css"><![CDATA[
+      .title { font: 700 26px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .sub { font: 400 14px "WenQuanYi Micro Hei", sans-serif; fill:#444; }
+      .h { font: 700 16px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .t { font: 400 13px "WenQuanYi Micro Hei", sans-serif; fill:#222; }
+      .ok { font: 700 13px "WenQuanYi Micro Hei", sans-serif; fill:#0a7; }
+      .w { font: 700 12px "WenQuanYi Micro Hei", sans-serif; fill:#a60; }
+      .bad { font: 700 13px "WenQuanYi Micro Hei", sans-serif; fill:#c0392b; }
+      .s { font: 400 12px "WenQuanYi Micro Hei", sans-serif; fill:#555; }
+      .box { fill:#fffdf8; stroke:#bfb6a3; }
+    ]]></style>
+  </defs>
+  <rect width="1500" height="1100" fill="#f2eee4"/>
+  <text x="40" y="38" class="title">静音实验室 · 达标强制要求</text>
+  <text x="40" y="66" class="sub">目标：半消声企业静音实验室（工程级）· 本底与隔声必须验收合格才开测</text>
+
+  <!-- target -->
+  <g transform="translate(40,85)">
+    <rect x="0" y="0" width="1420" height="160" fill="#eaf2f8" stroke="#5dade2" stroke-width="2"/>
+    <text x="20" y="36" class="h">对标什么（说清楚）</text>
+    <text x="20" y="70" class="t">不是随便搭个棚。目标按「半消声室 + 工程法测噪声」来建：</text>
+    <text x="20" y="100" class="ok">参照：半消声思路（GB/T 6882 / ISO 3745 同类房间）+ 工程测法环境要求（GB/T 3767 / ISO 3744）</text>
+    <text x="20" y="130" class="t">托辊对比试验以「本底足够低 + 隔声够 + 测点可重复」为硬验收，不宣称国家级精密消声室。</text>
+  </g>
+
+  <!-- mandatory metrics -->
+  <g transform="translate(40,270)">
+    <rect x="0" y="0" width="700" height="400" class="box"/>
+    <text x="16" y="32" class="h">① 硬指标（必须达到）</text>
+    <text x="20" y="75" class="ok">本底噪声 ≤ 25 dB(A)</text>
+    <text x="20" y="105" class="t">（争取 ≤ 20 dB(A)；关门、电机停）</text>
+    <text x="20" y="145" class="ok">本底比被测辊低 ≥ 10 dB</text>
+    <text x="20" y="175" class="t">（低 ≥20 dB 可不修正；这是测得准的底线）</text>
+    <text x="20" y="215" class="ok">围护隔声 Rw ≥ 45 dB</text>
+    <text x="20" y="245" class="t">墙/顶用 150 mm 钢板夹岩棉（或双层100）</text>
+    <text x="20" y="285" class="ok">门：双道声闸（必做）</text>
+    <text x="20" y="315" class="t">单道门达不到“一定静音”时不可接受</text>
+    <text x="20" y="355" class="ok">电机必须舱外隔间 + 软连接</text>
+    <text x="20" y="385" class="ok">浮筑地 + 全缝密封 + 墙顶吸声</text>
+  </g>
+
+  <!-- construction upgrade -->
+  <g transform="translate(760,270)">
+    <rect x="0" y="0" width="700" height="400" class="box"/>
+    <text x="16" y="32" class="h">② 构造升级（相对省钱版）</text>
+    <text x="20" y="75" class="bad">省钱版不够“一定达标”的，全部改掉：</text>
+    <text x="20" y="115" class="t">墙板 100 → 改 150 mm（或双层夹空腔）</text>
+    <text x="20" y="150" class="t">单道门 → 改 声闸前室 + 两道隔声门</text>
+    <text x="20" y="185" class="t">只贴薄棉 → 改 厚吸声（楔形/尖劈或等效）</text>
+    <text x="20" y="220" class="t">尺寸：常规仍可用 4×3×2.8；B1600 用 5×4×3</text>
+    <text x="20" y="255" class="t">观察窗：双层夹胶 + 错缝密封</text>
+    <text x="20" y="290" class="t">通风：进出风消声器，风速 &lt;0.5 m/s</text>
+    <text x="20" y="325" class="t">穿墙：套管 + 填实，禁止裸孔</text>
+    <text x="20" y="365" class="ok">仪器：1级声级计，测前声校准</text>
+  </g>
+
+  <!-- acceptance -->
+  <rect x="40" y="700" width="1420" height="360" fill="#fdebd0" stroke="#e67e22" stroke-width="2"/>
+  <text x="60" y="740" class="h">③ 验收清单（全过才算静音实验室）</text>
+  <text x="60" y="780" class="t">□ 1. 关门本底 ≤25 dB(A)（记录频谱）　□ 2. 开电机（隔间内）主舱增量 &lt;3 dB(A)</text>
+  <text x="60" y="815" class="t">□ 3. 门缝/板缝手电不透光　□ 4. 声闸两道门不同时大开仍能隔声</text>
+  <text x="60" y="850" class="t">□ 5. 试转普通辊：测点声级 − 本底 ≥10 dB　□ 6. 同点重复 3 次，偏差 ≤1 dB(A)</text>
+  <text x="60" y="885" class="t">□ 7. 无刚性声桥（钉穿、硬连外墙）　□ 8. 浮筑地与厂房脱开</text>
+  <text x="60" y="920" class="t">□ 9. 1级仪器在检定周期内　□ 10. 测点 1 m 固定工装可重复</text>
+  <text x="60" y="965" class="ok">任一条不满足：先整改，不准出具“静音实验室”对比结论。</text>
+  <text x="60" y="1005" class="s">全精密消声室（GB/T 6882 精密法全套）造价高一个数量级；本方案是可落地的企业半消声达标版。</text>
+  <text x="60" y="1040" class="s">需要第三方认同时：按 GB/T 6882 / 半消声室规范请声学所或检测机构做自由场与本底检定。</text>
+</svg>
