@@ -94,6 +94,7 @@
 | 达标 | [`figures/59-lab-standard-compliance.jpg`](./figures/59-lab-standard-compliance.jpg) | 强制指标 |
 | 地面 | [`figures/60-lab-floor.jpg`](./figures/60-lab-floor.jpg) | 浮筑地 |
 | 工装 | [`figures/62-idler-test-fixture.jpg`](./figures/62-idler-test-fixture.jpg) | 托辊试验工装 |
+| 双架立体 | [`figures/68-latest-3d-dual-frame.jpg`](./figures/68-latest-3d-dual-frame.jpg) | 型材+板搭接立体图 |
 
 ---
 

@@ -44,6 +44,7 @@
 | [`docs/silent-idler/TEST_TOOLS_ENV.md`](./docs/silent-idler/TEST_TOOLS_ENV.md) | **静音托辊测试工具与环境** |
 | [`docs/silent-idler/SILENT_LAB_BUILD.md`](./docs/silent-idler/SILENT_LAB_BUILD.md) | **静音实验室材料与工艺** |
 | [`docs/silent-idler/DOUBLE_SKIN_FIXING.md`](./docs/silent-idler/DOUBLE_SKIN_FIXING.md) | **双层70板内外怎么固定** |
+| [`docs/silent-idler/DUAL_FRAME_3D.md`](./docs/silent-idler/DUAL_FRAME_3D.md) | **双架立体图·型材板搭接** |
 | [`docs/silent-idler/ACOUSTIC_DOOR.md`](./docs/silent-idler/ACOUSTIC_DOOR.md) | **静音实验室门怎么做** |
 | [`docs/silent-idler/SILENT_LAB_PACK.md`](./docs/silent-idler/SILENT_LAB_PACK.md) | **静音托辊实验室完备总册** |
 | [`docs/silent-idler/IDLER_TEST_FIXTURE.md`](./docs/silent-idler/IDLER_TEST_FIXTURE.md) | **托辊试验工装设计** |

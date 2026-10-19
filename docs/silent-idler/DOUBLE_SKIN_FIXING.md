@@ -3,6 +3,10 @@
 > 口诀：**外层固定外层，内层固定内层；中间岩棉不承力；要连就垫橡胶。**  
 > 只保留示意图与说明。
 
+![最新立体图](./figures/68-latest-3d-dual-frame.jpg)
+
+专篇：[`DUAL_FRAME_3D.md`](./DUAL_FRAME_3D.md)
+
 ![和框架怎么连](./figures/66-wall-to-frame-connection.jpg)
 
 ![固定节点](./figures/64-double-skin-fixing.jpg)
