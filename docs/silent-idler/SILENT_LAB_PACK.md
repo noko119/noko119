@@ -51,7 +51,7 @@
 | # | 条件 | 专篇 |
 |---|------|------|
 | C1 | 1 级声级计 + 声校准器 + 三脚架/1 m 定位 | [`TEST_TOOLS_ENV.md`](./TEST_TOOLS_ENV.md) |
-| C2 | 试验支架 + 变频调速 + 转速表 | 同上 |
+| C2 | 试验工装 + 变频调速 + 转速表 | [`IDLER_TEST_FIXTURE.md`](./IDLER_TEST_FIXTURE.md) |
 | C3 | 同规格普通对比辊 + 静音辊 | 同上 |
 | C4 | 固定测序：本底→普通辊→静音辊→算 ΔL | 同上 |
 
@@ -69,7 +69,9 @@
 | ③ | [`SILENT_LAB_BUILD.md`](./SILENT_LAB_BUILD.md) | 材料 + 制作方法 + 分步工艺 |
 | ④ | [`LAB_FLOOR.md`](./LAB_FLOOR.md) | 地面浮筑隔振 |
 | ⑤ | [`ACOUSTIC_DOOR.md`](./ACOUSTIC_DOOR.md) | 门扇；达标必须双道声闸 |
-| ⑥ | [`TEST_TOOLS_ENV.md`](./TEST_TOOLS_ENV.md) | 仪器、台架、测序 |
+| ⑥ | [`IDLER_TEST_FIXTURE.md`](./IDLER_TEST_FIXTURE.md) | **托辊试验工装设计** |
+| ⑦ | [`TEST_TOOLS_ENV.md`](./TEST_TOOLS_ENV.md) | 仪器、测序 |
+| ⑧ | 本总册 `SILENT_LAB_PACK.md` | 总清单与勾选 |
 | ⑦ | 本总册 `SILENT_LAB_PACK.md` | 总清单与勾选 |
 
 产品侧（测什么辊）可对照：[`DESIGN.md`](./DESIGN.md) §7、[`OVERALL_END_ASSEMBLY.md`](./OVERALL_END_ASSEMBLY.md)。
@@ -91,6 +93,7 @@
 | 门 | [`figures/58-acoustic-door.jpg`](./figures/58-acoustic-door.jpg) | 门扇密封 |
 | 达标 | [`figures/59-lab-standard-compliance.jpg`](./figures/59-lab-standard-compliance.jpg) | 强制指标 |
 | 地面 | [`figures/60-lab-floor.jpg`](./figures/60-lab-floor.jpg) | 浮筑地 |
+| 工装 | [`figures/62-idler-test-fixture.jpg`](./figures/62-idler-test-fixture.jpg) | 托辊试验工装 |
 
 ---
 
