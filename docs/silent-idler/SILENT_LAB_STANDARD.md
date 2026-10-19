@@ -79,3 +79,5 @@
 测序与仪器：[`TEST_TOOLS_ENV.md`](./TEST_TOOLS_ENV.md)
 
 地面细部：[`LAB_FLOOR.md`](./LAB_FLOOR.md)
+
+完备总册：[`SILENT_LAB_PACK.md`](./SILENT_LAB_PACK.md)
