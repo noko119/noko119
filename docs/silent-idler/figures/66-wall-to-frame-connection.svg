@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1050" viewBox="0 0 1500 1050">
+  <defs>
+    <style type="text/css"><![CDATA[
+      .title { font: 700 26px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .sub { font: 400 14px "WenQuanYi Micro Hei", sans-serif; fill:#444; }
+      .h { font: 700 16px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .t { font: 400 13px "WenQuanYi Micro Hei", sans-serif; fill:#222; }
+      .ok { font: 700 13px "WenQuanYi Micro Hei", sans-serif; fill:#0a7; }
+      .w { font: 700 12px "WenQuanYi Micro Hei", sans-serif; fill:#a60; }
+      .bad { font: 700 12px "WenQuanYi Micro Hei", sans-serif; fill:#c0392b; }
+      .s { font: 400 12px "WenQuanYi Micro Hei", sans-serif; fill:#555; }
+      .box { fill:#fffdf8; stroke:#bfb6a3; }
+    ]]></style>
+  </defs>
+  <rect width="1500" height="1050" fill="#f2eee4"/>
+  <text x="40" y="38" class="title">双层墙节点 · 和框架怎么连接</text>
+  <text x="40" y="66" class="sub">你图里的外柱/内柱，就是两套框架的立柱；板只连到自己那套架上</text>
+
+  <!-- ISO / elevation of two frames -->
+  <g transform="translate(40,85)">
+    <rect x="0" y="0" width="900" height="520" class="box"/>
+    <text x="16" y="30" class="h">① 两套框架（立面关系）</text>
+
+    <!-- floating floor -->
+    <rect x="60" y="420" width="780" height="28" fill="#d7bde2" stroke="#6c3483" stroke-width="2"/>
+    <text x="380" y="440" class="s">浮筑地板</text>
+    <!-- pads under -->
+    <rect x="120" y="448" width="40" height="20" fill="#27ae60"/>
+    <rect x="400" y="448" width="40" height="20" fill="#27ae60"/>
+    <rect x="700" y="448" width="40" height="20" fill="#27ae60"/>
+    <text x="300" y="485" class="s">↓ 隔振垫 ↓ 厂房地</text>
+
+    <!-- OUTER frame - blue-ish dark -->
+    <rect x="100" y="400" width="50" height="20" fill="#1a5276"/>
+    <text x="90" y="395" class="s">外地梁</text>
+    <rect x="110" y="160" width="30" height="240" fill="#5d6d7e" stroke="#2c3e50" stroke-width="2"/>
+    <text x="60" y="280" class="ok">外立柱</text>
+    <rect x="100" y="140" width="200" height="24" fill="#f39c12" stroke="#b9770e" stroke-width="2"/>
+    <text x="140" y="130" class="w">外上圈梁</text>
+    <!-- outer panel hanging -->
+    <rect x="145" y="170" width="40" height="220" fill="#95a5a6" stroke="#2c3e50"/>
+    <text x="148" y="290" class="s">外70</text>
+    <!-- orange clamp -->
+    <rect x="140" y="170" width="6" height="220" fill="#e67e22"/>
+
+    <!-- cavity -->
+    <rect x="195" y="180" width="55" height="200" fill="#f9e79f" stroke="#b7950b"/>
+    <text x="200" y="290" class="ok">岩棉</text>
+
+    <!-- INNER frame - offset to the right -->
+    <rect x="260" y="400" width="50" height="20" fill="#6c3483"/>
+    <text x="250" y="395" class="s">内地梁</text>
+    <!-- rubber between ground beam bases -->
+    <rect x="230" y="405" width="25" height="12" fill="#27ae60"/>
+    <text x="220" y="430" class="ok">橡胶垫</text>
+
+    <rect x="270" y="180" width="30" height="220" fill="#34495e" stroke="#2c3e50" stroke-width="2"/>
+    <text x="310" y="300" class="ok">内立柱</text>
+    <text x="310" y="320" class="s">(与外柱错开)</text>
+    <rect x="250" y="155" width="200" height="24" fill="#8e44ad" stroke="#5b2c6f" stroke-width="2"/>
+    <text x="300" y="148" class="w">内上圈梁</text>
+    <!-- rubber between ring beams if they must meet at corner - show small pad -->
+    <rect x="195" y="145" width="50" height="10" fill="#27ae60"/>
+    <text x="185" y="140" class="s">圈梁相遇垫橡胶</text>
+
+    <!-- inner panel -->
+    <rect x="310" y="185" width="40" height="200" fill="#7f8c8d" stroke="#2c3e50"/>
+    <text x="312" y="295" class="s">内70</text>
+    <rect x="348" y="185" width="6" height="200" fill="#e67e22"/>
+
+    <!-- absorption -->
+    <rect x="360" y="195" width="35" height="180" fill="#aed6f1" stroke="#2980b9"/>
+    <text x="400" y="290" class="s">吸声</text>
+
+    <text x="500" y="200" class="ok">外框架 = 外地梁+外柱+外圈梁</text>
+    <text x="500" y="235" class="ok">内框架 = 内地梁+内柱+内圈梁</text>
+    <text x="500" y="275" class="t">你图里的「外柱/内柱」</text>
+    <text x="500" y="300" class="t">就是这两套架上的立柱</text>
+    <text x="500" y="340" class="w">板不直接连「总框架」</text>
+    <text x="500" y="370" class="w">而是连到自己那一套</text>
+  </g>
+
+  <!-- connection detail list -->
+  <g transform="translate(960,85)">
+    <rect x="0" y="0" width="500" height="520" fill="#eaf2f8" stroke="#5dade2" stroke-width="2"/>
+    <text x="16" y="36" class="h">② 连接对照表</text>
+    <text x="16" y="80" class="ok">外70板 ↔ 外框架</text>
+    <text x="16" y="110" class="t">压条/卡槽 + 自攻钉</text>
+    <text x="16" y="140" class="t">钉只进外柱、外圈梁</text>
+
+    <text x="16" y="185" class="ok">内70板 ↔ 内框架</text>
+    <text x="16" y="215" class="t">压条/卡槽 + 自攻钉</text>
+    <text x="16" y="245" class="t">钉只进内柱、内圈梁</text>
+
+    <text x="16" y="290" class="ok">外框架 ↔ 内框架</text>
+    <text x="16" y="320" class="t">正常：不焊死、不钉穿</text>
+    <text x="16" y="350" class="t">必须定位处：橡胶垫</text>
+    <text x="16" y="380" class="t">柱位错开，减少声桥</text>
+
+    <text x="16" y="425" class="ok">两套框架 ↔ 浮筑地</text>
+    <text x="16" y="455" class="t">地梁都落浮筑板上</text>
+    <text x="16" y="485" class="t">底板之间宜垫橡胶</text>
+  </g>
+
+  <!-- corner plan -->
+  <g transform="translate(40,630)">
+    <rect x="0" y="0" width="1420" height="380" class="box"/>
+    <text x="16" y="32" class="h">③ 转角俯视：框架交圈怎么走</text>
+
+    <!-- outer frame corner L -->
+    <rect x="80" y="80" width="280" height="28" fill="#f39c12" stroke="#b9770e"/>
+    <rect x="80" y="80" width="28" height="220" fill="#f39c12" stroke="#b9770e"/>
+    <text x="120" y="70" class="w">外圈梁交圈</text>
+    <!-- outer columns -->
+    <rect x="80" y="180" width="28" height="28" fill="#5d6d7e"/>
+    <rect x="200" y="80" width="28" height="28" fill="#5d6d7e"/>
+
+    <!-- outer panels -->
+    <rect x="115" y="115" width="22" height="160" fill="#95a5a6"/>
+    <rect x="115" y="115" width="160" height="22" fill="#95a5a6"/>
+
+    <!-- cavity -->
+    <rect x="145" y="145" width="40" height="120" fill="#f9e79f"/>
+    <rect x="145" y="145" width="120" height="40" fill="#f9e79f"/>
+
+    <!-- inner frame corner - inset -->
+    <rect x="200" y="200" width="200" height="22" fill="#8e44ad" stroke="#5b2c6f"/>
+    <rect x="200" y="200" width="22" height="160" fill="#8e44ad" stroke="#5b2c6f"/>
+    <text x="250" y="190" class="w">内圈梁交圈（缩进）</text>
+    <rect x="200" y="280" width="22" height="22" fill="#34495e"/>
+    <rect x="300" y="200" width="22" height="22" fill="#34495e"/>
+
+    <!-- rubber at near approach -->
+    <rect x="175" y="175" width="20" height="20" fill="#27ae60"/>
+    <text x="160" y="170" class="ok">垫</text>
+
+    <text x="480" y="100" class="t">外框架先交成一圈（像外盒）</text>
+    <text x="480" y="140" class="t">内框架再交成一圈（像内盒）</text>
+    <text x="480" y="180" class="t">两圈之间是岩棉空腔</text>
+    <text x="480" y="220" class="ok">板：外板挂外圈，内板挂内圈</text>
+    <text x="480" y="260" class="bad">不是「一块板去拧在总龙骨上」</text>
+    <text x="480" y="300" class="t">门洞处：内外框各自收口，中间做声闸通道</text>
+    <text x="480" y="340" class="s">你贴的俯视节点 = 上图直墙段的局部放大</text>
+  </g>
+</svg>
