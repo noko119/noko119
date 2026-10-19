@@ -77,3 +77,5 @@
 - 通风低风速；旁边大噪声设备停掉  
 
 测序与仪器：[`TEST_TOOLS_ENV.md`](./TEST_TOOLS_ENV.md)
+
+地面细部：[`LAB_FLOOR.md`](./LAB_FLOOR.md)

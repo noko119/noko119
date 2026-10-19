@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="920" viewBox="0 0 1400 920">
+  <defs>
+    <style type="text/css"><![CDATA[
+      .title { font: 700 26px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .sub { font: 400 14px "WenQuanYi Micro Hei", sans-serif; fill:#444; }
+      .h { font: 700 16px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .t { font: 400 14px "WenQuanYi Micro Hei", sans-serif; fill:#222; }
+      .ok { font: 700 14px "WenQuanYi Micro Hei", sans-serif; fill:#0a7; }
+      .w { font: 700 13px "WenQuanYi Micro Hei", sans-serif; fill:#a60; }
+      .s { font: 400 12px "WenQuanYi Micro Hei", sans-serif; fill:#555; }
+      .box { fill:#fffdf8; stroke:#bfb6a3; }
+    ]]></style>
+  </defs>
+  <rect width="1400" height="920" fill="#f2eee4"/>
+  <text x="40" y="40" class="title">静音实验室 · 地面怎么做</text>
+  <text x="40" y="68" class="sub">浮筑隔振地：与厂房地、墙全部脱开，切断振动声桥</text>
+
+  <!-- section layers -->
+  <g transform="translate(40,90)">
+    <rect x="0" y="0" width="900" height="480" class="box"/>
+    <text x="16" y="32" class="h">① 地面剖面（由下→上）</text>
+
+    <!-- factory floor -->
+    <rect x="80" y="360" width="720" height="50" fill="#7f8c8d" stroke="#2c3e50" stroke-width="2"/>
+    <text x="360" y="390" class="t" fill="#fff">① 厂房地坪（原水泥地）</text>
+
+    <!-- isolation pads -->
+    <rect x="140" y="320" width="50" height="40" fill="#27ae60" stroke="#1e8449"/>
+    <rect x="280" y="320" width="50" height="40" fill="#27ae60" stroke="#1e8449"/>
+    <rect x="420" y="320" width="50" height="40" fill="#27ae60" stroke="#1e8449"/>
+    <rect x="560" y="320" width="50" height="40" fill="#27ae60" stroke="#1e8449"/>
+    <rect x="700" y="320" width="50" height="40" fill="#27ae60" stroke="#1e8449"/>
+    <text x="300" y="310" class="ok">② 橡胶隔振垫 / 弹簧隔振器（均布）</text>
+
+    <!-- floating deck -->
+    <rect x="100" y="260" width="680" height="55" fill="#d7bde2" stroke="#6c3483" stroke-width="2"/>
+    <text x="320" y="295" class="t">③ 浮筑地板（多层板/水泥纤维板）</text>
+
+    <!-- soft gap to wall -->
+    <rect x="80" y="200" width="20" height="160" fill="#f9e79f" stroke="#b7950b"/>
+    <rect x="780" y="200" width="20" height="160" fill="#f9e79f" stroke="#b7950b"/>
+    <text x="40" y="180" class="w">④ 周边缝</text>
+    <text x="40" y="200" class="w">10～20</text>
+    <text x="800" y="180" class="w">软填</text>
+
+    <!-- ground beam -->
+    <rect x="160" y="210" width="40" height="50" fill="#1a5276"/>
+    <rect x="680" y="210" width="40" height="50" fill="#1a5276"/>
+    <text x="220" y="240" class="ok">⑤ 地梁落在浮筑板上（□80）</text>
+
+    <!-- finish -->
+    <rect x="120" y="185" width="640" height="20" fill="#aeb6bf" stroke="#5d6d7e"/>
+    <text x="350" y="175" class="t">⑥ 面层（防滑板/橡胶垫，可选）</text>
+
+    <text x="16" y="440" class="s">半消声：地面可偏“硬反射”；关键是隔振脱开，不是地面也铺满尖劈。</text>
+    <text x="16" y="465" class="ok">禁止：地梁直接焊死在厂房地坪上（声桥）。</text>
+  </g>
+
+  <!-- plan tips -->
+  <g transform="translate(960,90)">
+    <rect x="0" y="0" width="400" height="480" fill="#eaf2f8" stroke="#5dade2" stroke-width="2"/>
+    <text x="16" y="36" class="h">② 平面布置要点</text>
+    <text x="16" y="80" class="t">隔振垫间距：</text>
+    <text x="16" y="110" class="ok">约 400～600 mm</text>
+    <text x="16" y="150" class="t">垫上荷载要够：</text>
+    <text x="16" y="180" class="t">架+辊+人，选承重垫</text>
+    <text x="16" y="220" class="t">浮筑板拼缝：</text>
+    <text x="16" y="250" class="t">错缝+胶水/螺丝</text>
+    <text x="16" y="280" class="t">板厚建议 ≥18～25</text>
+    <text x="16" y="320" class="t">台架支腿：</text>
+    <text x="16" y="350" class="ok">只压浮筑板</text>
+    <text x="16" y="380" class="t">不要穿到厂房地</text>
+    <text x="16" y="420" class="w">周边缝禁止灌死水泥</text>
+    <text x="16" y="450" class="s">用橡胶条/发泡软填</text>
+  </g>
+
+  <!-- process -->
+  <rect x="40" y="600" width="1320" height="280" fill="#fdebd0" stroke="#e67e22" stroke-width="2"/>
+  <text x="60" y="640" class="h">③ 地面工艺顺序</text>
+  <text x="60" y="680" class="t">1. 厂房地清扫、找平（高低差大先自流平或垫平）</text>
+  <text x="60" y="715" class="t">2. 按网格放隔振垫（或整铺隔振橡胶板）</text>
+  <text x="60" y="750" class="t">3. 铺浮筑地板，四周与墙位留 10～20 mm，软质填缝</text>
+  <text x="60" y="785" class="t">4. 地梁、立柱做在浮筑板上；再上墙板（墙板底也坐密封）</text>
+  <text x="60" y="820" class="t">5. 台架就位；验收：踩踏无“通地下室”硬振感，敲地与敲厂房外地声感应不同</text>
+  <text x="60" y="855" class="ok">达标版：地面必须浮筑隔振，这是硬条件（见 SILENT_LAB_STANDARD）。</text>
+</svg>

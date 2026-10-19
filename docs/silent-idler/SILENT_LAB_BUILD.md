@@ -85,6 +85,9 @@
 
 ### 地面做法
 
+细部：[`LAB_FLOOR.md`](./LAB_FLOOR.md)
+
+
 ```text
 厂房地面清扫
   → 均布隔振垫
