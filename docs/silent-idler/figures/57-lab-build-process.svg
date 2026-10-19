@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1200" viewBox="0 0 1500 1200">
+  <defs>
+    <style type="text/css"><![CDATA[
+      .title { font: 700 26px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .sub { font: 400 14px "WenQuanYi Micro Hei", sans-serif; fill:#444; }
+      .h { font: 700 16px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .t { font: 400 13px "WenQuanYi Micro Hei", sans-serif; fill:#222; }
+      .ok { font: 700 13px "WenQuanYi Micro Hei", sans-serif; fill:#0a7; }
+      .w { font: 700 12px "WenQuanYi Micro Hei", sans-serif; fill:#a60; }
+      .s { font: 400 12px "WenQuanYi Micro Hei", sans-serif; fill:#555; }
+      .box { fill:#fffdf8; stroke:#bfb6a3; }
+    ]]></style>
+  </defs>
+  <rect width="1500" height="1200" fill="#f2eee4"/>
+  <text x="40" y="38" class="title">静音实验室 · 怎么做（材料 + 工艺）</text>
+  <text x="40" y="66" class="sub">无砖拼装房中房 · 常规用 4×3×2.8 · 测 B1600 用 5×4×3</text>
+
+  <!-- process steps top -->
+  <g transform="translate(40,85)">
+    <rect x="0" y="0" width="1420" height="140" fill="#eaf2f8" stroke="#5dade2" stroke-width="2"/>
+    <text x="20" y="35" class="h">工艺总顺序</text>
+    <text x="20" y="70" class="ok">1定位放线 → 2隔振+浮筑地 → 3地梁立柱 → 4上圈梁顶檩 → 5挂墙/顶隔音板 → 6密封 → 7门窗风口 → 8内吸声 → 9验收本底</text>
+    <text x="20" y="105" class="t">关键：板缝满密封；内外钢板不钉穿；电机另做小隔间。</text>
+  </g>
+
+  <!-- materials -->
+  <g transform="translate(40,250)">
+    <rect x="0" y="0" width="700" height="520" class="box"/>
+    <text x="16" y="32" class="h">① 主要材料</text>
+    <text x="20" y="70" class="ok">骨架</text>
+    <text x="20" y="100" class="t">□80×80×3 立柱　□100×100 角柱/门柱</text>
+    <text x="20" y="128" class="t">□60×60×3 上圈梁/顶檩　□80×80 地梁</text>
+    <text x="20" y="156" class="t">（5×4 舱加顶中梁 □80×80×3）</text>
+
+    <text x="20" y="200" class="ok">隔音墙/顶板</text>
+    <text x="20" y="230" class="t">双层钢板夹岩棉模块，厚 100 mm</text>
+    <text x="20" y="258" class="t">（厂房很吵用 150 mm）</text>
+    <text x="20" y="286" class="t">岩棉容重 ≥ 80～100 kg/m³</text>
+    <text x="20" y="314" class="t">板缝橡胶条 / 发泡密封胶</text>
+
+    <text x="20" y="358" class="ok">隔振与吸声</text>
+    <text x="20" y="388" class="t">橡胶隔振垫或弹簧隔振器</text>
+    <text x="20" y="416" class="t">浮筑地板：多层板/水泥纤维板</text>
+    <text x="20" y="444" class="t">内壁吸声棉 50～80 mm + 护面网</text>
+
+    <text x="20" y="488" class="ok">门窗风</text>
+    <text x="20" y="516" class="t">厚隔声门+密封条；夹胶观察窗；消声风口</text>
+  </g>
+
+  <!-- method detail -->
+  <g transform="translate(760,250)">
+    <rect x="0" y="0" width="700" height="520" class="box"/>
+    <text x="16" y="32" class="h">② 制作方法（节点）</text>
+
+    <!-- wall section mini -->
+    <rect x="40" y="60" width="14" height="120" fill="#95a5a6"/>
+    <rect x="54" y="60" width="50" height="120" fill="#5dade2"/>
+    <rect x="104" y="60" width="12" height="120" fill="#7f8c8d"/>
+    <rect x="120" y="60" width="40" height="120" fill="#aed6f1"/>
+    <text x="180" y="90" class="t">外板+岩棉+内板+吸声</text>
+    <text x="180" y="120" class="s">成品箱板或现场复合</text>
+    <text x="180" y="150" class="w">禁止钉穿内外板</text>
+
+    <text x="20" y="220" class="ok">板怎么上</text>
+    <text x="20" y="255" class="t">· 板立在柱间，顶进上圈梁下口</text>
+    <text x="20" y="285" class="t">· 边缝夹橡胶条，扁钢压条或卡槽固定</text>
+    <text x="20" y="315" class="t">· 阴角、地脚、穿线孔全部打胶密封</text>
+
+    <text x="20" y="360" class="ok">地怎么做</text>
+    <text x="20" y="395" class="t">· 厂房地面清扫 → 放隔振垫</text>
+    <text x="20" y="425" class="t">· 铺浮筑板，与厂房墙脱开 10～20 mm</text>
+    <text x="20" y="455" class="t">· 地梁落在浮筑板上再立柱</text>
+
+    <text x="20" y="500" class="ok">电机：舱外单独小钢隔间，软轴/皮带传入</text>
+  </g>
+
+  <!-- process table bottom -->
+  <rect x="40" y="800" width="1420" height="360" fill="#fdebd0" stroke="#e67e22" stroke-width="2"/>
+  <text x="60" y="840" class="h">③ 分步工艺</text>
+  <text x="60" y="880" class="t">步骤1 放线：按选定尺寸弹线（4×3×2.8 或 5×4×3），定门洞、观察窗、风口位置。</text>
+  <text x="60" y="915" class="t">步骤2 地面：隔振垫均布 → 浮筑地板拼装找平 → 缝隙填软质密封。</text>
+  <text x="60" y="950" class="t">步骤3 骨架：地梁交圈焊接/螺栓 → 立柱垂直固定 → 上圈梁交圈 → 顶中梁（仅 5×4）+ 顶檩。</text>
+  <text x="60" y="985" class="t">步骤4 围护：先墙后顶挂隔音板；每块板缝压密封条；角部加强密封。</text>
+  <text x="60" y="1020" class="t">步骤5 开口：装隔声门、观察窗；电线穿墙用套管+填缝；进出风加消声器。</text>
+  <text x="60" y="1055" class="t">步骤6 内饰：贴吸声棉并罩护网；灯具弹性吊装，不硬连外墙。</text>
+  <text x="60" y="1090" class="t">步骤7 验收：关门测本底 ≤25～30 dB(A)；手摸无刚性声桥；门缝漏光检查。</text>
+  <text x="60" y="1125" class="ok">不做湿砌砖；像搭隔音箱：钢架 + 模块板 + 密封 + 隔振。</text>
+</svg>

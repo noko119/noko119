@@ -42,6 +42,7 @@
 | [`docs/silent-idler/RED_SEAL_STRUCTURE.md`](./docs/silent-idler/RED_SEAL_STRUCTURE.md) | **红色密封结构各视图** |
 | [`docs/silent-idler/ACOUSTIC_TEST_ROOM.md`](./docs/silent-idler/ACOUSTIC_TEST_ROOM.md) | **静音托辊隔音试验房** |
 | [`docs/silent-idler/TEST_TOOLS_ENV.md`](./docs/silent-idler/TEST_TOOLS_ENV.md) | **静音托辊测试工具与环境** |
+| [`docs/silent-idler/SILENT_LAB_BUILD.md`](./docs/silent-idler/SILENT_LAB_BUILD.md) | **静音实验室材料与工艺** |
 | [`docs/silent-idler/RED_SEAL_SOUND.md`](./docs/silent-idler/RED_SEAL_SOUND.md) | **红色密封能否隔音（示意图+说明）** |
 | [`docs/silent-idler/RED_SEAL_IMPROVE.md`](./docs/silent-idler/RED_SEAL_IMPROVE.md) | **红色密封改进（示意图+说明）** |
 | [`docs/silent-idler/DARK_BLUE_THERMAL.md`](./docs/silent-idler/DARK_BLUE_THERMAL.md) | **深蓝软件与热变形（示意图+说明）** |
