@@ -141,3 +141,5 @@
 测试工具与测序：[`TEST_TOOLS_ENV.md`](./TEST_TOOLS_ENV.md)
 
 材料与制作工艺：[`SILENT_LAB_BUILD.md`](./SILENT_LAB_BUILD.md)
+
+门的做法：[`ACOUSTIC_DOOR.md`](./ACOUSTIC_DOOR.md)

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="980" viewBox="0 0 1400 980">
+  <defs>
+    <style type="text/css"><![CDATA[
+      .title { font: 700 26px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .sub { font: 400 14px "WenQuanYi Micro Hei", sans-serif; fill:#444; }
+      .h { font: 700 16px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .t { font: 400 14px "WenQuanYi Micro Hei", sans-serif; fill:#222; }
+      .ok { font: 700 14px "WenQuanYi Micro Hei", sans-serif; fill:#0a7; }
+      .w { font: 700 13px "WenQuanYi Micro Hei", sans-serif; fill:#a60; }
+      .s { font: 400 12px "WenQuanYi Micro Hei", sans-serif; fill:#555; }
+      .box { fill:#fffdf8; stroke:#bfb6a3; }
+    ]]></style>
+  </defs>
+  <rect width="1400" height="980" fill="#f2eee4"/>
+  <text x="40" y="40" class="title">静音实验室 · 门怎么做</text>
+  <text x="40" y="68" class="sub">省钱：单道厚隔声门 + 三边密封 + 门槛。有预算再加声闸第二道门。</text>
+
+  <!-- door elevation -->
+  <g transform="translate(40,90)">
+    <rect x="0" y="0" width="640" height="520" class="box"/>
+    <text x="16" y="32" class="h">① 门立面（从舱外看）</text>
+    <!-- frame -->
+    <rect x="80" y="60" width="400" height="400" fill="none" stroke="#5d6d7e" stroke-width="16"/>
+    <!-- leaf -->
+    <rect x="100" y="80" width="360" height="360" fill="#7f8c8d" stroke="#2c3e50" stroke-width="2"/>
+    <!-- seal indication around -->
+    <rect x="100" y="80" width="360" height="360" fill="none" stroke="#27ae60" stroke-width="6"/>
+    <text x="250" y="250" class="t" fill="#fff">门扇</text>
+    <text x="220" y="280" class="s" fill="#d5f5e3">钢板夹岩棉</text>
+    <!-- handle -->
+    <rect x="400" y="240" width="30" height="12" fill="#f4d03f"/>
+    <!-- hinges -->
+    <rect x="95" y="140" width="18" height="40" fill="#f39c12"/>
+    <rect x="95" y="320" width="18" height="40" fill="#f39c12"/>
+    <text x="500" y="160" class="ok">绿边=密封条</text>
+    <text x="500" y="200" class="t">洞口约</text>
+    <text x="500" y="230" class="ok">900×2000</text>
+    <text x="500" y="270" class="s">（辊从侧门进）</text>
+    <text x="500" y="320" class="t">合页侧加粗</text>
+    <text x="500" y="350" class="t">门柱□100</text>
+  </g>
+
+  <!-- section of leaf -->
+  <g transform="translate(720,90)">
+    <rect x="0" y="0" width="640" height="520" class="box"/>
+    <text x="16" y="32" class="h">② 门扇剖面（厚度）</text>
+    <rect x="80" y="80" width="20" height="280" fill="#95a5a6" stroke="#2c3e50"/>
+    <rect x="100" y="80" width="80" height="280" fill="#5dade2" stroke="#2874a6"/>
+    <rect x="180" y="80" width="20" height="280" fill="#7f8c8d" stroke="#2c3e50"/>
+    <!-- seals -->
+    <ellipse cx="70" cy="120" rx="12" ry="20" fill="#27ae60"/>
+    <ellipse cx="70" cy="220" rx="12" ry="20" fill="#27ae60"/>
+    <ellipse cx="70" cy="320" rx="12" ry="20" fill="#27ae60"/>
+    <text x="220" y="140" class="t">外钢板 1.5～2</text>
+    <text x="220" y="180" class="ok">岩棉芯 80～100</text>
+    <text x="220" y="220" class="t">内钢板 1.2～1.5</text>
+    <text x="220" y="270" class="ok">门扇总厚 ≈ 100～120</text>
+    <text x="220" y="320" class="ok">绿=橡胶密封条</text>
+    <text x="220" y="360" class="t">门框做止口，关紧压实</text>
+    <text x="40" y="420" class="w">底部：自动升降门槛 或 橡胶扫条</text>
+    <text x="40" y="455" class="t">（门缝最容易漏声，底缝必封）</text>
+    <text x="40" y="495" class="s">锁：插销/压紧锁，多点压紧密封更好</text>
+  </g>
+
+  <!-- bottom rules -->
+  <rect x="40" y="640" width="1320" height="300" fill="#eaf2f8" stroke="#5dade2" stroke-width="2"/>
+  <text x="60" y="680" class="h">③ 做法要点</text>
+  <text x="60" y="720" class="t">1. 洞口开在短边或长边均可；门柱用 □100×100；上过梁 □80×80 或与圈梁一体加强。</text>
+  <text x="60" y="755" class="t">2. 门扇 = 与墙同级的钢板夹岩棉（厚约 100），比普通防火门实心岩棉隔声更好要对密封。</text>
+  <text x="60" y="790" class="t">3. 门框带止口；上、左、右三边装密封条；底边用升降门槛/扫条——关严后手电照缝不应透光。</text>
+  <text x="60" y="825" class="t">4. 合页用承重铰链（门重）；开启朝外（向控制室/厂房侧），避免占舱内测点空间。</text>
+  <text x="60" y="860" class="t">5. 省钱先做单道；仍漏声再在门外加 0.8～1.0 m 深声闸小前室 + 第二道门。</text>
+  <text x="60" y="900" class="ok">验收：关门后舱内本底仍 ≤25～30 dB(A)；关门听外面说话应明显变闷。</text>
+</svg>
