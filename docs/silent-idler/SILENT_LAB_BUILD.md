@@ -143,3 +143,5 @@
 - 只做相对对比，不按国家级消声室标准堆料
 
 门的做法：[`ACOUSTIC_DOOR.md`](./ACOUSTIC_DOOR.md)
+
+双层板固定：[`DOUBLE_SKIN_FIXING.md`](./DOUBLE_SKIN_FIXING.md)

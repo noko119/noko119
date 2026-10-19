@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="920" viewBox="0 0 1400 920">
+  <defs>
+    <style type="text/css"><![CDATA[
+      .title { font: 700 26px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .sub { font: 400 14px "WenQuanYi Micro Hei", sans-serif; fill:#444; }
+      .h { font: 700 16px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .t { font: 400 14px "WenQuanYi Micro Hei", sans-serif; fill:#222; }
+      .ok { font: 700 14px "WenQuanYi Micro Hei", sans-serif; fill:#0a7; }
+      .w { font: 700 13px "WenQuanYi Micro Hei", sans-serif; fill:#a60; }
+      .bad { font: 700 13px "WenQuanYi Micro Hei", sans-serif; fill:#c0392b; }
+      .s { font: 400 12px "WenQuanYi Micro Hei", sans-serif; fill:#555; }
+      .box { fill:#fffdf8; stroke:#bfb6a3; }
+    ]]></style>
+  </defs>
+  <rect width="1400" height="920" fill="#f2eee4"/>
+  <text x="40" y="40" class="title">双层 70 板 · 内外层怎么固定</text>
+  <text x="40" y="68" class="sub">两套骨架分开固定各自板；中间只有岩棉/空腔；连接处垫橡胶，禁止长钉打穿</text>
+
+  <!-- plan section node -->
+  <g transform="translate(40,90)">
+    <rect x="0" y="0" width="900" height="480" class="box"/>
+    <text x="16" y="32" class="h">① 俯视节点（墙一段）</text>
+
+    <!-- outer column -->
+    <rect x="100" y="160" width="40" height="40" fill="#5d6d7e" stroke="#2c3e50" stroke-width="2"/>
+    <text x="70" y="140" class="s">外柱</text>
+    <!-- outer panel -->
+    <rect x="150" y="100" width="50" height="200" fill="#95a5a6" stroke="#2c3e50" stroke-width="2"/>
+    <text x="145" y="330" class="s">外70</text>
+    <!-- clamp outer -->
+    <rect x="145" y="100" width="8" height="200" fill="#f39c12"/>
+    <text x="40" y="220" class="w">压条</text>
+    <text x="40" y="245" class="w">只固定</text>
+    <text x="40" y="270" class="w">外板</text>
+
+    <!-- cavity wool -->
+    <rect x="210" y="100" width="70" height="200" fill="#f9e79f" stroke="#b7950b"/>
+    <text x="215" y="200" class="ok">岩棉</text>
+    <text x="218" y="330" class="s">空腔</text>
+
+    <!-- rubber pad between frames -->
+    <rect x="285" y="170" width="20" height="30" fill="#27ae60" stroke="#1e8449"/>
+    <text x="270" y="160" class="ok">橡胶垫</text>
+
+    <!-- inner column - offset -->
+    <rect x="315" y="200" width="40" height="40" fill="#34495e" stroke="#2c3e50" stroke-width="2"/>
+    <text x="300" y="270" class="s">内柱</text>
+    <text x="300" y="290" class="s">(错开)</text>
+
+    <!-- inner panel -->
+    <rect x="365" y="100" width="50" height="200" fill="#7f8c8d" stroke="#2c3e50" stroke-width="2"/>
+    <text x="360" y="330" class="s">内70</text>
+    <rect x="412" y="100" width="8" height="200" fill="#f39c12"/>
+
+    <!-- absorption -->
+    <rect x="430" y="100" width="40" height="200" fill="#aed6f1" stroke="#2980b9"/>
+    <text x="425" y="330" class="s">吸声</text>
+
+    <!-- arrows -->
+    <text x="500" y="140" class="ok">外板 → 只钉/卡在外骨架</text>
+    <text x="500" y="180" class="ok">内板 → 只钉/卡在内骨架</text>
+    <text x="500" y="220" class="ok">内外柱错开布置</text>
+    <text x="500" y="260" class="ok">必须相连处：夹橡胶垫</text>
+    <text x="500" y="310" class="bad">× 长螺丝从外皮打到内皮</text>
+    <text x="500" y="350" class="bad">× 内外柱焊成刚性一体</text>
+    <text x="500" y="400" class="t">地梁可共用浮筑板，但内外立柱底板之间宜垫橡胶</text>
+  </g>
+
+  <!-- elevation fix methods -->
+  <g transform="translate(960,90)">
+    <rect x="0" y="0" width="400" height="480" fill="#eaf2f8" stroke="#5dade2" stroke-width="2"/>
+    <text x="16" y="36" class="h">② 板怎么卡住</text>
+    <text x="16" y="80" class="t">每层各自：</text>
+    <text x="16" y="115" class="ok">1. 板插入柱间</text>
+    <text x="16" y="150" class="ok">2. 边缝夹橡胶条</text>
+    <text x="16" y="185" class="ok">3. 40×4 扁钢压条</text>
+    <text x="16" y="220" class="ok">4. 自攻钉只打本层</text>
+    <text x="16" y="250" class="t">　骨架（钉长 &lt; 板厚）</text>
+    <text x="16" y="300" class="h">两层谁先装</text>
+    <text x="16" y="340" class="t">先立外骨架+外板</text>
+    <text x="16" y="375" class="t">空腔塞岩棉</text>
+    <text x="16" y="410" class="t">再立内骨架+内板</text>
+    <text x="16" y="450" class="t">最后贴舱内吸声</text>
+  </g>
+
+  <!-- bottom -->
+  <rect x="40" y="600" width="1320" height="280" fill="#fdebd0" stroke="#e67e22" stroke-width="2"/>
+  <text x="60" y="640" class="h">③ 固定口诀</text>
+  <text x="60" y="680" class="ok">外层固定外层，内层固定内层；中间岩棉不承力；要连就垫橡胶。</text>
+  <text x="60" y="720" class="t">外骨架：地梁1 + 立柱1 + 上圈梁1 → 挂外 70 板</text>
+  <text x="60" y="755" class="t">内骨架：地梁2（可同浮筑板上）+ 立柱2（与外柱错开）+ 上圈梁2 → 挂内 70 板</text>
+  <text x="60" y="790" class="t">顶板同样：外顶一层、内顶一层，或内层改为厚吸声吊顶（省一道顶板时须加强墙隔声验收）</text>
+  <text x="60" y="830" class="w">门洞：内外门框各自做，中间声闸前室连成通道，门扇装两道。</text>
+  <text x="60" y="865" class="s">自攻钉长度选：只穿透本层板进入本层方管，绝不穿到另一层。</text>
+</svg>
