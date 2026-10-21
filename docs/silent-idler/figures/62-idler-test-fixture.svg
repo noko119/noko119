@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1150" viewBox="0 0 1500 1150">
+  <defs>
+    <style type="text/css"><![CDATA[
+      .title { font: 700 26px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .sub { font: 400 14px "WenQuanYi Micro Hei", sans-serif; fill:#444; }
+      .h { font: 700 16px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .t { font: 400 13px "WenQuanYi Micro Hei", sans-serif; fill:#222; }
+      .ok { font: 700 13px "WenQuanYi Micro Hei", sans-serif; fill:#0a7; }
+      .w { font: 700 12px "WenQuanYi Micro Hei", sans-serif; fill:#a60; }
+      .bad { font: 700 12px "WenQuanYi Micro Hei", sans-serif; fill:#c0392b; }
+      .s { font: 400 12px "WenQuanYi Micro Hei", sans-serif; fill:#555; }
+      .box { fill:#fffdf8; stroke:#bfb6a3; }
+    ]]></style>
+  </defs>
+  <rect width="1500" height="1150" fill="#f2eee4"/>
+  <text x="40" y="38" class="title">静音托辊试验工装 · 设计示意</text>
+  <text x="40" y="66" class="sub">轴固定在槽口（同现场）· 驱动筒体转动 · 长度可调 · 电机在舱外</text>
+
+  <!-- MAIN ELEVATION -->
+  <g transform="translate(40,85)">
+    <rect x="0" y="0" width="1100" height="420" class="box"/>
+    <text x="16" y="30" class="h">① 主视（空载噪声工装）</text>
+
+    <!-- base -->
+    <rect x="60" y="340" width="980" height="30" fill="#5d6d7e" stroke="#2c3e50" stroke-width="2"/>
+    <text x="480" y="360" class="s" fill="#fff">底座（落浮筑地，可垫橡胶）</text>
+
+    <!-- left upright fixed -->
+    <rect x="120" y="140" width="36" height="200" fill="#7f8c8d" stroke="#2c3e50" stroke-width="2"/>
+    <!-- U slot -->
+    <path d="M120,160 L138,160 L138,200 L156,200 L156,160 L156,140 L120,140 Z" fill="#faf8f2" stroke="#2c3e50"/>
+    <rect x="125" y="145" width="26" height="14" fill="#6b2c1a"/>
+    <text x="80" y="130" class="ok">固定立板</text>
+    <text x="80" y="290" class="s">槽口+压板</text>
+
+    <!-- right upright movable -->
+    <rect x="820" y="140" width="36" height="200" fill="#7f8c8d" stroke="#2c3e50" stroke-width="2"/>
+    <path d="M820,160 L838,160 L838,200 L856,200 L856,160 L856,140 L820,140 Z" fill="#faf8f2" stroke="#2c3e50"/>
+    <rect x="825" y="145" width="26" height="14" fill="#6b2c1a"/>
+    <text x="780" y="130" class="ok">滑动立板</text>
+    <!-- adjustment rail -->
+    <rect x="200" y="320" width="680" height="16" fill="#34495e"/>
+    <text x="450" y="315" class="s">滑轨：调开档（B1000～B1600）</text>
+    <line x1="200" y1="300" x2="820" y2="300" stroke="#1a5276" stroke-width="1.5"/>
+    <text x="450" y="295" class="ok">开档可调 L</text>
+
+    <!-- shaft -->
+    <rect x="100" y="148" width="780" height="12" fill="#6b2c1a"/>
+    <text x="500" y="140" class="s">轴（固定不转）</text>
+
+    <!-- roller tube -->
+    <rect x="200" y="175" width="560" height="90" rx="10" fill="#bdc3c7" stroke="#2c3e50" stroke-width="2"/>
+    <text x="420" y="230" class="t">Φ159 筒体（转）</text>
+
+    <!-- end cover clearance -->
+    <line x1="200" y1="175" x2="156" y2="175" stroke="#e74c3c" stroke-width="2"/>
+    <text x="160" y="170" class="w">δ</text>
+    <text x="160" y="270" class="w">端盖不碰立板</text>
+
+    <!-- friction drive belt on tube -->
+    <ellipse cx="480" cy="265" rx="70" ry="12" fill="none" stroke="#f39c12" stroke-width="4"/>
+    <text x="430" y="295" class="ok">摩擦带/驱动轮顶筒</text>
+
+    <!-- drive path to outside -->
+    <line x1="550" y1="265" x2="700" y2="380" stroke="#f39c12" stroke-width="3"/>
+    <line x1="700" y1="380" x2="1000" y2="380" stroke="#f39c12" stroke-width="3" stroke-dasharray="6 4"/>
+    <rect x="980" y="350" width="80" height="60" fill="#f5b041" stroke="#b9770e" stroke-width="2"/>
+    <text x="990" y="385" class="s">电机舱</text>
+    <text x="850" y="410" class="ok">→ 舱外传动（软轴/皮带）</text>
+  </g>
+
+  <!-- RIGHT: principles -->
+  <g transform="translate(1160,85)">
+    <rect x="0" y="0" width="300" height="420" fill="#eaf2f8" stroke="#5dade2" stroke-width="2"/>
+    <text x="16" y="36" class="h">设计原则</text>
+    <text x="16" y="80" class="ok">1. 轴固定</text>
+    <text x="16" y="110" class="t">槽口同现场扁位/六方</text>
+    <text x="16" y="150" class="ok">2. 转筒体</text>
+    <text x="16" y="180" class="t">摩擦带驱动外圆</text>
+    <text x="16" y="210" class="bad">禁止拖着轴转</text>
+    <text x="16" y="250" class="ok">3. 长度可调</text>
+    <text x="16" y="280" class="t">一侧立板可滑</text>
+    <text x="16" y="320" class="ok">4. 电机舱外</text>
+    <text x="16" y="350" class="t">软连接进舱</text>
+    <text x="16" y="390" class="ok">5. 端盖留 δ</text>
+  </g>
+
+  <!-- TOP / SLOT DETAIL -->
+  <g transform="translate(40,530)">
+    <rect x="0" y="0" width="700" height="320" class="box"/>
+    <text x="16" y="30" class="h">② 槽口节点（同现场）</text>
+    <!-- plate with slot -->
+    <rect x="80" y="70" width="120" height="200" fill="#7f8c8d" stroke="#2c3e50" stroke-width="2"/>
+    <path d="M110,70 L110,130 L150,130 L150,70" fill="#faf8f2" stroke="#2c3e50" stroke-width="2"/>
+    <!-- shaft flat -->
+    <rect x="115" y="100" width="30" height="24" fill="#6b2c1a"/>
+    <!-- keeper plate -->
+    <rect x="105" y="70" width="50" height="14" fill="#f39c12" stroke="#b9770e"/>
+    <text x="220" y="100" class="ok">开口槽 + 压板/挡销</text>
+    <text x="220" y="135" class="t">防轴跳出；轴不转</text>
+    <text x="220" y="170" class="t">槽宽按轴扁位/六方</text>
+    <text x="220" y="205" class="t">立板内侧与端盖间距 δ</text>
+    <text x="220" y="240" class="ok">建议 δ = 3～12 mm</text>
+    <text x="220" y="275" class="s">（与静音托辊端盖要求一致）</text>
+    <text x="80" y="300" class="w">可加尼龙/橡胶槽口衬垫减碰擦啸叫</text>
+  </g>
+
+  <!-- drive detail -->
+  <g transform="translate(760,530)">
+    <rect x="0" y="0" width="700" height="320" class="box"/>
+    <text x="16" y="30" class="h">③ 驱动方式（推荐）</text>
+    <!-- tube cross -->
+    <circle cx="160" cy="170" r="70" fill="#bdc3c7" stroke="#2c3e50" stroke-width="2"/>
+    <circle cx="160" cy="170" r="12" fill="#6b2c1a"/>
+    <!-- friction wheel -->
+    <circle cx="160" cy="260" r="28" fill="#f39c12" stroke="#b9770e" stroke-width="2"/>
+    <text x="145" y="265" class="s">轮</text>
+    <text x="250" y="120" class="ok">方案A（推荐）</text>
+    <text x="250" y="155" class="t">下部摩擦轮顶筒外圆</text>
+    <text x="250" y="185" class="t">轮轴接舱外电机</text>
+    <text x="250" y="215" class="t">压力可调，防打滑</text>
+    <text x="250" y="255" class="ok">方案B：环形皮带包筒</text>
+    <text x="250" y="285" class="bad">禁止：夹头拧轴硬拖</text>
+  </g>
+
+  <!-- bottom specs -->
+  <rect x="40" y="880" width="1420" height="240" fill="#fdebd0" stroke="#e67e22" stroke-width="2"/>
+  <text x="60" y="920" class="h">④ 主要参数（Φ159）</text>
+  <text x="60" y="960" class="t">开档调节：约 1000～1600 mm（按试样长度）　·　轴高：便于 1 m 测点布置　·　底座与浮筑地接触加橡胶垫</text>
+  <text x="60" y="995" class="t">转速：240～420 r/min（对应带速 2.0～3.5 m/s）　·　变频调速　·　转速表测筒或摩擦轮</text>
+  <text x="60" y="1030" class="t">材料：底座/立板 Q235；槽口可加尼龙衬；滑轨丝杆或销孔定位，换辊只松一侧</text>
+  <text x="60" y="1065" class="ok">对比试验铁律：同一工装、同一开档、同一转速、同一测点——只换托辊。</text>
+  <text x="60" y="1100" class="s">可选：上方轻压轮做轻载噪声（非常规必选）。急停在舱外。</text>
+</svg>

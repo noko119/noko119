@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900">
+  <defs>
+    <style type="text/css"><![CDATA[
+      .title { font: 700 28px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .sub { font: 400 15px "WenQuanYi Micro Hei", sans-serif; fill:#444; }
+      .h { font: 700 18px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .t { font: 400 15px "WenQuanYi Micro Hei", sans-serif; fill:#222; }
+      .ok { font: 700 16px "WenQuanYi Micro Hei", sans-serif; fill:#0a7; }
+      .bad { font: 700 16px "WenQuanYi Micro Hei", sans-serif; fill:#c0392b; }
+      .s { font: 400 13px "WenQuanYi Micro Hei", sans-serif; fill:#555; }
+      .big { font: 700 22px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .box { fill:#fffdf8; stroke:#bfb6a3; stroke-width:2; }
+    ]]></style>
+  </defs>
+  <rect width="1400" height="900" fill="#f2eee4"/>
+  <text x="40" y="42" class="title">红密封：4 道 → 变成 1 件了吗？</text>
+  <text x="40" y="72" class="sub">一句话：对，改成「一整块」注塑件；里面还是 4 级作用（3 个脂腔 + 1 道外唇）。</text>
+
+  <!-- LEFT: 4 separate -->
+  <g transform="translate(40,100)">
+    <rect x="0" y="0" width="640" height="520" class="box"/>
+    <text x="20" y="40" class="big">原来：4 道分开的唇</text>
+    <text x="20" y="75" class="bad">像 4 个独立的 V 形圈，一个挨一个</text>
+
+    <!-- shaft -->
+    <rect x="80" y="280" width="480" height="40" fill="#6b2c1a"/>
+    <text x="500" y="305" class="s" fill="#fff">轴</text>
+
+    <!-- 4 separate V lips -->
+    <polygon points="140,180 190,180 165,320" fill="#e74c3c" stroke="#922b21" stroke-width="2"/>
+    <polygon points="220,180 270,180 245,320" fill="#e74c3c" stroke="#922b21" stroke-width="2"/>
+    <polygon points="300,180 350,180 325,320" fill="#e74c3c" stroke="#922b21" stroke-width="2"/>
+    <polygon points="380,180 430,180 405,320" fill="#e74c3c" stroke="#922b21" stroke-width="2"/>
+    <!-- contact marks -->
+    <line x1="165" y1="320" x2="165" y2="280" stroke="#922b21" stroke-width="4"/>
+    <line x1="245" y1="320" x2="245" y2="280" stroke="#922b21" stroke-width="4"/>
+    <line x1="325" y1="320" x2="325" y2="280" stroke="#922b21" stroke-width="4"/>
+    <line x1="405" y1="320" x2="405" y2="280" stroke="#922b21" stroke-width="4"/>
+
+    <text x="145" y="165" class="t">第1</text>
+    <text x="225" y="165" class="t">第2</text>
+    <text x="305" y="165" class="t">第3</text>
+    <text x="385" y="165" class="t">第4</text>
+
+    <text x="80" y="380" class="t">件数感觉：4 道唇（4 处都贴轴）</text>
+    <text x="80" y="420" class="bad">短板：4 处都压轴 → 阻力大、易啸叫</text>
+    <text x="80" y="460" class="s">唇和唇之间可以有脂，但接触太多</text>
+    <text x="80" y="500" class="s">装的时候也像叠了好几圈</text>
+  </g>
+
+  <!-- RIGHT: 1 piece -->
+  <g transform="translate(720,100)">
+    <rect x="0" y="0" width="640" height="520" class="box"/>
+    <text x="20" y="40" class="big">现在：1 整块红件</text>
+    <text x="20" y="75" class="ok">一次注塑出来，里面开了 3 格 + 1 唇</text>
+
+    <rect x="80" y="280" width="480" height="40" fill="#6b2c1a"/>
+    <text x="500" y="305" class="s" fill="#fff">轴</text>
+
+    <!-- one connected body -->
+    <path d="M120,170 L160,170 L160,200
+             L210,200 L210,210 L250,210 L250,200
+             L300,200 L300,210 L340,210 L340,200
+             L390,200 L390,210 L430,210 L430,170
+             L480,170 L450,320 L420,320 L440,250
+             L390,250 L390,270 L340,270 L340,250
+             L300,250 L300,270 L250,270 L250,250
+             L210,250 L210,270 L160,270 L160,320 L120,320 Z"
+          fill="#e74c3c" stroke="#922b21" stroke-width="2.5"/>
+    <!-- grease in chambers -->
+    <rect x="160" y="210" width="50" height="40" fill="#f9e79f"/>
+    <rect x="250" y="210" width="50" height="40" fill="#f9e79f"/>
+    <rect x="340" y="210" width="50" height="40" fill="#f9e79f"/>
+    <text x="165" y="235" class="s">脂</text>
+    <text x="255" y="235" class="s">脂</text>
+    <text x="345" y="235" class="s">脂</text>
+    <!-- only outer lip contact -->
+    <line x1="450" y1="320" x2="450" y2="280" stroke="#922b21" stroke-width="4"/>
+    <!-- gap line -->
+    <line x1="160" y1="270" x2="390" y2="270" stroke="#27ae60" stroke-width="2" stroke-dasharray="4 3"/>
+
+    <text x="170" y="165" class="s">腔1</text>
+    <text x="260" y="165" class="s">腔2</text>
+    <text x="350" y="165" class="s">腔3</text>
+    <text x="440" y="155" class="ok">外唇</text>
+
+    <text x="80" y="380" class="ok">件数：只有 1 件（整块红胶/TPE）</text>
+    <text x="80" y="420" class="ok">贴轴：只剩最右边外唇 1 处轻贴</text>
+    <text x="80" y="460" class="t">左边 3 格：不贴轴，只装润滑脂</text>
+    <text x="80" y="500" class="s">绿虚线 = 不碰轴的空当</text>
+  </g>
+
+  <!-- bottom big answer -->
+  <rect x="40" y="650" width="1320" height="220" fill="#eaf2f8" stroke="#5dade2" stroke-width="3"/>
+  <text x="60" y="700" class="big">你问「把 4 个变成了一体的吗？」—— 是的。</text>
+  <text x="60" y="750" class="t">· 零件数量：4 道唇 → 改成 1 个整体红密封件</text>
+  <text x="60" y="790" class="t">· 里面还保留 4 级作用：格1 + 格2 + 格3（满脂）+ 外唇（贴轴）</text>
+  <text x="60" y="830" class="ok">· 一句话：外形是一块；功能还是四级；只是不再用四个分开的圈。</text>
+</svg>

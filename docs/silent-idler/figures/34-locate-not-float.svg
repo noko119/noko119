@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="780" viewBox="0 0 1400 780">
+  <defs>
+    <style type="text/css"><![CDATA[
+      .title { font: 700 28px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .sub { font: 400 14px "WenQuanYi Micro Hei", sans-serif; fill:#444; }
+      .h { font: 700 17px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .t { font: 400 14px "WenQuanYi Micro Hei", sans-serif; fill:#222; }
+      .b { font: 700 14px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .ok { font: 700 14px "WenQuanYi Micro Hei", sans-serif; fill:#0a7; }
+      .bad { font: 700 14px "WenQuanYi Micro Hei", sans-serif; fill:#b00020; }
+      .s { font: 400 12px "WenQuanYi Micro Hei", sans-serif; fill:#555; }
+      .box { fill:#fffdf8; stroke:#bfb6a3; }
+    ]]></style>
+  </defs>
+  <rect width="1400" height="780" fill="#f2eee4"/>
+  <text x="40" y="42" class="title">纠正：不是“零定位”，是“不碰硬座”</text>
+  <text x="40" y="70" class="sub">外圈必须被绿减震座径向抱住、轴向挡住；只是外圈不要直接碰到轴承座硬孔</text>
+
+  <rect x="40" y="95" width="1320" height="64" fill="#fdebd0" stroke="#e67e22" stroke-width="2"/>
+  <text x="60" y="135" class="h">错：外圈悬空、到处不挨着　对：外圈由绿套定位；绿套再装进轴承座</text>
+
+  <!-- two columns -->
+  <g transform="translate(40,190)">
+    <rect x="0" y="0" width="640" height="400" class="box"/>
+    <text x="20" y="36" class="bad">之前说法容易误解</text>
+    <text x="20" y="70" class="bad">“外圈零接触” → 听起来没法安装定位</text>
+    <rect x="80" y="110" width="200" height="160" fill="#5dade2" fill-opacity="0.3" stroke="#2e86ab"/>
+    <text x="120" y="190" class="s">轴承座</text>
+    <rect x="160" y="150" width="50" height="80" fill="#85929e" stroke="#999" stroke-dasharray="4 3"/>
+    <text x="300" y="170" class="bad">外圈晃着？</text>
+    <text x="300" y="200" class="bad">不行</text>
+    <text x="20" y="330" class="t">装配需要：径向定心 + 轴向挡死</text>
+    <text x="20" y="360" class="t">不能靠“悬空”来静音</text>
+  </g>
+
+  <g transform="translate(720,190)">
+    <rect x="0" y="0" width="640" height="400" class="box"/>
+    <text x="20" y="36" class="ok">正确装配定位</text>
+    <!-- housing -->
+    <rect x="70" y="90" width="40" height="220" fill="#5dade2" fill-opacity="0.35" stroke="#2e86ab"/>
+    <text x="50" y="80" class="s">座</text>
+    <!-- green seat -->
+    <path d="M110,100 L190,100 L190,120 L130,120 L130,280 L190,280 L190,300 L110,300 Z"
+          fill="#1e8449" stroke="#145a32" stroke-width="2"/>
+    <!-- ribs -->
+    <rect x="130" y="140" width="8" height="25" fill="#82e0aa"/>
+    <rect x="130" y="180" width="8" height="25" fill="#82e0aa"/>
+    <rect x="130" y="220" width="8" height="25" fill="#82e0aa"/>
+    <!-- anti rot -->
+    <rect x="98" y="180" width="14" height="35" fill="#145a32"/>
+    <!-- outer race seated on ribs + against flange -->
+    <rect x="140" y="135" width="40" height="140" fill="#85929e" stroke="#2c3e50" stroke-width="2"/>
+    <circle cx="172" cy="205" r="16" fill="#f7dc6f" stroke="#9a7d0a"/>
+    <!-- arrows -->
+    <text x="220" y="130" class="ok">轴向：内台阶/翻边挡住外圈</text>
+    <text x="220" y="200" class="ok">径向：减震筋过盈抱外圈</text>
+    <text x="220" y="250" class="ok">绿套外圆：过盈+防转进座孔</text>
+    <text x="220" y="300" class="ok">外圈 ↔ 硬座孔：不直接碰</text>
+    <text x="20" y="350" class="t">定位链条：外圈→绿套→轴承座</text>
+    <text x="20" y="380" class="t">隔振也在同一条链上完成</text>
+  </g>
+
+  <rect x="40" y="620" width="1320" height="130" fill="#d5f5e3" stroke="#27ae60" stroke-width="2"/>
+  <text x="60" y="660" class="h">改口后的说法</text>
+  <text x="60" y="695" class="t">外圈必须定位：径向靠减震筋，轴向靠内台阶。禁止的是外圈直接蹭轴承座硬孔，不是禁止定位。</text>
+  <text x="60" y="725" class="t">绿套 = 定位件 + 隔振件（一身两职）。</text>
+</svg>

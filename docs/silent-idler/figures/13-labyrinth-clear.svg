@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 980" width="1400" height="980">
+  <defs>
+    <style>
+      .T{font:700 28px "WenQuanYi Micro Hei","Noto Sans CJK SC",sans-serif;fill:#111}
+      .H{font:700 22px "WenQuanYi Micro Hei","Noto Sans CJK SC",sans-serif;fill:#111}
+      .b{font:700 18px "WenQuanYi Micro Hei","Noto Sans CJK SC",sans-serif;fill:#111}
+      .t{font:600 16px "WenQuanYi Micro Hei","Noto Sans CJK SC",sans-serif;fill:#222}
+      .s{font:400 14px "WenQuanYi Micro Hei","Noto Sans CJK SC",sans-serif;fill:#444}
+      .w{font:700 16px "WenQuanYi Micro Hei","Noto Sans CJK SC",sans-serif;fill:#b33}
+      .ok{font:700 16px "WenQuanYi Micro Hei","Noto Sans CJK SC",sans-serif;fill:#166534}
+      .n{font:700 20px "WenQuanYi Micro Hei","Noto Sans CJK SC",sans-serif;fill:#fff}
+    </style>
+  </defs>
+  <rect width="1400" height="980" fill="#f0f2f5"/>
+  <text x="40" y="48" class="T">迷宫密封怎么装？——先认两个零件，再对齿合拢</text>
+  <text x="40" y="78" class="s">一句话：棕齿套在轴上不转；青齿装在端盖上跟着转；青齿插进棕齿缝里，互相不碰到，缝里抹黄油。</text>
+
+  <!-- ===== PART A STATOR ===== -->
+  <g transform="translate(40,100)">
+    <rect width="640" height="320" rx="12" fill="#fff" stroke="#c4a35a" stroke-width="3"/>
+    <rect x="0" y="0" width="640" height="56" rx="12" fill="#c4a35a"/>
+    <rect x="0" y="40" width="640" height="16" fill="#c4a35a"/>
+    <text x="24" y="38" class="H" fill="#fff">零件 A　迷宫定子（棕黄色）</text>
+
+    <!-- big simple stator side view -->
+    <!-- shaft -->
+    <rect x="80" y="160" width="400" height="50" rx="4" fill="#9aa3ab" stroke="#333" stroke-width="2"/>
+    <text x="230" y="150" class="t">钢轴（不转）</text>
+    <!-- hub -->
+    <rect x="140" y="145" width="280" height="15" fill="#d4b36a" stroke="#5a4810" stroke-width="2"/>
+    <rect x="140" y="210" width="280" height="15" fill="#d4b36a" stroke="#5a4810" stroke-width="2"/>
+    <!-- 5 big teeth UP -->
+    <rect x="165" y="95" width="28" height="50" fill="#e0c878" stroke="#5a4810" stroke-width="2"/>
+    <rect x="215" y="95" width="28" height="50" fill="#e0c878" stroke="#5a4810" stroke-width="2"/>
+    <rect x="265" y="95" width="28" height="50" fill="#e0c878" stroke="#5a4810" stroke-width="2"/>
+    <rect x="315" y="95" width="28" height="50" fill="#e0c878" stroke="#5a4810" stroke-width="2"/>
+    <rect x="365" y="95" width="28" height="50" fill="#e0c878" stroke="#5a4810" stroke-width="2"/>
+    <!-- 5 big teeth DOWN -->
+    <rect x="165" y="225" width="28" height="50" fill="#e0c878" stroke="#5a4810" stroke-width="2"/>
+    <rect x="215" y="225" width="28" height="50" fill="#e0c878" stroke="#5a4810" stroke-width="2"/>
+    <rect x="265" y="225" width="28" height="50" fill="#e0c878" stroke="#5a4810" stroke-width="2"/>
+    <rect x="315" y="225" width="28" height="50" fill="#e0c878" stroke="#5a4810" stroke-width="2"/>
+    <rect x="365" y="225" width="28" height="50" fill="#e0c878" stroke="#5a4810" stroke-width="2"/>
+
+    <text x="500" y="130" class="b">梳齿朝外</text>
+    <text x="500" y="160" class="ok">套在轴上</text>
+    <text x="500" y="190" class="ok">固定 · 不转</text>
+    <text x="40" y="300" class="t">记住：定子 = 固定在轴上的“外向梳子”</text>
+  </g>
+
+  <!-- ===== PART B ROTOR ===== -->
+  <g transform="translate(720,100)">
+    <rect width="640" height="320" rx="12" fill="#fff" stroke="#2aa4c4" stroke-width="3"/>
+    <rect x="0" y="0" width="640" height="56" fill="#2aa4c4"/>
+    <text x="24" y="38" class="H" fill="#fff">零件 B　迷宫转子（青色）</text>
+
+    <!-- yellow end cap outline -->
+    <path d="M80 90 L520 90 L520 290 L80 290 L80 250 L460 250 L460 130 L80 130 Z"
+          fill="#ffe9a0" stroke="#a08020" stroke-width="2" stroke-dasharray="8 4"/>
+    <text x="480" y="115" class="t">端盖</text>
+
+    <!-- rotor rim -->
+    <rect x="120" y="145" width="300" height="22" fill="#3db8d4" stroke="#0d5a6e" stroke-width="2"/>
+    <rect x="120" y="213" width="300" height="22" fill="#3db8d4" stroke="#0d5a6e" stroke-width="2"/>
+    <!-- inward teeth hanging down from top rim into gap -->
+    <rect x="155" y="167" width="28" height="46" fill="#5ec8e0" stroke="#0d5a6e" stroke-width="2"/>
+    <rect x="215" y="167" width="28" height="46" fill="#5ec8e0" stroke="#0d5a6e" stroke-width="2"/>
+    <rect x="275" y="167" width="28" height="46" fill="#5ec8e0" stroke="#0d5a6e" stroke-width="2"/>
+    <rect x="335" y="167" width="28" height="46" fill="#5ec8e0" stroke="#0d5a6e" stroke-width="2"/>
+    <rect x="395" y="167" width="28" height="46" fill="#5ec8e0" stroke="#0d5a6e" stroke-width="2"/>
+
+    <text x="40" y="160" class="b">梳齿朝内</text>
+    <text x="40" y="190" class="ok">压进端盖</text>
+    <text x="40" y="220" class="ok">跟着辊子转</text>
+    <text x="40" y="300" class="t">记住：转子 = 装在端盖里的“内向梳子”</text>
+  </g>
+
+  <!-- ===== MESH PRINCIPLE ===== -->
+  <g transform="translate(40,450)">
+    <rect width="1320" height="200" rx="12" fill="#fff" stroke="#166534" stroke-width="3"/>
+    <text x="24" y="40" class="H">对齿原理（合在一起时）</text>
+
+    <!-- before -->
+    <text x="40" y="80" class="t">分开时：</text>
+    <rect x="40" y="95" width="20" height="70" fill="#e0c878" stroke="#5a4810" stroke-width="2"/>
+    <rect x="80" y="95" width="20" height="70" fill="#e0c878" stroke="#5a4810" stroke-width="2"/>
+    <rect x="120" y="95" width="20" height="70" fill="#e0c878" stroke="#5a4810" stroke-width="2"/>
+    <text x="50" y="185" class="s">棕齿（定子）</text>
+
+    <rect x="200" y="110" width="20" height="55" fill="#5ec8e0" stroke="#0d5a6e" stroke-width="2"/>
+    <rect x="240" y="110" width="20" height="55" fill="#5ec8e0" stroke="#0d5a6e" stroke-width="2"/>
+    <text x="200" y="185" class="s">青齿（转子）</text>
+
+    <text x="320" y="145" class="H" fill="#c45c26">→</text>
+
+    <!-- after meshed -->
+    <text x="380" y="80" class="t">合拢后（像拉链交错，但留缝）：</text>
+    <rect x="380" y="95" width="22" height="70" fill="#e0c878" stroke="#5a4810" stroke-width="2"/>
+    <rect x="418" y="110" width="22" height="55" fill="#5ec8e0" stroke="#0d5a6e" stroke-width="2"/>
+    <rect x="456" y="95" width="22" height="70" fill="#e0c878" stroke="#5a4810" stroke-width="2"/>
+    <rect x="494" y="110" width="22" height="55" fill="#5ec8e0" stroke="#0d5a6e" stroke-width="2"/>
+    <rect x="532" y="95" width="22" height="70" fill="#e0c878" stroke="#5a4810" stroke-width="2"/>
+    <rect x="570" y="110" width="22" height="55" fill="#5ec8e0" stroke="#0d5a6e" stroke-width="2"/>
+    <!-- gap highlight -->
+    <line x1="402" y1="100" x2="418" y2="100" stroke="#c45c26" stroke-width="2"/>
+    <text x="600" y="120" class="w">缝约 0.3～0.6 mm</text>
+    <text x="600" y="148" class="w">两齿不能碰到！</text>
+    <text x="600" y="176" class="ok">缝里涂满黄油（脂）</text>
+
+    <text x="900" y="120" class="b">灰尘要进来</text>
+    <text x="900" y="148" class="t">必须绕很多弯</text>
+    <text x="900" y="176" class="ok">→ 这就是迷宫密封</text>
+  </g>
+
+  <!-- ===== 5 STEPS ===== -->
+  <g transform="translate(40,680)">
+    <rect width="1320" height="270" rx="12" fill="#fff" stroke="#333" stroke-width="2"/>
+    <text x="24" y="40" class="H">装配就 5 步</text>
+
+    <!-- step 1 -->
+    <g transform="translate(30,60)">
+      <rect width="230" height="180" rx="10" fill="#fef9e8" stroke="#c4a35a" stroke-width="2"/>
+      <circle cx="30" cy="30" r="20" fill="#c4a35a"/><text x="23" y="37" class="n">1</text>
+      <text x="60" y="38" class="b">定子套到轴上</text>
+      <rect x="40" y="70" width="150" height="24" fill="#9aa3ab" stroke="#333"/>
+      <rect x="70" y="60" width="90" height="44" fill="#e0c878" stroke="#5a4810" stroke-width="2"/>
+      <text x="40" y="130" class="t">像套戒指一样</text>
+      <text x="40" y="155" class="t">套到钢轴上固定</text>
+    </g>
+    <text x="270" y="150" class="H" fill="#c45c26">→</text>
+
+    <!-- step 2 -->
+    <g transform="translate(300,60)">
+      <rect width="230" height="180" rx="10" fill="#fffbeb" stroke="#e6c84a" stroke-width="2"/>
+      <circle cx="30" cy="30" r="20" fill="#e6c84a"/><text x="23" y="37" class="n">2</text>
+      <text x="60" y="38" class="b">齿缝抹黄油</text>
+      <rect x="70" y="70" width="20" height="60" fill="#e0c878" stroke="#5a4810" stroke-width="2"/>
+      <rect x="110" y="70" width="20" height="60" fill="#e0c878" stroke="#5a4810" stroke-width="2"/>
+      <circle cx="100" cy="90" r="5" fill="#e6c84a"/><circle cx="95" cy="110" r="4" fill="#e6c84a"/>
+      <circle cx="105" cy="105" r="4" fill="#e6c84a"/>
+      <text x="40" y="155" class="t">每道齿缝都填满</text>
+    </g>
+    <text x="540" y="150" class="H" fill="#c45c26">→</text>
+
+    <!-- step 3 -->
+    <g transform="translate(570,60)">
+      <rect width="230" height="180" rx="10" fill="#e8f7fb" stroke="#2aa4c4" stroke-width="2"/>
+      <circle cx="30" cy="30" r="20" fill="#2aa4c4"/><text x="23" y="37" class="n">3</text>
+      <text x="60" y="38" class="b">转子压进端盖</text>
+      <path d="M50 65 L180 65 L180 150 L50 150 L50 130 L160 130 L160 85 L50 85 Z" fill="#ffe9a0" stroke="#a08020" stroke-width="2"/>
+      <rect x="70" y="95" width="70" height="30" fill="#5ec8e0" stroke="#0d5a6e" stroke-width="2"/>
+      <text x="40" y="170" class="t">转子跟着端盖转</text>
+    </g>
+    <text x="810" y="150" class="H" fill="#c45c26">→</text>
+
+    <!-- step 4 -->
+    <g transform="translate(840,60)">
+      <rect width="230" height="180" rx="10" fill="#ecfdf5" stroke="#166534" stroke-width="2"/>
+      <circle cx="30" cy="30" r="20" fill="#166534"/><text x="23" y="37" class="n">4</text>
+      <text x="60" y="38" class="b">对齿推拢</text>
+      <rect x="50" y="70" width="18" height="55" fill="#e0c878" stroke="#5a4810" stroke-width="2"/>
+      <rect x="80" y="82" width="18" height="43" fill="#5ec8e0" stroke="#0d5a6e" stroke-width="2"/>
+      <rect x="110" y="70" width="18" height="55" fill="#e0c878" stroke="#5a4810" stroke-width="2"/>
+      <rect x="140" y="82" width="18" height="43" fill="#5ec8e0" stroke="#0d5a6e" stroke-width="2"/>
+      <text x="40" y="150" class="t">青齿插进棕齿缝</text>
+      <text x="40" y="172" class="w">不要使劲压死刮蹭</text>
+    </g>
+    <text x="1080" y="150" class="H" fill="#c45c26">→</text>
+
+    <!-- step 5 -->
+    <g transform="translate(1110,60)">
+      <rect width="190" height="180" rx="10" fill="#f5f3ff" stroke="#7b4ea3" stroke-width="2"/>
+      <circle cx="30" cy="30" r="20" fill="#7b4ea3"/><text x="23" y="37" class="n">5</text>
+      <text x="58" y="38" class="b">装外唇</text>
+      <text x="30" y="90" class="t">再装一道</text>
+      <text x="30" y="115" class="t">轻接触外唇</text>
+      <text x="30" y="140" class="t">和挡圈</text>
+      <text x="30" y="170" class="ok">完成</text>
+    </g>
+  </g>
+</svg>

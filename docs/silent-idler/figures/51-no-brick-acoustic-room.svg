@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="980" viewBox="0 0 1400 980">
+  <defs>
+    <style type="text/css"><![CDATA[
+      .title { font: 700 26px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .sub { font: 400 14px "WenQuanYi Micro Hei", sans-serif; fill:#444; }
+      .h { font: 700 16px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .t { font: 400 14px "WenQuanYi Micro Hei", sans-serif; fill:#222; }
+      .ok { font: 700 14px "WenQuanYi Micro Hei", sans-serif; fill:#0a7; }
+      .w { font: 700 13px "WenQuanYi Micro Hei", sans-serif; fill:#a60; }
+      .s { font: 400 12px "WenQuanYi Micro Hei", sans-serif; fill:#555; }
+      .box { fill:#fffdf8; stroke:#bfb6a3; }
+    ]]></style>
+  </defs>
+  <rect width="1400" height="980" fill="#f2eee4"/>
+  <text x="40" y="38" class="title">隔音房 · 无砖做法（钢板拼装房中房）</text>
+  <text x="40" y="66" class="sub">不砌砖：钢骨架 + 双层钢板岩棉模块 + 浮筑地 + 内吸声。可拆、可搬、工期短。</text>
+
+  <!-- isometric-ish room -->
+  <g transform="translate(40,90)">
+    <rect x="0" y="0" width="820" height="520" class="box"/>
+    <text x="16" y="30" class="h">① 拼装舱外形</text>
+
+    <!-- floor platform -->
+    <polygon points="120,400 420,480 720,360 420,280" fill="#85929e" stroke="#2c3e50" stroke-width="2"/>
+    <text x="380" y="390" class="s" fill="#fff">浮筑地板</text>
+    <!-- isolators under -->
+    <rect x="200" y="400" width="30" height="40" fill="#27ae60"/>
+    <rect x="380" y="430" width="30" height="40" fill="#27ae60"/>
+    <rect x="560" y="370" width="30" height="40" fill="#27ae60"/>
+    <text x="180" y="470" class="ok">橡胶/弹簧隔振器</text>
+
+    <!-- walls as panels -->
+    <polygon points="120,400 120,160 420,80 420,280" fill="#5d6d7e" stroke="#2c3e50" stroke-width="2"/>
+    <polygon points="420,280 420,80 720,160 720,360" fill="#7f8c8d" stroke="#2c3e50" stroke-width="2"/>
+    <!-- panel seam lines -->
+    <line x1="220" y1="360" x2="220" y2="140" stroke="#34495e" stroke-width="1" stroke-dasharray="4 3"/>
+    <line x1="320" y1="330" x2="320" y2="110" stroke="#34495e" stroke-width="1" stroke-dasharray="4 3"/>
+    <line x1="520" y1="250" x2="520" y2="100" stroke="#34495e" stroke-width="1" stroke-dasharray="4 3"/>
+    <line x1="620" y1="300" x2="620" y2="130" stroke="#34495e" stroke-width="1" stroke-dasharray="4 3"/>
+    <text x="150" y="200" class="t" fill="#fff">模块墙板</text>
+    <text x="530" y="200" class="t" fill="#fff">模块墙板</text>
+
+    <!-- door -->
+    <polygon points="560,320 560,200 640,220 640,340" fill="#fadbd8" stroke="#c0392b" stroke-width="2"/>
+    <text x="565" y="280" class="s">声闸门</text>
+
+    <!-- roof -->
+    <polygon points="120,160 420,80 720,160 420,220" fill="#34495e" stroke="#1c2833" stroke-width="2" fill-opacity="0.85"/>
+    <text x="380" y="150" class="s" fill="#fff">顶板模块</text>
+  </g>
+
+  <!-- wall detail -->
+  <g transform="translate(880,90)">
+    <rect x="0" y="0" width="480" height="520" class="box"/>
+    <text x="16" y="30" class="h">② 墙板构造（无砖）</text>
+    <text x="16" y="58" class="s">由外 → 内</text>
+
+    <rect x="40" y="80" width="22" height="220" fill="#95a5a6" stroke="#2c3e50"/>
+    <text x="30" y="320" class="s">①外钢板</text>
+    <text x="35" y="338" class="s">1.5～2</text>
+
+    <rect x="70" y="80" width="50" height="220" fill="#5dade2" stroke="#2874a6"/>
+    <text x="75" y="320" class="s">②岩棉</text>
+    <text x="72" y="338" class="s">100～150</text>
+
+    <rect x="128" y="80" width="22" height="220" fill="#7f8c8d" stroke="#2c3e50"/>
+    <text x="120" y="320" class="s">③内钢板</text>
+    <text x="125" y="338" class="s">1.2～1.5</text>
+
+    <rect x="160" y="80" width="20" height="220" fill="#f9e79f" stroke="#b7950b"/>
+    <text x="155" y="320" class="s">④空腔</text>
+    <text x="158" y="338" class="s">隔振</text>
+
+    <rect x="190" y="80" width="40" height="220" fill="#85c1e9" stroke="#2980b9"/>
+    <polygon points="230,100 270,120 230,140" fill="#5dade2"/>
+    <polygon points="230,160 270,180 230,200" fill="#5dade2"/>
+    <polygon points="230,220 270,240 230,260" fill="#5dade2"/>
+    <text x="195" y="320" class="s">⑤吸声层</text>
+    <text x="195" y="338" class="s">棉/尖劈</text>
+
+    <text x="16" y="390" class="ok">也可用成品「隔音箱板」</text>
+    <text x="16" y="420" class="t">双层板夹岩棉 = 一块墙模块</text>
+    <text x="16" y="450" class="t">板缝：卡槽 + 橡胶条密封</text>
+    <text x="16" y="480" class="w">内外板不要刚性钉穿通</text>
+    <text x="16" y="505" class="s">（钉穿会漏声、传振）</text>
+  </g>
+
+  <!-- how to build steps -->
+  <rect x="40" y="640" width="1320" height="300" fill="#eaf2f8" stroke="#5dade2" stroke-width="2"/>
+  <text x="60" y="680" class="h">③ 无砖落地步骤</text>
+  <text x="60" y="720" class="t">1. 厂房水泥地上放隔振器/橡胶垫 → 铺浮筑地板（木工板/钢架+板，与厂房地脱开）</text>
+  <text x="60" y="755" class="t">2. 钢立柱/方管骨架立在浮筑板上（或独立落地但与墙板软连接）</text>
+  <text x="60" y="790" class="t">3. 挂双层钢板岩棉模块墙 → 顶板同样模块封顶 → 缝全密封</text>
+  <text x="60" y="825" class="t">4. 内侧贴吸声棉或尖劈；开双道声闸门 + 夹胶观察窗</text>
+  <text x="60" y="860" class="t">5. 电机做独立小钢隔间（同样钢板岩棉）；进出风加消声器</text>
+  <text x="60" y="900" class="ok">不要砖、不要湿作业；像搭洁净棚/隔音箱一样拼起来。</text>
+</svg>

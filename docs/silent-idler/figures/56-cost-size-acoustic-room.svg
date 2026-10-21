@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="820" viewBox="0 0 1400 820">
+  <defs>
+    <style type="text/css"><![CDATA[
+      .title { font: 700 26px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .sub { font: 400 14px "WenQuanYi Micro Hei", sans-serif; fill:#444; }
+      .h { font: 700 16px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .t { font: 400 14px "WenQuanYi Micro Hei", sans-serif; fill:#222; }
+      .ok { font: 700 14px "WenQuanYi Micro Hei", sans-serif; fill:#0a7; }
+      .w { font: 700 13px "WenQuanYi Micro Hei", sans-serif; fill:#a60; }
+      .s { font: 400 12px "WenQuanYi Micro Hei", sans-serif; fill:#555; }
+      .box { fill:#fffdf8; stroke:#bfb6a3; }
+    ]]></style>
+  </defs>
+  <rect width="1400" height="820" fill="#f2eee4"/>
+  <text x="40" y="40" class="title">隔音试验舱 · 省钱合理尺寸</text>
+  <text x="40" y="68" class="sub">对比测噪声够用即可，不必按消声室豪华标准做大</text>
+
+  <!-- three size options -->
+  <g transform="translate(40,95)">
+    <rect x="0" y="0" width="420" height="380" class="box"/>
+    <text x="16" y="36" class="h">A 最小够用（最省）</text>
+    <rect x="60" y="80" width="240" height="180" fill="#d5f5e3" stroke="#1e8449" stroke-width="3"/>
+    <text x="100" y="160" class="ok">3.5 × 3.0 × 2.6 m</text>
+    <text x="16" y="300" class="t">可测辊长：至 B1000</text>
+    <text x="16" y="330" class="t">板材/型钢最少</text>
+    <text x="16" y="360" class="w">挤：人少进舱，窗外操作</text>
+  </g>
+
+  <g transform="translate(490,95)">
+    <rect x="0" y="0" width="420" height="380" fill="#eaf2f8" stroke="#27ae60" stroke-width="3"/>
+    <text x="16" y="36" class="h">B 推荐省钱版 ★</text>
+    <rect x="50" y="70" width="300" height="200" fill="#abebc6" stroke="#1e8449" stroke-width="3"/>
+    <text x="110" y="155" class="ok">4.0 × 3.0 × 2.8 m</text>
+    <text x="90" y="185" class="s">地面 12 m²</text>
+    <text x="16" y="300" class="ok">可测辊长：至 B1200～B1400</text>
+    <text x="16" y="330" class="t">性价比最好</text>
+    <text x="16" y="360" class="t">Φ159 日常实验够用</text>
+  </g>
+
+  <g transform="translate(940,95)">
+    <rect x="0" y="0" width="420" height="380" class="box"/>
+    <text x="16" y="36" class="h">C 宽松版（更贵）</text>
+    <rect x="40" y="60" width="340" height="220" fill="#d6eaf8" stroke="#2980b9" stroke-width="2"/>
+    <text x="100" y="155" class="t">5.0 × 4.0 × 3.0 m</text>
+    <text x="16" y="310" class="t">可测至 B1600</text>
+    <text x="16" y="340" class="w">材料约多 50～70%</text>
+    <text x="16" y="365" class="s">除非常测长辊，否则不必</text>
+  </g>
+
+  <!-- cost tips -->
+  <rect x="40" y="500" width="1320" height="280" fill="#fdebd0" stroke="#e67e22" stroke-width="2"/>
+  <text x="60" y="540" class="h">省钱要点（比“做大”更重要）</text>
+  <text x="60" y="580" class="t">1. 选 B：4×3×2.8；板用 100 mm 钢板岩棉（厂房不太吵时）</text>
+  <text x="60" y="615" class="t">2. 电机放舱外小隔间，舱体不必为大电机留空间</text>
+  <text x="60" y="650" class="t">3. 门用单道厚隔声门 + 好密封即可；双道声闸可后加</text>
+  <text x="60" y="685" class="t">4. 内壁贴 50～80 吸声棉，先别上尖劈</text>
+  <text x="60" y="720" class="t">5. 只做相对对比（普通辊 vs 静音辊），不追求国家标准消声室</text>
+  <text x="60" y="755" class="ok">结论：节约成本就做 4.0×3.0×2.8 m；辊长超过 B1400 再考虑加大。</text>
+</svg>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 540" width="1100" height="540">
+  <defs>
+    <style type="text/css"><![CDATA[
+      .title { font: 700 22px "Noto Sans CJK SC", sans-serif; fill: #1a2332; }
+      .label { font: 500 13px "Noto Sans CJK SC", sans-serif; fill: #243447; }
+      .small { font: 400 11px "Noto Sans CJK SC", sans-serif; fill: #4a5a6a; }
+      .warn { font: 600 12px "Noto Sans CJK SC", sans-serif; fill: #a33; }
+      .rot { font: 600 11px "Noto Sans CJK SC", sans-serif; fill: #1a5f8a; }
+      .fix { font: 600 11px "Noto Sans CJK SC", sans-serif; fill: #5a4810; }
+      .tube { fill: #a8b4c0; stroke: #3d4a57; stroke-width: 1.4; }
+      .shaft { fill: #5c6770; stroke: #2c343c; stroke-width: 1; }
+      .seal { fill: #3d7ea6; stroke: #1f4f6e; stroke-width: 0.8; }
+      .stator { fill: #8a6a20; stroke: #5a4810; }
+      .damp { fill: #5a8f6a; stroke: #2f5a3c; stroke-width: 0.8; }
+      .cap { fill: #6e7f90; stroke: #2f3b48; stroke-width: 1; }
+      .housing { fill: #c5ced6; stroke: #3d4a57; stroke-width: 1.2; }
+      .bracket { fill: #d9dde3; stroke: #3d4a57; }
+      .leader { stroke: #c45c26; stroke-width: 1; fill: none; }
+      .gapline { stroke: #c45c26; stroke-width: 1.1; stroke-dasharray: 4 3; }
+      .bg { fill: #f3f6f8; }
+      .center { stroke: #9aa8b5; stroke-width: 0.8; stroke-dasharray: 6 4; }
+    ]]></style>
+    <marker id="dot" markerWidth="6" markerHeight="6" refX="3" refY="3">
+      <circle cx="3" cy="3" r="2.2" fill="#c45c26"/>
+    </marker>
+  </defs>
+  <rect width="1100" height="540" class="bg"/>
+  <text x="40" y="40" class="title">图1  静音托辊总体结构（半剖·已修正端盖/密封动静）</text>
+  <text x="40" y="60" class="small">轴固定穿出端盖入支架；端盖与支架留 δ；迷宫定子随轴、转子随座</text>
+  <line x1="70" y1="275" x2="1020" y2="275" class="center"/>
+
+  <!-- left bracket -->
+  <rect x="50" y="160" width="40" height="230" class="bracket"/>
+  <rect x="60" y="160" width="14" height="90" fill="#f3f6f8"/>
+  <rect x="60" y="268" width="24" height="14" fill="#c45c26" stroke="#8a3a12"/>
+  <text x="40" y="148" class="label">支架</text>
+
+  <!-- shaft through -->
+  <rect x="55" y="257" width="950" height="36" class="shaft" rx="2"/>
+  <rect x="55" y="250" width="36" height="50" class="shaft"/>
+  <rect x="970" y="250" width="36" height="50" class="shaft"/>
+  <text x="480" y="310" class="fix">固定轴</text>
+
+  <!-- gap -->
+  <line x1="92" y1="190" x2="92" y2="360" class="gapline"/>
+  <line x1="118" y1="190" x2="118" y2="360" class="gapline"/>
+  <text x="95" y="180" class="warn">δ</text>
+
+  <!-- left end cap rotating annular -->
+  <path d="M120 210 L165 210 L165 250 L140 250 L140 300 L165 300 L165 340 L120 340 Q108 275 120 210 Z" class="damp"/>
+  <text x="100" y="370" class="rot">端盖(转)</text>
+
+  <!-- labyrinth: stator brown + rotor blue -->
+  <rect x="170" y="230" width="50" height="90" class="cap" rx="2"/>
+  <rect x="178" y="238" width="8" height="74" class="stator"/>
+  <rect x="192" y="238" width="8" height="74" class="stator"/>
+  <rect x="185" y="245" width="20" height="6" class="seal"/>
+  <rect x="185" y="265" width="20" height="6" class="seal"/>
+  <rect x="185" y="285" width="20" height="6" class="seal"/>
+  <rect x="185" y="305" width="20" height="6" class="seal"/>
+  <text x="165" y="390" class="small">迷宫定/转子</text>
+
+  <!-- housing + bearing left -->
+  <path d="M225 215 H320 V335 H225 Z" class="housing"/>
+  <circle cx="272" cy="275" r="36" fill="#e8c56a" stroke="#8a6a20"/>
+  <circle cx="272" cy="275" r="16" class="shaft"/>
+  <circle cx="272" cy="275" r="26" fill="none" stroke="#8a6a20" stroke-width="3"/>
+  <rect x="225" y="205" width="95" height="10" class="damp"/>
+  <rect x="225" y="335" width="95" height="10" class="damp"/>
+
+  <!-- tube -->
+  <path d="M225 180 H880 V205 H225 Z" class="tube"/>
+  <path d="M225 345 H880 V370 H225 Z" class="tube"/>
+  <text x="500" y="165" class="rot">辊筒（转）</text>
+
+  <!-- right side mirror simplified -->
+  <path d="M785 215 H880 V335 H785 Z" class="housing"/>
+  <circle cx="832" cy="275" r="36" fill="#e8c56a" stroke="#8a6a20"/>
+  <circle cx="832" cy="275" r="16" class="shaft"/>
+  <circle cx="832" cy="275" r="26" fill="none" stroke="#8a6a20" stroke-width="3"/>
+  <rect x="785" y="205" width="95" height="10" class="damp"/>
+  <rect x="785" y="335" width="95" height="10" class="damp"/>
+  <rect x="885" y="230" width="50" height="90" class="cap" rx="2"/>
+  <rect x="893" y="238" width="8" height="74" class="stator"/>
+  <rect x="907" y="238" width="8" height="74" class="stator"/>
+  <path d="M940 210 L980 210 Q990 275 980 340 L940 340 L940 300 L960 300 L960 250 L940 250 Z" class="damp"/>
+
+  <!-- callouts -->
+  <path d="M272 215 L272 120 L360 120" class="leader" marker-start="url(#dot)"/>
+  <text x="368" y="124" class="label">1 低噪声轴承 Z2/Z3 · C3</text>
+  <path d="M190 230 L190 100 L360 100" class="leader" marker-start="url(#dot)"/>
+  <text x="368" y="104" class="label">2 迷宫：定子随轴 / 转子随座</text>
+  <path d="M130 275 L130 420 L280 420" class="leader" marker-start="url(#dot)"/>
+  <text x="288" y="424" class="label">3 端盖随辊转，与支架留 δ，轴穿出</text>
+  <path d="M272 345 L272 460 L400 460" class="leader" marker-start="url(#dot)"/>
+  <text x="408" y="464" class="label">4 座—筒阻尼环（辊内）</text>
+  <path d="M70 300 L70 500 L200 500" class="leader" marker-start="url(#dot)"/>
+  <text x="208" y="504" class="label">5 仅轴端入支架槽口承力</text>
+
+  <g transform="translate(780, 400)">
+    <rect width="290" height="110" fill="#fff" stroke="#c5d0da" rx="6"/>
+    <text x="12" y="22" class="label">图例（修正后）</text>
+    <rect x="12" y="36" width="16" height="12" fill="#8a6a20"/><text x="34" y="46" class="small">固定（轴/定子）</text>
+    <rect x="130" y="36" width="16" height="12" class="seal"/><text x="152" y="46" class="small">转子齿</text>
+    <rect x="12" y="58" width="16" height="12" class="damp"/><text x="34" y="68" class="small">端盖/阻尼</text>
+    <rect x="130" y="58" width="16" height="12" class="bracket"/><text x="152" y="68" class="small">支架</text>
+    <rect x="12" y="80" width="16" height="12" fill="#e8c56a" stroke="#8a6a20"/><text x="34" y="90" class="small">轴承</text>
+    <rect x="130" y="80" width="16" height="12" class="tube"/><text x="152" y="90" class="small">辊筒</text>
+  </g>
+</svg>

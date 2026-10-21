@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="620" viewBox="0 0 1400 620">
+  <defs>
+    <style type="text/css"><![CDATA[
+      .title { font: 700 24px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .h { font: 700 15px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .t { font: 400 13px "WenQuanYi Micro Hei", sans-serif; fill:#222; }
+      .ok { font: 700 13px "WenQuanYi Micro Hei", sans-serif; fill:#0a7; }
+      .bad { font: 700 12px "WenQuanYi Micro Hei", sans-serif; fill:#b00020; }
+      .box { fill:#fffdf8; stroke:#bfb6a3; }
+    ]]></style>
+  </defs>
+  <rect width="1400" height="620" fill="#f2eee4"/>
+  <text x="40" y="40" class="title">推荐半推翻：硬座+薄绿套 → 整段聚合物轴承座</text>
+
+  <g transform="translate(40,70)">
+    <rect x="0" y="0" width="640" height="420" class="box"/>
+    <text x="20" y="32" class="h">现理念</text>
+    <rect x="60" y="70" width="40" height="280" fill="#8b5a2b"/>
+    <text x="50" y="60" class="t">钢管</text>
+    <rect x="100" y="100" width="80" height="220" fill="#5dade2" stroke="#2e86ab"/>
+    <text x="110" y="210" class="t">硬端座</text>
+    <rect x="190" y="140" width="35" height="140" fill="#82e0aa" stroke="#1e8449"/>
+    <text x="185" y="130" class="t">薄绿套</text>
+    <rect x="235" y="155" width="45" height="110" fill="#85929e" stroke="#2c3e50"/>
+    <circle cx="255" cy="210" r="14" fill="#f7dc6f" stroke="#9a7d0a"/>
+    <rect x="280" y="175" width="200" height="70" fill="#6b2c1a"/>
+    <text x="60" y="390" class="bad">硬座还在 → 绿套再好也只堵一层</text>
+  </g>
+
+  <g transform="translate(720,70)">
+    <rect x="0" y="0" width="640" height="420" class="box"/>
+    <text x="20" y="32" class="h">路径2（对齐欧洲）</text>
+    <rect x="60" y="70" width="40" height="280" fill="#8b5a2b"/>
+    <text x="50" y="60" class="t">钢管</text>
+    <!-- thick polymer housing -->
+    <path d="M100,90 L280,90 L280,120 L160,120 L160,300 L280,300 L280,330 L100,330 Z"
+          fill="#1e8449" stroke="#145a32" stroke-width="2"/>
+    <text x="170" y="110" class="ok">整段 PA66+GF 端座</text>
+    <!-- ribs inside -->
+    <rect x="160" y="150" width="8" height="30" fill="#82e0aa"/>
+    <rect x="160" y="200" width="8" height="30" fill="#82e0aa"/>
+    <rect x="160" y="250" width="8" height="30" fill="#82e0aa"/>
+    <rect x="170" y="145" width="50" height="130" fill="#85929e" stroke="#2c3e50"/>
+    <circle cx="195" cy="210" r="16" fill="#f7dc6f" stroke="#9a7d0a"/>
+    <rect x="220" y="175" width="200" height="70" fill="#6b2c1a"/>
+    <!-- yellow seal hint -->
+    <rect x="300" y="140" width="50" height="40" fill="#f1c40f" stroke="#b7950b"/>
+    <text x="300" y="130" class="t">黄定子保留</text>
+    <text x="60" y="370" class="ok">外圈由聚合物座定位+隔振（一身两职）</text>
+    <text x="60" y="395" class="ok">取消「硬孔+薄套」两层拼</text>
+  </g>
+
+  <text x="40" y="530" class="t">更静还可上路径3：管体改 HDPE/复合（澳矿路线）。路径1=现绿套做透+支架垫，仅保底。</text>
+  <text x="40" y="560" class="t">详见 GLOBAL_SILENT_PHILOSOPHY.md</text>
+</svg>

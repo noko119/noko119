@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="780" viewBox="0 0 1400 780">
+  <defs>
+    <style type="text/css"><![CDATA[
+      .title { font: 700 26px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .sub { font: 400 14px "WenQuanYi Micro Hei", sans-serif; fill:#444; }
+      .h { font: 700 16px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .t { font: 400 14px "WenQuanYi Micro Hei", sans-serif; fill:#222; }
+      .ok { font: 700 14px "WenQuanYi Micro Hei", sans-serif; fill:#0a7; }
+      .w { font: 700 13px "WenQuanYi Micro Hei", sans-serif; fill:#a60; }
+      .s { font: 400 12px "WenQuanYi Micro Hei", sans-serif; fill:#555; }
+      .box { fill:#fffdf8; stroke:#bfb6a3; }
+    ]]></style>
+  </defs>
+  <rect width="1400" height="780" fill="#f2eee4"/>
+  <text x="40" y="40" class="title">只有 70 mm 厂房板 · 怎么达到隔声</text>
+  <text x="40" y="68" class="sub">做法：70 板 + 空腔（填岩棉）+ 70 板 · 两层骨架软连接 · 缝用胶封，不整仓灌发泡</text>
+
+  <g transform="translate(40,95)">
+    <rect x="0" y="0" width="900" height="420" class="box"/>
+    <text x="16" y="32" class="h">墙剖面（由外→内）</text>
+
+    <rect x="80" y="80" width="50" height="260" fill="#95a5a6" stroke="#2c3e50" stroke-width="2"/>
+    <text x="70" y="370" class="s">外70板</text>
+
+    <rect x="140" y="80" width="70" height="260" fill="#f9e79f" stroke="#b7950b" stroke-width="2"/>
+    <!-- wool marks -->
+    <line x1="155" y1="100" x2="195" y2="130" stroke="#5dade2" stroke-width="3"/>
+    <line x1="155" y1="150" x2="195" y2="180" stroke="#5dade2" stroke-width="3"/>
+    <line x1="155" y1="200" x2="195" y2="230" stroke="#5dade2" stroke-width="3"/>
+    <line x1="155" y1="250" x2="195" y2="280" stroke="#5dade2" stroke-width="3"/>
+    <text x="145" y="370" class="ok">空腔50～80</text>
+    <text x="150" y="395" class="ok">填岩棉</text>
+
+    <rect x="220" y="80" width="50" height="260" fill="#7f8c8d" stroke="#2c3e50" stroke-width="2"/>
+    <text x="215" y="370" class="s">内70板</text>
+
+    <rect x="280" y="80" width="50" height="260" fill="#aed6f1" stroke="#2980b9" stroke-width="2"/>
+    <text x="275" y="370" class="s">吸声层</text>
+
+    <text x="360" y="140" class="ok">总厚约 70+60+70 ≈ 200 mm</text>
+    <text x="360" y="180" class="t">（空腔按 50～80 取）</text>
+    <text x="360" y="230" class="w">内外骨架不要用长钉打穿</text>
+    <text x="360" y="270" class="w">两层柱网宜错开/软垫隔离</text>
+    <text x="360" y="320" class="t">板缝、穿墙孔：密封胶/少量发泡堵缝</text>
+    <text x="360" y="360" class="bad" style="font:700 14px sans-serif;fill:#c0392b">禁止空腔整仓灌发泡胶</text>
+  </g>
+
+  <g transform="translate(960,95)">
+    <rect x="0" y="0" width="400" height="420" fill="#eaf2f8" stroke="#5dade2" stroke-width="2"/>
+    <text x="16" y="36" class="h">采购清单（墙顶）</text>
+    <text x="16" y="80" class="t">· 70 mm 岩棉厂房板 ×2 层</text>
+    <text x="16" y="120" class="t">· 空腔岩棉（容重≥80）</text>
+    <text x="16" y="160" class="t">· 密封胶 + 橡胶条</text>
+    <text x="16" y="200" class="t">· 少量发泡胶（只堵缝）</text>
+    <text x="16" y="250" class="ok">门仍按厚隔声门</text>
+    <text x="16" y="280" class="ok">+ 双道声闸</text>
+    <text x="16" y="330" class="t">本底仍按 ≤25 dB(A)</text>
+    <text x="16" y="370" class="t">验收不过再加外层</text>
+  </g>
+
+  <rect x="40" y="540" width="1320" height="200" fill="#fdebd0" stroke="#e67e22" stroke-width="2"/>
+  <text x="60" y="580" class="h">结论</text>
+  <text x="60" y="620" class="ok">买不到 150：用两道 70 mm 板 + 中间 50～80 空腔填岩棉，等效甚至厚过单层 150。</text>
+  <text x="60" y="660" class="t">关键是两层之间要有空腔/岩棉，并且内外壳不能刚性钉穿连成一块。</text>
+  <text x="60" y="700" class="t">顶板同样：双层 70 或一层 70 + 舱内加厚吸声；门不要用 70 厂房板凑合，门要专用隔声门。</text>
+</svg>

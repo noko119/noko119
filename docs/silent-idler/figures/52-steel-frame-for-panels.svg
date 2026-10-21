@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="820" viewBox="0 0 1400 820">
+  <defs>
+    <style type="text/css"><![CDATA[
+      .title { font: 700 26px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .sub { font: 400 14px "WenQuanYi Micro Hei", sans-serif; fill:#444; }
+      .h { font: 700 16px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .t { font: 400 14px "WenQuanYi Micro Hei", sans-serif; fill:#222; }
+      .ok { font: 700 14px "WenQuanYi Micro Hei", sans-serif; fill:#0a7; }
+      .w { font: 700 13px "WenQuanYi Micro Hei", sans-serif; fill:#a60; }
+      .s { font: 400 12px "WenQuanYi Micro Hei", sans-serif; fill:#555; }
+      .box { fill:#fffdf8; stroke:#bfb6a3; }
+    ]]></style>
+  </defs>
+  <rect width="1400" height="820" fill="#f2eee4"/>
+  <text x="40" y="40" class="title">隔音板用多大的型钢卡</text>
+  <text x="40" y="68" class="sub">板厚 100～150 mm 模块墙 · 舱高约 3 m · 无砖拼装</text>
+
+  <!-- frame sketch -->
+  <g transform="translate(40,90)">
+    <rect x="0" y="0" width="700" height="480" class="box"/>
+    <text x="16" y="30" class="h">骨架示意</text>
+    <!-- columns -->
+    <rect x="80" y="80" width="28" height="320" fill="#7f8c8d" stroke="#2c3e50" stroke-width="2"/>
+    <rect x="280" y="80" width="28" height="320" fill="#7f8c8d" stroke="#2c3e50" stroke-width="2"/>
+    <rect x="480" y="80" width="28" height="320" fill="#7f8c8d" stroke="#2c3e50" stroke-width="2"/>
+    <!-- beam -->
+    <rect x="80" y="80" width="428" height="24" fill="#5d6d7e" stroke="#2c3e50" stroke-width="2"/>
+    <rect x="80" y="380" width="428" height="24" fill="#5d6d7e" stroke="#2c3e50" stroke-width="2"/>
+    <!-- panels between -->
+    <rect x="115" y="120" width="155" height="240" fill="#5dade2" stroke="#2874a6" stroke-width="2"/>
+    <rect x="315" y="120" width="155" height="240" fill="#5dade2" stroke="#2874a6" stroke-width="2"/>
+    <text x="140" y="250" class="s">隔音板</text>
+    <text x="340" y="250" class="s">隔音板</text>
+    <text x="90" y="430" class="ok">立柱 □80×80×3（或 □100×100×3）</text>
+    <text x="90" y="458" class="ok">横梁 □60×60×3 / □80×40×3</text>
+  </g>
+
+  <!-- clamp detail -->
+  <g transform="translate(760,90)">
+    <rect x="0" y="0" width="600" height="480" class="box"/>
+    <text x="16" y="30" class="h">卡板节点（俯视剖面）</text>
+    <!-- column -->
+    <rect x="80" y="120" width="60" height="60" fill="#7f8c8d" stroke="#2c3e50" stroke-width="2"/>
+    <text x="85" y="155" class="s">□立柱</text>
+    <!-- panel -->
+    <rect x="160" y="100" width="140" height="100" fill="#5dade2" stroke="#2874a6" stroke-width="2"/>
+    <rect x="165" y="105" width="8" height="90" fill="#95a5a6"/>
+    <rect x="287" y="105" width="8" height="90" fill="#95a5a6"/>
+    <text x="195" y="155" class="s">岩棉板</text>
+    <!-- clamp / press strip -->
+    <rect x="145" y="90" width="12" height="120" fill="#f5b041" stroke="#b9770e" stroke-width="2"/>
+    <rect x="300" y="90" width="12" height="120" fill="#f5b041" stroke="#b9770e" stroke-width="2"/>
+    <text x="330" y="130" class="w">压条/卡槽</text>
+    <text x="330" y="155" class="s">40×4 扁钢</text>
+    <text x="330" y="180" class="s">或成品卡件</text>
+    <!-- rubber -->
+    <rect x="157" y="110" width="6" height="80" fill="#27ae60"/>
+    <text x="16" y="280" class="ok">板边夹橡胶条，再上压条</text>
+    <text x="16" y="315" class="t">螺钉只打在外皮或卡件上</text>
+    <text x="16" y="345" class="w">禁止一颗钉打穿内外钢板</text>
+    <text x="16" y="390" class="t">柱距：按板宽，常见</text>
+    <text x="16" y="420" class="ok">900～1200 mm（板宽对齐）</text>
+    <text x="16" y="455" class="s">门洞两侧改 □100×100×4</text>
+  </g>
+
+  <!-- table -->
+  <rect x="40" y="600" width="1320" height="190" fill="#eaf2f8" stroke="#5dade2" stroke-width="2"/>
+  <text x="60" y="640" class="h">选用表（5×4×3 m 舱）</text>
+  <text x="60" y="680" class="t">立柱：□80×80×3（常规）　门洞/角柱：□100×100×3～4　横梁/圈梁：□60×60×3 或 □80×40×3</text>
+  <text x="60" y="715" class="t">地梁：□80×80×3 或 10# 槽钢　顶檩：□60×60×3，间距约 800～1000</text>
+  <text x="60" y="750" class="t">卡板：成品隔音板卡槽；或 40×4 扁钢压条 + 密封橡胶条</text>
+  <text x="60" y="785" class="ok">板 100 mm 厚 → 卡槽净宽按 100；板 150 → 按 150。型钢立在板缝处，不要立在板心钻孔硬拧。</text>
+</svg>

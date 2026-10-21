@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900">
+  <defs>
+    <style type="text/css"><![CDATA[
+      .title { font: 700 26px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .sub { font: 400 14px "WenQuanYi Micro Hei", sans-serif; fill:#444; }
+      .h { font: 700 16px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .t { font: 400 13px "WenQuanYi Micro Hei", sans-serif; fill:#222; }
+      .ok { font: 700 13px "WenQuanYi Micro Hei", sans-serif; fill:#0a7; }
+      .s { font: 400 12px "WenQuanYi Micro Hei", sans-serif; fill:#555; }
+      .box { fill:#fffdf8; stroke:#bfb6a3; }
+    ]]></style>
+  </defs>
+  <rect width="1400" height="900" fill="#f2eee4"/>
+  <text x="40" y="40" class="title">静音托辊实验室 · 完备资料总览</text>
+  <text x="40" y="68" class="sub">必要且充分 = 房间构造 + 声学验收 + 测试能力 三类全齐</text>
+
+  <g transform="translate(40,95)">
+    <rect x="0" y="0" width="420" height="360" fill="#d5f5e3" stroke="#1e8449" stroke-width="2"/>
+    <text x="20" y="40" class="h">A 房间构造</text>
+    <text x="20" y="80" class="t">尺寸 4×3×2.8 / 5×4×3</text>
+    <text x="20" y="115" class="t">钢架 + 150 隔音板</text>
+    <text x="20" y="150" class="t">浮筑地</text>
+    <text x="20" y="185" class="t">双道声闸门</text>
+    <text x="20" y="220" class="t">厚吸声 + 消声风口</text>
+    <text x="20" y="255" class="t">电机外置隔间</text>
+    <text x="20" y="300" class="ok">专篇：建造/地面/门/框架</text>
+    <text x="20" y="335" class="s">SILENT_LAB_BUILD 等</text>
+  </g>
+
+  <g transform="translate(490,95)">
+    <rect x="0" y="0" width="420" height="360" fill="#d6eaf8" stroke="#2980b9" stroke-width="2"/>
+    <text x="20" y="40" class="h">B 声学验收</text>
+    <text x="20" y="80" class="t">本底 ≤25 dB(A)</text>
+    <text x="20" y="115" class="t">本底低被测 ≥10 dB</text>
+    <text x="20" y="150" class="t">Rw ≥45</text>
+    <text x="20" y="185" class="t">电机影响 &lt;3 dB</text>
+    <text x="20" y="220" class="t">重复性 ≤1 dB</text>
+    <text x="20" y="255" class="t">十条全过</text>
+    <text x="20" y="300" class="ok">专篇：达标强制</text>
+    <text x="20" y="335" class="s">SILENT_LAB_STANDARD</text>
+  </g>
+
+  <g transform="translate(940,95)">
+    <rect x="0" y="0" width="420" height="360" fill="#fdebd0" stroke="#e67e22" stroke-width="2"/>
+    <text x="20" y="40" class="h">C 测试能力</text>
+    <text x="20" y="80" class="t">1级声级计+校准</text>
+    <text x="20" y="115" class="t">支架+变频+转速表</text>
+    <text x="20" y="150" class="t">1 m 固定测点</text>
+    <text x="20" y="185" class="t">对比辊+静音辊</text>
+    <text x="20" y="220" class="t">标准测序</text>
+    <text x="20" y="255" class="t">记录与 ΔL</text>
+    <text x="20" y="300" class="ok">专篇：工具与环境</text>
+    <text x="20" y="335" class="s">TEST_TOOLS_ENV</text>
+  </g>
+
+  <rect x="40" y="490" width="1320" height="370" fill="#eaf2f8" stroke="#5dade2" stroke-width="2"/>
+  <text x="60" y="535" class="h">总册入口：SILENT_LAB_PACK.md</text>
+  <text x="60" y="580" class="t">读序：①达标 → ②尺寸布置 → ③建造工艺 → ④地面 → ⑤门 → ⑥测试工具测序 → ⑦总册勾选</text>
+  <text x="60" y="625" class="t">图号 50～60：布置/无砖/型钢/圈梁/整架/工具/尺寸/工艺/门/达标/地面</text>
+  <text x="60" y="670" class="ok">A+B+C 全齐并通过验收 = 对本用途必要且充分</text>
+  <text x="60" y="715" class="t">缺任一项：先补齐，不准以静音实验室名义出对比结论</text>
+  <text x="60" y="760" class="s">增强项（非必须）：第三方半消声检定、全精密消声室认证</text>
+  <text x="60" y="805" class="s">产品结构资料另见静音托辊专篇；实验室只保证测得准、比得了</text>
+</svg>

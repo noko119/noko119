@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1100" viewBox="0 0 1500 1100">
+<defs>
+<style type="text/css"><![CDATA[
+  .title { font: 700 26px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+  .sub { font: 400 14px "WenQuanYi Micro Hei", sans-serif; fill:#444; }
+  .h { font: 700 16px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+  .t { font: 400 14px "WenQuanYi Micro Hei", sans-serif; fill:#222; }
+  .ok { font: 700 14px "WenQuanYi Micro Hei", sans-serif; fill:#0a7; }
+  .w { font: 700 13px "WenQuanYi Micro Hei", sans-serif; fill:#a60; }
+  .s { font: 400 12px "WenQuanYi Micro Hei", sans-serif; fill:#555; }
+  .box { fill:#fffdf8; stroke:#bfb6a3; }
+  .leg { font: 400 13px "WenQuanYi Micro Hei", sans-serif; fill:#222; }
+]]></style>
+</defs>
+<rect width="1500" height="1100" fill="#f2eee4"/>
+<text x="40" y="40" class="title">隔音房 · 整体钢框架示意（4×5 m）</text>
+<text x="40" y="68" class="sub">地梁 + 立柱 + 上圈梁 + 顶檩 · 无砖拼装 · 板后挂</text>
+<rect x="40" y="85" width="1000" height="720" class="box"/>
+<line x1="520.0" y1="720.0" x2="520.0" y2="480.0" stroke="#5d6d7e" stroke-width="5" stroke-linecap="round"/>
+<line x1="658.6" y1="760.0" x2="727.8" y2="800.0" stroke="#e74c3c" stroke-width="2" stroke-dasharray="6 4"/>
+<line x1="589.3" y1="760.0" x2="589.3" y2="520.0" stroke="#7f8c8d" stroke-width="4" stroke-linecap="round"/>
+<line x1="450.7" y1="760.0" x2="450.7" y2="520.0" stroke="#7f8c8d" stroke-width="4" stroke-linecap="round"/>
+<line x1="242.9" y1="880.0" x2="520.0" y2="720.0" stroke="#1a5276" stroke-width="6" stroke-linecap="round"/>
+<line x1="658.6" y1="800.0" x2="658.6" y2="560.0" stroke="#c0392b" stroke-width="5" stroke-linecap="round"/>
+<line x1="381.4" y1="800.0" x2="381.4" y2="560.0" stroke="#7f8c8d" stroke-width="4" stroke-linecap="round"/>
+<line x1="520.0" y1="720.0" x2="866.4" y2="920.0" stroke="#1a5276" stroke-width="6" stroke-linecap="round"/>
+<line x1="589.3" y1="520.0" x2="450.7" y2="600.0" stroke="#27ae60" stroke-width="3" stroke-linecap="round"/>
+<line x1="242.9" y1="640.0" x2="520.0" y2="480.0" stroke="#f39c12" stroke-width="6" stroke-linecap="round"/>
+<line x1="727.8" y1="840.0" x2="727.8" y2="600.0" stroke="#c0392b" stroke-width="5" stroke-linecap="round"/>
+<line x1="312.2" y1="840.0" x2="312.2" y2="600.0" stroke="#7f8c8d" stroke-width="4" stroke-linecap="round"/>
+<line x1="520.0" y1="480.0" x2="866.4" y2="680.0" stroke="#f39c12" stroke-width="6" stroke-linecap="round"/>
+<line x1="658.6" y1="560.0" x2="520.0" y2="640.0" stroke="#27ae60" stroke-width="3" stroke-linecap="round"/>
+<line x1="242.9" y1="880.0" x2="242.9" y2="640.0" stroke="#5d6d7e" stroke-width="5" stroke-linecap="round"/>
+<line x1="797.1" y1="880.0" x2="797.1" y2="640.0" stroke="#7f8c8d" stroke-width="4" stroke-linecap="round"/>
+<line x1="450.7" y1="600.0" x2="312.2" y2="680.0" stroke="#27ae60" stroke-width="3" stroke-linecap="round"/>
+<line x1="727.8" y1="600.0" x2="589.3" y2="680.0" stroke="#27ae60" stroke-width="3" stroke-linecap="round"/>
+<line x1="312.2" y1="920.0" x2="312.2" y2="680.0" stroke="#7f8c8d" stroke-width="4" stroke-linecap="round"/>
+<line x1="866.4" y1="920.0" x2="866.4" y2="680.0" stroke="#5d6d7e" stroke-width="5" stroke-linecap="round"/>
+<line x1="658.6" y1="560.0" x2="727.8" y2="600.0" stroke="#e74c3c" stroke-width="7" stroke-linecap="round"/>
+<line x1="381.4" y1="560.0" x2="727.8" y2="760.0" stroke="#8e44ad" stroke-width="5" stroke-linecap="round"/>
+<line x1="520.0" y1="640.0" x2="381.4" y2="720.0" stroke="#27ae60" stroke-width="3" stroke-linecap="round"/>
+<line x1="797.1" y1="640.0" x2="658.6" y2="720.0" stroke="#27ae60" stroke-width="3" stroke-linecap="round"/>
+<line x1="381.4" y1="960.0" x2="381.4" y2="720.0" stroke="#7f8c8d" stroke-width="4" stroke-linecap="round"/>
+<line x1="797.1" y1="960.0" x2="797.1" y2="720.0" stroke="#7f8c8d" stroke-width="4" stroke-linecap="round"/>
+<line x1="589.3" y1="1080.0" x2="242.9" y2="880.0" stroke="#1a5276" stroke-width="6" stroke-linecap="round"/>
+<line x1="589.3" y1="680.0" x2="450.7" y2="760.0" stroke="#27ae60" stroke-width="3" stroke-linecap="round"/>
+<line x1="866.4" y1="920.0" x2="589.3" y2="1080.0" stroke="#1a5276" stroke-width="6" stroke-linecap="round"/>
+<line x1="450.7" y1="1000.0" x2="450.7" y2="760.0" stroke="#7f8c8d" stroke-width="4" stroke-linecap="round"/>
+<line x1="727.8" y1="1000.0" x2="727.8" y2="760.0" stroke="#7f8c8d" stroke-width="4" stroke-linecap="round"/>
+<line x1="589.3" y1="840.0" x2="242.9" y2="640.0" stroke="#f39c12" stroke-width="6" stroke-linecap="round"/>
+<line x1="658.6" y1="720.0" x2="520.0" y2="800.0" stroke="#27ae60" stroke-width="3" stroke-linecap="round"/>
+<line x1="866.4" y1="680.0" x2="589.3" y2="840.0" stroke="#f39c12" stroke-width="6" stroke-linecap="round"/>
+<line x1="520.0" y1="1040.0" x2="520.0" y2="800.0" stroke="#7f8c8d" stroke-width="4" stroke-linecap="round"/>
+<line x1="658.6" y1="1040.0" x2="658.6" y2="800.0" stroke="#7f8c8d" stroke-width="4" stroke-linecap="round"/>
+<line x1="589.3" y1="1080.0" x2="589.3" y2="840.0" stroke="#5d6d7e" stroke-width="5" stroke-linecap="round"/>
+<line x1="554.6" y1="700.0" x2="901.1" y2="900.0" stroke="#1a5276" stroke-width="1.5" stroke-linecap="round"/>
+<text x="707.8" y="820.0" class="ok">5 m</text>
+<line x1="901.1" y1="940.0" x2="623.9" y2="1100.0" stroke="#1a5276" stroke-width="1.5" stroke-linecap="round"/>
+<text x="911.1" y="1020.0" class="ok">4 m</text>
+<line x1="494.0" y1="705.0" x2="494.0" y2="465.0" stroke="#1a5276" stroke-width="1.5" stroke-linecap="round"/>
+<text x="444.0" y="585.0" class="ok">高 3 m</text>
+<text x="120" y="200" class="w">门洞</text>
+<text x="700" y="180" class="w">上圈梁 □60×60×3</text>
+<text x="100" y="620" class="ok">地梁 □80×80×3</text>
+<text x="750" y="500" class="s">立柱 □80×80×3</text>
+<text x="750" y="530" class="s">角柱/门柱 □100×100</text>
+<rect x="1060" y="85" width="400" height="720" fill="#eaf2f8" stroke="#5dade2" stroke-width="2"/>
+<text x="1080" y="120" class="h">构件对照</text>
+<line x1="1080" y1="150" x2="1140" y2="150" stroke="#1a5276" stroke-width="6"/>
+<text x="1155" y="155" class="leg">地梁 □80×80×3</text>
+<line x1="1080" y1="190" x2="1140" y2="190" stroke="#7f8c8d" stroke-width="5"/>
+<text x="1155" y="195" class="leg">立柱 □80×80×3</text>
+<line x1="1080" y1="230" x2="1140" y2="230" stroke="#5d6d7e" stroke-width="5"/>
+<text x="1155" y="235" class="leg">角柱 □100×100×3</text>
+<line x1="1080" y1="270" x2="1140" y2="270" stroke="#c0392b" stroke-width="5"/>
+<text x="1155" y="275" class="leg">门柱/门上过梁</text>
+<line x1="1080" y1="310" x2="1140" y2="310" stroke="#f39c12" stroke-width="6"/>
+<text x="1155" y="315" class="leg">上圈梁 □60×60×3</text>
+<line x1="1080" y1="350" x2="1140" y2="350" stroke="#8e44ad" stroke-width="5"/>
+<text x="1155" y="355" class="leg">顶中梁 □80×80×3</text>
+<line x1="1080" y1="390" x2="1140" y2="390" stroke="#27ae60" stroke-width="3"/>
+<text x="1155" y="395" class="leg">顶檩 □60×60×3</text>
+<text x="1080" y="450" class="h">装配顺序</text>
+<text x="1080" y="485" class="t">1. 隔振垫 + 浮筑地</text>
+<text x="1080" y="515" class="t">2. 地梁交圈</text>
+<text x="1080" y="545" class="t">3. 立柱竖起</text>
+<text x="1080" y="575" class="t">4. 上圈梁交圈</text>
+<text x="1080" y="605" class="t">5. 顶中梁 + 顶檩</text>
+<text x="1080" y="635" class="t">6. 挂隔音板 + 密封</text>
+<text x="1080" y="665" class="t">7. 铺顶板、装门窗</text>
+<text x="1080" y="720" class="ok">柱距 ≈ 1 m</text>
+<text x="1080" y="750" class="s">板后挂，图为骨架</text>
+<text x="1080" y="780" class="s">电机另做小框架隔间</text>
+<rect x="40" y="830" width="1420" height="230" fill="#fdebd0" stroke="#e67e22" stroke-width="2"/>
+<text x="60" y="870" class="h">读图要点</text>
+<text x="60" y="910" class="t">· 蓝底一圈 = 地梁；灰柱竖立；橙顶一圈 = 上横梁（圈梁）。</text>
+<text x="60" y="945" class="t">· 紫线 = 屋顶纵向中梁，把 4 m 向分成两跨，顶檩 □60×60×3 才压得住。</text>
+<text x="60" y="980" class="t">· 红虚线处 = 声闸门洞；门柱加粗，门上沿圈梁/过梁加强。</text>
+<text x="60" y="1015" class="ok">· 隔音板卡在柱间、顶到圈梁；本图只画钢架，板未画出。</text>
+</svg>

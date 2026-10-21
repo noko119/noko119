@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="920" viewBox="0 0 1400 920">
+  <defs>
+    <style type="text/css"><![CDATA[
+      .title { font: 700 26px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .sub { font: 400 14px "WenQuanYi Micro Hei", sans-serif; fill:#444; }
+      .h { font: 700 16px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .t { font: 400 14px "WenQuanYi Micro Hei", sans-serif; fill:#222; }
+      .b { font: 700 14px "WenQuanYi Micro Hei", sans-serif; fill:#111; }
+      .ok { font: 700 14px "WenQuanYi Micro Hei", sans-serif; fill:#0a7; }
+      .w { font: 700 13px "WenQuanYi Micro Hei", sans-serif; fill:#a60; }
+      .s { font: 400 12px "WenQuanYi Micro Hei", sans-serif; fill:#555; }
+      .box { fill:#fffdf8; stroke:#bfb6a3; }
+      .arr { fill:#c0392b; }
+    ]]></style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#c0392b"/>
+    </marker>
+  </defs>
+  <rect width="1400" height="920" fill="#f2eee4"/>
+  <text x="40" y="40" class="title">两个件怎么装在一起</text>
+  <text x="40" y="68" class="sub">件①深绿减震座（含浅绿筋）　件②轴承　—— 压装，无螺钉/无胶</text>
+
+  <!-- STEP 0: two parts separate -->
+  <g transform="translate(40,90)">
+    <rect x="0" y="0" width="1320" height="280" class="box"/>
+    <text x="20" y="32" class="h">装之前：两件分开</text>
+
+    <!-- Part 1 seat -->
+    <g transform="translate(40,55)">
+      <text x="0" y="0" class="ok">件① 深绿减震座（一体件）</text>
+      <!-- seat section -->
+      <path d="M20,30 L180,30 L180,55 L90,55 L90,200 L180,200 L180,225 L20,225 L20,200 L60,200 L60,55 L20,55 Z"
+            fill="#145a32" stroke="#0b3d1f" stroke-width="2"/>
+      <!-- shoulder -->
+      <rect x="60" y="55" width="55" height="18" fill="#1e8449" stroke="#0b3d1f" stroke-width="1.5"/>
+      <!-- ribs -->
+      <rect x="90" y="90" width="18" height="28" fill="#82e0aa" stroke="#1e8449" stroke-width="1.5"/>
+      <rect x="90" y="135" width="18" height="28" fill="#82e0aa" stroke="#1e8449" stroke-width="1.5"/>
+      <rect x="90" y="175" width="18" height="22" fill="#82e0aa" stroke="#1e8449" stroke-width="1.5"/>
+      <text x="200" y="70" class="t">内孔有浅绿筋</text>
+      <text x="200" y="95" class="t">底部有内台阶</text>
+      <text x="200" y="120" class="s">筋顶圆略小于轴承外径</text>
+      <text x="200" y="145" class="s">（过盈，能抱住）</text>
+    </g>
+
+    <!-- Part 2 bearing -->
+    <g transform="translate(520,55)">
+      <text x="0" y="0" class="b">件② 轴承（完整）</text>
+      <rect x="40" y="50" width="50" height="150" fill="#7f8c8d" stroke="#2c3e50" stroke-width="2"/>
+      <circle cx="105" cy="125" r="28" fill="#f7dc6f" stroke="#9a7d0a" stroke-width="2"/>
+      <rect x="115" y="80" width="40" height="90" fill="#bdc3c7" stroke="#2c3e50" stroke-width="2"/>
+      <text x="180" y="90" class="t">外圈外圆 = 压入面</text>
+      <text x="180" y="115" class="t">外圈端面 = 顶台阶面</text>
+      <text x="180" y="140" class="s">内圈 / 滚动体一起进</text>
+      <text x="180" y="165" class="s">（整套轴承压进座）</text>
+    </g>
+
+    <!-- arrow between -->
+    <g transform="translate(900,120)">
+      <line x1="0" y1="40" x2="120" y2="40" stroke="#c0392b" stroke-width="4" marker-end="url(#arrow)"/>
+      <text x="20" y="25" class="w">压装方向 →</text>
+      <text x="10" y="80" class="s">轴承外圈对准</text>
+      <text x="10" y="100" class="s">座内孔筋顶圆</text>
+    </g>
+  </g>
+
+  <!-- STEP assemble -->
+  <g transform="translate(40,400)">
+    <rect x="0" y="0" width="820" height="280" class="box"/>
+    <text x="20" y="32" class="h">装到位：压到底为止</text>
+
+    <!-- assembled section -->
+    <path d="M80,55 L240,55 L240,80 L140,80 L140,230 L240,230 L240,255 L80,255 L80,230 L110,230 L110,80 L80,80 Z"
+          fill="#145a32" stroke="#0b3d1f" stroke-width="2"/>
+    <rect x="110" y="80" width="60" height="18" fill="#1e8449" stroke="#0b3d1f" stroke-width="1.5"/>
+    <rect x="140" y="115" width="18" height="28" fill="#82e0aa" stroke="#1e8449" stroke-width="1.5"/>
+    <rect x="140" y="160" width="18" height="28" fill="#82e0aa" stroke="#1e8449" stroke-width="1.5"/>
+    <rect x="140" y="200" width="18" height="24" fill="#82e0aa" stroke="#1e8449" stroke-width="1.5"/>
+
+    <!-- bearing in place -->
+    <rect x="158" y="98" width="55" height="155" fill="#7f8c8d" stroke="#2c3e50" stroke-width="2"/>
+    <!-- red contact markers -->
+    <rect x="156" y="115" width="5" height="28" fill="#e74c3c"/>
+    <rect x="156" y="160" width="5" height="28" fill="#e74c3c"/>
+    <rect x="156" y="200" width="5" height="24" fill="#e74c3c"/>
+    <rect x="158" y="96" width="55" height="5" fill="#e74c3c"/>
+    <circle cx="210" cy="175" r="22" fill="#f7dc6f" stroke="#9a7d0a" stroke-width="2"/>
+    <rect x="215" y="140" width="35" height="70" fill="#bdc3c7" stroke="#2c3e50" stroke-width="2"/>
+
+    <text x="280" y="100" class="ok">① 径向：外圈外圆被筋抱紧</text>
+    <text x="280" y="130" class="ok">② 轴向：外圈端面顶到内台阶</text>
+    <text x="280" y="160" class="w">红边 = 装好后真正接触处</text>
+    <text x="280" y="195" class="t">到位判据：端面贴死台阶，</text>
+    <text x="280" y="220" class="t">再往里压不动；外圈不晃。</text>
+    <text x="280" y="250" class="s">无螺钉、无卡簧、无胶——靠过盈+台阶</text>
+  </g>
+
+  <!-- steps list -->
+  <g transform="translate(890,400)">
+    <rect x="0" y="0" width="470" height="280" fill="#eaf2f8" stroke="#5dade2" stroke-width="2"/>
+    <text x="20" y="36" class="h">安装顺序（就这两件）</text>
+    <text x="20" y="75" class="t">1. 深绿座放稳（台阶朝下/朝里）</text>
+    <text x="20" y="110" class="t">2. 轴承外圈对准座内孔</text>
+    <text x="20" y="145" class="t">3. 压力机/手压机压入</text>
+    <text x="20" y="180" class="t">   （力作用在外圈端面，</text>
+    <text x="20" y="205" class="t">　 不要压内圈）</text>
+    <text x="20" y="240" class="ok">4. 压到端面贴台阶 → 停</text>
+  </g>
+
+  <!-- bottom note -->
+  <rect x="40" y="710" width="1320" height="170" fill="#fdebd0" stroke="#e67e22" stroke-width="2"/>
+  <text x="60" y="750" class="h">一句话</text>
+  <text x="60" y="785" class="t">深绿座内孔略小（筋顶圆），轴承整套压进去 → 外圆被筋抱住，端面顶住台阶。</text>
+  <text x="60" y="820" class="t">浅绿筋不是第二件，已经做在深绿座上了；你装的就是「座 + 轴承」两件。</text>
+  <text x="60" y="855" class="s">之后这组再进钢管/端壳（另一步）；黄封公、红唇、深蓝件按原端盖顺序装。</text>
+</svg>
