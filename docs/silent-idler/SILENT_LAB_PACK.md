@@ -72,6 +72,7 @@
 | ⑥ | [`IDLER_TEST_FIXTURE.md`](./IDLER_TEST_FIXTURE.md) | **托辊试验工装设计** |
 | ⑥b | [`MULTI_SIZE_SLOT.md`](./MULTI_SIZE_SLOT.md) | **多规格开口槽衬块** |
 | ⑦ | [`TEST_TOOLS_ENV.md`](./TEST_TOOLS_ENV.md) | 仪器、测序 |
+| ⑦b | [`TEST_METRICS.md`](./TEST_METRICS.md) | **托辊测哪些指标/多少** |
 | ⑧ | 本总册 `SILENT_LAB_PACK.md` | 总清单与勾选 |
 
 产品侧（测什么辊）可对照：[`DESIGN.md`](./DESIGN.md) §7、[`OVERALL_END_ASSEMBLY.md`](./OVERALL_END_ASSEMBLY.md)。

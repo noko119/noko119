@@ -42,6 +42,7 @@
 | [`docs/silent-idler/RED_SEAL_STRUCTURE.md`](./docs/silent-idler/RED_SEAL_STRUCTURE.md) | **红色密封结构各视图** |
 | [`docs/silent-idler/ACOUSTIC_TEST_ROOM.md`](./docs/silent-idler/ACOUSTIC_TEST_ROOM.md) | **静音托辊隔音试验房** |
 | [`docs/silent-idler/TEST_TOOLS_ENV.md`](./docs/silent-idler/TEST_TOOLS_ENV.md) | **静音托辊测试工具与环境** |
+| [`docs/silent-idler/TEST_METRICS.md`](./docs/silent-idler/TEST_METRICS.md) | **静音托辊测试指标与限值** |
 | [`docs/silent-idler/SILENT_LAB_BUILD.md`](./docs/silent-idler/SILENT_LAB_BUILD.md) | **静音实验室材料与工艺** |
 | [`docs/silent-idler/DOUBLE_SKIN_FIXING.md`](./docs/silent-idler/DOUBLE_SKIN_FIXING.md) | **双层70板内外怎么固定** |
 | [`docs/silent-idler/DUAL_FRAME_3D.md`](./docs/silent-idler/DUAL_FRAME_3D.md) | **双架立体图·型材板搭接** |
